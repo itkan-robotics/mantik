@@ -5,7 +5,8 @@
 ├── environment-setup/
 │   ├── environment-setup.json 💻
 │   ├── elastic-basics.json 💻
-│   └── code-organization.json 💻
+│   ├── code-organization.json 💻
+│   └── frc-programming-resources.json 💻
 ├── hardware-vendors/
 │   ├── ctre/
 │   │   ├── ctre-hardware-setup.json 💻

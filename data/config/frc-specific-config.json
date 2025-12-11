@@ -34,6 +34,13 @@
           "file": "data/frc/environment-setup/code-organization.json",
           "difficulty": "intermediate",
           "duration": "40 min"
+        },
+        {
+          "id": "frc-programming-resources",
+          "label": "FRC Programming Resources",
+          "file": "data/frc/environment-setup/frc-programming-resources.json",
+          "difficulty": "beginner",
+          "duration": "15 min"
         }
       ]
     },
@@ -252,9 +259,9 @@
   "metadata": {
     "version": "1.3.0",
     "lastUpdated": "2025-11-30",
-    "totalLessons": 36,
+    "totalLessons": 37,
     "difficultyLevels": {
-      "beginner": 5,
+      "beginner": 6,
       "intermediate": 25,
       "advanced": 6
     },

@@ -1,0 +1,288 @@
+{
+    "title": "FRC Programming Resources",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Introduction to FRC Programming Resources",
+            "content": "This page contains a comprehensive collection of resources for learning FRC programming. These resources cover everything from basic command-based programming to advanced topics like PID control, motion profiling, vision systems, and more. Bookmark this page for quick access to essential FRC programming documentation, tutorials, and tools.<br><br>These resources are organized by topic to help you find what you need quickly. Whether you're just starting with FRC programming or looking to master advanced techniques, these links will guide you through your learning journey."
+        },
+        {
+            "type": "link-grid",
+            "title": "Official Documentation",
+            "links": [
+                {
+                    "label": "CTRE Device Specific Documentation",
+                    "url": "https://v6.docs.ctr-electronics.com/en/2023-v6/docs/api-reference/device-specific/index.html"
+                },
+                {
+                    "label": "Limelight Documentation",
+                    "url": "https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary"
+                },
+                {
+                    "label": "PathPlanner Docs",
+                    "url": "https://pathplanner.dev/home.html"
+                },
+                {
+                    "label": "WPILib Docs",
+                    "url": "https://docs.wpilib.org/en/stable/"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Getting Started & Introduction",
+            "links": [
+                {
+                    "label": "Advanced Programming Notes",
+                    "url": "https://docs.google.com/document/d/1qKTuPB7myu2Kce0LdjYmC6BKeGXBA_ozFjc9v1Wgyd4/edit?tab=t.0"
+                },
+                {
+                    "label": "How to Solve Programming Problems | FRC 167",
+                    "url": "https://docs.iowacityrobotics.org/programming/frc-programming"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Command-Based Programming",
+            "links": [
+                {
+                    "label": "Commands | BoVLB's FRC Tips",
+                    "url": "https://bovlb.github.io/frc-tips/commands/"
+                },
+                {
+                    "label": "EveryBot Commands Intro",
+                    "url": "https://robonauts-everybot.github.io/Everybot-Docs/manual/code/"
+                },
+                {
+                    "label": "Presentation on Command-Based",
+                    "url": "https://www.canva.com/design/DAGy3x5Bb5w/_XC7XskD4ox9WgfoJe3xgw/edit?utm_content=DAGy3x5Bb5w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
+                },
+                {
+                    "label": "What Is Command-Based Programming?",
+                    "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Control Theory - PID & Motion",
+            "links": [
+                {
+                    "label": "CTRE Control Requests",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/control-requests-guide.html"
+                },
+                {
+                    "label": "CD Tuning Guide From 3255",
+                    "url": "https://www.chiefdelphi.com/t/is-this-really-how-we-tune-pids/496054/13"
+                },
+                {
+                    "label": "Motion Magic® Controls",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"
+                },
+                {
+                    "label": "PID Simulation Code",
+                    "url": "https://docs.google.com/document/d/13aGnRN9Ko_cBKw3Ya9WvrPnz8qgh_PAKr5CRwKrjZMM/edit?tab=t.0"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Vision Systems - Limelight",
+            "links": [
+                {
+                    "label": "Abdullah Simple Limelight Tutorial",
+                    "url": "https://youtu.be/rKTio2rlF_o"
+                },
+                {
+                    "label": "FRC Programming with Limelight Lib",
+                    "url": "https://docs.limelightvision.io/docs/docs-limelight/apis/limelight-lib"
+                },
+                {
+                    "label": "From zero to auto align to reef tutorial",
+                    "url": "https://www.chiefdelphi.com/t/from-zero-to-auto-align-to-reef-tutorial-how-to-simply-auto-align-to-the-reef/494478"
+                },
+                {
+                    "label": "Tracking AprilTags | Limelight Documentation",
+                    "url": "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Autonomous Programming",
+            "links": [
+                {
+                    "label": "Getting Started | PathPlanner Docs",
+                    "url": "https://pathplanner.dev/gui-getting-started.html#create-a-path-or-auto"
+                },
+                {
+                    "label": "TalonFX Swerve Template | AdvantageKit",
+                    "url": "https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template/"
+                },
+                {
+                    "label": "VRS Swerve Drive 05: Autonomous Programming (PathPlanner)",
+                    "url": "https://youtu.be/vPrRsnVQgf4"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Advanced Topics",
+            "links": [
+                {
+                    "label": "How do I use Exponential Profiles? | YAMS",
+                    "url": "https://yagsl.gitbook.io/yams/documentation/how-to/how-do-i-use-exponential-profiles#when-should-i-use-exponential-profiles"
+                },
+                {
+                    "label": "Intro to State Machines in FRC Programming",
+                    "url": "https://www.youtube.com/watch?v=Vr-79QyLZvI&feature=youtu.be"
+                },
+                {
+                    "label": "Tech Design Doc 10340 - Subsystems & Auto-Align",
+                    "url": "https://docs.google.com/document/d/1fzSF0_23UlM1gFZ5H1A2yUbQ-DxSPQcEWlQnw7CRpi0/edit?usp=sharing"
+                },
+                {
+                    "label": "YAMS Docs",
+                    "url": "https://yagsl.gitbook.io/yams/documentation/"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "YAMS Resources",
+            "links": [
+                {
+                    "label": "Abdullah's YAMS Expo PID Simulation Tuning Tutorial",
+                    "url": "https://youtu.be/nlRjdr1KUg4"
+                },
+                {
+                    "label": "YAMS Docs",
+                    "url": "https://yagsl.gitbook.io/yams/documentation/"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Version Control & Git",
+            "links": [
+                {
+                    "label": "Abdullah Pull Requests Overview",
+                    "url": "https://youtu.be/L_Ism2q3m6c"
+                },
+                {
+                    "label": "Git Version Control Introduction | WPILib",
+                    "url": "https://docs.wpilib.org/en/stable/docs/software/basic-programming/git-getting-started.html"
+                },
+                {
+                    "label": "The Complete FRC Git Tutorial",
+                    "url": "https://docs.google.com/presentation/d/1u6U_jYswAvdTaLUHEQ-OCSHSVd32xVkV7TSDiXvAtFM/edit?slide=id.g6fb6ad6e6a_0_648#slide=id.g6fb6ad6e6a_0_648"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "API Reference Documentation",
+            "links": [
+                {
+                    "label": "CTRE Phoenix 6 Controls API",
+                    "url": "https://api.ctr-electronics.com/phoenix6/release/java/com/ctre/phoenix6/controls/package-summary.html"
+                },
+                {
+                    "label": "FRC-REVLib API",
+                    "url": "https://codedocs.revrobotics.com/java/"
+                },
+                {
+                    "label": "LimelightLIB",
+                    "url": "https://limelightlib-wpijava-reference.limelightvision.io/frc/robot/package-summary.html"
+                },
+                {
+                    "label": "PathPlannerLib API",
+                    "url": "https://pathplanner.dev/api/java/"
+                },
+                {
+                    "label": "WPILib API 2025.3.2",
+                    "url": "https://github.wpilib.org/allwpilib/docs/release/java/index.html"
+                },
+                {
+                    "label": "WPILib Command API",
+                    "url": "https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/package-summary.html"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Team Code & Write-ups",
+            "links": [
+                {
+                    "label": "FRC Public Codebases",
+                    "url": "https://docs.google.com/spreadsheets/d/1DM9e6BfHAz6vgunDjd_3omCpgrsXfdrn7atWPzjFnRU/edit?usp=sharing"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Training Resources & Tutorials",
+            "links": [
+                {
+                    "label": "Abdullah's Programming Tutorials",
+                    "url": "https://www.youtube.com/playlist?list=PLXZmTommNXyXFZJGnoJt82-evVkSwn-f8"
+                },
+                {
+                    "label": "Deep Blue Robotics Training",
+                    "url": "https://deep-blue-training.readthedocs.io/en/latest/"
+                },
+                {
+                    "label": "LYNK LoK",
+                    "url": "https://docs.lynkrobotics.org/#gsc.tab=0"
+                },
+                {
+                    "label": "Spectrum Training",
+                    "url": "https://www.spectrum3847.org/"
+                },
+                {
+                    "label": "The Compass Alliance",
+                    "url": "https://www.thecompassalliance.org/"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Additional External Resources",
+            "links": [
+                {
+                    "label": "AdamBots Programming Resources",
+                    "url": "https://www.adambots.com/resources/programming/"
+                },
+                {
+                    "label": "CanCode - FRC Java Tutorials",
+                    "url": "https://archive.firstroboticscanada.org/cancode/frc/"
+                },
+                {
+                    "label": "Code Red Robotics Programming Lessons",
+                    "url": "https://controls.coderedrobotics.com/programminglessons/"
+                },
+                {
+                    "label": "Eagle Robotics Programming Mentoring",
+                    "url": "https://team5417.com/programming-mentoring/"
+                },
+                {
+                    "label": "FRC Design Handbook",
+                    "url": "https://www.frc-handbook.com/"
+                },
+                {
+                    "label": "LYNK Library of Knowledge - Programming",
+                    "url": "https://docs.lynkrobotics.org/programming/"
+                },
+                {
+                    "label": "Robotics Crash Course - Intro to FRC Programming",
+                    "url": "https://www.youtube.com/watch?v=PdgXk6D311k"
+                },
+                {
+                    "label": "Team 1351 Resources",
+                    "url": "https://amhsrobotics.com/index.php/resources/"
+                }
+            ]
+        }
+    ]
+}

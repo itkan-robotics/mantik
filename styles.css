@@ -2,57 +2,57 @@
 
 /* CSS Variables - Light Theme (Matching SWYFT Robotics Website) */
 :root {
-    /* Typography - SWYFT uses Poppins */
-    --font-stack: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Typography - Arabic-inspired fonts */
+    --font-stack: 'Cairo', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --font-stack--monospace: 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', Menlo, Consolas, Monaco, 'Liberation Mono', 'Lucida Console', monospace;
-    --font-stack--headings: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-stack--headings: 'Cairo', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
-    /* Font Sizes - SWYFT uses 12px base */
-    --font-size--normal: 12px;
-    --font-size--small: 10.5px;
-    --font-size--small--2: 9.75px;
-    --font-size--small--3: 9px;
-    --font-size--small--4: 7.5px;
+    /* Font Sizes - Increased by 1-2px */
+    --font-size--normal: 14px;
+    --font-size--small: 12px;
+    --font-size--small--2: 11px;
+    --font-size--small--3: 10px;
+    --font-size--small--4: 8.5px;
     
-    /* Body typography - SWYFT specs */
-    --body-font-size: 12px;
+    /* Body typography */
+    --body-font-size: 14px;
     --body-line-height: 22px;
     --body-letter-spacing: 0.02em;
     
     --sidebar-caption-font-size: var(--font-size--small--2);
     --sidebar-item-font-size: var(--font-size--small);
-    --code-font-size: var(--font-size--small--2);
+    --code-font-size: var(--font-size--small);
     --header-height: 4rem;
     --sidebar-item-line-height: 1.2rem;
     --sidebar-item-spacing-vertical: 0.75rem;
     --sidebar-item-spacing-horizontal: 1.25rem;
     --sidebar-item-height: calc(var(--sidebar-item-line-height) + var(--sidebar-item-spacing-vertical) * 2);
     
-    /* SWYFT Robotics Official Color Palette */
-    --color-foreground-primary: #232323; /* SWYFT text color */
-    --color-foreground-secondary: #868686; /* SWYFT grey */
-    --color-foreground-muted: #969696;    /* SWYFT muted grey */
-    --color-foreground-border: #e6e6e6;   /* SWYFT border */
-    --color-background-primary: #ffffff;  /* Pure white */
-    --color-background-secondary: #fafafa; /* SWYFT bg-global */
-    --color-background-hover: #f8f8f8;   /* SWYFT hover */
-    --color-background-border: #e6e6e6;  /* SWYFT border-global */
-    --color-brand-primary: #232323;      /* SWYFT primary (black) */
-    --color-brand-primary-rgb: 35, 35, 35; /* RGB values for #232323 */
-    --color-brand-content: #232323;      /* SWYFT link color */
-    --color-accent: #0088ff;             /* SWYFT blue */
-    --color-success: #5A5A5A;            /* SWYFT success */
-    --color-warning: #e0b252;            /* SWYFT warning */
-    --color-error: #e95144;              /* SWYFT error red */
-    --color-black: #202020;              /* SWYFT black */
+    /* Palestinian Flag Color Palette */
+    --color-foreground-primary: #000000; /* Black - Palestinian flag */
+    --color-foreground-secondary: #333333; /* Dark grey */
+    --color-foreground-muted: #666666;    /* Medium grey */
+    --color-foreground-border: #007A3D;   /* Green border - Palestinian flag */
+    --color-background-primary: #FFFFFF;  /* White - Palestinian flag */
+    --color-background-secondary: #F5F5F5; /* Light grey */
+    --color-background-hover: #E8F5E9;   /* Light green hover */
+    --color-background-border: #007A3D;  /* Green border - Palestinian flag */
+    --color-brand-primary: #000000;      /* Black - Palestinian flag */
+    --color-brand-primary-rgb: 0, 0, 0; /* RGB values for #000000 */
+    --color-brand-content: #CE1126;      /* Red - Palestinian flag link color */
+    --color-accent: #CE1126;             /* Red - Palestinian flag */
+    --color-success: #007A3D;            /* Green - Palestinian flag */
+    --color-warning: #FFA500;            /* Orange warning */
+    --color-error: #CE1126;              /* Red - Palestinian flag */
+    --color-black: #000000;              /* Black - Palestinian flag */
     
-    /* Button Colors - SWYFT Style */
+    /* Button Colors - Palestinian Flag Style */
     --btn-1-color: #FFFFFF;
-    --btn-1-bg: #232323;
-    --btn-1-border: #232323;
-    --btn-1-color-hover: #232323;
-    --btn-1-bg-hover: #ffffff;
-    --btn-1-border-hover: #232323;
+    --btn-1-bg: #000000;
+    --btn-1-border: #000000;
+    --btn-1-color-hover: #FFFFFF;
+    --btn-1-bg-hover: #CE1126;
+    --btn-1-border-hover: #CE1126;
     
     --color-sidebar-background: var(--color-background-primary);
     --color-sidebar-background-border: var(--color-background-border);
@@ -66,11 +66,11 @@
     --color-header-border: var(--color-background-border);
     --color-header-text: var(--color-foreground-primary);
     
-    --color-code-background: #fafafa;
-    --color-code-foreground: #232323;
-    --color-inline-code-background: #fafafa;
+    --color-code-background: #FFFFFF;
+    --color-code-foreground: #000000;
+    --color-inline-code-background: #E8F5E9;
     
-    --color-link: #232323; /* SWYFT links match text color */
+    --color-link: #CE1126; /* Red - Palestinian flag link color */
     
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -89,20 +89,20 @@
   @media (prefers-color-scheme: dark) {
     html:not([data-theme="dark"])[data-theme="light"],
       html:not([data-theme="dark"]):not([data-theme]) {
-      /* SWYFT Robotics Official Light Theme */
-    --color-background-primary: #ffffff; /* Pure white background */
-    --color-background-secondary: #fafafa; /* SWYFT bg-global */
-    --color-background-hover: #f8f8f8;   /* SWYFT hover state */
-    --color-background-border: #e6e6e6;  /* SWYFT border-global */
-    --color-foreground-primary: #232323; /* SWYFT text color */
-    --color-foreground-secondary: #868686; /* SWYFT grey */
-    --color-foreground-muted: #969696;    /* SWYFT muted grey */
-    --color-foreground-border: #e6e6e6;   /* SWYFT border */
-    --color-brand-primary: #232323;      /* SWYFT primary black */
-    --color-brand-primary-rgb: 35, 35, 35; /* RGB values for #232323 */
-    --color-brand-content: #232323;      /* SWYFT link color */
-    --color-code-background: #fafafa; /* SWYFT code background */
-    --color-code-foreground: #232323; /* SWYFT code text */
+      /* Palestinian Flag Color Theme */
+    --color-background-primary: #FFFFFF; /* White - Palestinian flag */
+    --color-background-secondary: #F5F5F5; /* Light grey */
+    --color-background-hover: #E8F5E9;   /* Light green hover */
+    --color-background-border: #007A3D;  /* Green - Palestinian flag */
+    --color-foreground-primary: #000000; /* Black - Palestinian flag */
+    --color-foreground-secondary: #333333; /* Dark grey */
+    --color-foreground-muted: #666666;    /* Medium grey */
+    --color-foreground-border: #007A3D;   /* Green - Palestinian flag */
+    --color-brand-primary: #000000;      /* Black - Palestinian flag */
+    --color-brand-primary-rgb: 0, 0, 0; /* RGB values for #000000 */
+    --color-brand-content: #CE1126;      /* Red - Palestinian flag link color */
+    --color-code-background: #FFFFFF; /* White code background */
+    --color-code-foreground: #000000; /* Black code text */
   
       
       /* Update derived sidebar colors for dark theme */
@@ -125,25 +125,25 @@
       }
   }
   
-  /* Dark Theme */
+  /* Dark Theme - Palestinian Flag Colors */
   html[data-theme="dark"] {
-    --color-foreground-primary: #f8fafc;
-    --color-foreground-secondary: #cbd5e1;
-    --color-foreground-muted: #94a3b8;
-    --color-foreground-border: #475569;
-    --color-background-primary: #0f172a;
-    --color-background-secondary: #1e293b;
-    --color-background-hover: #334155;
-    --color-background-border: #475569;
-    --color-brand-primary: #3b82f6;
-    --color-brand-primary-rgb: 59, 130, 246; /* RGB values for #3b82f6 */
-    --color-brand-content: #60a5fa;
-    --color-accent: #f59e0b;
-    --color-success: #10b981;
-    --color-warning: #f59e0b;
-    --color-error: #ef4444;
-    --color-code-background: #1e293b;
-    --color-code-foreground: #e2e8f0;
+    --color-foreground-primary: #FFFFFF;
+    --color-foreground-secondary: #CCCCCC;
+    --color-foreground-muted: #999999;
+    --color-foreground-border: #007A3D;
+    --color-background-primary: #000000;
+    --color-background-secondary: #1a1a1a;
+    --color-background-hover: #1a3d1a;
+    --color-background-border: #007A3D;
+    --color-brand-primary: #CE1126;
+    --color-brand-primary-rgb: 206, 17, 38; /* RGB values for #CE1126 */
+    --color-brand-content: #CE1126;
+    --color-accent: #CE1126;
+    --color-success: #007A3D;
+    --color-warning: #FFA500;
+    --color-error: #CE1126;
+    --color-code-background: #000000;
+    --color-code-foreground: #FFFFFF;
     
     /* Update derived sidebar colors for dark theme */
     --color-sidebar-background: var(--color-background-secondary);
@@ -438,7 +438,7 @@ body {
     border-radius: 0; /* SWYFT: no border radius */
     background-color: var(--color-background-primary);
     color: var(--color-foreground-primary);
-    font-size: 12px; /* SWYFT body font size */
+    font-size: 14px; /* Increased font size */
     letter-spacing: 0.02em; /* SWYFT body letter spacing */
     transition: all ease 0.3s; /* SWYFT anchor-transition */
     box-sizing: border-box;
@@ -544,7 +544,7 @@ body {
   
   .match-text mark {
     background-color: var(--color-brand-primary);
-    color: white;
+    color: var(--color-background-primary);
     padding: 0.1rem 0.2rem;
     border-radius: 0.2rem;
   }
@@ -910,7 +910,7 @@ body {
   .sidebar-tree .current-page > .reference {
     font-weight: 700;
     background: var(--color-brand-primary);
-    color: white;
+    color: var(--color-background-primary);
     box-shadow: var(--shadow-sm);
   }
   
@@ -1088,13 +1088,13 @@ a:hover {
   code {
     background: var(--color-inline-code-background);
     border-radius: 0; /* SWYFT: no border radius */
-    font-size: var(--font-size--small--2);
+    font-size: var(--font-size--small);
     padding: 0.1em 0.2em;
   }
   
   .code-block {
     background: var(--color-code-background);
-    border: 1px solid var(--color-background-border); /* SWYFT: simple border */
+    border: 2px solid var(--color-background-border); /* Green border - Palestinian flag */
     border-radius: 0; /* SWYFT: no border radius */
     margin: 1.5rem 0;
     overflow: hidden;
@@ -1156,72 +1156,72 @@ a:hover {
     transform: scale(0.95);
   }
   
-  /* Java Syntax Highlighting - Light Theme */
+  /* Java Syntax Highlighting - Light Theme (Palestinian Flag Colors) */
   .code-block code .java-keyword {
-    color: #0066cc;
-    font-weight: 600;
+    color: #000000;
+    font-weight: 700;
   }
   
   .code-block code .java-type {
-    color: #008080;
-    font-weight: 500;
+    color: #007A3D;
+    font-weight: 600;
   }
   
   .code-block code .java-literal {
-    color: #cc0066;
+    color: #CE1126;
     font-weight: 500;
   }
   
   .code-block code .java-string {
-    color: #008000;
+    color: #007A3D;
   }
   
   .code-block code .java-number {
-    color: #0066cc;
+    color: #CE1126;
   }
   
   .code-block code .java-comment {
-    color: #808080;
+    color: #666666;
     font-style: italic;
   }
   
   .code-block code .java-annotation {
-    color: #808000;
-    font-weight: 500;
-  }
-  
-  /* Java Syntax Highlighting - Dark Theme */
-  html[data-theme="dark"] .code-block code .java-keyword {
-    color: #4fc3f7;
+    color: #CE1126;
     font-weight: 600;
   }
   
+  /* Java Syntax Highlighting - Dark Theme (Palestinian Flag Colors) */
+  html[data-theme="dark"] .code-block code .java-keyword {
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+  
   html[data-theme="dark"] .code-block code .java-type {
-    color: #81c784;
-    font-weight: 500;
+    color: #007A3D;
+    font-weight: 600;
   }
   
   html[data-theme="dark"] .code-block code .java-literal {
-    color: #f48fb1;
+    color: #CE1126;
     font-weight: 500;
   }
   
   html[data-theme="dark"] .code-block code .java-string {
-    color: #a5d6a7;
+    color: #007A3D;
   }
   
   html[data-theme="dark"] .code-block code .java-number {
-    color: #90caf9;
+    color: #CE1126;
   }
   
   html[data-theme="dark"] .code-block code .java-comment {
-    color: #9e9e9e;
+    color: #999999;
     font-style: italic;
   }
   
   html[data-theme="dark"] .code-block code .java-annotation {
-    color: #ffcc80;
-    font-weight: 500;
+    color: #CE1126;
+    font-weight: 600;
   }
   
   /* Code header styles for minimize/maximize functionality */
@@ -1329,7 +1329,7 @@ a:hover {
     border-bottom: 1px solid transparent; /* SWYFT: simpler border */
     color: var(--color-foreground-secondary);
     cursor: pointer;
-    font-size: 12px; /* SWYFT body font size */
+    font-size: 14px; /* Increased font size */
     font-weight: 400; /* SWYFT body weight */
     white-space: nowrap;
     transition: all ease 0.3s; /* SWYFT anchor-transition */
@@ -1930,12 +1930,12 @@ a:hover {
     
     .code-block pre {
       padding: 1rem 0.75rem; /* Reduce padding on small screens */
-      font-size: 0.8rem; /* Slightly smaller font for code on small screens */
+      font-size: 0.9rem; /* Slightly smaller font for code on small screens */
     }
     
     .exercise-code pre {
       padding: 0.75rem;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
     }
   }
   
@@ -2122,7 +2122,7 @@ a:hover {
       
       .child-reference {
           padding: 0.25rem var(--sidebar-item-spacing-horizontal);
-          font-size: 0.85rem;
+          font-size: 0.95rem;
       }
       
       .parent-reference {
@@ -2209,8 +2209,8 @@ a:hover {
   
   /* Answer button and section styles */
   .answer-toggle-btn {
-      background: linear-gradient(135deg, var(--color-brand-primary), #3498db);
-      color: white;
+      background: linear-gradient(135deg, var(--color-brand-primary), var(--color-accent));
+      color: var(--color-background-primary);
       border: none;
       padding: 0.75rem 1.5rem;
       border-radius: 0.5rem;
@@ -2225,7 +2225,7 @@ a:hover {
   .answer-toggle-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      background: linear-gradient(135deg, #2980b9, var(--color-brand-primary));
+      background: linear-gradient(135deg, var(--color-accent), var(--color-brand-primary));
   }
   
   .answer-toggle-btn:active {
@@ -2234,11 +2234,11 @@ a:hover {
   }
   
   .answer-toggle-btn.active {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      background: linear-gradient(135deg, var(--color-error), var(--color-accent));
   }
   
   .answer-toggle-btn.active:hover {
-      background: linear-gradient(135deg, #c0392b, #e74c3c);
+      background: linear-gradient(135deg, var(--color-accent), var(--color-error));
   }
   
   .answer-section {
@@ -2314,7 +2314,7 @@ a:hover {
   }
   
   .answer-code code {
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       line-height: 1.5;
       white-space: pre-wrap;
       word-wrap: break-word;
@@ -2365,7 +2365,7 @@ a:hover {
       .answer-toggle-btn {
           width: 100%;
           padding: 0.75rem;
-          font-size: 0.85rem;
+          font-size: 0.95rem;
       }
       
       .answer-section {
@@ -2381,7 +2381,7 @@ a:hover {
       }
       
       .answer-code code {
-          font-size: 0.8rem;
+          font-size: 0.9rem;
       }
   }
   
@@ -2627,7 +2627,7 @@ a:hover {
       .help-toggle {
           width: 1.75rem;
           height: 1.75rem;
-          font-size: 0.8rem;
+          font-size: 0.9rem;
       }
       
       .help-icon {
@@ -2835,7 +2835,7 @@ a:hover {
     border-radius: 0; /* SWYFT: no border radius */
     color: var(--color-foreground-primary);
     font-family: var(--font-stack);
-    font-size: 12px; /* SWYFT body font size */
+    font-size: 14px; /* Increased font size */
     font-weight: 400; /* SWYFT body weight */
     letter-spacing: 0.02em; /* SWYFT body letter spacing */
     cursor: pointer;
