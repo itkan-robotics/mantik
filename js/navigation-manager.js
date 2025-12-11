@@ -604,8 +604,9 @@ class NavigationManager {
             const isMainSection = ['java-training', 'ftc-specific', 'frc-specific', 'competitive-training', 'homepage'].includes(tabId);
             
             if (isMainSection) {
-                // Update URL for main sections
-                this.updateUrl(tabId);
+                // For main sections, use handleSectionNavigation which automatically navigates to intro page
+                await this.handleSectionNavigation(tabId);
+                return;
             }
             // Clear current page classes
             document.querySelectorAll('.toctree-l1, .toctree-l2').forEach(li => {
