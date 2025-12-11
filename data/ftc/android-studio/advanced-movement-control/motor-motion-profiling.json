@@ -1,0 +1,68 @@
+{
+  "title": "Motor Motion Profiling (Android Studio)",
+  "sections": [
+    {
+      "type": "text",
+      "title": "What is Motion Profiling?",
+      "content": "<p>Motion profiling is a technique for planning smooth, efficient movements for your robot. Instead of instantly commanding full speed or power, you generate a profile that gradually accelerates and decelerates, making your robot's motion faster, more accurate, and less likely to slip or tip.</p>"
+    },
+    {
+      "type": "list",
+      "title": "Types of Motion Profiles",
+      "content": [
+        "<strong>Trapezoidal</strong>: Accelerates to a constant speed, maintains it, then decelerates.",
+        "<strong>S-curve</strong>: Smooths out acceleration and deceleration for even less jerk.",
+        "<strong>Custom</strong>: You can design your own profiles for special tasks."
+      ]
+    },
+    {
+      "type": "code",
+      "title": "Generating a Trapezoidal Profile in Java",
+      "content": "This example shows how to generate a simple trapezoidal velocity profile:",
+      "code": "double maxVel = 30; // inches/sec\ndouble maxAccel = 60; // inches/sec^2\ndouble distance = 48; // inches\n\ndouble accelTime = maxVel / maxAccel;\ndouble accelDist = 0.5 * maxAccel * accelTime * accelTime;\ndouble cruiseDist = distance - 2 * accelDist;\ndouble cruiseTime = cruiseDist / maxVel;\ndouble totalTime = 2 * accelTime + cruiseTime;\n\n// At each time step, calculate target velocity and position\nfor (double t = 0; t < totalTime; t += 0.02) {\n    double vel, pos;\n    if (t < accelTime) {\n        vel = maxAccel * t;\n        pos = 0.5 * maxAccel * t * t;\n    } else if (t < accelTime + cruiseTime) {\n        vel = maxVel;\n        pos = accelDist + maxVel * (t - accelTime);\n    } else {\n        double dt = t - (accelTime + cruiseTime);\n        vel = maxVel - maxAccel * dt;\n        pos = accelDist + cruiseDist + maxVel * dt - 0.5 * maxAccel * dt * dt;\n    }\n    // Use vel and pos as setpoints for your PID controller\n}"
+    },
+    {
+      "type": "text",
+      "title": "Combining Motion Profiling with PID and Feedforward",
+      "content": "<p>Motion profiles generate target positions and velocities over time. You use a PID controller to follow the position setpoint, and optionally add <strong>feedforward</strong> terms to account for expected velocity and acceleration. This combination gives you both accuracy and responsiveness.</p><p>Learn more: <a href=\"https://gm0.org/en/latest/docs/software/concepts/control-loops.html#feedforward-control\" target=\"_blank\">gm0: Feedforward Control</a></p>"
+    },
+    {
+      "type": "code",
+      "title": "Following a Profile with PID and Feedforward",
+      "content": "This snippet shows how to combine PID and feedforward to follow a profile:",
+      "code": "double kV = 1.0 / maxVel; // Velocity gain\ndouble kA = 0.1; // Acceleration gain\n\nfor (ProfilePoint pt : profile) {\n    double error = pt.position - getCurrentPosition();\n    double pidOut = pid.calculate(error);\n    double ffOut = kV * pt.velocity + kA * pt.acceleration;\n    double output = pidOut + ffOut;\n    motor.setPower(Range.clip(output, -1, 1));\n    // Wait for next time step\n}"
+    },
+    {
+      "type": "text",
+      "title": "Practical FTC Examples",
+      "content": "<ul><li>Use motion profiling for autonomous driving, arm movement, and any task where smooth, fast motion is needed.</li><li>Libraries like Road Runner provide advanced motion profiling for FTC robots.</li></ul>"
+    },
+    {
+      "type": "text",
+      "title": "Troubleshooting and Tuning",
+      "content": "<ul><li>If motion is jerky, lower max acceleration or tune PID gains.</li><li>If the robot overshoots, increase deceleration or tune PID/FF gains.</li><li>Use telemetry to plot position, velocity, and error for debugging.</li></ul>"
+    },
+    {
+      "type": "link-grid",
+      "title": "Additional Resources",
+      "description": "Essential resources for motion profiling and trajectory following",
+      "links": [
+        {
+          "title": "gm0 Control Loops Guide",
+          "description": "Comprehensive guide to control loops, motion profiling, and feedforward control",
+          "url": "https://gm0.org/en/latest/docs/software/concepts/control-loops.html"
+        },
+        {
+          "title": "Road Runner Motion Planning",
+          "description": "Advanced motion planning library designed specifically for FTC autonomous movement",
+          "url": "https://github.com/acmerobotics/road-runner"
+        },
+        {
+          "title": "Learn Road Runner",
+          "description": "Step-by-step guide to setting up and using Road Runner for motion profiling",
+          "url": "https://rr.brott.dev/docs/v1-0/installation/"
+        }
+      ]
+    }
+  ]
+}
