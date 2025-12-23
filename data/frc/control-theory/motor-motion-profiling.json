@@ -95,6 +95,10 @@
         {
           "label": "CTRE Motion Magic",
           "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"
+        },
+        {
+          "label": "Expo PID Tutorial",
+          "url": "https://www.youtube.com/watch?v=nlRjdr1KUg4"
         }
       ]
     }

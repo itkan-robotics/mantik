@@ -185,13 +185,6 @@
           "file": "data/frc/hardware-vendors/vendor-generic/motor-current-limiting.json",
           "difficulty": "intermediate",
           "duration": "35 min"
-        },
-        {
-          "id": "motor-pid-control",
-          "label": "On-Controller PID",
-          "file": "data/frc/hardware-vendors/vendor-generic/motor-pid-control.json",
-          "difficulty": "intermediate",
-          "duration": "50 min"
         }
       ]
     },

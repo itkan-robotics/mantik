@@ -53,7 +53,7 @@
     {
       "type": "text",
       "title": "Tuning Process",
-      "content": "Tune feedforward first, then PID. Use Phoenix Tuner or similar tools for quick constant changes. Log desired vs actual position (AdvantageScope, Elastic works well) to see system behavior. (Credits to <a href='https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116'>SuperNURDS FRC 3255</a> for the original method)"
+      "content": "Tune feedforward first, then PID. Use Phoenix Tuner or similar tools for quick constant changes. Log desired vs actual position using a vendor-specific tool (Phoenix Tuner, REV Hardware Client) or an external tool (AdvantageScope, Elastic) to see system behavior. (Credits to <a href='https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116'>SuperNURDS FRC 3255</a> for the original method)"
     },
     {
       "type": "rules-box",
@@ -101,6 +101,10 @@
         {
           "label": "WPILib PID",
           "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html"
+        },
+        {
+          "label": "Mechanism PID Tuning Practice",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tutorial-intro.html"
         }
       ]
     }
