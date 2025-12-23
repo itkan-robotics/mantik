@@ -11,7 +11,7 @@
     {
       "id": "frc-environment-setup",
       "label": "Environment Setup",
-      "description": "Setting up your FRC development environment",
+      "description": "Setting up your FRC development environment and vendor libraries",
       "icon": "⚙️",
       "items": [
         {
@@ -22,17 +22,17 @@
           "duration": "60 min"
         },
         {
-          "id": "elastic-basics",
-          "label": "Elastic Basics",
-          "file": "data/frc/environment-setup/elastic-basics.json",
+          "id": "rev-hardware-setup",
+          "label": "REV Hardware Setup",
+          "file": "data/frc/hardware-vendors/rev/rev-hardware-setup.json",
           "difficulty": "beginner",
-          "duration": "30 min"
+          "duration": "45 min"
         },
         {
-          "id": "code-organization",
-          "label": "Code Organization",
-          "file": "data/frc/environment-setup/code-organization.json",
-          "difficulty": "intermediate",
+          "id": "ctre-hardware-setup",
+          "label": "CTRE Hardware Setup",
+          "file": "data/frc/hardware-vendors/ctre/ctre-hardware-setup.json",
+          "difficulty": "beginner",
           "duration": "40 min"
         },
         {
@@ -45,17 +45,117 @@
       ]
     },
     {
-      "id": "frc-hardware-vendors-ctre",
-      "label": "CTRE Hardware",
-      "description": "CTRE motor controllers, sensors, and hardware",
-      "icon": "⚡",
+      "id": "frc-basics",
+      "label": "Basics",
+      "description": "Fundamental FRC programming concepts - motors, controllers, and your first mechanism",
+      "icon": "🔰",
       "items": [
         {
-          "id": "ctre-hardware-setup",
-          "label": "CTRE Hardware Setup",
-          "file": "data/frc/hardware-vendors/ctre/ctre-hardware-setup.json",
+          "id": "intro-to-motors",
+          "label": "Introduction to Motors",
+          "file": "data/frc/basics/intro-to-motors.json",
+          "difficulty": "beginner",
+          "duration": "45 min"
+        },
+        {
+          "id": "controllers-and-bindings",
+          "label": "Controllers and Button Bindings",
+          "file": "data/frc/basics/controllers-and-bindings.json",
           "difficulty": "beginner",
           "duration": "40 min"
+        },
+        {
+          "id": "motor-config",
+          "label": "Basic Motor Configuration",
+          "file": "data/frc/basics/motor-config.json",
+          "difficulty": "beginner",
+          "duration": "35 min"
+        },
+        {
+          "id": "intake-example-robot",
+          "label": "Intake Example (Timed Robot)",
+          "file": "data/frc/basics/intake-example-robot.json",
+          "difficulty": "beginner",
+          "duration": "50 min"
+        },
+        {
+          "id": "elastic-basics",
+          "label": "Elastic Dashboard",
+          "file": "data/frc/environment-setup/elastic-basics.json",
+          "difficulty": "beginner",
+          "duration": "30 min"
+        }
+      ]
+    },
+    {
+      "id": "frc-command-based",
+      "label": "Command-Based Programming",
+      "description": "Complete guide to WPILib command-based programming architecture",
+      "icon": "🎮",
+      "items": [
+        {
+          "id": "intro-to-command-based",
+          "label": "Introduction to Command-Based",
+          "file": "data/frc/basics/intro-to-command-based.json",
+          "difficulty": "beginner",
+          "duration": "30 min"
+        },
+        {
+          "id": "subsystems",
+          "label": "Subsystems",
+          "file": "data/frc/command-based/subsystems.json",
+          "difficulty": "beginner",
+          "duration": "30 min"
+        },
+        {
+          "id": "commands",
+          "label": "Commands",
+          "file": "data/frc/command-based/commands.json",
+          "difficulty": "beginner",
+          "duration": "35 min"
+        },
+        {
+          "id": "robot-container-and-bindings",
+          "label": "RobotContainer & Bindings",
+          "file": "data/frc/command-based/robot-container-and-bindings.json",
+          "difficulty": "beginner",
+          "duration": "40 min"
+        },
+        {
+          "id": "command-groups",
+          "label": "Command Groups",
+          "file": "data/frc/command-based/command-groups.json",
+          "difficulty": "intermediate",
+          "duration": "35 min"
+        },
+        {
+          "id": "intake-command-based",
+          "label": "Intake Example (Command-Based)",
+          "file": "data/frc/basics/intake-command-based.json",
+          "difficulty": "beginner",
+          "duration": "50 min"
+        },
+        {
+          "id": "frc-code-organization",
+          "label": "Code Organization",
+          "file": "data/frc/environment-setup/frc-code-organization.json",
+          "difficulty": "intermediate",
+          "duration": "40 min"
+        }
+      ]
+    },
+    {
+      "id": "frc-hardware-features",
+      "label": "Hardware Features & Sensors",
+      "description": "Using encoders, sensors, and vendor-specific features",
+      "icon": "🔧",
+      "items": [
+        {
+          "id": "rev-sensors-and-encoders",
+          "label": "REV Sensors and Encoders",
+          "file": "data/frc/hardware-vendors/rev/rev-sensors-and-encoders.json",
+          "difficulty": "intermediate",
+          "duration": "50 min"
         },
         {
           "id": "ctre-sensors",
@@ -67,75 +167,38 @@
       ]
     },
     {
-      "id": "frc-hardware-vendors-rev",
-      "label": "REV Hardware",
-      "description": "REV Robotics motor controllers, sensors, and hardware",
-      "icon": "🔧",
-      "items": [
-        {
-          "id": "rev-hardware-setup",
-          "label": "REV Hardware Setup",
-          "file": "data/frc/hardware-vendors/rev/rev-hardware-setup.json",
-          "difficulty": "beginner",
-          "duration": "45 min"
-        },
-        {
-          "id": "rev-sensors-and-encoders",
-          "label": "REV Sensors and Encoders",
-          "file": "data/frc/hardware-vendors/rev/rev-sensors-and-encoders.json",
-          "difficulty": "intermediate",
-          "duration": "50 min"
-        }
-      ]
-    },
-    {
-      "id": "frc-hardware-vendors-overlap",
-      "label": "Vendor Generic",
-      "description": "Common motor controller topics for both REV and CTRE",
+      "id": "frc-advanced-motor-config",
+      "label": "Advanced Motor Control",
+      "description": "Advanced configuration, current limiting, and on-controller PID",
       "icon": "🔀",
       "items": [
         {
           "id": "motor-controller-configuration",
-          "label": "Motor Controller Configuration",
+          "label": "Advanced Configuration",
           "file": "data/frc/hardware-vendors/vendor-generic/motor-controller-configuration.json",
           "difficulty": "intermediate",
           "duration": "40 min"
         },
         {
-          "id": "motor-pid-control",
-          "label": "Motor PID Control",
-          "file": "data/frc/hardware-vendors/vendor-generic/motor-pid-control.json",
-          "difficulty": "intermediate",
-          "duration": "50 min"
-        },
-        {
           "id": "motor-current-limiting",
-          "label": "Motor Current Limiting",
+          "label": "Current Limiting",
           "file": "data/frc/hardware-vendors/vendor-generic/motor-current-limiting.json",
           "difficulty": "intermediate",
           "duration": "35 min"
-        }
-      ]
-    },
-    {
-      "id": "frc-command-based",
-      "label": "Command-Based Programming",
-      "description": "WPILib command-based programming architecture",
-      "icon": "🎮",
-      "items": [
+        },
         {
-          "id": "command-based-complete",
-          "label": "Command-Based Programming",
-          "file": "data/frc/command-based/command-based-complete.json",
+          "id": "motor-pid-control",
+          "label": "On-Controller PID",
+          "file": "data/frc/hardware-vendors/vendor-generic/motor-pid-control.json",
           "difficulty": "intermediate",
-          "duration": "60 min"
+          "duration": "50 min"
         }
       ]
     },
     {
       "id": "frc-control-theory",
       "label": "Control Theory",
-      "description": "PID control, motion profiling, feedforward, and advanced control techniques",
+      "description": "PID control, motion profiling, and feedforward",
       "icon": "📊",
       "items": [
         {
@@ -162,9 +225,31 @@
       ]
     },
     {
+      "id": "frc-examples",
+      "label": "Mechanism Examples",
+      "description": "Applying concepts to build complete mechanisms",
+      "icon": "💡",
+      "items": [
+        {
+          "id": "elevator-example",
+          "label": "Elevator Example",
+          "file": "data/frc/examples/elevator-example.json",
+          "difficulty": "intermediate",
+          "duration": "60 min"
+        },
+        {
+          "id": "shooter-example",
+          "label": "Shooter Example",
+          "file": "data/frc/examples/shooter-example.json",
+          "difficulty": "intermediate",
+          "duration": "60 min"
+        }
+      ]
+    },
+    {
       "id": "frc-pose-estimation",
       "label": "Pose Estimation",
-      "description": "Odometry, vision-based pose estimation, sensor fusion, and tuning",
+      "description": "Odometry, vision, and sensor fusion",
       "icon": "📍",
       "items": [
         {
@@ -189,6 +274,13 @@
           "duration": "45 min"
         },
         {
+          "id": "vision-pose-estimation-complete",
+          "label": "Vision-Based Pose Estimation",
+          "file": "data/frc/pose-estimation/vision-pose-estimation-complete.json",
+          "difficulty": "advanced",
+          "duration": "60 min"
+        },
+        {
           "id": "vision-pose-estimation-fusion",
           "label": "Fused Pose Estimation",
           "file": "data/frc/pose-estimation/vision-pose-estimation-fusion.json",
@@ -200,20 +292,13 @@
     {
       "id": "frc-external-tools",
       "label": "External Tools",
-      "description": "PathPlanner, YASS, AdvantageScope, and AdvantageKit",
+      "description": "PathPlanner, AdvantageKit, AdvantageScope, YASS",
       "icon": "🛠️",
       "items": [
         {
           "id": "pathplanner",
           "label": "PathPlanner",
           "file": "data/frc/external-tools/pathplanner.json",
-          "difficulty": "intermediate",
-          "duration": "50 min"
-        },
-        {
-          "id": "yass",
-          "label": "YASS",
-          "file": "data/frc/external-tools/yass.json",
           "difficulty": "intermediate",
           "duration": "50 min"
         },
@@ -230,13 +315,20 @@
           "file": "data/frc/external-tools/advantagekit.json",
           "difficulty": "advanced",
           "duration": "50 min"
+        },
+        {
+          "id": "yass",
+          "label": "YASS",
+          "file": "data/frc/external-tools/yass.json",
+          "difficulty": "intermediate",
+          "duration": "50 min"
         }
       ]
     },
     {
       "id": "frc-advanced-topics",
       "label": "Advanced Topics",
-      "description": "Advanced development practices including simulation, unit testing, and code organization",
+      "description": "Simulation and Unit Testing",
       "icon": "🚀",
       "items": [
         {
@@ -257,15 +349,15 @@
     }
   ],
   "metadata": {
-    "version": "1.3.0",
-    "lastUpdated": "2025-11-30",
+    "version": "2.1.0",
+    "lastUpdated": "2025-01-15",
     "totalLessons": 37,
     "difficultyLevels": {
-      "beginner": 6,
-      "intermediate": 25,
-      "advanced": 6
+      "beginner": 16,
+      "intermediate": 16,
+      "advanced": 5
     },
-    "estimatedDuration": "27 hours",
+    "estimatedDuration": "25 hours",
     "prerequisites": [
       "java-training"
     ],
@@ -273,53 +365,12 @@
       "frc",
       "robotics",
       "wpilib",
-      "environment-setup",
-      "gradle",
-      "vscode",
-      "driver-station",
-      "elastic",
-      "dashboard",
-      "ctre",
-      "talon-fx",
-      "cancoder",
-      "pigeon",
-      "pid",
-      "motion-magic",
-      "current-limiting",
-      "rev",
-      "spark-max",
-      "neo",
-      "smart-motion",
-      "revlib",
+      "motors",
       "command-based",
-      "commands",
-      "subsystems",
-      "scheduler",
-      "triggers",
-      "control-theory",
-      "motion-profiling",
-      "feedforward",
-      "trapezoidal-profiles",
-      "exponential-profiles",
-      "pose-estimation",
+      "pid",
       "odometry",
       "vision",
-      "apriltag",
-      "sensor-fusion",
-      "localization",
-      "pathplanner",
-      "yass",
-      "yagsl",
-      "yams",
-      "yall",
-      "yamg",
-      "advantagescope",
-      "advantagekit",
-      "simulation",
-      "unit-testing",
-      "code-organization",
-      "testing",
-      "logging"
+      "pathplanner"
     ]
   }
 }

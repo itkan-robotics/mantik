@@ -1,39 +1,63 @@
-💻 = code works 
-🔗 = links function 
-👀 = information correct
 /
+├── frc-intro.json 💻 🔗 👀
 ├── environment-setup/
-│   ├── environment-setup.json 💻
-│   ├── elastic-basics.json 💻
-│   ├── code-organization.json 💻
-│   └── frc-programming-resources.json 💻
+│   ├── environment-setup.json 💻 🔗 👀
+│   ├── frc-programming-resources.json 💻 🔗 👀
 ├── hardware-vendors/
-│   ├── ctre/
-│   │   ├── ctre-hardware-setup.json 💻
-│   │   └── ctre-sensors.json 💻
 │   ├── rev/
-│   │   ├── rev-hardware-setup.json 💻
-│   │   └── rev-sensors-and-encoders.json 💻
-│   └── vendor-generic/
-│       ├── motor-controller-configuration.json 💻
-│       ├── motor-pid-control.json 💻
-│       └── motor-current-limiting.json 💻
+│   │   ├── rev-hardware-setup.json 💻 🔗 👀
+│   ├── ctre/
+│   │   ├── ctre-hardware-setup.json 💻 🔗 👀
+├── basics/
+│   ├── intro-to-motors.json 💻 🔗 👀
+│   ├── controllers-and-bindings.json 💻 🔗 👀
+│   ├── motor-config.json 💻 🔗 👀
+│   ├── intake-example-robot.json 💻 🔗 👀
+├── environment-setup/
+│   ├── elastic-basics.json 💻 🔗 👀
+├── basics/
+│   ├── intro-to-command-based.json 💻 🔗 👀
+│   ├── intake-command-based.json 💻 🔗 👀
 ├── command-based/
-│   └── command-based-complete.json 💻
+│   ├── subsystems.json 💻 🔗 👀
+│   ├── commands.json 💻 🔗 👀
+│   ├── robot-container-and-bindings.json 💻 🔗 👀
+│   └── command-groups.json 💻 🔗 👀
+├── environment-setup/
+│   ├── frc-code-organization.json 💻 🔗 👀
+├── hardware-vendors/
+│   ├── rev/
+│   │   ├── rev-sensors-and-encoders.json 💻 🔗 👀
+│   ├── ctre/
+│   │   ├── ctre-sensors.json 💻 🔗 👀
+│   └── vendor-generic/
+│       ├── motor-controller-configuration.json 💻 🔗 👀
+│       ├── motor-current-limiting.json 💻 🔗 👀
+│       ├── motor-pid-control.json 💻 🔗 👀
 ├── control-theory/
-│   ├── pid-control.json 💻
-│   ├── motor-motion-profiling.json 💻
-│   └── advanced-control-theory.json 💻
+│   ├── pid-control.json 💻 🔗 👀
+│   ├── motor-motion-profiling.json 💻 🔗 👀
+│   └── advanced-control-theory.json 💻 🔗 👀
+├── examples/
+│   ├── elevator-example.json 💻 🔗 👀
+│   └── shooter-example.json 💻 🔗 👀
 ├── pose-estimation/
-│   ├── pose-estimation-intro.json 💻
-│   ├── odometry.json 💻
-│   ├── vision-subsystem.json 💻
-│   └── vision-pose-estimation-fusion.json 💻
+│   ├── pose-estimation-intro.json 💻 🔗 👀
+│   ├── odometry.json 💻 🔗 👀
+│   ├── vision-subsystem.json 💻 🔗 👀
+│   ├── vision-pose-estimation-complete.json 💻 🔗 👀
+│   └── vision-pose-estimation-fusion.json 💻 🔗 👀
 ├── external-tools/
-│   ├── pathplanner.json 💻
-│   ├── yass.json 💻
-│   ├── advantagescope.json 💻
-│   └── advantagekit.json 💻
+│   ├── pathplanner.json 💻 🔗 👀
+│   ├── advantagescope.json 💻 🔗 👀
+│   ├── advantagekit.json 💻 🔗 👀
+│   └── yass.json 💻 🔗 👀
 └── advanced-topics/
-    ├── simulation-basics.json 💻
-    └── unit-testing.json 💻
+    ├── simulation-basics.json 💻 🔗 👀
+    └── unit-testing.json 💻 🔗 👀
+
+
+
+rewrite ALL of the files in @data/frc so that they remove any fluff from the text. important explanations should be preserved while attempting to minimize the amouof redundant and/or unnecessary text. additionally, tr to make the tone and diction be suitable for a wide range of audiences. the website will be read from freshmen in low-income areas to professsionals in robotoics with 40+ years of experiene, so be sure to understand the wide range of views, experiences, and schooling into account when revising the wording of each page
+
+ @WPILib Documentation @curatedWpilibExamples @AdvantageKit @PathPlannerLib API @CTRELib API @REVLib API @LimelightHelpers @Limelight Documentation @PathPlanner Documentation @Elastic Documentation @YAMS API @REV Code Examples @CTRE Code Examples @YAMS Code Examples @PathPlanner Code Examples @AdvantageKit Code Examples @Limelight Code Examples @PhotonVision Code Examples @PhotonVision Documentation  @CTRE Phoenix6 Documentation 

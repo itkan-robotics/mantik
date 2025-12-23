@@ -112,7 +112,20 @@ class ConfigManager {
     }
 
     getSectionConfig(sectionId) {
+        // First check cache (most up-to-date)
+        if (this.configCache.has(sectionId)) {
+            return this.configCache.get(sectionId);
+        }
+        // Fallback to appState
         return appState.config.sections[sectionId];
+    }
+
+    isSectionConfigLoaded(sectionId) {
+        // Check if config is fully loaded (has groups/children/items/tiers, not just base metadata)
+        const config = this.getSectionConfig(sectionId);
+        if (!config) return false;
+        // If it only has {id, label, file}, it's not fully loaded
+        return !!(config.groups || config.children || config.items || config.tiers || config.intro);
     }
 
     getAllSections() {

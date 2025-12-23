@@ -1,43 +1,27 @@
 {
-  "title": "YASS: Yet Another Software Suite",
+  "title": "YASS (Yet Another Software Suite)",
   "sections": [
     {
       "type": "text",
       "title": "What is YASS?",
-      "content": "YASS (Yet Another Software Suite) is a collection of libraries designed to simplify FRC robot programming. Its goal is to make advanced features like swerve drive, mechanism control, and vision integration accessible to all teams, regardless of experience level. YASS promotes a philosophy of \"mastering robot programming in days, not years.\"<br><br>The suite includes:<br><strong>YAGSL</strong> (<a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>Yet Another General Swerve Library</a>)<br><strong>YAMS</strong> (<a href='https://yetanothersoftwaresuite.com/' target='_blank'>Yet Another Mechanism System</a>)<br><strong>YAMG</strong> (<a href='https://www.yamgen.com/' target='_blank'>Yet Another Mechanism Generator</a>)<br><strong>YALL</strong> (Yet Another Limelight Library)<br><br>Learn more: <a href='https://yetanothersoftwaresuite.com/' target='_blank'>YASS Official Website</a>"
+      "content": "YASS is a suite of libraries designed to make FRC programming faster and easier. It includes tools for swerve drive, mechanism control, and code generation."
     },
     {
       "type": "text",
-      "title": "YAGSL: Swerve Made Easy",
-      "content": "YAGSL is a comprehensive swerve drive library that handles the complex math and hardware abstraction for you. It supports nearly every combination of motor controllers, encoders, and gyros via JSON configuration files.<br><br><strong>Key Features:</strong><br>- <a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>JSON-based configuration</a> (change motors/offsets without recompiling).<br>- <a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>Built-in odometry and pose estimation</a>.<br>- <a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>Simulation support</a> out of the box.<br>- Support for various vendors (CTRE, REV, Thrifty, NavX).<br><br>Learn more: <a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>YAGSL Documentation</a> | <a href='https://github.com/BroncBotz3481/YAGSL-Example' target='_blank'>YAGSL Example Project</a>"
+      "title": "YAGSL (Swerve)",
+      "content": "<strong>Yet Another General Swerve Library</strong> simplifies swerve drive implementation. Instead of writing complex kinematics code, you configure your motors and encoders in JSON files. YAGSL handles the math, odometry, and simulation integration for you."
     },
     {
       "type": "text",
-      "title": "YAMG: Mechanism Generator",
-      "content": "YAMG (Yet Another Mechanism Generator) is a web-based tool that generates production-ready Java code for common mechanisms like elevators, arms, and pivots. You configure your mechanism visually (motor types, gear ratios, limits) and YAMG produces the code for you.<br><br><strong>Features:</strong><br>- <a href='https://www.yamgen.com/' target='_blank'>Visual configuration interface</a>.<br>- Generates command-based subsystems.<br>- Includes simulation support.<br>- Supports YAMS library integration.<br><br>Try it: <a href='https://www.yamgen.com/' target='_blank'>YAMG Website</a>"
-    },
-    {
-      "type": "text",
-      "title": "YAMS: Mechanism System",
-      "content": "YAMS provides a high-level abstraction for mechanisms, making it easy to create complex systems that work in both reality and simulation. It standardizes motor control and sensor feedback.<br><br><strong>Key Benefit:</strong> Simulation parity. YAMS allows your code to run in simulation almost exactly as it does on the real robot, often with just a single line of code difference (\".simIterate()\").<br><br>Learn more: <a href='https://yetanothersoftwaresuite.com/' target='_blank'>YAMS Documentation</a> | <a href='https://yetanothersoftwaresuite.com/' target='_blank'>YAMS API</a>"
-    },
-    {
-      "type": "rules-box",
-      "title": "YASS Best Practices",
-      "subtitle": "Getting the most out of the suite:",
-      "items": [
-        "Use the <a href='https://yagsl.gitbook.io/yagsl/' target='_blank'>JSON configuration for YAGSL</a> to keep hardware details out of code.",
-        "Leverage <a href='https://www.yamgen.com/' target='_blank'>YAMG</a> to generate the boilerplate code for your arms and elevators.",
-        "Test in simulation! YASS libraries are built with simulation priority.",
-        "Join the <a href='https://github.com/BroncBotz3481/YAGSL-Example' target='_blank'>YAGSL/YASS community</a> for support and updates."
-      ]
+      "title": "YAMG (Generator)",
+      "content": "<strong>Yet Another Mechanism Generator</strong> is a web tool that generates Java code for mechanisms. You visually configure your elevator or arm (gear ratios, motor types), and it produces ready-to-use Command-Based subsystem code."
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
-          "label": "YAGSL Documentation",
+          "label": "YAGSL Docs",
           "url": "https://yagsl.gitbook.io/yagsl/"
         },
         {
@@ -45,11 +29,7 @@
           "url": "https://www.yamgen.com/"
         },
         {
-          "label": "YAGSL Example Repo",
-          "url": "https://github.com/BroncBotz3481/YAGSL-Example"
-        },
-        {
-          "label": "YAMS Documentation",
+          "label": "YASS Website",
           "url": "https://yetanothersoftwaresuite.com/"
         }
       ]

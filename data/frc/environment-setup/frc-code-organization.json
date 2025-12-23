@@ -1,0 +1,134 @@
+{
+  "title": "Code Organization",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Command-Based Structure",
+      "content": "Standard Command-Based projects separate concerns into Subsystems, Commands, and the Robot Container.<br><br><strong>Subsystems:</strong> Physical hardware (Drivetrain, Arm) and low-level control.<br><strong>Commands:</strong> Actions and logic (Drive, Score).<br><strong>RobotContainer:</strong> Setup and wiring (bindings, auto chooser). Replaces <code>Robot.java</code> logic.<br><br><a href='https://docs.wpilib.org/en/stable/docs/software/commandbased/structuring-command-based-project.html' target='_blank'>WPILib Guide</a>"
+    },
+    {
+      "type": "text",
+      "title": "Directory Layout",
+      "content": "Standard structure:"
+    },
+    {
+      "type": "code",
+      "title": "Structure",
+      "content": "src/main/java/frc/robot/\n├── Main.java                // Entry point\n├── Robot.java               // Lifecycle (init, periodic)\n├── RobotContainer.java      // Bindings & Setup\n├── Constants.java           // IDs & Tuning values\n├── subsystems/              // Hardware wrappers\n│   ├── Drivetrain.java\n│   └── Intake.java\n├── commands/                // Actions\n│   ├── autos/               // Auto routines\n│   ├── DriveCommand.java\n│   └── IntakeCommand.java\n└── util/                    // Helpers"
+    },
+    {
+      "type": "text",
+      "title": "Constants",
+      "content": "Use a <code>Constants</code> class to avoid magic numbers. Organize with nested classes by subsystem or component."
+    },
+    {
+      "type": "code",
+      "title": "Constants Example",
+      "content": "package frc.robot;\n\npublic final class Constants {\n    public static final class Drivetrain {\n        // Motor CAN IDs\n        public static final int kLeftMotorID = 1;\n        public static final int kRightMotorID = 2;\n        // Speeds\n        public static final double kMaxSpeed = 0.8;\n    }\n\n    public static final class Intake {\n        public static final int kMotorID = 5;\n        public static final double kIntakeSpeed = 0.6;\n        public static final double kEjectSpeed = -0.4;\n    }\n\n    public static final class Arm {\n        public static final int kMotorID = 7;\n        public static final double kP = 0.1;\n        public static final double kI = 0.0;\n        public static final double kD = 0.0;\n        public static final double kMaxPosition = 90.0;\n    }\n\n    public static final class Controller {\n        public static final int kDriverPort = 0;\n        public static final int kOperatorPort = 1;\n    }\n}"
+    },
+    {
+      "type": "text",
+      "title": "Subsystems Organization",
+      "content": "Each subsystem gets its own file in the <code>subsystems/</code> directory. Subsystems should contain only hardware objects and methods to control them."
+    },
+    {
+      "type": "code",
+      "title": "Subsystem Structure",
+      "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport frc.robot.Constants;\n\npublic class Intake extends SubsystemBase {\n    private final TalonFX m_motor = new TalonFX(Constants.Intake.kMotorID);\n    \n    public Intake() {\n        // Hardware configuration\n        configureMotor();\n    }\n    \n    private void configureMotor() {\n        // Configuration logic\n    }\n    \n    public void run(double speed) {\n        m_motor.set(speed);\n    }\n    \n    public void stop() {\n        m_motor.set(0);\n    }\n}"
+    },
+    {
+      "type": "rules-box",
+      "title": "Subsystem Guidelines",
+      "subtitle": "Organization rules:",
+      "items": [
+        "<strong>One subsystem per file:</strong> Name matches class name.",
+        "<strong>Use Constants:</strong> All IDs and configuration values come from Constants.",
+        "<strong>Simple methods:</strong> Provide control methods, not complex logic.",
+        "<strong>No commands in subsystems:</strong> Commands belong in the commands package."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Commands Organization",
+      "content": "Commands go in the <code>commands/</code> directory. Use subdirectories to group related commands, especially autonomous routines."
+    },
+    {
+      "type": "code",
+      "title": "Commands Directory Structure",
+      "content": "commands/\n├── autos/                   // Autonomous routines\n│   ├── DriveForwardAuto.java\n│   └── ScoreAndMoveAuto.java\n├── DriveCommand.java        // Teleop commands\n├── IntakeCommand.java\n└── ScoreCommand.java"
+    },
+    {
+      "type": "code",
+      "title": "Command Structure Example",
+      "content": "package frc.robot.commands;\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport frc.robot.subsystems.Intake;\nimport frc.robot.Constants;\n\npublic class RunIntakeCommand extends Command {\n    private final Intake m_intake;\n    \n    public RunIntakeCommand(Intake intake) {\n        m_intake = intake;\n        addRequirements(m_intake);\n    }\n    \n    @Override\n    public void initialize() {\n        m_intake.run(Constants.Intake.kIntakeSpeed);\n    }\n    \n    @Override\n    public void end(boolean interrupted) {\n        m_intake.stop();\n    }\n}"
+    },
+    {
+      "type": "rules-box",
+      "title": "Command Guidelines",
+      "subtitle": "Organization rules:",
+      "items": [
+        "<strong>Dependency injection:</strong> Pass subsystems via constructor.",
+        "<strong>Add requirements:</strong> Always call <code>addRequirements()</code> in constructor.",
+        "<strong>Use Constants:</strong> Hard-coded values belong in Constants.",
+        "<strong>Group autos:</strong> Put autonomous routines in <code>commands/autos/</code>.",
+        "<strong>Descriptive names:</strong> Command name should clearly describe its action."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "RobotContainer Organization",
+      "content": "The <code>RobotContainer</code> centralizes setup and wiring. It should contain initialization logic only, not runtime behavior."
+    },
+    {
+      "type": "code",
+      "title": "RobotContainer Structure",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.smartdashboard.SendableChooser;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.Constants;\nimport frc.robot.subsystems.*;\nimport frc.robot.commands.*;\nimport frc.robot.commands.autos.*;\n\npublic class RobotContainer {\n    // Subsystems\n    private final Drivetrain m_drivetrain = new Drivetrain();\n    private final Intake m_intake = new Intake();\n    \n    // Controllers\n    private final CommandXboxController m_driver = new CommandXboxController(Constants.Controller.kDriverPort);\n    private final CommandXboxController m_operator = new CommandXboxController(Constants.Controller.kOperatorPort);\n    \n    // Autonomous chooser\n    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();\n    \n    public RobotContainer() {\n        configureDefaultCommands();\n        configureBindings();\n        configureAutonomous();\n    }\n    \n    private void configureDefaultCommands() {\n        m_drivetrain.setDefaultCommand(Commands.run(\n            () -> m_drivetrain.arcadeDrive(m_driver.getLeftY(), m_driver.getRightX()),\n            m_drivetrain\n        ));\n        \n        m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));\n    }\n    \n    private void configureBindings() {\n        m_driver.a().whileTrue(Commands.run(() -> m_intake.run(Constants.Intake.kIntakeSpeed), m_intake));\n        m_operator.x().onTrue(new ScoreCommand(m_intake));\n    }\n    \n    private void configureAutonomous() {\n        m_autoChooser.setDefaultOption(\"Drive Forward\", new DriveForwardAuto(m_drivetrain));\n        m_autoChooser.addOption(\"Score and Move\", new ScoreAndMoveAuto(m_drivetrain, m_intake));\n        SmartDashboard.putData(\"Auto Chooser\", m_autoChooser);\n    }\n    \n    public Command getAutonomousCommand() {\n        return m_autoChooser.getSelected();\n    }\n}"
+    },
+    {
+      "type": "rules-box",
+      "title": "RobotContainer Guidelines",
+      "subtitle": "Organization rules:",
+      "items": [
+        "<strong>Group by function:</strong> Separate default commands, bindings, and autonomous into methods.",
+        "<strong>Use Constants:</strong> Controller ports and other values come from Constants.",
+        "<strong>No loop logic:</strong> Only initialization and configuration code.",
+        "<strong>Provide auto command:</strong> Include <code>getAutonomousCommand()</code> method.",
+        "<strong>Final fields:</strong> Subsystems and controllers should be final."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Utility Classes",
+      "content": "Helper classes and utilities belong in the <code>util/</code> directory. Examples include math utilities, conversion helpers, and custom controllers."
+    },
+    {
+      "type": "code",
+      "title": "Utility Example",
+      "content": "package frc.robot.util;\n\npublic class MathUtils {\n    public static double clamp(double value, double min, double max) {\n        return Math.max(min, Math.min(max, value));\n    }\n    \n    public static double deadband(double value, double threshold) {\n        if (Math.abs(value) < threshold) {\n            return 0.0;\n        }\n        return value;\n    }\n}"
+    },
+    {
+      "type": "rules-box",
+      "title": "General Organization Rules",
+      "subtitle": "Best practices:",
+      "items": [
+        "<strong>One class per file:</strong> File name matches class name.",
+        "<strong>Clear separation:</strong> Subsystems = Hardware; Commands = Logic.",
+        "<strong>Dependency injection:</strong> Pass subsystems to commands via constructor.",
+        "<strong>No static subsystems:</strong> Avoid static instances; use dependency injection.",
+        "<strong>Organize constants:</strong> Use nested classes in Constants by subsystem.",
+        "<strong>Descriptive names:</strong> Use clear, self-documenting names.",
+        "<strong>Group related code:</strong> Use subdirectories for autos and utilities."
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Related",
+      "links": [
+        {
+          "label": "Command-Based Intro",
+          "id": "intro-to-command-based"
+        }
+      ]
+    }
+  ]
+}

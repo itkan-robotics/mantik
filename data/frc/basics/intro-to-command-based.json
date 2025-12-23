@@ -1,0 +1,51 @@
+{
+  "title": "Command-Based Intro",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Command-based programming organizes robot code into logical components. It separates hardware (subsystems) from logic (commands), making code reusable, maintainable, and scalable. It is the standard for modern FRC development."
+    },
+    {
+      "type": "text",
+      "title": "Setting Up Your Project",
+      "content": "When creating a new WPILib project, use the <strong>Command Robot</strong> template. This provides the correct command-based structure with <code>Robot.java</code>, <code>RobotContainer.java</code>, and the necessary directories.<br><br>In VS Code, use <strong>WPILib: Create a new project</strong> and select the Command Robot template. The template includes example subsystems and commands to help you get started.<br><br>For detailed instructions, see the <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html' target='_blank'>WPILib Creating a Robot Program documentation</a>."
+    },
+    {
+      "type": "rules-box",
+      "title": "Core Components",
+      "subtitle": "The four pillars:",
+      "items": [
+        "<strong>Subsystems:</strong> Represent hardware (e.g., Intake, Drivetrain). Handle low-level control.",
+        "<strong>Commands:</strong> Represent actions (e.g., RunIntake, Drive). Use subsystems.",
+        "<strong>RobotContainer:</strong> The hub. Creates subsystems and binds buttons to commands.",
+        "<strong>Scheduler:</strong> Runs in the background, managing command execution."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Comparison",
+      "content": "<strong>Robot.java (TimedRobot):</strong><br>- All logic in one file.<br>- Hard to manage as complexity grows.<br>- Direct hardware control mixed with logic.<br><br><strong>Command-Based:</strong><br>- Modular structure.<br>- Reusable commands (auto & teleop).<br>- Clean separation of concerns."
+    },
+    {
+      "type": "text",
+      "title": "Command Lifecycle",
+      "content": "1. <code>initialize()</code>: Run once at start.<br>2. <code>execute()</code>: Run every loop (20ms).<br>3. <code>isFinished()</code>: Check if done.<br>4. <code>end()</code>: Run once at finish/interrupt."
+    },
+    {
+      "type": "text",
+      "title": "Subsystem Requirements",
+      "content": "Commands declare <strong>requirements</strong> (subsystems they use). The Scheduler ensures only one command controls a subsystem at a time, preventing conflicts (e.g., two commands trying to move the arm)."
+    },
+    {
+      "type": "link-grid",
+      "title": "Next",
+      "links": [
+        {
+          "label": "Intake (Command-Based)",
+          "id": "intake-command-based"
+        }
+      ]
+    }
+  ]
+}

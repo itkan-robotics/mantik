@@ -1,164 +1,39 @@
 {
-  "title": "Motor Current Limiting",
+  "title": "Current Limiting",
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to Current Limiting",
-      "content": "Current limiting is a critical safety feature that protects your motors, motor controllers, and battery from damage due to excessive current draw. Both SPARK MAX and Talon FX support sophisticated current limiting that can prevent costly hardware failures and improve robot reliability.<br><br>Understanding and properly configuring current limiting is essential for safe and reliable robot operation. Current limiting can prevent:<br>- Motor overheating and damage<br>- Circuit breaker tripping<br>- Battery damage<br>- Motor controller failure<br>- Electrical fires"
+      "title": "Why Limit Current?",
+      "content": "Current limiting protects motors from burning out and prevents the main breaker from tripping. It is the single most important safety configuration."
+    },
+    {
+      "type": "text",
+      "title": "Types of Limits",
+      "content": "<strong>Stator (Smart) Limit:</strong> Limits current inside the motor. Protects the motor from overheating. Use this for mechanism safety.<br><strong>Supply (Secondary) Limit:</strong> Limits current drawn from the battery. Protects the main breaker/battery. Use this to prevent brownouts."
     },
     {
       "type": "rules-box",
-      "title": "Why Current Limiting is Important",
-      "subtitle": "Current limiting protects:",
+      "title": "Recommended Values",
+      "subtitle": "Starting points:",
       "items": [
-        "Motors from overheating and damage",
-        "Battery from excessive discharge",
-        "Power Distribution Hub from overload",
-        "Motor controllers from damage",
-        "Electrical system from failures",
-        "Robot from unexpected shutdowns"
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Types of Current Limiting",
-      "content": "Both motor controllers support two types of current limiting, each protecting different parts of your electrical system:<br><br><strong>SPARK MAX:</strong><br>- <strong>Smart Current Limiting:</strong> Automatically adjusts based on motor type, protects the motor itself, prevents motor overheating<br>- <strong>Secondary Current Limiting:</strong> Hard limit that shuts down motor if exceeded, protects battery and Power Distribution Hub<br><br><strong>Talon FX:</strong><br>- <strong>Stator Current Limiting:</strong> Limits current through the motor windings, protects the motor itself, prevents motor overheating<br>- <strong>Supply Current Limiting:</strong> Limits current from the power source (battery/PDH), protects battery and Power Distribution Hub<br><br><strong>Differences:</strong> SPARK MAX smart current limiting is adaptive and adjusts output to stay within limits, while Talon FX stator current limiting uses threshold-based limiting. Both secondary/supply limits are hard cutoffs."
-    },
-    {
-      "type": "text",
-      "title": "When to Use Each Type",
-      "content": "Understanding when to use each type of current limiting helps you configure appropriate protection:<br><br><strong>Use Motor Protection Limits When:</strong><br>- Motor is the primary concern<br>- You want to prevent motor overheating<br>- Motor has specific current rating<br>- Protecting motor is more important than maximum performance<br><br><strong>Use Battery/PDH Protection Limits When:</strong><br>- Battery/PDH protection is primary concern<br>- Circuit breakers are tripping<br>- Multiple motors share power source<br>- You want a hard safety limit<br><br><strong>Use Both:</strong> For maximum protection, configure both types of current limits. This protects both the motor and the power system."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Motor Protection Current Limits",
-      "content": "Configuring current limits that protect the motor itself:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class SmartCurrentLimit {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // Smart current limit parameters\n    // For NEO motor: typically 40-60 amps\n    // For NEO 550: typically 20-30 amps\n    // For brushed motors: depends on motor specifications\n    private static final int SMART_CURRENT_LIMIT = 40;  // amps\n    \n    public SmartCurrentLimit() {\n        // Configure smart current limit using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config.smartCurrentLimit(SMART_CURRENT_LIMIT);\n        \n        // Persist parameters during initial setup\n        m_motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Explanation:\n        // - Motor output is automatically reduced if current exceeds limit\n        // - This prevents motor overheating while still allowing operation\n        // - Limit is based on motor type and application\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "import com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class StatorCurrentLimit {\n    private final TalonFX m_motor = new TalonFX(1);\n    \n    // Current limit parameters\n    // Enable, current limit (amps), trigger threshold (amps), trigger time (seconds)\n    private static final boolean ENABLE = true;\n    private static final double CURRENT_LIMIT = 40.0;      // 40 amps limit\n    private static final double TRIGGER_THRESHOLD = 45.0;  // Trigger at 45 amps\n    private static final double TRIGGER_TIME = 0.5;\n    \n    public StatorCurrentLimit() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Configure stator current limit\n        config.CurrentLimits.StatorCurrentLimitEnable = ENABLE;\n        config.CurrentLimits.StatorCurrentLimit = CURRENT_LIMIT;\n        \n        m_motor.getConfigurator().apply(config);\n        \n        // Explanation:\n        // - If current exceeds TRIGGER_THRESHOLD (45A) for TRIGGER_TIME (0.5s),\n        //   current is limited to CURRENT_LIMIT (40A)\n        // - This prevents brief spikes from triggering, but limits sustained high current\n    }\n}"
-        }
+        "<strong>Drivetrain:</strong> 40A - 60A",
+        "<strong>Intake/Roller:</strong> 20A - 30A",
+        "<strong>Elevator/Arm:</strong> 40A - 50A",
+        "<strong>NEO 550:</strong> NEVER exceed 20A - 25A."
       ]
     },
     {
       "type": "code-tabs",
-      "title": "Configuring Battery/PDH Protection Current Limits",
-      "content": "Configuring current limits that protect the battery and Power Distribution Hub:",
+      "title": "Code Examples",
+      "content": "Setting limits:",
       "tabs": [
         {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class SecondaryCurrentLimit {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // Secondary current limit (hard limit)\n    // Typically higher than smart limit (acts as safety backup)\n    private static final int SECONDARY_CURRENT_LIMIT = 60;  // amps\n    \n    public SecondaryCurrentLimit() {\n        // Configure secondary current limit using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config.secondaryCurrentLimit(SECONDARY_CURRENT_LIMIT);\n        \n        // Persist parameters during initial setup\n        m_motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Explanation:\n        // - Protects battery and Power Distribution Hub\n        // - Hard cutoff if current exceeds limit\n        // - Typically higher than smart limit\n    }\n}"
-        },
-        {
           "label": "Talon FX",
-          "code": "import com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class SupplyCurrentLimit {\n    private final TalonFX m_motor = new TalonFX(1);\n    \n    // Supply current limit parameters\n    private static final boolean ENABLE = true;\n    private static final double CURRENT_LIMIT = 50.0;      // 50 amps limit\n    private static final double TRIGGER_THRESHOLD = 55.0;  // Trigger at 55 amps\n    private static final double TRIGGER_TIME = 0.5;\n    \n    public SupplyCurrentLimit() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Configure supply current limit\n        config.CurrentLimits.SupplyCurrentLimitEnable = ENABLE;\n        config.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;\n        \n        m_motor.getConfigurator().apply(config);\n        \n        // Explanation:\n        // - Protects battery and Power Distribution Hub\n        // - Limits current from power source\n        // - Typically higher limits than stator (battery can supply more)\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Both Current Limits",
-      "content": "Complete current limiting configuration with both motor and battery protection:",
-      "tabs": [
+          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class Drivetrain extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    // ... (other fields and methods)\n    \n    public void configureCurrentLimits() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Stator current limit: protects the motor from overheating\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 40.0; // Amps\n        \n        // Supply current limit: protects battery and prevents brownouts\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = 50.0;      // Limit in amps\n        config.CurrentLimits.SupplyCurrentThreshold = 60.0; // Threshold to trigger\n        config.CurrentLimits.SupplyTimeThreshold = 0.1;     // Time above threshold before limiting\n        \n        motor.getConfigurator().apply(config);\n    }\n    \n    // ... (rest of class)"
+        },
         {
           "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class CompleteCurrentLimiting {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // Smart current limit (motor protection)\n    private static final int SMART_LIMIT = 40;\n    \n    // Secondary current limit (battery protection)\n    private static final int SECONDARY_LIMIT = 60;\n    \n    public CompleteCurrentLimiting() {\n        // Configure both current limits using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .smartCurrentLimit(SMART_LIMIT)\n            .secondaryCurrentLimit(SECONDARY_LIMIT);\n        \n        // Persist parameters during initial setup\n        m_motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // - Smart limit prevents motor overheating\n        // - Secondary limit prevents battery/PDH overload\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class CompleteCurrentLimiting {\n    private final TalonFX m_motor = new TalonFX(1);\n    \n    // Stator current limit (motor protection)\n    private static final double STATOR_LIMIT = 40.0;\n    private static final double STATOR_THRESHOLD = 45.0;\n    private static final double STATOR_TIME = 0.5;\n    \n    // Supply current limit (battery protection)\n    private static final double SUPPLY_LIMIT = 50.0;\n    \n    public CompleteCurrentLimiting() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Configure stator current limit\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = STATOR_LIMIT;\n        \n        // Configure supply current limit\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = SUPPLY_LIMIT;\n        \n        m_motor.getConfigurator().apply(config);\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Current Limit Parameters Explained",
-      "content": "Current limiting uses parameters to determine when and how to limit current:<br><br><strong>SPARK MAX Smart Current Limit:</strong><br>- Maximum current allowed (in amps)<br>- Motor output is automatically reduced to stay under this limit<br>- Set based on motor specifications and application<br>- Adaptive: adjusts output gradually to maintain limit<br><br><strong>SPARK MAX Secondary Current Limit:</strong><br>- Hard current limit (in amps)<br>- Motor is shut down if current exceeds this limit<br>- Acts as safety backup<br>- Typically 10-20 amps higher than smart limit<br><br><strong>Talon FX Current Limits:</strong><br>- <strong>Current Limit:</strong> Maximum current allowed (in amps)<br>- <strong>Trigger Threshold:</strong> Current level that triggers limiting (in amps)<br>- <strong>Trigger Time:</strong> How long current must exceed threshold before limiting (in seconds)<br>- Prevents brief spikes from triggering<br>- Typically 5-10 amps above current limit"
-    },
-    {
-      "type": "text",
-      "title": "Current Monitoring",
-      "content": "You can read actual current draw from motor controllers to monitor motor performance and verify current limiting is working correctly.<br><br><strong>SPARK MAX:</strong><br>- <strong>Output Current:</strong> Current through motor<br>- <strong>Bus Voltage:</strong> Battery voltage<br>- <strong>Applied Output:</strong> Motor output being applied<br><br><strong>Talon FX:</strong><br>- <strong>Stator Current:</strong> Current through motor windings<br>- <strong>Supply Current:</strong> Current from battery/PDH<br><br><strong>Use Cases:</strong><br>- Monitor motor performance<br>- Verify current limiting is working<br>- Diagnose electrical issues<br>- Optimize current limits<br>- Display telemetry<br><br><strong>Reading Current:</strong> Use vendor-specific methods to read current values. Talon FX uses <code>StatusSignal</code> objects which should be refreshed efficiently."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Monitoring Current Draw",
-      "content": "Reading and displaying current values for monitoring and diagnostics:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class CurrentMonitoring extends SubsystemBase {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // Track maximum currents seen\n    private double m_maxCurrent = 0.0;\n    \n    public CurrentMonitoring() {\n        // Configure current limits using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .smartCurrentLimit(40)\n            .secondaryCurrentLimit(60);\n        \n        // Persist parameters during initial setup\n        m_motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n    \n    @Override\n    public void periodic() {\n        double outputCurrent = m_motor.getOutputCurrent();\n        double busVoltage = m_motor.getBusVoltage();\n        double appliedOutput = m_motor.getAppliedOutput();\n        \n        // Track maximum\n        if (outputCurrent > m_maxCurrent) {\n            m_maxCurrent = outputCurrent;\n        }\n        \n        SmartDashboard.putNumber(\"Output Current\", outputCurrent);\n        SmartDashboard.putNumber(\"Bus Voltage\", busVoltage);\n        SmartDashboard.putNumber(\"Applied Output\", appliedOutput);\n        SmartDashboard.putNumber(\"Max Current\", m_maxCurrent);\n        \n        // Check if current limiting is active\n        boolean isLimiting = outputCurrent >= 38.0;  // Near smart limit\n        SmartDashboard.putBoolean(\"Current Limiting Active\", isLimiting);\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.BaseStatusSignal;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class CurrentMonitoring extends SubsystemBase {\n    private final TalonFX m_motor = new TalonFX(1);\n    \n    // Status signals for efficient reading\n    private final BaseStatusSignal[] m_signals = {\n        m_motor.getStatorCurrent(),\n        m_motor.getSupplyCurrent()\n    };\n    \n    // Track maximum currents seen\n    private double m_maxStatorCurrent = 0.0;\n    private double m_maxSupplyCurrent = 0.0;\n    \n    public CurrentMonitoring() {\n        // Configure current limits (see previous examples)\n    }\n    \n    @Override\n    public void periodic() {\n        // Refresh all signals at once (efficient)\n        BaseStatusSignal.refreshAll(m_signals);\n        \n        double statorCurrent = m_motor.getStatorCurrent().getValueAsDouble();\n        double supplyCurrent = m_motor.getSupplyCurrent().getValueAsDouble();\n        \n        // Track maximums\n        if (statorCurrent > m_maxStatorCurrent) {\n            m_maxStatorCurrent = statorCurrent;\n        }\n        if (supplyCurrent > m_maxSupplyCurrent) {\n            m_maxSupplyCurrent = supplyCurrent;\n        }\n        \n        SmartDashboard.putNumber(\"Stator Current\", statorCurrent);\n        SmartDashboard.putNumber(\"Supply Current\", supplyCurrent);\n        SmartDashboard.putNumber(\"Max Stator Current\", m_maxStatorCurrent);\n        SmartDashboard.putNumber(\"Max Supply Current\", m_maxSupplyCurrent);\n        \n        // Check if current limiting is active\n        boolean isLimiting = statorCurrent >= 40.0 || supplyCurrent >= 50.0;\n        SmartDashboard.putBoolean(\"Current Limiting Active\", isLimiting);\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Motor-Specific Current Ratings",
-      "content": "Different motors have different current ratings and requirements. Setting appropriate limits based on motor type ensures proper protection. For detailed motor performance data, current ratings, and testing information, refer to the <a href=\"https://motors.ctr-electronics.com/\" target=\"_blank\">CTR Electronics Motor Testing Lab</a>.<br><br><strong>NEO:</strong><br>- Brushless motor commonly used with SPARK MAX<br>- High-performance motor for drivetrains and mechanisms<br>- Check motor testing lab for specific current ratings and performance curves<br><br><strong>NEO 550:</strong><br>- Compact brushless motor, smaller than NEO<br>- Suitable for lighter mechanisms and applications with space constraints<br>- Lower current requirements than full-size NEO<br><br><strong>Kraken x60:</strong><br>- CTRE brushless motor rated for 60A continuous current<br>- Designed for high-performance applications<br>- Compatible with Talon FX motor controllers<br><br><strong>Kraken x44:</strong><br>- CTRE brushless motor rated for 44A continuous current<br>- Mid-range performance motor<br>- Compatible with Talon FX motor controllers<br><br><strong>Best Practice:</strong> Always consult the <a href=\"https://motors.ctr-electronics.com/\" target=\"_blank\">Motor Testing Lab</a> for accurate, up-to-date motor specifications, current ratings, and performance data. Set current limits conservatively (below maximum ratings) to ensure long-term reliability."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Current Limiting for Different Motors",
-      "content": "Example configurations for different motor types:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class MotorSpecificLimits {\n    // Example: NEO motor\n    // Rated: ~60A continuous, ~100A peak\n    public static void configureNEO(SparkMax motor) {\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .smartCurrentLimit(40)  // Smart: protect motor\n            .secondaryCurrentLimit(60);  // Secondary: protect battery\n        \n        motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n    \n    // Example: NEO 550 motor\n    // Rated: ~30A continuous, ~60A peak\n    public static void configureNEO550(SparkMax motor) {\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .smartCurrentLimit(20)  // Smart: protect motor\n            .secondaryCurrentLimit(30);  // Secondary: protect battery\n        \n        motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n    \n    // Example: Brushed motor\n    // Rated: depends on motor\n    public static void configureBrushed(SparkMax motor) {\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .smartCurrentLimit(30)  // Smart: protect motor (example)\n            .secondaryCurrentLimit(40);  // Secondary: protect battery (example)\n        \n        motor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class MotorSpecificLimits {\n    // Example: Falcon 500 motor\n    // Rated: ~60A continuous, ~100A peak\n    public static void configureFalcon500(TalonFX motor) {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Stator: protect motor (40A continuous)\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 40.0;\n\n        \n        // Supply: protect battery (50A)\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = 50.0;\n\n        \n        motor.getConfigurator().apply(config);\n    }\n    \n    // Example: Smaller motor (e.g., NEO)\n    // Rated: ~30A continuous, ~60A peak\n    public static void configureSmallMotor(TalonFX motor) {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Stator: protect motor (25A continuous)\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 25.0;\n\n        \n        // Supply: protect battery (30A)\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = 30.0;\n\n        \n        motor.getConfigurator().apply(config);\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Balancing Protection vs Performance",
-      "content": "Current limiting is a balance between protection and performance. Setting limits too low protects hardware but may limit robot performance. Setting limits too high provides performance but risks damage.<br><br><strong>Too Low Limits:</strong><br>- Excellent protection<br>- May limit robot performance<br>- Motors may not reach full power<br>- Mechanism may be slower than desired<br><br><strong>Too High Limits:</strong><br>- Maximum performance<br>- Risk of motor/controller damage<br>- Risk of circuit breaker tripping<br>- May cause overheating<br><br><strong>Finding the Balance:</strong><br>- Start with conservative limits<br>- Test mechanism performance<br>- Gradually increase if needed<br>- Monitor current during operation<br>- Never exceed motor/controller specifications<br>- Leave safety margin"
-    },
-    {
-      "type": "text",
-      "title": "Testing Current Limits",
-      "content": "Testing current limits ensures they're configured correctly and provide adequate protection:<br><br><strong>Test Procedure:</strong><br>1. Configure current limits<br>2. Operate mechanism under normal load<br>3. Monitor current readings<br>4. Verify current stays within limits<br>5. Test with maximum load<br>6. Verify protection activates if needed<br>7. Adjust limits based on results<br><br><strong>What to Monitor:</strong><br>- Maximum current reached<br>- Whether limits are too restrictive<br>- Whether protection activates appropriately<br>- Motor temperature (if possible)<br>- Mechanism performance<br><br><strong>Tools:</strong> Use vendor tools (REV Hardware Client or Phoenix Tuner) or your dashboard to monitor current in real-time during testing."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Current Limit Testing Helper",
-      "content": "Helper code for testing and validating current limit settings:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class CurrentLimitTesting {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    private double m_peakCurrent = 0.0;\n    \n    public void testCurrentLimits() {\n        double current = Math.abs(m_motor.getOutputCurrent());\n        \n        // Track peak value\n        if (current > m_peakCurrent) {\n            m_peakCurrent = current;\n        }\n        \n        SmartDashboard.putNumber(\"Current Test - Output\", current);\n        SmartDashboard.putNumber(\"Peak Current\", m_peakCurrent);\n        \n        // Check if limits are appropriate\n        boolean smartOK = m_peakCurrent < 45.0;  // Below smart limit threshold\n        boolean secondaryOK = m_peakCurrent < 55.0;  // Below secondary limit threshold\n        \n        SmartDashboard.putBoolean(\"Smart Limit OK\", smartOK);\n        SmartDashboard.putBoolean(\"Secondary Limit OK\", secondaryOK);\n    }\n    \n    public void resetPeak() {\n        m_peakCurrent = 0.0;\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.BaseStatusSignal;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class CurrentLimitTesting {\n    private final TalonFX m_motor = new TalonFX(1);\n    \n    // Status signals for efficient reading\n    private final BaseStatusSignal[] m_signals = {\n        m_motor.getStatorCurrent(),\n        m_motor.getSupplyCurrent()\n    };\n    \n    private double m_peakStatorCurrent = 0.0;\n    private double m_peakSupplyCurrent = 0.0;\n    \n    public void testCurrentLimits() {\n        // Refresh all signals at once (efficient)\n        BaseStatusSignal.refreshAll(m_signals);\n        \n        double statorCurrent = Math.abs(m_motor.getStatorCurrent().getValueAsDouble());\n        double supplyCurrent = Math.abs(m_motor.getSupplyCurrent().getValueAsDouble());\n        \n        // Track peak values\n        if (statorCurrent > m_peakStatorCurrent) {\n            m_peakStatorCurrent = statorCurrent;\n        }\n        if (supplyCurrent > m_peakSupplyCurrent) {\n            m_peakSupplyCurrent = supplyCurrent;\n        }\n        \n        SmartDashboard.putNumber(\"Current Test - Stator\", statorCurrent);\n        SmartDashboard.putNumber(\"Current Test - Supply\", supplyCurrent);\n        SmartDashboard.putNumber(\"Peak Stator\", m_peakStatorCurrent);\n        SmartDashboard.putNumber(\"Peak Supply\", m_peakSupplyCurrent);\n        \n        // Check if limits are appropriate\n        boolean statorOK = m_peakStatorCurrent < 45.0;  // Below threshold\n        boolean supplyOK = m_peakSupplyCurrent < 55.0;\n        \n        SmartDashboard.putBoolean(\"Stator Limit OK\", statorOK);\n        SmartDashboard.putBoolean(\"Supply Limit OK\", supplyOK);\n    }\n    \n    public void resetPeaks() {\n        m_peakStatorCurrent = 0.0;\n        m_peakSupplyCurrent = 0.0;\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "link-grid",
-      "title": "Related Topics and Documentation",
-      "links": [
-        {
-          "label": "Motor Controller Configuration",
-          "id": "motor-controller-configuration"
-        },
-        {
-          "label": "SPARK MAX Setup",
-          "id": "spark-max-setup"
-        },
-        {
-          "label": "Talon FX Setup",
-          "id": "talon-fx-setup"
+          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Drivetrain extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // ... (other fields and methods)\n    \n    public void configureCurrentLimits() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        \n        // Smart current limit: protects the motor (stator current)\n        config.smartCurrentLimit(40); // Amps\n        \n        // Secondary current limit: protects battery (supply current)\n        config.secondaryCurrentLimit(60); // Amps\n        \n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    // ... (rest of class)"
         }
       ]
     }

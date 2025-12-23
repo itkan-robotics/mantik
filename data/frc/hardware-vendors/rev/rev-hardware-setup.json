@@ -3,174 +3,45 @@
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to REV Robotics Hardware",
-      "content": "REV Robotics is a leading manufacturer of motor controllers, motors, sensors, and other electronics for FRC robots. REV products are widely used in FRC due to their reliability, ease of use, and excellent documentation. This lesson covers setting up the REVLib software library and configuring SPARK MAX motor controllers for use in your robot code.<br><br>REV provides a comprehensive ecosystem of hardware and software tools that work together seamlessly. Their products are designed specifically for FRC competition and are well-documented and supported.<br><br>Learn more: <a href='https://docs.revrobotics.com/docs/ion/' target='_blank'>REV ION Documentation</a>"
-    },
-    {
-      "type": "rules-box",
-      "title": "REV Product Lineup",
-      "subtitle": "Main REV products for FRC:",
-      "items": [
-        "<strong>SPARK MAX:</strong> CAN-based motor controller supporting both brushed and brushless DC motors with advanced control features",
-        "<strong>SPARK Flex:</strong> Enhanced motor controller with improved performance and additional features for high-power applications",
-        "<strong>NEO Brushless Motor:</strong> High-performance brushless motor with integrated encoder designed for FRC competition",
-        "<strong>NEO 550 Motor:</strong> Compact brushless motor variant suitable for smaller mechanisms and applications",
-        "<strong>REV Color Sensor V3:</strong> Advanced color detection sensor with proximity sensing capabilities",
-        "<strong>REV 2m Distance Sensor:</strong> Ultrasonic distance sensor for object detection and ranging",
-        "<strong>REV Pneumatic Hub:</strong> CAN-based pneumatic control module for managing solenoids and compressors",
-        "<strong>REV Power Distribution Hub:</strong> Centralized power distribution system with circuit breakers and CAN bus integration"
-      ]
+      "title": "Overview",
+      "content": "This guide covers setting up REVLib for SPARK MAX, SPARK Flex, and NEO motors."
     },
     {
       "type": "text",
-      "title": "Installing REVLib (Online Method)",
-      "content": "The online installation method fetches the latest library version directly from the internet. This is the simplest method if you have internet access.<br><br><strong>Steps:</strong><br>1. In Visual Studio Code, press <code>Ctrl+Shift+P</code> (or <code>Cmd+Shift+P</code> on Mac) to open the Command Palette<br>2. Type \"WPILib: Manage Vendor Libraries\" and select it<br>3. Choose \"Install new libraries (online)\"<br>4. Enter the URL for the REVLib vendordeps JSON file:<br>   <code>https://software-metadata.revrobotics.com/REVLib-2025.json</code><br>5. VS Code will download and configure the library automatically<br>6. Your Gradle project will sync automatically<br><br>The library will be added to your project's <code>vendordeps/</code> folder, and all dependencies and repositories will be configured automatically.<br><br>Learn more: <a href='https://docs.revrobotics.com/revlib/' target='_blank'>REVLib Documentation</a>"
-    },
-    {
-      "type": "text",
-      "title": "Installing REVLib (Offline Method)",
-      "content": "The offline installation method uses a vendordeps JSON file that you can download and add to your project manually.<br><br><strong>Steps:</strong><br>1. Download the REVLib vendordeps JSON file from the <a href='https://github.com/REVrobotics/REVLib' target='_blank'>REV Robotics GitHub</a> or <a href='https://docs.revrobotics.com/revlib/' target='_blank'>REVLib documentation</a><br>2. Place the JSON file in your project's <code>vendordeps/</code> folder<br>3. In Visual Studio Code, press <code>Ctrl+Shift+P</code> (or <code>Cmd+Shift+P</code> on Mac) to open the Command Palette<br>4. Type \"WPILib: Manage Vendor Libraries\" and select it<br>5. Choose \"Install new libraries (offline)\"<br>6. Select the REVLib library from the list<br>7. Click OK to add it to your project<br><br>The library will be added to your project, and all dependencies will be configured automatically."
+      "title": "Installation",
+      "content": "1. <strong>VS Code:</strong> Command Palette → \"WPILib: Manage Vendor Libraries\" → \"Install new (online)\".<br>2. <strong>URL:</strong> <code>https://software-metadata.revrobotics.com/REVLib-2025.json</code>"
     },
     {
       "type": "text",
       "title": "REV Hardware Client",
-      "content": "REV Hardware Client is REV Robotics' configuration and diagnostic tool for managing REV devices. It provides a graphical interface for configuring SPARK MAX controllers, updating firmware, and performing diagnostics. Understanding how to use REV Hardware Client is essential for setting up and maintaining REV hardware.<br><br><strong>REV Hardware Client Capabilities:</strong><br>- Configure CAN IDs for all REV devices<br>- Set motor controller parameters<br>- Configure sensors<br>- Tune PID loops<br>- Monitor device status and diagnostics<br>- Update firmware<br>- Save and load configurations<br>- Real-time data monitoring<br><br><strong>Download:</strong> REV Hardware Client is available from the <a href='https://docs.revrobotics.com/rev-hardware-client/' target='_blank'>REV Robotics website</a>. It's a standalone application available for Windows, macOS, and Linux that connects to your robot over USB or CAN bus."
-    },
-    {
-      "type": "text",
-      "title": "Connecting REV Hardware Client to Devices",
-      "content": "REV Hardware Client can connect to REV devices in two ways:<br><br><strong>USB Connection:</strong><br>- Connect SPARK MAX to computer via USB cable<br>- REV Hardware Client automatically detects connected devices<br>- Useful for initial setup and configuration<br>- Fast and reliable connection<br><br><strong>CAN Bus Connection:</strong><br>- Connect to robot over network (robot must be powered and on network)<br>- REV Hardware Client scans CAN bus for REV devices<br>- Useful for configuring devices on robot<br>- Requires robot to be on same network<br><br><strong>Finding Devices:</strong><br>1. Open REV Hardware Client<br>2. Click \"Scan for Devices\"<br>3. REV Hardware Client will discover all REV devices<br>4. Select device from list to configure"
-    },
-    {
-      "type": "text",
-      "title": "CAN Bus Communication",
-      "content": "REV devices communicate over the CAN (Controller Area Network) bus. Understanding CAN bus basics helps when working with REV hardware.<br><br><strong>CAN Bus Basics:</strong><br>- All devices share the same CAN bus<br>- Each device has a unique CAN ID (0-62)<br>- Devices communicate at high speed (1 Mbps)<br>- CAN bus is more reliable than PWM<br><br><strong>CAN ID Assignment:</strong><br>- Each REV device needs a unique CAN ID<br>- Set CAN IDs using REV Hardware Client<br>- Common practice: Use sequential IDs (1, 2, 3, etc.)<br>- Document your CAN ID assignments<br><br><strong>CAN Bus Wiring:</strong><br>- Use proper CAN bus wiring (daisy-chain)<br>- Terminate the CAN bus at both ends (120 ohm resistors)<br>- Ensure proper power distribution"
-    },
-    {
-      "type": "text",
-      "title": "Introduction to SPARK MAX",
-      "content": "The SPARK MAX is REV Robotics' versatile motor controller designed for FRC. It supports both brushed and brushless DC motors, features CAN bus communication, and provides advanced control capabilities. The SPARK MAX is one of the most popular motor controllers in FRC due to its ease of use and feature set.<br><br>Learn more: <a href='https://docs.revrobotics.com/revlib/spark' target='_blank'>SPARK MAX Documentation</a>"
-    },
-    {
-      "type": "rules-box",
-      "title": "SPARK MAX Capabilities",
-      "subtitle": "What SPARK MAX provides:",
-      "items": [
-        "Brushless and brushed motor control",
-        "CAN bus communication (reliable, fast)",
-        "Built-in encoder support (NEO motors)",
-        "Advanced PID control with multiple slots",
-        "MAXMotion motion profiling",
-        "Current limiting (motor and battery protection)",
-        "Voltage compensation",
-        "Data port for external sensors and encoders",
-        "Status monitoring and diagnostics"
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Hardware Setup",
-      "content": "Before programming, you need to physically set up your SPARK MAX controllers on the robot.<br><br><strong>Wiring SPARK MAX:</strong><br>1. <strong>Motor Connections:</strong> Connect the motor leads to the SPARK MAX motor terminals (supports both brushed and brushless)<br>2. <strong>Power Connections:</strong> Connect power from the Power Distribution Hub (PDH) to the SPARK MAX power terminals<br>3. <strong>CAN Bus:</strong> Connect the CAN bus wires (CAN High and CAN Low) to the CAN bus network<br>4. <strong>Data Port:</strong> Optional connection for external encoders and sensors<br>5. <strong>Ground:</strong> Ensure proper grounding connections<br><br><strong>Status LED:</strong> The SPARK MAX has a status LED that indicates its state:<br>- <strong>Solid Cyan:</strong> Device is operating normally<br>- <strong>Slow Blink Cyan:</strong> CAN bus communication established<br>- <strong>Fast Blink Magenta:</strong> Fault condition (check REV Hardware Client for details)<br>- <strong>Off:</strong> No power or not connected"
-    },
-    {
-      "type": "text",
-      "title": "CAN ID Configuration",
-      "content": "Each SPARK MAX needs a unique CAN ID (1-62, avoid ID 0) to communicate on the CAN bus. You can set the CAN ID using REV Hardware Client.<br><br><strong>Using REV Hardware Client:</strong><br>1. Open REV Hardware Client<br>2. Connect to your robot (USB or CAN bus)<br>3. Select the SPARK MAX device<br>4. Set the CAN ID in the Basic tab<br>5. Click \"Save Configuration\" to apply<br><br><strong>In Code:</strong> When you create a SPARK MAX instance, you specify the CAN ID in the constructor. The CAN ID must match what's configured in REV Hardware Client.<br><br><strong>Best Practices:</strong><br>- Use sequential IDs for related devices (e.g., drivetrain: 1, 2, 3, 4)<br>- Avoid ID 0 (reserved)<br>- Document your CAN ID assignments<br>- Keep a consistent numbering scheme across your robot"
+      "content": "Download <a href='https://docs.revrobotics.com/rev-hardware-client/' target='_blank'>REV Hardware Client</a> to configure CAN IDs, update firmware, and test motors via USB."
     },
     {
       "type": "code",
-      "title": "Creating SPARK MAX Instances",
-      "content": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Drivetrain {\n    // MotorType.kBrushless for NEO motors\n    // MotorType.kBrushed for brushed motors\n    private final SparkMax m_leftFront = new SparkMax(1, MotorType.kBrushless);   // CAN ID 1\n    private final SparkMax m_leftBack = new SparkMax(2, MotorType.kBrushless);    // CAN ID 2\n    private final SparkMax m_rightFront = new SparkMax(3, MotorType.kBrushless);  // CAN ID 3\n    private final SparkMax m_rightBack = new SparkMax(4, MotorType.kBrushless);   // CAN ID 4\n    \n    public Drivetrain() {\n        // Basic configuration shown in next section\n        // For comprehensive configuration, see Motor Controller Configuration lesson\n    }\n    \n    public void drive(double leftPower, double rightPower) {\n        m_leftFront.set(leftPower);\n        m_rightFront.set(rightPower);\n    }\n}"
+      "title": "SPARK MAX Setup",
+      "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class DriveMotor extends SubsystemBase {\n    // Create motor instance: CAN ID 1, brushless type\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n\n    public DriveMotor() {\n        // Configure motor settings\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Set brake mode (motor resists motion when stopped)\n        config.idleMode(IdleMode.kBrake);\n        \n        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n\n    /**\n     * Set motor output percentage\n     * @param percent Motor output (-1.0 to 1.0)\n     */\n    public void set(double percent) {\n        m_motor.set(percent);\n    }\n}"
     },
     {
       "type": "text",
-      "title": "Basic SPARK MAX Configuration",
-      "content": "When setting up a SPARK MAX, you should configure essential parameters for safe operation. Here's a minimal configuration to get started using the SparkMaxConfig API.<br><br><strong>Essential Settings:</strong><br>- <strong>Motor Inversion:</strong> Set if motor runs backwards when given positive power<br>- <strong>Idle Mode:</strong> Brake (motor resists movement) or Coast (motor free-spins)<br><br>For a complete guide to all configuration parameters including current limits, voltage compensation, encoders, soft limits, and ramp rates, refer to the <a href='#motor-controller-configuration' target='_blank'>Motor Controller Configuration</a> lesson."
+      "title": "Follower Mode",
+      "content": "Configure a motor to follow another."
     },
     {
       "type": "code",
-      "title": "Basic SPARK MAX Configuration",
-      "content": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Drivetrain {\n    private final SparkMax m_leftFront = new SparkMax(1, MotorType.kBrushless);\n    private final SparkMax m_leftBack = new SparkMax(2, MotorType.kBrushless);\n    private final SparkMax m_rightFront = new SparkMax(3, MotorType.kBrushless);\n    private final SparkMax m_rightBack = new SparkMax(4, MotorType.kBrushless);\n    \n    public Drivetrain() {\n        // Create configuration object\n        SparkMaxConfig config = new SparkMaxConfig();\n        \n        // Configure basic settings\n        config\n            .inverted(false)  // Set to true if motor runs backwards\n            .idleMode(IdleMode.kBrake);  // Brake holds position, Coast free-spins\n        \n        // Apply configuration to all motors (persist during initial setup)\n        m_leftFront.configure(config, \n            com.revrobotics.ResetMode.kResetSafeParameters, \n            com.revrobotics.PersistMode.kPersistParameters);\n        m_leftBack.configure(config, \n            com.revrobotics.ResetMode.kResetSafeParameters, \n            com.revrobotics.PersistMode.kPersistParameters);\n        m_rightFront.configure(config, \n            com.revrobotics.ResetMode.kResetSafeParameters, \n            com.revrobotics.PersistMode.kPersistParameters);\n        m_rightBack.configure(config, \n            com.revrobotics.ResetMode.kResetSafeParameters, \n            com.revrobotics.PersistMode.kPersistParameters);\n        \n        // For comprehensive configuration (current limits, voltage compensation,\n        // encoders, soft limits, ramp rates), see the Motor Controller Configuration lesson\n    }\n    \n    public void drive(double leftPower, double rightPower) {\n        m_leftFront.set(leftPower);\n        m_leftBack.set(leftPower);\n        m_rightFront.set(rightPower);\n        m_rightBack.set(rightPower);\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Basic Motor Control",
-      "content": "The SPARK MAX supports several control methods. For basic operation, you'll typically use percent output control, which sets the motor power as a percentage (-1.0 to 1.0).<br><br><strong>Control Methods:</strong><br>- <strong>Percent Output:</strong> Direct power control (-1.0 to 1.0)<br>- <strong>Voltage:</strong> Control by voltage<br>- <strong>Position:</strong> PID position control (see <a href='#motor-pid-control' target='_blank'>Motor PID Control</a> lesson)<br>- <strong>Velocity:</strong> PID velocity control (see <a href='#motor-pid-control' target='_blank'>Motor PID Control</a> lesson)<br>- <strong>MAXMotion:</strong> Motion profiling (see <a href='#motor-motion-profiling' target='_blank'>Motion Profiling</a> lesson)<br><br><strong>Setting Motor Power:</strong> Use the <code>set()</code> method with a value from -1.0 (full reverse) to 1.0 (full forward), with 0.0 being stopped."
-    },
-    {
-      "type": "code",
-      "title": "Basic Motor Control Examples",
-      "content": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class BasicMotorControl {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    public void examples() {\n        // Percent output: -1.0 to 1.0\n        m_motor.set(0.5);   // 50% forward\n        m_motor.set(-0.5);  // 50% reverse\n        m_motor.set(0.0);   // Stop\n        \n        // Reading status\n        double currentOutput = m_motor.get();\n        double outputCurrent = m_motor.getOutputCurrent();\n        double busVoltage = m_motor.getBusVoltage();\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Motor Types",
-      "content": "SPARK MAX supports two types of motors: brushed and brushless. The motor type must be specified when creating the SPARK MAX instance and cannot be changed later.<br><br><strong>Brushless Motors (NEO, NEO 550):</strong><br>- More efficient and powerful<br>- Require <code>MotorType.kBrushless</code><br>- Have built-in encoders (NEO motors)<br>- Better for high-performance applications<br><br><strong>Brushed Motors:</strong><br>- Simpler and less expensive<br>- Require <code>MotorType.kBrushed</code><br>- May need external encoders<br>- Good for basic applications<br><br><strong>Important:</strong> The motor type is set in the constructor and cannot be changed. Make sure to use the correct motor type for your motor."
-    },
-    {
-      "type": "code",
-      "title": "Motor Type Examples",
-      "content": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class MotorTypeExamples {\n    // Brushless motor (NEO or NEO 550)\n    private final SparkMax m_brushlessMotor = new SparkMax(1, MotorType.kBrushless);\n    \n    // Brushed motor (CIM, MiniCIM, etc.)\n    private final SparkMax m_brushedMotor = new SparkMax(2, MotorType.kBrushed);\n    \n    public MotorTypeExamples() {\n        // Both motors can be controlled the same way\n        m_brushlessMotor.set(0.5);\n        m_brushedMotor.set(0.5);\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Follower Configuration",
-      "content": "In many drivetrains, you have multiple motors on the same side. The SPARK MAX supports follower mode, where one SPARK MAX follows another, reducing the number of control signals needed.<br><br><strong>Follower Setup:</strong><br>- One SPARK MAX is the leader (you control it directly)<br>- Other SPARK MAX controllers are followers (they mirror the leader)<br>- Followers automatically match the leader's output<br>- Followers can be inverted relative to the leader<br><br><strong>Benefits:</strong><br>- Simpler code (only control leader motors)<br>- Reduced CAN bus traffic<br>- Automatic synchronization"
-    },
-    {
-      "type": "code",
-      "title": "Follower Configuration Example",
-      "content": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class DrivetrainWithFollowers {\n    // Leader motors (front)\n    private final SparkMax m_leftFront = new SparkMax(1, MotorType.kBrushless);\n    private final SparkMax m_rightFront = new SparkMax(3, MotorType.kBrushless);\n    \n    // Follower motors (back)\n    private final SparkMax m_leftBack = new SparkMax(2, MotorType.kBrushless);\n    private final SparkMax m_rightBack = new SparkMax(4, MotorType.kBrushless);\n    \n    public DrivetrainWithFollowers() {\n        // Configure left front motor\n        SparkMaxConfig leftFrontConfig = new SparkMaxConfig();\n        leftFrontConfig.idleMode(IdleMode.kBrake).inverted(false);\n        m_leftFront.configure(leftFrontConfig, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Configure left back motor\n        SparkMaxConfig leftBackConfig = new SparkMaxConfig();\n        leftBackConfig.idleMode(IdleMode.kBrake).inverted(false);\n\n        //Follow m_leftFront\n        leftBackConfig.follow(m_leftFront.getDeviceId());\n\n        m_leftBack.configure(leftBackConfig, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Configure right front motor (inverted)\n        SparkMaxConfig rightFrontConfig = new SparkMaxConfig();\n        rightFrontConfig.idleMode(IdleMode.kBrake).inverted(true);\n        m_rightFront.configure(rightFrontConfig, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Configure right back motor (inverted)\n        SparkMaxConfig rightBackConfig = new SparkMaxConfig();\n        rightBackConfig.idleMode(IdleMode.kBrake).inverted(true);\n\n        // Follow m_rightFront\n        rightBackConfig.follow(m_rightFront.getDeviceId());\n\n        m_rightBack.configure(rightBackConfig, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n    \n    public void drive(double leftPower, double rightPower) {\n        // Only set leader motors - followers automatically match\n        m_leftFront.set(leftPower);\n        m_rightFront.set(rightPower);\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Status Monitoring",
-      "content": "The SPARK MAX provides extensive status information that you can read in your code. This is useful for monitoring, debugging, and displaying telemetry.<br><br><strong>Available Status Information:</strong><br>- Motor output (power being applied)<br>- Output current (current through motor)<br>- Bus voltage (battery voltage)<br>- Applied output (voltage being applied)<br>- Temperature<br>- Encoder position and velocity (if using encoder)<br>- Fault information"
-    },
-    {
-      "type": "code",
-      "title": "Reading SPARK MAX Status",
-      "content": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class MotorStatus {\n    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    public void updateStatus() {\n        // Motor output (percent: -1.0 to 1.0)\n        double output = m_motor.get();\n        \n        // Current draw (amperes)\n        double outputCurrent = m_motor.getOutputCurrent();\n        \n        // Bus voltage (volts)\n        double busVoltage = m_motor.getBusVoltage();\n        \n        // Applied output (percentage: -1.0 to 1.0)\n        double appliedOutput = m_motor.getAppliedOutput();\n        \n        // Temperature (Celsius)\n        double temperature = m_motor.getMotorTemperature();\n        \n        SmartDashboard.putNumber(\"Motor Output\", output);\n        SmartDashboard.putNumber(\"Output Current\", outputCurrent);\n        SmartDashboard.putNumber(\"Bus Voltage\", busVoltage);\n        SmartDashboard.putNumber(\"Applied Output\", appliedOutput);\n        SmartDashboard.putNumber(\"Temperature\", temperature);\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Using REV Hardware Client for Configuration",
-      "content": "REV Hardware Client provides a graphical interface for configuring SPARK MAX parameters. While code-based configuration is recommended for production, Hardware Client is useful for initial setup and testing.<br><br><strong>Configuration Tabs:</strong><br>- <strong>Basic:</strong> CAN ID, motor type, idle mode, inversion<br>- <strong>Advanced:</strong> Current limits, voltage compensation, ramp rates<br>- <strong>Encoder:</strong> Encoder configuration and conversion factors<br>- <strong>Closed Loop:</strong> PID parameters and control settings<br><br><strong>Configuring Parameters:</strong><br>1. Select the SPARK MAX from the device list<br>2. Navigate to the appropriate tab<br>3. Set parameters as needed<br>4. Click \"Save Configuration\" to apply<br>5. Configuration is stored in the SPARK MAX's non-volatile memory<br><br><strong>Monitoring and Diagnostics:</strong><br>REV Hardware Client can display real-time data including current, voltage, position, velocity, temperature, and fault information. Use the monitoring features to verify your configuration and diagnose issues."
-    },
-    {
-      "type": "text",
-      "title": "Firmware Updates",
-      "content": "REV Hardware Client can check and update firmware on REV devices. Keeping firmware up to date ensures compatibility with the latest REVLib and provides bug fixes and new features.<br><br><strong>Updating Firmware:</strong><br>1. Connect device to REV Hardware Client<br>2. Check current firmware version (displayed in device info)<br>3. Click \"Update\" if newer firmware is available<br>4. Follow update wizard<br>5. Wait for update to complete (do not disconnect during update)<br><br><strong>Best Practice:</strong> Keep firmware up to date, especially at the start of a new season. However, test thoroughly after updating firmware to ensure compatibility with your code."
-    },
-    {
-      "type": "text",
-      "title": "Configuration Persistence",
-      "content": "When configuring SPARK MAX in code, you must decide whether to persist parameters to the controller's memory using PersistMode.<br><br><strong>PersistMode.kPersistParameters:</strong><br>- Saves configuration to non-volatile memory<br>- Configuration survives power cycles and brownouts<br>- Takes time and blocks communication briefly<br>- Use during initial setup in constructor<br><br><strong>PersistMode.kNoPersistParameters:</strong><br>- Configuration is temporary (lost on power cycle)<br>- Faster, doesn't block communication<br>- Use for runtime configuration changes<br><br><strong>Best Practice:</strong> Persist parameters during initial configuration in your constructor to ensure settings are retained after power cycles. For runtime changes, don't persist to avoid blocking your program."
-    },
-    {
-      "type": "text",
-      "title": "Next Steps: Comprehensive Configuration",
-      "content": "This lesson covered basic SPARK MAX setup to get you started. For production robot code, you'll need to configure additional parameters for optimal performance and safety.<br><br><strong>Important Configuration Topics:</strong><br>- <strong>Current Limiting:</strong> Protect motors and battery from overcurrent<br>- <strong>Voltage Compensation:</strong> Maintain consistent performance as battery drains<br>- <strong>Encoder Configuration:</strong> Track position accurately with gear ratios<br>- <strong>Soft Limits:</strong> Prevent mechanisms from exceeding safe positions<br>- <strong>Ramp Rates:</strong> Smooth acceleration and deceleration<br><br>All of these topics are covered in detail in the <a href='#motor-controller-configuration' target='_blank'>Motor Controller Configuration</a> lesson. We recommend completing that lesson before using SPARK MAX in your robot code."
+      "title": "Follower Example",
+      "content": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Drivetrain extends SubsystemBase {\n    private SparkMax m_leader = new SparkMax(1, MotorType.kBrushless);\n    private SparkMax m_follower = new SparkMax(2, MotorType.kBrushless);\n    \n    public void configure() {\n        // Configure follower to mirror leader\n        SparkMaxConfig followerConfig = new SparkMaxConfig();\n        followerConfig.follow(m_leader.getDeviceId()); // Leader CAN ID\n        m_follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n}"
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Related",
       "links": [
         {
-          "label": "Motor Controller Configuration",
+          "label": "REV Sensors",
+          "id": "rev-sensors-and-encoders"
+        },
+        {
+          "label": "Motor Configuration",
           "id": "motor-controller-configuration"
-        },
-        {
-          "label": "Motor PID Control",
-          "id": "motor-pid-control"
-        },
-        {
-          "label": "Motor Current Limiting",
-          "id": "motor-current-limiting"
-        },
-        {
-          "label": "SPARK MAX API Documentation",
-          "url": "https://codedocs.revrobotics.com/java/com/revrobotics/spark/sparkmax"
         }
       ]
     }

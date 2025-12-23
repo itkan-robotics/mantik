@@ -1,0 +1,56 @@
+{
+  "title": "Intake Example (Basic)",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "This lesson demonstrates building a complete intake mechanism in <code>Robot.java</code>. We will configure a motor and control it with buttons (A to collect, B to eject)."
+    },
+    {
+      "type": "rules-box",
+      "title": "Requirements",
+      "subtitle": "The intake must:",
+      "items": [
+        "Run forward (collect) on 'A' press.",
+        "Run reverse (eject) on 'B' press.",
+        "Stop when no button is pressed.",
+        "Be configured (Coast mode, Current Limit)."
+      ]
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Code",
+      "content": "Complete implementation:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // Controller on USB port 1\n    private XboxController m_controller = new XboxController(1);\n    // Intake motor on CAN ID 5\n    private TalonFX m_motor = new TalonFX(5);\n    private DutyCycleOut m_out = new DutyCycleOut(0);\n    \n    @Override\n    public void robotInit() {\n        // Configure motor settings\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        // Set motor direction (adjust if needed for your mechanism)\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        // Coast mode allows free spinning when stopped (good for intakes)\n        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n        // Enable current limiting to protect motor (30A limit)\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 30.0;\n        m_motor.getConfigurator().apply(config);\n    }\n    \n    @Override\n    public void teleopPeriodic() {\n        // Button A: Run intake forward (collect)\n        if (m_controller.getAButton()) {\n            m_motor.setControl(m_out.withOutput(0.6));\n        }\n        // Button B: Run intake reverse (eject)\n        else if (m_controller.getBButton()) {\n            m_motor.setControl(m_out.withOutput(-0.4));\n        }\n        // No button: Stop motor\n        else {\n            m_motor.setControl(m_out.withOutput(0.0));\n        }\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Robot extends TimedRobot {\n    // Controller on USB port 1\n    private XboxController m_controller = new XboxController(1);\n    // Intake motor on CAN ID 5, brushless type\n    private SparkMax m_motor = new SparkMax(5, MotorType.kBrushless);\n    \n    @Override\n    public void robotInit() {\n        // Configure motor settings\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Set motor direction (adjust if needed for your mechanism)\n        config.inverted(false);\n        // Coast mode allows free spinning when stopped (good for intakes)\n        config.idleMode(IdleMode.kCoast);\n        // Enable current limiting to protect motor (30A limit)\n        config.smartCurrentLimit(30);\n        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    @Override\n    public void teleopPeriodic() {\n        // Button A: Run intake forward (collect)\n        if (m_controller.getAButton()) {\n            m_motor.set(0.6);\n        }\n        // Button B: Run intake reverse (eject)\n        else if (m_controller.getBButton()) {\n            m_motor.set(-0.4);\n        }\n        // No button: Stop motor\n        else {\n            m_motor.set(0.0);\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Power Tuning",
+      "content": "<strong>Values:</strong> 0.6 (60%) forward is usually enough to grab game pieces. -0.4 (40%) reverse is enough to eject. Test and adjust these values for your specific mechanism."
+    },
+    {
+      "type": "text",
+      "title": "Troubleshooting",
+      "content": "<strong>Wrong Direction:</strong> Change inversion setting.<br><strong>No Movement:</strong> Check CAN IDs and power.<br><strong>Drift:</strong> Ensure <code>else { stop }</code> block exists."
+    },
+    {
+      "type": "link-grid",
+      "title": "Next Steps",
+      "links": [
+        {
+          "label": "Command-Based Intro",
+          "id": "intro-to-command-based"
+        }
+      ]
+    }
+  ]
+}

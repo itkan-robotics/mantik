@@ -1,5 +1,5 @@
 {
-  "title": "Unit Testing for FRC Robot Code",
+      "title": "Unit Testing for FRC Robot Code"
   "sections": [
     {
       "type": "text",
@@ -10,11 +10,6 @@
       "type": "text",
       "title": "Why Unit Testing is Important",
       "content": "<strong>1. Early Bug Detection:</strong> Catch logic errors, off-by-one errors, and edge cases before deploying code to the robot. This saves valuable battery/practice time.<br><br><strong>2. Safe Refactoring:</strong> When you clean up or optimize code, unit tests act as a safety net, ensuring you haven't broken existing functionality.<br><br><strong>3. Documentation:</strong> Tests serve as live documentation. A new member can look at \"DrivetrainTest\" to understand how the \"Drivetrain\" class is supposed to behave.<br><br><strong>4. Faster Feedback Loop:</strong> deploying code takes minutes; running tests takes seconds. This encourages more frequent testing and iteration.<br><br><strong>5. Testing Hard-to-Reach States:</strong> You can simulate rare error conditions (like a sensor disconnect or max current draw) that are dangerous or difficult to reproduce on a real robot."
-    },
-    {
-      "type": "text",
-      "title": "Testing Frameworks",
-      "content": "WPILib projects use <strong>JUnit 5</strong> as the standard testing framework. It provides the structure for writing tests (assertions, test lifecycle methods).<br><br><strong>Mockito</strong> is typically used alongside JUnit. It allows you to create 'mock' objects—fake versions of complex dependencies like motor controllers or sensors. This lets you test your logic in isolation without needing the actual hardware libraries to be active or connected."
     },
     {
       "type": "code",
@@ -38,8 +33,12 @@
     },
     {
       "type": "code",
-      "title": "Command and Time Simulation",
       "content": "package frc.robot.commands;\n\nimport static org.junit.jupiter.api.Assertions.*;\nimport org.junit.jupiter.api.Test;\nimport edu.wpi.first.wpilibj.simulation.SimHooks;\nimport edu.wpi.first.wpilibj2.command.CommandScheduler;\nimport edu.wpi.first.wpilibj2.command.WaitCommand;\n\npublic class CommandTest {\n    @Test\n    void testWaitCommand() {\n        CommandScheduler scheduler = CommandScheduler.getInstance();\n        WaitCommand waitCmd = new WaitCommand(2.0);\n        \n        scheduler.schedule(waitCmd);\n        scheduler.run();\n        assertTrue(scheduler.isScheduled(waitCmd), \"Command should be scheduled\");\n\n        // Advance time by 1 second\n        SimHooks.stepInTime(1.0);\n        scheduler.run();\n        assertTrue(scheduler.isScheduled(waitCmd), \"Command should still be running after 1s\");\n\n        // Advance time by another 1.1 seconds (total 2.1)\n        SimHooks.stepInTime(1.1);\n        scheduler.run();\n        assertFalse(scheduler.isScheduled(waitCmd), \"Command should finish after 2s\");\n    }\n}"
+    },
+    {
+      "type": "text",
+      "title": "Testing Frameworks",
+      "content": "WPILib projects use <strong>JUnit 5</strong> as the standard testing framework. It provides the structure for writing tests (assertions, test lifecycle methods).<br><br><strong>Mockito</strong> is typically used alongside JUnit. It allows you to create 'mock' objects—fake versions of complex dependencies like motor controllers or sensors. This lets you test your logic in isolation without needing the actual hardware libraries to be active or connected."
     },
     {
       "type": "rules-box",

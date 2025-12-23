@@ -30,12 +30,22 @@ class NavigationManager {
         
         if (sectionPath) {
             // For main sections, use path routing
-            const newPath = `/${sectionPath}`;
-            if (tabId) {
-                // For specific tabs within sections, use full path routing
+            let newPath = `/${sectionPath}`;
+            
+            // Check if tabId is the intro for this section
+            let isIntro = false;
+            if (tabId && appState.config && appState.config.sections && appState.config.sections[sectionId]) {
+                const section = appState.config.sections[sectionId];
+                if (section.intro && section.intro.id === tabId) {
+                    isIntro = true;
+                }
+            }
+
+            if (tabId && !isIntro) {
+                // For specific tabs within sections (that aren't the intro), use full path routing
                 window.history.pushState({section: sectionId, tab: tabId}, '', `${newPath}/${tabId}`);
             } else {
-                // For main sections, just use path
+                // For main sections or intro tabs, just use path
                 window.history.pushState({section: sectionId}, '', newPath);
             }
         } else if (sectionId === 'homepage') {
@@ -159,6 +169,13 @@ class NavigationManager {
             await this.renderSectionNavigation(navigationContainer);
         }
 
+        // Ensure sidebar CSS variable is initialized
+        const sidebarDrawer = document.querySelector('.sidebar-drawer');
+        if (sidebarDrawer) {
+            const currentWidth = sidebarDrawer.style.width || localStorage.getItem('sidebarWidth') || '15em';
+            sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
+        }
+
         // Adjust layout after navigation is generated
         setTimeout(() => {
             this.adjustLayoutForSidebar();
@@ -167,7 +184,6 @@ class NavigationManager {
             const navCheckbox = document.getElementById('__navigation');
             if (navList && navList.children.length === 0 && navCheckbox) {
                 // Ensure the CSS variable is set before closing
-                const sidebarDrawer = document.querySelector('.sidebar-drawer');
                 if (sidebarDrawer) {
                     const currentWidth = sidebarDrawer.style.width || '15em';
                     sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
@@ -376,52 +392,86 @@ class NavigationManager {
         }
         // Check if sidebar is currently visible (checkbox is checked)
         const isSidebarVisible = navCheckbox && navCheckbox.checked;
+        console.log(`[Debug] adjustLayoutForSidebar called. Visible: ${isSidebarVisible}`);
+
+        // If sidebar is hidden, we don't need to force visibility to measure.
+        // We can just use the stored width or default to avoid visual glitches.
+        if (!isSidebarVisible) {
+            let storedWidth = sidebarDrawer.dataset.storedWidth || localStorage.getItem('sidebarWidth') || '15em';
+            console.log(`[Debug] Sidebar hidden. Using stored/default width: ${storedWidth}`);
+            
+            // If stored width is just a number (from resize manager), append px
+            if (/^\d+(\.\d+)?$/.test(storedWidth)) {
+                storedWidth += 'px';
+            }
+            
+            // Set the CSS variable and width styles just in case
+            sidebarDrawer.style.width = storedWidth;
+            if (sidebarDrawer.querySelector('.sidebar-container')) {
+                sidebarDrawer.querySelector('.sidebar-container').style.width = storedWidth;
+            }
+            sidebarDrawer.style.setProperty('--sidebar-width', storedWidth);
+            
+            // Ensure main content is reset
+            mainContent.style.removeProperty('margin-left');
+            mainContent.style.removeProperty('max-width');
+            
+            return;
+        }
+
         // Temporarily make sidebar visible to measure content
         const originalLeft = sidebarDrawer.style.left;
         const originalVisibility = sidebarDrawer.style.visibility;
-        sidebarDrawer.style.left = '0';
-        sidebarDrawer.style.visibility = 'visible';
-        sidebarDrawer.style.position = 'absolute'; // Temporarily change to absolute to measure
+        const originalPosition = sidebarDrawer.style.position;
+        
+        let optimalWidth = 240; // Default min width
 
-        // Count visible navigation items and measure their content
-        const visibleItems = this.countVisibleNavigationItems();
-        const contentWidth = this.measureNavigationContentWidth();
-        
-        // Calculate optimal width based on number of items and content width
-        const minSidebarWidth = 240; // 15em minimum
-        const maxSidebarWidth = 600; // Increased maximum for better accommodation of multiple sections
-        const padding = 50; // Increased padding for better spacing
-        
-        // Base width calculation
-        let optimalWidth = Math.max(minSidebarWidth, contentWidth + padding);
-        
-        // Adjust width based on number of visible items with better scaling
-        if (visibleItems.count > 0) {
-            // More aggressive scaling for sections with many items
-            const itemMultiplier = Math.min(visibleItems.count / 8, 1.5); // Increased scale factor
-            const extraWidth = Math.floor(itemMultiplier * 120); // Up to 180px extra for many items
-            optimalWidth += extraWidth;
+        try {
+            console.log('[Debug] Measuring sidebar content width...');
+            sidebarDrawer.style.left = '0';
+            sidebarDrawer.style.visibility = 'visible';
+            sidebarDrawer.style.position = 'absolute'; // Temporarily change to absolute to measure
+
+            // Count visible navigation items and measure their content
+            const visibleItems = this.countVisibleNavigationItems();
+            const contentWidth = this.measureNavigationContentWidth();
             
-            // Additional width for multiple expanded parent sections
-            if (visibleItems.details.parentFolders > 1) {
-                const parentMultiplier = visibleItems.details.parentFolders * 20; // 20px per parent section
-                optimalWidth += parentMultiplier;
+            // Calculate optimal width based on number of items and content width
+            const minSidebarWidth = 240; // 15em minimum
+            const maxSidebarWidth = 600; // Increased maximum for better accommodation of multiple sections
+            const padding = 50; // Increased padding for better spacing
+            
+            // Base width calculation
+            optimalWidth = Math.max(minSidebarWidth, contentWidth + padding);
+            
+            // Adjust width based on number of visible items with better scaling
+            if (visibleItems.count > 0) {
+                // More aggressive scaling for sections with many items
+                const itemMultiplier = Math.min(visibleItems.count / 8, 1.5); // Increased scale factor
+                const extraWidth = Math.floor(itemMultiplier * 120); // Up to 180px extra for many items
+                optimalWidth += extraWidth;
+                
+                // Additional width for multiple expanded parent sections
+                if (visibleItems.details.parentFolders > 1) {
+                    const parentMultiplier = visibleItems.details.parentFolders * 20; // 20px per parent section
+                    optimalWidth += parentMultiplier;
+                }
+                
+                // Extra width for sections with many child items
+                if (visibleItems.details.childItems > 10) {
+                    const childMultiplier = Math.min(visibleItems.details.childItems / 15, 1) * 80; // Up to 80px extra
+                    optimalWidth += childMultiplier;
+                }
             }
             
-            // Extra width for sections with many child items
-            if (visibleItems.details.childItems > 10) {
-                const childMultiplier = Math.min(visibleItems.details.childItems / 15, 1) * 80; // Up to 80px extra
-                optimalWidth += childMultiplier;
-            }
+            // Ensure width doesn't exceed maximum
+            optimalWidth = Math.min(maxSidebarWidth, optimalWidth);
+        } finally {
+            // Restore original positioning
+            sidebarDrawer.style.left = originalLeft;
+            sidebarDrawer.style.visibility = originalVisibility;
+            sidebarDrawer.style.position = originalPosition || 'fixed';
         }
-        
-        // Ensure width doesn't exceed maximum
-        optimalWidth = Math.min(maxSidebarWidth, optimalWidth);
-
-        // Restore original positioning
-        sidebarDrawer.style.left = originalLeft;
-        sidebarDrawer.style.visibility = originalVisibility;
-        sidebarDrawer.style.position = 'fixed';
 
         // Apply the optimal width
         sidebarDrawer.style.width = `${optimalWidth}px`;
@@ -597,6 +647,7 @@ class NavigationManager {
             return;
         }
         try {
+            console.log(`[Debug] navigateToTab called for: ${tabId}`);
             // Store the last opened tab ID
             localStorage.setItem('lastOpenedTab', tabId);
             
@@ -735,6 +786,7 @@ class NavigationManager {
             // Close mobile navigation and reset layout
             const navCheckbox = document.getElementById('__navigation');
             if (navCheckbox && navCheckbox.checked) {
+                console.log('[Debug] Closing sidebar after navigation (mobile/standard)');
                 // Set the CSS variable before closing to ensure smooth transition
                 const sidebarDrawer = document.querySelector('.sidebar-drawer');
                 if (sidebarDrawer) {
@@ -824,14 +876,87 @@ class NavigationManager {
                 this.resetLayoutForHiddenSidebar();
             }
 
-            if (updatedSection.intro) {
-                await this.navigateToTab(updatedSection.intro.id);
-                return;
+            // Navigate to intro if it exists
+            if (updatedSection.intro && updatedSection.intro.id) {
+                // Ensure intro content is loaded before navigating
+                let introTabData = appState.getTabData(updatedSection.intro.id);
+                
+                // If data not in state, it might have failed to load in loadIntroContent (which doesn't throw)
+                // Try loading it explicitly again
+                if (!introTabData || !introTabData.loaded) {
+                    try {
+                        const data = await this.contentManager.configManager.loadContentFile(updatedSection.intro.file);
+                        introTabData = {
+                            ...updatedSection.intro,
+                            ...data,
+                            sectionId,
+                            sectionLabel: updatedSection.title || updatedSection.label,
+                            loaded: true
+                        };
+                        appState.addTabData(updatedSection.intro.id, introTabData);
+                        appState.allTabs.push(introTabData);
+                    } catch (e) {
+                        console.error(`Retry loading intro failed: ${e}`);
+                    }
+                }
+
+                if (introTabData) {
+                    await this.navigateToTab(updatedSection.intro.id);
+                    return;
+                } else {
+                    console.warn(`Intro tab ${updatedSection.intro.id} not found in tab data, attempting to navigate anyway`);
+                    await this.navigateToTab(updatedSection.intro.id);
+                    return;
+                }
             }
             
-            if (updatedSection.groups && updatedSection.groups.length > 0 && updatedSection.groups[0].items.length > 0) {
-                const firstItem = updatedSection.groups[0].items[0];
+            // Fallback to first item in first group if no intro
+            // Helper function to find first valid item recursively
+            const findFirstItem = (items) => {
+                if (!Array.isArray(items)) return null;
+                for (const item of items) {
+                    if (item.file) return item; // Found a leaf item
+                    if (item.items) {
+                        const found = findFirstItem(item.items);
+                        if (found) return found;
+                    }
+                    if (item.children) {
+                        const found = findFirstItem(item.children);
+                        if (found) return found;
+                    }
+                    if (item.groups) {
+                        const found = findFirstItem(item.groups);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            };
+
+            let firstItem = null;
+            if (updatedSection.groups) firstItem = findFirstItem(updatedSection.groups);
+            if (!firstItem && updatedSection.children) firstItem = findFirstItem(updatedSection.children);
+            if (!firstItem && updatedSection.items) firstItem = findFirstItem(updatedSection.items);
+            if (!firstItem && updatedSection.tiers) {
+                // Handle tiers (special case for FTC if structure used)
+                for (const tier of updatedSection.tiers) {
+                    if (tier.lessons && tier.lessons.length > 0) {
+                        // Extract ID from first lesson
+                        const lessonId = tier.lessons[0].replace(/^.*\/([^/]+)\.json$/, '$1');
+                        await this.navigateToTab(lessonId);
+                        return;
+                    }
+                }
+            }
+
+            if (firstItem) {
                 await this.navigateToTab(firstItem.id);
+                return;
+            }
+
+            // Fix: If section has no intro/groups/children, it's likely a standalone page (like homepage)
+            if (!updatedSection.intro && !firstItem) {
+                this.contentManager.renderContent(sectionId);
+                appState.setCurrentTab(sectionId);
                 return;
             }
         } catch (error) {

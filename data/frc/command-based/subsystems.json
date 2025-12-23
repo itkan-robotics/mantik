@@ -1,0 +1,56 @@
+{
+  "title": "Subsystems",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Subsystems encapsulate hardware (motors, sensors) and provide methods to control them. They extend <code>SubsystemBase</code> and should contain minimal logic—just the 'how' to control hardware."
+    },
+    {
+      "type": "rules-box",
+      "title": "Subsystem Principles",
+      "subtitle": "Best practices:",
+      "items": [
+        "<strong>Encapsulation:</strong> Hide hardware details from commands.",
+        "<strong>Methods:</strong> Provide simple, focused control methods.",
+        "<strong>No Complex Logic:</strong> Commands handle when and why; subsystems handle how.",
+        "<strong>Configuration:</strong> Set up hardware in the constructor."
+      ]
+    },
+    {
+      "type": "code-tabs",
+      "title": "Intake Subsystem Example",
+      "content": "A basic subsystem with motor configuration:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Intake extends SubsystemBase {\n    private final TalonFX m_motor = new TalonFX(5);\n    private final DutyCycleOut m_out = new DutyCycleOut(0);\n    \n    public Intake() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 30.0;\n        m_motor.getConfigurator().apply(config);\n    }\n    \n    public void run(double speed) {\n        m_motor.setControl(m_out.withOutput(speed));\n    }\n    \n    public void stop() {\n        m_motor.setControl(m_out.withOutput(0));\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Intake extends SubsystemBase {\n    private final SparkMax m_motor = new SparkMax(5, MotorType.kBrushless);\n    \n    public Intake() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        config.idleMode(IdleMode.kCoast);\n        config.smartCurrentLimit(30);\n        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    public void run(double speed) {\n        m_motor.set(speed);\n    }\n    \n    public void stop() {\n        m_motor.set(0);\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Default Commands",
+      "content": "Subsystems can have a default command that runs when no other command requires the subsystem. Use <code>setDefaultCommand()</code> in <code>RobotContainer</code> to set one."
+    },
+    {
+      "type": "link-grid",
+      "title": "Next Steps",
+      "links": [
+        {
+          "label": "Commands",
+          "id": "commands"
+        },
+        {
+          "label": "Intake Example",
+          "id": "intake-command-based"
+        }
+      ]
+    }
+  ]
+}
+

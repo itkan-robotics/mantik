@@ -3,100 +3,100 @@
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to Elastic",
-      "content": "Elastic is a modern web-based dashboard tool for FRC robots that provides real-time data visualization and robot monitoring. It can run in a browser and connects to your robot over the network, making it accessible from any device on your network. Elastic offers a flexible, customizable interface for displaying sensor data, robot state, and interactive controls.<br><br>Elastic is part of the WPILib dashboard ecosystem and provides an alternative to SmartDashboard and Shuffleboard with a modern web-based interface. It's particularly useful for teams that want a browser-based dashboard that can be accessed from multiple devices simultaneously.<br><br><strong>Learn more:</strong><br> <a href='https://docs.wpilib.org/en/stable/docs/software/dashboards/elastic.html' target='_blank'>WPILib Documentation: Elastic</a><br><a href='https://frc-elastic.gitbook.io/docs' target='_blank'>Official Elastic Documentation</a>"
+      "title": "Introduction",
+      "content": "Elastic is a web-based dashboard for FRC robots, offering real-time data visualization and control. It connects via NetworkTables and runs in a browser, allowing access from multiple devices simultaneously.<br><br><strong>Resources:</strong><br><a href='https://docs.wpilib.org/en/stable/docs/software/dashboards/elastic.html' target='_blank'>WPILib Documentation</a><br><a href='https://frc-elastic.gitbook.io/docs' target='_blank'>Official Elastic Documentation</a>"
     },
     {
       "type": "rules-box",
-      "title": "What Elastic Provides",
+      "title": "Features",
       "subtitle": "Elastic allows you to:",
       "items": [
-        "Display sensor values and robot state in real-time via web browser",
-        "Create custom dashboard layouts with drag-and-drop widgets",
-        "Monitor motor speeds, currents, and temperatures",
-        "View robot pose and position on field visualization",
-        "Plot data over time with interactive graphs",
-        "Access dashboard from multiple devices simultaneously",
-        "Create responsive layouts that work on different screen sizes",
-        "Use modern web technologies for better performance"
+        "View sensor data and robot state in real-time.",
+        "Create custom layouts with drag-and-drop widgets.",
+        "Monitor motor stats (speed, current, temp).",
+        "Visualize robot pose on a 2D field.",
+        "Plot data with interactive graphs.",
+        "Access from multiple devices.",
+        "Create responsive layouts."
       ]
     },
     {
       "type": "text",
-      "title": "Installing and Launching Elastic",
-      "content": "Elastic is included with WPILib installation. It runs as a web server that you access through your browser.<br><br><strong>Installation:</strong> Elastic is typically installed automatically with WPILib. If needed, ensure you have the latest WPILib version installed from the <a href='https://github.com/wpilibsuite/allwpilib/releases' target='_blank'>WPILib releases page</a>.<br><br><strong>Launching Elastic:</strong><br>1. Ensure your robot code is running and connected to the network<br>2. Elastic runs automatically when your robot code starts (if configured)<br>3. Open a web browser on any device connected to the same network<br>4. Navigate to <code>https://gold872.github.io/elastic-dashboard/</code> or open the desktop app on your computer.<br><br><strong>Team Number Configuration:</strong> Elastic uses your team number to determine the robot's IP address. Make sure your robot's team number is configured correctly in your project settings."
+      "title": "Installation & Launch",
+      "content": "<strong>Installation:</strong> Elastic is included with WPILib. Ensure you have the latest version from the <a href='https://github.com/wpilibsuite/allwpilib/releases' target='_blank'>WPILib releases page</a>.<br><br><strong>Launch:</strong><br>1. Run your robot code.<br>2. Open a browser on a connected device.<br>3. Navigate to <code>https://gold872.github.io/elastic-dashboard/</code> or use the desktop app.<br><br><strong>Configuration:</strong> Ensure your team number is set in the project settings for correct IP resolution."
     },
     {
       "type": "text",
-      "title": "Elastic Interface Overview",
-      "content": "Elastic provides a modern web-based interface that you access through any web browser. The interface is responsive and works on desktops, tablets, and mobile devices.<br><br><strong>Main Components:</strong><br>- <br>- <strong>Dashboard Canvas:</strong> Main area where widgets are placed and arranged<br>- <strong>Widget Library:</strong> Sidebar or menu with available widget types<br>- <strong>Configuration Panel:</strong> Settings and properties for selected widgets<br>- <strong>Toolbar:</strong> Tools for adding, removing, and arranging widgets<br><br><strong>Widget Types:</strong> Elastic provides various widget types:<br>- <strong>Basic:</strong> Number, String, Boolean, Text displays<br>- <strong>Charts:</strong> Line charts, bar charts, gauge displays<br>- <strong>Field Visualization:</strong> 2D field view with robot pose<br>- <strong>Controls:</strong> Buttons, sliders, input fields<br>- <strong>Media:</strong> Camera streams, image displays<br><br><strong>Layout Management:</strong> You can create multiple dashboard tabs, save layouts, and customize the interface to match your team's needs."
+      "title": "Interface",
+      "content": "<strong>Components:</strong><br>- <strong>Canvas:</strong> Main area for widgets.<br>- <strong>Library:</strong> Available widgets.<br>- <strong>Configuration:</strong> Widget settings.<br>- <strong>Toolbar:</strong> Layout tools.<br><br><strong>Widgets:</strong><br>- <strong>Basic:</strong> Numbers, text, booleans.<br>- <strong>Charts:</strong> Line/bar charts, gauges.<br>- <strong>Field:</strong> 2D robot visualization.<br>- <strong>Controls:</strong> Buttons, sliders, inputs.<br>- <strong>Media:</strong> Camera streams."
     },
     {
       "type": "text",
-      "title": "Displaying Data from Robot Code",
-      "content": "To display data in Elastic, you use NetworkTables to send data from your robot code. NetworkTables is the underlying communication protocol that Elastic uses to receive data from your robot.<br><br><strong>Using NetworkTables:</strong><br>Elastic automatically receives data published to NetworkTables. You can use the NetworkTables API or the SmartDashboard compatibility layer to send data. I would recommend using the SmartDashboard compatibility layer, as it is easier to use and more familiar to most people.<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/dashboards/elastic.html' target='_blank'>WPILib Documentation: Elastic Dashboard</a>"
+      "title": "Displaying Data",
+      "content": "Elastic uses NetworkTables. The easiest method is via the SmartDashboard compatibility layer."
     },
     {
       "type": "code",
-      "title": "Sending Data to Elastic Via SmartDashboard",
-      "content": "import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class ExampleSubsystem {\n    private double motorSpeed = 0.5;\n    private String status = \"Running\";\n    private boolean isEnabled = true;\n    \n    public void updateDashboard() {\n        // SmartDashboard methods work with Elastic through NetworkTables\n        SmartDashboard.putNumber(\"Motor Speed\", motorSpeed);\n        SmartDashboard.putString(\"Robot Status\", status);\n        SmartDashboard.putBoolean(\"System Enabled\", isEnabled);\n        \n        // Multiple values\n        SmartDashboard.putNumber(\"Left Motor\", 0.75);\n        SmartDashboard.putNumber(\"Right Motor\", 0.75);\n        SmartDashboard.putNumber(\"Arm Position\", 45.0);\n    }\n}"
+      "title": "Sending Data (SmartDashboard)",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class Robot extends TimedRobot {\n    private double motorSpeed = 0.5;\n    private String status = \"Running\";\n    \n    @Override\n    public void robotPeriodic() {\n        // Send data to SmartDashboard (visible in Elastic)\n        SmartDashboard.putNumber(\"Motor Speed\", motorSpeed);\n        SmartDashboard.putString(\"Robot Status\", status);\n        SmartDashboard.putBoolean(\"Enabled\", true);\n    }\n}"
     },
     {
       "type": "text",
-      "title": "Adding and Customizing Widgets",
-      "content": "Widgets are the cards on the dashboard grid that display information about your robot. Elastic makes it easy to add and customize widgets to create a dashboard that fits your needs.<br><br><strong>Adding Widgets:</strong><br>1. Click the \"Add Widget\" button with a <strong>+</strong> icon in the menu bar at the top of the screen<br>2. The widget dialog will open showing all available data from NetworkTables<br>3. Click on table names to reveal sub-tables and find the data you want to display<br>4. Use the search box at the bottom of the dialog to quickly find specific values<br>5. Click and drag the data value to the location on the grid where you want the widget<br>6. A red or green outline will indicate whether the location is valid<br>7. Release the mouse to place the widget<br><br><strong>Resizing Widgets:</strong> After placing a widget, you can resize it by dragging the edges of the widget's box.<br><br><strong>Customizing Widgets:</strong> Right-click on any widget to open a context menu with options to \"Edit Properties\" or \"Remove\". The Edit Properties menu allows you to:<br>- Change the widget title and type<br>- Adjust container settings<br>- Modify NetworkTables settings (advanced)<br>- Configure widget-specific properties depending on the widget type<br><br><strong>Copying and Pasting Widgets:</strong> You can copy widgets by right-clicking and selecting \"Copy\". Then right-click in an empty spot to paste the widget, which will place it at that location if there's enough space.<br><br><strong>Camera Streams:</strong> To add camera streams, your robot code must publish them to the RoboRIO's Camera Server. Add <code>CameraServer.startAutomaticCapture();</code> in your <code>robotInit()</code> method, then navigate to the <code>CameraPublisher</code> table in the widget dialog to add camera stream widgets."
+      "title": "Widgets",
+      "content": "<strong>Adding:</strong> Click the \"Add Widget\" (+) button, find your data in the NetworkTables list, and drag it to the grid.<br><br><strong>Editing:</strong> Right-click a widget to edit properties (title, type, settings) or remove it.<br><br><strong>Cameras:</strong> Start automatic capture in <code>robotInit()</code> (<code>CameraServer.startAutomaticCapture();</code>), then add the stream from the <code>CameraPublisher</code> table."
     },
     {
       "type": "text",
-      "title": "Interactive Controls and Reading Values",
-      "content": "Elastic allows you to create interactive controls (buttons, sliders, input fields) that your robot code can read in real-time. This is useful for tuning parameters, triggering actions, and testing without physical controls.<br><br><strong>Reading Widget Values:</strong> Your robot code can read values from Elastic widgets using NetworkTables. You can use either the NetworkTables API directly or the SmartDashboard compatibility layer, which is recommended for simplicity.<br><br><strong>SmartDashboard Methods:</strong> The easiest way to read values is using SmartDashboard.get methods:<br>- <code>SmartDashboard.getNumber(\"key\", defaultValue)</code> - Read a number<br>- <code>SmartDashboard.getString(\"key\", defaultValue)</code> - Read text<br>- <code>SmartDashboard.getBoolean(\"key\", defaultValue)</code> - Read true/false<br><br><strong>Creating Interactive Controls:</strong> Add button or slider widgets in Elastic and configure them to write to NetworkTables keys. Your robot code then reads these keys using SmartDashboard.get methods to respond to user input. This allows you to create tuning interfaces, test modes, and interactive debugging tools.<br><br>For detailed instructions on adding widgets, customizing properties, and advanced features, please refer to the <a href='https://frc-elastic.gitbook.io/docs/customizing-your-dashboard/adding-and-customizing-widgets' target='_blank'>Elastic Documentation: Adding and Customizing Widgets</a>."
+      "title": "Interactive Controls",
+      "content": "Create buttons, sliders, or inputs in Elastic to control the robot.<br><br><strong>Reading Values:</strong> Use <code>SmartDashboard.get</code> methods.<br>- <code>getNumber(\"key\", default)</code><br>- <code>getString(\"key\", default)</code><br>- <code>getBoolean(\"key\", default)</code>"
     },
     {
       "type": "code",
-      "title": "Reading Values from Elastic",
-      "content": "import edu.wpi.first.networktables.NetworkTableInstance;\nimport edu.wpi.first.networktables.NetworkTable;\n\npublic class ExampleSubsystem {\n    private NetworkTable m_table;\n    private double targetSpeed;\n    private boolean enableSystem;\n    \n    public ExampleSubsystem() {\n        m_table = NetworkTableInstance.getDefault().getTable(\"SmartDashboard\");\n    }\n    \n    public void readDashboard() {\n        targetSpeed = m_table.getEntry(\"Target Speed\").getDouble(0.5);\n        \n        enableSystem = m_table.getEntry(\"Enable System\").getBoolean(false);\n        \n        String mode = m_table.getEntry(\"Robot Mode\").getString(\"Teleop\");\n        \n        if (enableSystem) {\n            setMotorSpeed(targetSpeed);\n        }\n    }\n}"
+      "title": "Reading Data",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class Robot extends TimedRobot {\n    @Override\n    public void robotPeriodic() {\n        // Read values from SmartDashboard (set by Elastic widgets)\n        // Second parameter is default value if key doesn't exist\n        double speed = SmartDashboard.getNumber(\"Target Speed\", 0.0);\n        boolean enable = SmartDashboard.getBoolean(\"Enable\", false);\n        \n        if (enable) {\n            setMotorSpeed(speed);\n        }\n    }\n    \n    private void setMotorSpeed(double speed) {\n        // Motor control logic here\n    }\n}"
+    },
+    {
+      "type": "code-tabs",
+      "title": "Arm Example",
+      "content": "Complete arm control with Elastic dashboard:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // Arm motor on CAN ID 3\n    private final TalonFX m_motor = new TalonFX(3);\n    private final DutyCycleOut m_output = new DutyCycleOut(0);\n    \n    @Override\n    public void robotInit() {\n        // Initialize dashboard value (creates widget in Elastic)\n        SmartDashboard.putNumber(\"Arm Target\", 0.0);\n    }\n    \n    @Override\n    public void robotPeriodic() {\n        // Read target from dashboard (set by user in Elastic)\n        double target = SmartDashboard.getNumber(\"Arm Target\", 0.0);\n        \n        // Send current position to dashboard (displayed in Elastic)\n        SmartDashboard.putNumber(\"Arm Pos\", m_motor.getPosition().getValueAsDouble());\n        \n        // Control logic here (e.g., PID to reach target)\n        // For now, just set motor to target value\n        m_motor.setControl(m_output.withOutput(target));\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Robot extends TimedRobot {\n    // Arm motor on CAN ID 3\n    private final SparkMax m_motor = new SparkMax(3, MotorType.kBrushless);\n    \n    @Override\n    public void robotInit() {\n        // Initialize dashboard value (creates widget in Elastic)\n        SmartDashboard.putNumber(\"Arm Target\", 0.0);\n    }\n    \n    @Override\n    public void robotPeriodic() {\n        // Read target from dashboard (set by user in Elastic)\n        double target = SmartDashboard.getNumber(\"Arm Target\", 0.0);\n        \n        // Send current position to dashboard (displayed in Elastic)\n        SmartDashboard.putNumber(\"Arm Pos\", m_motor.getEncoder().getPosition());\n        \n        // Control logic here (e.g., PID to reach target)\n        // For now, just set motor to target value\n        m_motor.set(target);\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Advanced Features",
+      "content": "<strong>Charts:</strong> Visualize data over time (e.g., PID tuning).<br><strong>Field:</strong> 2D field view (requires odometry).<br><strong>Command Widgets:</strong> Monitor command and subsystem states.<br><strong>Custom:</strong> Elastic supports custom widgets."
+    },
+    {
+      "type": "text",
+      "title": "Field Visualization",
+      "content": "<strong>Setup:</strong><br>1. Add a Field widget.<br>2. Configure the field image.<br>3. Send <code>Pose2d</code> data via <code>Field2d</code> object."
     },
     {
       "type": "code",
-      "title": "Complete Subsystem with Elastic Integration",
-      "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Arm extends SubsystemBase {\n    private final SparkMax m_armMotor = new SparkMax(3, MotorType.kBrushless);\n    private double m_targetPosition = 0.0;\n    private boolean m_pidEnabled = false;\n    \n    public Arm() {\n        SmartDashboard.putNumber(\"Arm Target Position\", 0.0);\n        SmartDashboard.putBoolean(\"Arm PID Enabled\", false);\n    }\n    \n    @Override\n    public void periodic() {\n        m_targetPosition = SmartDashboard.getNumber(\"Arm Target Position\", 0.0);\n        m_pidEnabled = SmartDashboard.getBoolean(\"Arm PID Enabled\", false);\n        \n        SmartDashboard.putNumber(\"Arm Current Position\", m_armMotor.getEncoder().getPosition());\n        SmartDashboard.putNumber(\"Arm Current Speed\", m_armMotor.getEncoder().getVelocity());\n        SmartDashboard.putNumber(\"Arm Current\", m_armMotor.getOutputCurrent());\n        SmartDashboard.putBoolean(\"Arm At Target\", isAtPosition(m_targetPosition, 2.0));\n        \n        // Control arm based on dashboard values\n        if (m_pidEnabled) {\n            // (PID implementation would go here)\n        }\n    }\n    \n    private boolean isAtPosition(double target, double tolerance) {\n        double current = m_armMotor.getEncoder().getPosition();\n        return Math.abs(current - target) < tolerance;\n    }\n}"
+      "title": "Field Pose Example",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.smartdashboard.Field2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.math.geometry.Pose2d;\n\npublic class Robot extends TimedRobot {\n    // Field visualization object\n    private final Field2d m_field = new Field2d();\n    \n    @Override\n    public void robotInit() {\n        // Add field widget to SmartDashboard (visible in Elastic)\n        SmartDashboard.putData(\"Field\", m_field);\n    }\n    \n    @Override\n    public void robotPeriodic() {\n        // Update robot pose on field visualization\n        Pose2d currentPose = getOdometryPose();\n        m_field.setRobotPose(currentPose);\n    }\n    \n    private Pose2d getOdometryPose() {\n        // Return current robot pose from odometry\n        return new Pose2d(); // Placeholder\n    }\n}"
     },
     {
       "type": "text",
-      "title": "Advanced Widget Types",
-      "content": "Elastic provides advanced widgets for complex data visualization and robot monitoring.<br><br><strong>Chart Widgets:</strong> Create line charts, bar charts, and gauge displays to visualize data over time. Useful for monitoring sensor readings, motor performance, or PID tuning.<br><br><strong>Field Visualization:</strong> Display a 2D visualization of the game field with your robot's position and orientation. Requires pose estimation (odometry) in your robot code. Extremely useful for autonomous development and debugging.<br><br><strong>Command and Subsystem Widgets:</strong> Show the status of commands and subsystems in command-based programming. Displays which commands are running, scheduled, or interrupted, and subsystem states.<br><br><strong>Camera Stream Widgets:</strong> Display video feeds from cameras connected to the robot. Useful for driver vision and autonomous navigation.<br><br><strong>Custom Widgets:</strong> Elastic supports custom widget development, allowing teams to create specialized visualizations for their specific needs."
-    },
-    {
-      "type": "text",
-      "title": "Field Visualization with Elastic",
-      "content": "Elastic's Field widget displays a 2D visualization of the game field with your robot's position. This is extremely useful for autonomous development and debugging.<br><br><strong>Setting Up Field Visualization:</strong><br>1. Add a Field widget to your Elastic dashboard<br>2. Configure it with the current game field image<br>3. Your robot code sends pose data (x, y, rotation) to NetworkTables<br>4. The widget displays robot position in real-time<br><br><strong>In Robot Code:</strong> Use <code>Field2d</code> class to send pose data to NetworkTables. This requires pose estimation (odometry) in your robot code. The Field2d object publishes to NetworkTables automatically."
-    },
-    {
-      "type": "code",
-      "title": "Sending Field Pose Data to Elastic",
-      "content": "import edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.wpilibj.smartdashboard.Field2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Drivetrain extends SubsystemBase {\n    private final Field2d m_field = new Field2d();\n    private Pose2d m_robotPose;\n    \n    public Drivetrain() {\n        // Field2d automatically publishes to NetworkTables\n        // Elastic will automatically display it\n        SmartDashboard.putData(\"Field\", m_field);\n    }\n    \n    @Override\n    public void periodic() {\n        m_robotPose = getOdometryPose();\n        \n        m_field.setRobotPose(m_robotPose);\n        \n        // You can also add trajectory visualizations\n        // m_field.getObject(\"trajectory\").setTrajectory(trajectory);\n    }\n}"
-    },
-    {
-      "type": "text",
-      "title": "Multi-Device Access",
-      "content": "One of Elastic's key advantages is that multiple devices can access the dashboard simultaneously. This is useful for teams where multiple people need to monitor the robot.<br><br><strong>Accessing from Multiple Devices:</strong><br>- Open a web browser on any device connected to the same network<br>- Navigate to <code>https://gold872.github.io/elastic-dashboard/</code><br>- Each device gets its own view of the dashboard<br>- Changes to the dashboard layout are typically per-device (browser-based)<br><br><strong>Use Cases:</strong><br>- Driver and operator can each have their own dashboard view<br>- Programming team can monitor robot during testing<br>- Strategy team can view robot state during matches<br>- Multiple team members can debug simultaneously<br><br><strong>Network Considerations:</strong> Ensure your network can handle multiple connections. Elastic is designed to be efficient, but very high update rates from multiple devices may impact network performance."
-    },
-    {
-      "type": "text",
-      "title": "Performance Considerations",
-      "content": "Elastic sends data over the network using NetworkTables, so efficient data management is important for good performance.<br><br><strong>Network Bandwidth:</strong> Each dashboard update uses network bandwidth. Too many updates or too much data can slow down robot communication. Use reasonable update frequencies.<br><br><strong>Update Frequency:</strong> Most data doesn't need to update every cycle. Update at reasonable rates (5-20 Hz) depending on the data type. Critical data can update more frequently, while status information can update less frequently.<br><br><strong>Data Amount:</strong> Sending large amounts of data (like high-resolution images or large arrays) can be slow. Use efficient data types and only send what's necessary for the dashboard."
+      "title": "Considerations",
+      "content": "<strong>Multi-Device:</strong> Multiple browsers can connect. Useful for separate driver/operator views.<br><strong>Performance:</strong> Manage bandwidth. Update non-critical data less frequently (5-20 Hz)."
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Related",
       "links": [
         {
-          "label": "Driver Station Setup",
-          "id": "driver-station-setup"
-        },
-        {
-          "label": "Basic Robot Structure",
-          "id": "command-based-intro"
+          "label": "Command-Based Intro",
+          "id": "intro-to-command-based"
         },
         {
           "label": "Elastic Documentation",

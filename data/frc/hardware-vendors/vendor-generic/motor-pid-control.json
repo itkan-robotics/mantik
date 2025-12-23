@@ -1,209 +1,57 @@
 {
-  "title": "Motor Controller PID Control",
+  "title": "On-Controller PID",
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to On-Controller PID",
-      "content": "You've configured your motor controller with all the essential settings from the previous lesson - brake mode, current limits, voltage compensation, and encoder configuration. Now it's time to add the intelligence: PID control that runs directly on your motor controller hardware.<br><br>On-controller PID leverages the motor controller's built-in processor to provide lightning-fast control (1ms update rate) without burdening your roboRIO. This is perfect for mechanisms that demand precise, responsive control like elevators moving to exact heights or flywheels maintaining consistent speed.<br><br>If you're new to PID control concepts, we highly recommend reviewing the <a href='#pid-control' target='_blank'>PID Control for Elevators</a> lesson first, which covers the fundamentals of how PID works, the three components (Proportional, Integral, Derivative), and tuning strategies. This lesson focuses specifically on implementing PID using the hardware features of SPARK MAX and Talon FX controllers."
-    },
-    {
-      "type": "text",
-      "title": "Why On-Controller PID?",
-      "content": "You might wonder why you'd use on-controller PID instead of running PID calculations in your robot code. The answer comes down to performance and reliability:<br><br><strong>Speed:</strong> Motor controllers update PID at 1ms intervals - that's 20 times faster than your roboRIO's 20ms loop. For mechanisms like flywheels spinning at thousands of RPM, this faster response can mean the difference between consistent accuracy and frustrating inconsistency.<br><br><strong>Reliability:</strong> On-controller PID runs independently of your robot code. Even if your code hits a delay or stutters, the motor controller continues controlling smoothly. This isolation provides a safety net for your mechanisms.<br><br><strong>Efficiency:</strong> Offloading PID calculations from the roboRIO frees up processing power for your autonomous routines, vision processing, and complex control logic.<br><br><strong>Specialized Features:</strong> Motor controllers offer advanced features like feedforward control, multiple PID slots for different scenarios, and integrated sensor processing that's optimized for motor control."
+      "title": "Overview",
+      "content": "Running PID on the motor controller (1kHz loop) is faster and smoother than on the RIO (50Hz). It frees up CAN bus bandwidth and RIO CPU."
     },
     {
       "type": "text",
       "title": "PID Slots",
-      "content": "Think of PID slots as different control profiles stored on your motor controller. You configure each slot with its own set of PID parameters, optimized for specific tasks. Need your elevator to move quickly to position? Use Slot 0 with aggressive gains. Need your flywheel to maintain speed smoothly? Use Slot 1 with velocity-focused parameters.<br><br>Both SPARK MAX and Talon FX support multiple slots, allowing you to switch between control modes seamlessly. When you command a position or velocity, you simply specify which slot to use. The motor controller handles the rest, automatically applying the right PID parameters for the job.<br><br>Common practice: Use Slot 0 for position control (where precision and stability matter) and Slot 1 for velocity control (where maintaining consistent speed is key). This separation lets you tune each control type independently for optimal performance."
-    },
-    {
-      "type": "text",
-      "title": "Position Control: Elevator",
-      "content": "Let's build on your configured elevator from the previous lesson. Right now, it has all the safety and configuration settings, but it can only move with open-loop control (direct power commands). Adding position control transforms your elevator from a mechanism that \"goes up and down\" into one that \"knows where it is and moves precisely.\"<br><br>Position control uses PID to move your elevator to a specific encoder position and hold it there. Imagine commanding your elevator to go to 100 encoder units (your high position), and it smoothly moves there, automatically stopping when it arrives. Even better, if something bumps the elevator or load changes, the PID controller notices and adjusts to maintain that exact position.<br><br>The beauty of on-controller position control is that once you set the target, the motor controller handles everything. It continuously reads the encoder, calculates the error, adjusts motor output, and maintains position - all at 1ms intervals, all automatically."
-    },
-    {
-      "type": "text",
-      "title": "Configuring Position Control PID",
-      "content": "Position control requires tuning PID parameters that balance speed, accuracy, and stability. For elevators, you need to configure four main parameters: kP (Proportional), kI (Integral), kD (Derivative), and kFF (Feedforward). Each parameter plays a specific role in controlling your mechanism's movement.<br><br>Remember: These are starting points. Your actual values depend on your mechanism's weight, gearing, and mechanical characteristics. Tune systematically, test thoroughly."
-    },
-    {
-      "type": "text",
-      "title": "kP: Proportional Gain",
-      "content": "The proportional gain (kP) provides the \"oomph\" to move toward the target. Higher values make the elevator respond faster, but too high causes overshoot and oscillation. Think of kP as how aggressively your mechanism moves toward its target.<br><br><strong>How it works:</strong> kP multiplies the error (difference between current position and target). If you're 10 units away, a kP of 0.5 means the controller tries to move with 5 units of \"force\" toward the target.<br><br><strong>Starting values:</strong> Start around 0.1-0.5 for position control. Too low and your mechanism moves slowly. Too high and it overshoots, oscillates, or becomes unstable.<br><br><strong>Tuning tip:</strong> Increase kP until your mechanism responds quickly, then back off slightly if you see overshoot or oscillation."
-    },
-    {
-      "type": "text",
-      "title": "kI: Integral Gain",
-      "content": "The integral gain (kI) eliminates persistent errors. If your elevator consistently stops 2 units short of the target (steady-state error), integral gain gradually increases output until it reaches exactly where it should.<br><br><strong>How it works:</strong> kI accumulates error over time. If there's a consistent small error, the integral term gradually builds up to push the mechanism closer to the target. This is especially useful for overcoming friction or mechanical resistance.<br><br><strong>Starting values:</strong> Often set to 0 for elevators, but can help overcome friction or mechanical resistance. If you notice your mechanism consistently stops short of the target, try small values like 0.001-0.01.<br><br><strong>Tuning tip:</strong> Start at 0. Only add integral gain if you see persistent steady-state error. Too much kI can cause instability or slow oscillation."
-    },
-    {
-      "type": "text",
-      "title": "kD: Derivative Gain",
-      "content": "The derivative gain (kD) is the dampening force. As your elevator approaches the target, derivative gain reduces the aggressive correction, preventing overshoot. Essential for smooth, accurate stops.<br><br><strong>How it works:</strong> kD responds to the rate of change of error. If you're approaching the target quickly, kD reduces the output to prevent overshooting. It acts as a brake that gets stronger as you approach your target.<br><br><strong>Starting values:</strong> Typical values are 0.01-0.1 times your kP value. For example, if kP is 0.5, try kD around 0.05-0.05.<br><br><strong>Tuning tip:</strong> Increase kD to reduce overshoot and smooth out the approach. Too much kD can make the system sluggish or noisy."
-    },
-    {
-      "type": "text",
-      "title": "kFF: Feedforward Gain",
-      "content": "The feedforward gain (kFF) provides predictive control to improve response. Instead of waiting for error to occur (like PID does), feedforward predicts the needed output based on the target.<br><br><strong>How it works:</strong> Feedforward adds output based on the target position itself, not the error. This \"pre-loads\" the system with an expected output, making the PID corrections smaller and smoother.<br><br><strong>Starting values:</strong> Often set to 0 for basic position control. Feedforward is more commonly used in velocity control (as kF/kV), where predicting output based on target speed is more straightforward.<br><br><strong>Tuning tip:</strong> For position control, start at 0. Feedforward can be useful for mechanisms with predictable load characteristics, but requires more advanced tuning."
-    },
-    {
-      "type": "text",
-      "title": "Adding Position Control to Your Elevator",
-      "content": "Building on your configured elevator from the previous lesson, adding PID position control involves three main steps: defining PID constants, configuring PID in the constructor, and creating methods to use position control. Let's break this down step by step."
+      "content": "Controllers have 'Slots' (0, 1, 2...) to store different PID gains. Example: Slot 0 for Position, Slot 1 for Velocity."
     },
     {
       "type": "code-tabs",
-      "title": "Step 1: Define PID Constants",
-      "content": "First, define your PID constants as class constants. These are the tuned values that control your elevator's behavior:",
+      "title": "Configuring PID",
+      "content": "Setting gains:",
       "tabs": [
         {
-          "label": "SPARK MAX",
-          "code": "// PID constants for position control (Slot 0)\nprivate static final double POSITION_KP = 0.5;\nprivate static final double POSITION_KI = 0.0;\nprivate static final double POSITION_KD = 0.1;\nprivate static final double POSITION_KFF = 0.0;"
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    // ... (other fields and methods)\n    \n    public void configurePID() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Configure Slot 0 for position control\n        config.Slot0.kP = 0.1;  // Proportional gain\n        config.Slot0.kI = 0.0;  // Integral gain\n        config.Slot0.kD = 0.01; // Derivative gain\n        \n        // Configure Slot 1 for velocity control\n        config.Slot1.kP = 0.05; // Proportional gain\n        config.Slot1.kV = 0.12;  // Velocity feedforward\n        \n        motor.getConfigurator().apply(config);\n    }\n    \n    // ... (rest of class)"
         },
         {
-          "label": "Talon FX",
-          "code": "// PID constants for position control (Slot0)\nprivate static final double POSITION_KP = 0.5;\nprivate static final double POSITION_KI = 0.0;\nprivate static final double POSITION_KD = 0.1;"
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.ClosedLoopController.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Elevator extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // ... (other fields and methods)\n    \n    public void configurePID() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        \n        // Configure Slot 0 for position control\n        config.closedLoop.p(0.1, ClosedLoopSlot.kSlot0);\n        config.closedLoop.d(0.01, ClosedLoopSlot.kSlot0);\n        \n        // Configure Slot 1 for velocity control\n        config.closedLoop.p(0.05, ClosedLoopSlot.kSlot1);\n        config.closedLoop.i(0.0, ClosedLoopSlot.kSlot1);\n        \n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    // ... (rest of class)"
         }
       ]
     },
     {
       "type": "code-tabs",
-      "title": "Step 2: Configure PID in Constructor",
-      "content": "In your elevator constructor, add PID configuration to your SparkMaxConfig or TalonFXConfiguration. Also get a reference to the closed-loop controller (SPARK MAX) or create a position request object (Talon FX):",
+      "title": "Controlling",
+      "content": "Setting targets:",
       "tabs": [
         {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkClosedLoopController;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\n// Get closed-loop controller reference\nprivate final SparkClosedLoopController m_closedLoopController = m_elevatorMotor.getClosedLoopController();\n\n// In your Elevator constructor, add to SparkMaxConfig:\nSparkMaxConfig config = new SparkMaxConfig();\n\n// Position control PID configuration (Slot 0)\nconfig.closedLoop.pidf(POSITION_KP, POSITION_KI, POSITION_KD, POSITION_KFF, ClosedLoopSlot.kSlot0);\nconfig.closedLoop.outputRange(-1.0, 1.0, ClosedLoopSlot.kSlot0);\n\n// Apply configuration\nm_elevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.PositionVoltage;\nimport com.ctre.phoenix6.controls.VelocityVoltage;\n\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    // ... (other fields and methods)\n    \n    public void setPosition(double targetRotations) {\n        // Use Slot 0 for position control\n        motor.setControl(new PositionVoltage(targetRotations).withSlot(0));\n    }\n    \n    public void setVelocity(double targetRPS) {\n        // Use Slot 1 for velocity control\n        motor.setControl(new VelocityVoltage(targetRPS).withSlot(1));\n    }\n    \n    // ... (rest of class)"
         },
         {
-          "label": "Talon FX",
-          "code": "import com.ctre.phoenix6.controls.PositionVoltage;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\n// Create position request object\nprivate final PositionVoltage m_positionRequest = new PositionVoltage(0);\n\n// In your Elevator constructor, add to TalonFXConfiguration:\nTalonFXConfiguration config = new TalonFXConfiguration();\n\n// Position control PID configuration (Slot0)\nconfig.Slot0.kP = POSITION_KP;\nconfig.Slot0.kI = POSITION_KI;\nconfig.Slot0.kD = POSITION_KD;\nconfig.Slot0.kV = 0.0;\nconfig.Slot0.kS = 0.0;\nconfig.Slot0.kA = 0.0;\n\n// Apply configuration\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "code-tabs",
-      "title": "Step 3: Create Position Control Methods",
-      "content": "Finally, create methods that use PID position control to move your elevator to specific heights:",
-      "tabs": [
-        {
           "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkBase.ControlType;\nimport com.revrobotics.spark.ClosedLoopSlot;\n\n// Method to move elevator to specific height\npublic void setHeight(double height) {\n    m_closedLoopController.setReference(height, ControlType.kPosition, ClosedLoopSlot.kSlot0);\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "// Method to move elevator to specific height\npublic void setHeight(double height) {\n    m_elevatorMotor.setControl(m_positionRequest.withPosition(height).withSlot(0));\n}"
+          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.ClosedLoopController;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\nimport com.revrobotics.spark.ClosedLoopController.ClosedLoopSlot;\n\npublic class Elevator extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    private SparkClosedLoopController pid = motor.getClosedLoopController();\n    \n    // ... (other fields and methods)\n    \n    public void setPosition(double targetRotations) {\n        // Use Slot 0 for position control\n        pid.setReference(targetRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);\n    }\n    \n    public void setVelocity(double targetRPM) {\n        // Use Slot 1 for velocity control\n        pid.setReference(targetRPM, ControlType.kVelocity, ClosedLoopSlot.kSlot1);\n    }\n    \n    // ... (rest of class)"
         }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Complete Elevator with Position Control",
-      "content": "Your elevator is now a precision mechanism. You can command it to specific heights, and it will move there accurately and hold position reliably. The PID controller running on the motor hardware ensures smooth motion, precise stops, and automatic position maintenance - even when conditions change.<br><br>Consider the complete workflow: Your elevator starts at home (position 0). You command it to move to the high position (100 units). The PID controller calculates the necessary motor output, the elevator accelerates smoothly (thanks to your closed-loop ramp rate), reaches the target, and stops precisely. Throughout the match, gravity tries to pull the elevator down, but brake mode and PID control work together to hold position.<br><br>This is the power of on-controller PID - your elevator becomes an intelligent, self-correcting mechanism that handles the details while you focus on the bigger picture of robot strategy."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Complete Elevator Subsystem with Position Control",
-      "content": "Your fully configured elevator with on-controller PID position control:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.ClosedLoopConfig;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ControlType;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkClosedLoopController;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.RelativeEncoder;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Elevator extends SubsystemBase {\n    private final SparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n    private final RelativeEncoder m_encoder = m_elevatorMotor.getEncoder();\n    private final SparkClosedLoopController m_closedLoopController = m_elevatorMotor.getClosedLoopController();\n\n    \n    // Configuration constants\n    private static final int CURRENT_LIMIT = 40;\n    private static final int SECONDARY_CURRENT_LIMIT = 60;\n    private static final double VOLTAGE_COMPENSATION = 12.0;\n    private static final double RAMP_RATE = 0.5;\n    private static final double MAX_HEIGHT = 100.0;\n    private static final double GEAR_RATIO = 10.0;\n    \n    // PID constants for position control (Slot 0)\n    private static final double POSITION_KP = 0.5;\n    private static final double POSITION_KI = 0.0;\n    private static final double POSITION_KD = 0.1;\n    private static final double POSITION_KFF = 0.0;\n\n    \n    // Elevator height presets\n    private static final double HOME_HEIGHT = 0.0;\n    private static final double LOW_HEIGHT = 50.0;\n    private static final double MID_HEIGHT = 75.0;\n    private static final double HIGH_HEIGHT = 100.0;\n    \n    public Elevator() {\n        // Motor configuration using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .inverted(false)\n            .idleMode(IdleMode.kBrake)\n            .smartCurrentLimit(CURRENT_LIMIT)\n            .secondaryCurrentLimit(SECONDARY_CURRENT_LIMIT)\n            .voltageCompensation(VOLTAGE_COMPENSATION)\n            .openLoopRampRate(RAMP_RATE)\n            .closedLoopRampRate(RAMP_RATE);\n        \n        // Encoder configuration\n        config.encoder.positionConversionFactor(1.0 / GEAR_RATIO);\n        config.encoder.velocityConversionFactor(1.0 / GEAR_RATIO);\n        \n        // Soft limits\n        config.softLimit.reverseSoftLimit(0.0f);\n        config.softLimit.forwardSoftLimit((float)MAX_HEIGHT);\n        config.softLimit.reverseSoftLimitEnabled(true);\n        config.softLimit.forwardSoftLimitEnabled(true);\n\n        // Position control PID configuration (Slot 0)\n        config.closedLoop.pidf(POSITION_KP, POSITION_KI, POSITION_KD, POSITION_KFF, ClosedLoopSlot.kSlot0);\n        config.closedLoop.outputRange(-1.0, 1.0, ClosedLoopSlot.kSlot0);\n        \n        // Apply configuration (persist during initial setup)\n        m_elevatorMotor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Reset encoder position after configuration\n        m_encoder.setPosition(0);\n    }\n    \n    // Position control methods\n    public void setHeight(double height) {\n        m_closedLoopController.setReference(height, ControlType.kPosition, ClosedLoopSlot.kSlot0);\n    }\n    \n    public void goToHome() { setHeight(HOME_HEIGHT); }\n    public void goToLow() { setHeight(LOW_HEIGHT); }\n    public void goToMid() { setHeight(MID_HEIGHT); }\n    public void goToHigh() { setHeight(HIGH_HEIGHT); }\n    \n    // Status methods\n    public double getHeight() {\n        return m_encoder.getPosition();\n    }\n    \n    public boolean isAtHeight(double targetHeight, double tolerance) {\n        return Math.abs(getHeight() - targetHeight) < tolerance;\n    }\n    \n    @Override\n    public void periodic() {\n        SmartDashboard.putNumber(\"Elevator Height\", getHeight());\n        SmartDashboard.putNumber(\"Elevator Velocity\", m_encoder.getVelocity());\n        SmartDashboard.putNumber(\"Elevator Output\", m_elevatorMotor.getAppliedOutput());\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.PositionVoltage;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.signals.FeedbackSensorSourceValue;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Elevator extends SubsystemBase {\n    private final TalonFX m_elevatorMotor = new TalonFX(3);\n    private final PositionVoltage m_positionRequest = new PositionVoltage(0);\n    \n    // Configuration constants\n    private static final double CURRENT_LIMIT = 40.0;\n    private static final double VOLTAGE_PEAK = 12.0;\n    private static final double RAMP_RATE = 0.5;\n    private static final double MAX_HEIGHT = 10.0;  // In rotations\n    private static final double GEAR_RATIO = 10.0;\n    \n    // PID constants for position control (Slot0)\n    private static final double POSITION_KP = 0.5;\n    private static final double POSITION_KI = 0.0;\n    private static final double POSITION_KD = 0.1;\n    \n    // Elevator height presets\n    private static final double HOME_HEIGHT = 0.0;\n    private static final double LOW_HEIGHT = 5.0;\n    private static final double MID_HEIGHT = 7.5;\n    private static final double HIGH_HEIGHT = 10.0;\n    \n    public Elevator() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Motor configuration (from previous lesson)\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = CURRENT_LIMIT;\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;\n        config.Voltage.PeakForwardVoltage = VOLTAGE_PEAK;\n        config.Voltage.PeakReverseVoltage = -VOLTAGE_PEAK;\n        \n        // Encoder configuration\n        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;\n        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;\n        config.Feedback.FeedbackRotorOffset = 0.0;\n        \n        // Soft limits\n        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HOME_HEIGHT;\n        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HIGH_HEIGHT;\n        \n        // Closed loop ramp settings\n        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = RAMP_RATE;\n        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = RAMP_RATE;\n        \n        // Position control PID configuration (Slot0)\n        config.Slot0.kP = POSITION_KP;\n        config.Slot0.kI = POSITION_KI;\n        config.Slot0.kD = POSITION_KD;\n        config.Slot0.kV = 0.0;\n        config.Slot0.kS = 0.0;\n        config.Slot0.kA = 0.0;\n        \n        m_elevatorMotor.getConfigurator().apply(config);\n        m_elevatorMotor.setPosition(HOME_HEIGHT);\n    }\n    \n    // Position control methods\n    public void setHeight(double height) {\n        m_elevatorMotor.setControl(m_positionRequest.withPosition(height).withSlot(0));\n    }\n    \n    public void goToHome() { setHeight(HOME_HEIGHT); }\n    public void goToLow() { setHeight(LOW_HEIGHT); }\n    public void goToMid() { setHeight(MID_HEIGHT); }\n    public void goToHigh() { setHeight(HIGH_HEIGHT); }\n    \n    // Status methods\n    public double getHeight() {\n        return m_elevatorMotor.getPosition().getValueAsDouble();\n    }\n    \n    public boolean isAtHeight(double targetHeight, double tolerance) {\n        return Math.abs(getHeight() - targetHeight) < tolerance;\n    }\n    \n    @Override\n    public void periodic() {\n        SmartDashboard.putNumber(\"Elevator Height\", getHeight());\n        SmartDashboard.putNumber(\"Elevator Velocity\", m_elevatorMotor.getVelocity().getValueAsDouble());\n        SmartDashboard.putNumber(\"Elevator Output\", m_elevatorMotor.getDutyCycle().getValueAsDouble());\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Velocity Control: The Flywheel's Need for Speed",
-      "content": "Now let's switch gears (pun intended) to velocity control. While position control answers \"where should I be?\", velocity control answers \"how fast should I spin?\" The perfect mechanism to explore this is a flywheel - that spinning wheel on your shooter that needs to maintain precise RPM for accurate shooting.<br><br>Imagine your flywheel needs to spin at 3000 RPM to launch game pieces accurately. Without velocity control, you'd set a fixed motor power and hope the speed stays consistent. But as battery voltage drops, or friction changes, or you load a heavier game piece, that speed drifts. Your shots become inconsistent, your autonomous routines become unreliable.<br><br>With velocity control, your flywheel becomes a precision instrument. You command 3000 RPM, and the PID controller continuously adjusts motor output to maintain that exact speed, compensating for battery voltage changes, friction variations, and load differences. Whether it's the first shot or the fiftieth, whether your battery is full or nearly drained, the flywheel maintains its target speed."
-    },
-    {
-      "type": "text",
-      "title": "Why Flywheels Need Velocity Control",
-      "content": "Flywheels present unique challenges that make velocity control essential:<br><br><strong>Consistency is King:</strong> For accurate shooting, your flywheel must maintain the same speed every time. Even small variations (50-100 RPM) can dramatically affect shot accuracy. Velocity control eliminates guesswork and ensures repeatable performance.<br><br><strong>Battery Voltage Compensation:</strong> As your match progresses, battery voltage drops from ~12.6V to ~11.0V. A fixed power setting that worked at the start becomes too weak. Velocity control automatically increases output to compensate, maintaining speed throughout the match.<br><br><strong>Load Changes:</strong> Different game pieces, varying friction, temperature changes - all affect how much power is needed to maintain speed. Velocity control adapts in real-time, keeping your flywheel spinning at target RPM regardless of conditions.<br><br><strong>Precision Matters:</strong> Many game pieces require specific flywheel speeds for optimal performance. Velocity control lets you dial in exact RPM values, test different speeds, and find the sweet spot for your mechanism."
-    },
-    {
-      "type": "text",
-      "title": "Configuring Velocity Control PID",
-      "content": "Velocity control uses a different tuning approach than position control. Here's what matters:<br><br><strong>kP (Proportional):</strong> Responds to speed errors. If your flywheel is spinning 200 RPM below target, higher kP provides stronger correction. For velocity control, kP is typically lower than position control (0.01-0.1 range) because you want smooth, steady speed maintenance rather than aggressive corrections.<br><br><strong>kI (Integral):</strong> Often set to zero for flywheels. Since you're maintaining speed rather than reaching a specific position, steady-state error is less common. However, if you notice consistent speed drift, small integral gain can help eliminate it.<br><br><strong>kD (Derivative):</strong> Usually not needed for velocity control. Since you're maintaining a constant speed rather than coming to a stop, overshoot isn't typically a concern. Derivative gain is often set to zero.<br><br><strong>kF/kV (Feedforward):</strong> This is the secret weapon for velocity control. Feedforward predicts the needed output based on target velocity, providing most of the control effort. This reduces error before it occurs, making PID corrections smaller and smoother. Typical values are calculated based on your mechanism's characteristics: kV ≈ (max voltage) / (max velocity)."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Flywheel Velocity Control Setup",
-      "content": "Here's how to configure a flywheel with velocity control:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkClosedLoopController;\nimport com.revrobotics.spark.SparkBase.ControlType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\n// PID constants for velocity control (Slot 1)\nprivate static final double VELOCITY_KP = 0.05;\nprivate static final double VELOCITY_KI = 0.0;\nprivate static final double VELOCITY_KD = 0.0;\nprivate static final double VELOCITY_KFF = 0.0001;\n\nprivate final SparkClosedLoopController m_closedLoopController = m_flywheelMotor.getClosedLoopController();\n\n// In your Flywheel constructor, add to SparkMaxConfig:\nSparkMaxConfig config = new SparkMaxConfig();\n\n// Velocity control PID configuration (Slot 1)\nconfig.closedLoop.pidf(VELOCITY_KP, VELOCITY_KI, VELOCITY_KD, VELOCITY_KFF, ClosedLoopSlot.kSlot1);\nconfig.closedLoop.outputRange(-1.0, 1.0, ClosedLoopSlot.kSlot1);\n\n// Apply configuration\nm_flywheelMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n\n// Method to set flywheel speed\npublic void setSpeed(double rpm) {\n    double velocityInCountsPerSecond = (rpm / 60.0) * COUNTS_PER_REVOLUTION;\n    m_closedLoopController.setReference(velocityInCountsPerSecond, ControlType.kVelocity, ClosedLoopSlot.kSlot1);\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "import com.ctre.phoenix6.controls.VelocityVoltage;\n\n// In your Flywheel constructor, add to TalonFXConfiguration:\n// Velocity PID gains (Slot1)\nconfig.Slot1.kP = 0.05;  // Lower than position control\nconfig.Slot1.kI = 0.0;   // Usually zero for velocity\nconfig.Slot1.kD = 0.0;   // Not needed for velocity\nconfig.Slot1.kV = 0.05;  // Feedforward - key for velocity control!\nconfig.Slot1.kS = 0.0;\nconfig.Slot1.kA = 0.0;\n\n// After applying config, create control request:\nprivate final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);\n\n// Method to set flywheel speed (in rotations per second)\npublic void setSpeed(double rps) {\n    m_flywheelMotor.setControl(m_velocityRequest.withVelocity(rps).withSlot(1));\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Complete Flywheel: From Static to Spinning Precision",
-      "content": "Your flywheel subsystem represents the evolution from basic motor control to precision mechanism. Start with essential configuration: current limits to protect the motor, voltage compensation for consistency, proper motor inversion. Then add velocity control with carefully tuned PID parameters and feedforward.<br><br>The result? A flywheel that spins up quickly, maintains exact speed, and adapts to changing conditions automatically. Your autonomous routines become reliable because the flywheel speed is consistent. Your teleop shooting becomes accurate because every shot launches with the same velocity. Match after match, the flywheel performs consistently, regardless of battery state or game piece type.<br><br>This is the power of on-controller velocity control - your flywheel becomes a reliable, intelligent subsystem that handles speed management while you focus on strategy and coordination."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Complete Flywheel Subsystem with Velocity Control",
-      "content": "Your fully configured flywheel with on-controller PID velocity control:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.ClosedLoopConfig;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ControlType;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkClosedLoopController;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.RelativeEncoder;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Flywheel extends SubsystemBase {\n    private final SparkMax m_flywheelMotor = new SparkMax(5, MotorType.kBrushless);\n    private final RelativeEncoder m_encoder = m_flywheelMotor.getEncoder();\n    private final SparkClosedLoopController m_closedLoopController = m_flywheelMotor.getClosedLoopController();\n    \n    // Configuration constants\n    private static final int CURRENT_LIMIT = 60;\n    private static final int SECONDARY_CURRENT_LIMIT = 80;\n    private static final double VOLTAGE_COMPENSATION = 12.0;\n    private static final double RAMP_RATE = 0.25;  // Faster ramp for flywheel\n    \n    // Encoder constants\n    private static final double COUNTS_PER_REVOLUTION = 42.0;  // NEO encoder\n    \n    // Velocity control PID constants (Slot 1)\n    private static final double VELOCITY_KP = 0.05;\n    private static final double VELOCITY_KI = 0.0;\n    private static final double VELOCITY_KD = 0.0;\n    private static final double VELOCITY_KFF = 0.0001;  // Feedforward\n    \n    // Target speeds (RPM)\n    private static final double TARGET_RPM = 3000.0;\n    private static final double TOLERANCE_RPM = 50.0;\n    \n    public Flywheel() {\n        // Motor configuration using SparkMaxConfig\n        SparkMaxConfig config = new SparkMaxConfig();\n        config\n            .inverted(false)\n            .idleMode(IdleMode.kCoast)  // Coast mode for flywheel\n            .smartCurrentLimit(CURRENT_LIMIT)\n            .secondaryCurrentLimit(SECONDARY_CURRENT_LIMIT)\n            .voltageCompensation(VOLTAGE_COMPENSATION)\n            .openLoopRampRate(RAMP_RATE)\n            .closedLoopRampRate(RAMP_RATE);\n        \n        // Encoder configuration (no conversion needed for velocity)\n        config.encoder.velocityConversionFactor(1.0);\n        \n        // Velocity control PID configuration (Slot 1)\n        config.closedLoop.pidf(VELOCITY_KP, VELOCITY_KI, VELOCITY_KD, VELOCITY_KFF, ClosedLoopSlot.kSlot1);\n        config.closedLoop.outputRange(-1.0, 1.0, ClosedLoopSlot.kSlot1);\n        \n        // Apply configuration (persist during initial setup)\n        m_flywheelMotor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n    }\n    \n    // Velocity control methods\n    public void spinUp() {\n        setSpeed(TARGET_RPM);\n    }\n    \n    public void setSpeed(double rpm) {\n        // Convert RPM to encoder counts per second\n        double velocityInCountsPerSecond = (rpm / 60.0) * COUNTS_PER_REVOLUTION;\n        m_closedLoopController.setReference(velocityInCountsPerSecond, ControlType.kVelocity, ClosedLoopSlot.kSlot1);\n    }\n    \n    public void stop() {\n        m_flywheelMotor.set(0.0);\n    }\n    \n    // Status methods\n    public double getSpeed() {\n        double velocityCountsPerSecond = m_encoder.getVelocity();\n        return (velocityCountsPerSecond / COUNTS_PER_REVOLUTION) * 60.0;  // Convert to RPM\n    }\n    \n    public boolean isAtSpeed() {\n        return Math.abs(getSpeed() - TARGET_RPM) < TOLERANCE_RPM;\n    }\n    \n    @Override\n    public void periodic() {\n        SmartDashboard.putNumber(\"Flywheel Speed (RPM)\", getSpeed());\n        SmartDashboard.putNumber(\"Flywheel Target (RPM)\", TARGET_RPM);\n        SmartDashboard.putNumber(\"Flywheel Output\", m_flywheelMotor.getAppliedOutput());\n        SmartDashboard.putBoolean(\"Flywheel At Speed\", isAtSpeed());\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.VelocityVoltage;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.signals.FeedbackSensorSourceValue;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Flywheel extends SubsystemBase {\n    private final TalonFX m_flywheelMotor = new TalonFX(5);\n    private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);\n    private final DutyCycleOut m_dutyCycleRequest = new DutyCycleOut(0);\n    \n    // Configuration constants\n    private static final double CURRENT_LIMIT = 60.0;\n    private static final double VOLTAGE_PEAK = 12.0;\n    private static final double RAMP_RATE = 0.25;  // Faster ramp for flywheel\n    \n    // Velocity control PID constants (Slot1)\n    private static final double VELOCITY_KP = 0.05;\n    private static final double VELOCITY_KI = 0.0;\n    private static final double VELOCITY_KD = 0.0;\n    private static final double VELOCITY_KV = 0.05;  // Feedforward - key for velocity!\n    private static final double VELOCITY_KS = 0.0;\n    private static final double VELOCITY_KA = 0.0;\n    \n    // Target speeds (rotations per second)\n    private static final double TARGET_RPS = 50.0;  // ~3000 RPM = 50 RPS\n    private static final double TOLERANCE_RPS = 1.0;\n    \n    public Flywheel() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Motor configuration\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;  // Coast mode for flywheel\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = CURRENT_LIMIT;\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;\n        config.Voltage.PeakForwardVoltage = VOLTAGE_PEAK;\n        config.Voltage.PeakReverseVoltage = -VOLTAGE_PEAK;\n        \n        // Encoder configuration\n        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;\n        \n        // Closed loop ramp settings\n        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = RAMP_RATE;\n        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = RAMP_RATE;\n        \n        // Velocity control PID configuration (Slot1)\n        config.Slot1.kP = VELOCITY_KP;\n        config.Slot1.kI = VELOCITY_KI;\n        config.Slot1.kD = VELOCITY_KD;\n        config.Slot1.kV = VELOCITY_KV;\n        config.Slot1.kS = VELOCITY_KS;\n        config.Slot1.kA = VELOCITY_KA;\n        \n        m_flywheelMotor.getConfigurator().apply(config);\n    }\n    \n    // Velocity control methods\n    public void spinUp() {\n        setSpeed(TARGET_RPS);\n    }\n    \n    public void setSpeed(double rps) {\n        m_flywheelMotor.setControl(m_velocityRequest.withVelocity(rps).withSlot(1));\n    }\n    \n    public void stop() {\n        m_flywheelMotor.setControl(m_dutyCycleRequest.withOutput(0.0));\n    }\n    \n    // Status methods\n    public double getSpeed() {\n        return m_flywheelMotor.getVelocity().getValueAsDouble();  // Returns RPS\n    }\n    \n    public boolean isAtSpeed() {\n        return Math.abs(getSpeed() - TARGET_RPS) < TOLERANCE_RPS;\n    }\n    \n    @Override\n    public void periodic() {\n        SmartDashboard.putNumber(\"Flywheel Speed (RPS)\", getSpeed());\n        SmartDashboard.putNumber(\"Flywheel Target (RPS)\", TARGET_RPS);\n        SmartDashboard.putNumber(\"Flywheel Output\", m_flywheelMotor.getDutyCycle().getValueAsDouble());\n        SmartDashboard.putBoolean(\"Flywheel At Speed\", isAtSpeed());\n    }\n}"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Position vs Velocity: Choosing Your Control Strategy",
-      "content": "You've now seen both position control (elevator) and velocity control (flywheel) in action. Understanding when to use each is crucial for effective robot design.<br><br><strong>Use Position Control When:</strong> Your mechanism needs to reach and hold a specific position. Examples include elevators at specific heights, arms at specific angles, turrets at specific rotations. The mechanism moves to a target and stays there.<br><br><strong>Use Velocity Control When:</strong> Your mechanism needs to maintain a specific speed. Examples include flywheels at consistent RPM, intakes at constant speed, conveyors at steady rates. The mechanism maintains speed rather than reaching a position."
-    },
-    {
-      "type": "rules-box",
-      "title": "Key Takeaways",
-      "subtitle": "What you've learned about on-controller PID:",
-      "items": [
-        "On-controller PID provides 1ms update rates - 20x faster than robot code",
-        "Multiple PID slots allow different control strategies (position vs velocity) on the same controller",
-        "Position control is perfect for mechanisms that need to reach and hold specific positions",
-        "Velocity control is essential for mechanisms that must maintain consistent speed",
-        "Feedforward (kF/kV) is crucial for velocity control, predicting needed output",
-        "Tuning approach differs: position needs higher kP and kD, velocity benefits from feedforward",
-        "The motor controller handles all PID calculations, freeing your roboRIO for other tasks"
       ]
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Related",
       "links": [
         {
-          "label": "PID Control for Elevators",
+          "label": "Motion Profiling",
+          "id": "motor-motion-profiling"
+        },
+        {
+          "label": "PID Overview",
           "id": "pid-control"
-        },
-        {
-          "label": "Motor Controller Configuration",
-          "id": "motor-controller-configuration"
-        },
-        {
-          "label": "Motor Current Limiting",
-          "id": "motor-current-limiting"
-        },
-        {
-          "label": "Feedforward Control",
-          "id": "feedforward-control"
         }
       ]
     }

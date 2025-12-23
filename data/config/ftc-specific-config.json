@@ -20,6 +20,13 @@
           "description": "Setting up your FTC development environment",
           "items": [
             {
+              "id": "ftc-curriculum-intro",
+              "label": "FTC Curriculum Overview",
+              "file": "data/ftc/ftc-curriculum-intro.json",
+              "difficulty": "beginner",
+              "duration": "15 min"
+            },
+            {
               "id": "ftc-sdk-basics",
               "label": "FTC SDK Basics",
               "file": "data/ftc/onbot-java/environment-setup/ftc-sdk-basics.json",

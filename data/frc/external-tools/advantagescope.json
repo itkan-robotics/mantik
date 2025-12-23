@@ -1,5 +1,5 @@
 {
-  "title": "AdvantageScope: Data Logging and Analysis",
+      "title": "AdvantageScope: Data Logging and Analysis"
   "sections": [
     {
       "type": "text",
@@ -12,14 +12,14 @@
       "content": "<strong>1. Multi-Format Support:</strong> Opens WPILib data logs (.wpilog), AdvantageKit logs (.rlog), CTRE logs (.hoot), and Driver Station logs (.dslog). (<a href='https://docs.advantagescope.org/guides/loading-data/' target='_blank'>Loading Data Documentation</a>)<br><br><strong>2. 3D Field Visualization:</strong> Visualize your robot's pose, mechanism states (arm angles, elevator heights), and trajectory in full 3D. This is critical for debugging odometry and autonomous paths. (<a href='https://docs.advantagescope.org/views/field3d/' target='_blank'>3D Field View Documentation</a>)<br><br><strong>3. Video Synchronization:</strong> If you have match video, you can sync it with the log data. Clicking a point on the graph jumps the video to that exact moment. (<a href='https://docs.advantagescope.org/guides/video-sync/' target='_blank'>Video Sync Documentation</a>)<br><br><strong>4. Swerve Visualization:</strong> Dedicated views for swerve module states (vectors) to debug drive issues. (<a href='https://docs.advantagescope.org/views/swerve/' target='_blank'>Swerve View Documentation</a>)<br><br><strong>5. Console Log Review:</strong> Filter and search through robot console output synchronized with the data. (<a href='https://docs.advantagescope.org/views/console/' target='_blank'>Console View Documentation</a>)"
     },
     {
-      "type": "text",
-      "title": "Using AdvantageScope with WPILib",
-      "content": "To get the most out of AdvantageScope, you should use <a href='https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DataLogManager.html' target='_blank'>\"DataLogManager\"</a> in your WPILib code to record data to a USB stick or the RIO's internal storage. (<a href='https://docs.advantagescope.org/guides/recording-data/' target='_blank'>Recording Data Documentation</a>)<br><br><strong>Structured Data:</strong> AdvantageScope supports the new WPILib \"Struct\" serialization. This allows you to log complex objects like \"Pose2d\", \"Translation2d\", or custom classes efficiently, and AdvantageScope will automatically recognize them as 3D objects or vectors. (<a href='https://docs.advantagescope.org/guides/structured-data/' target='_blank'>Structured Data Documentation</a>)"
-    },
-    {
       "type": "code",
       "title": "Logging for Visualization",
       "content": "// In your robot code (RobotPeriodic or Subsystem)\n\n// Log a Pose2d for 3D field visualization\n// See: https://docs.advantagescope.org/views/field3d/\nLogger.recordOutput(\"Odometry/RobotPose\", m_drive.getPose());\n\n// Log a Trajectory to see the path\nLogger.recordOutput(\"Auto/Trajectory\", m_trajectory);\n\n// Log mechanism states (e.g. Arm Angle)\nLogger.recordOutput(\"Arm/AngleDegrees\", m_arm.getAngle());\n\n// Log Swerve Module States for vector visualization\n// See: https://docs.advantagescope.org/views/swerve/\nLogger.recordOutput(\"Swerve/ModuleStates\", m_drive.getModuleStates());"
+    },
+    {
+      "type": "text",
+      "title": "Using AdvantageScope with WPILib",
+      "content": "To get the most out of AdvantageScope, you should use <a href='https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DataLogManager.html' target='_blank'>\"DataLogManager\"</a> in your WPILib code to record data to a USB stick or the RIO's internal storage. (<a href='https://docs.advantagescope.org/guides/recording-data/' target='_blank'>Recording Data Documentation</a>)<br><br><strong>Structured Data:</strong> AdvantageScope supports the new WPILib \"Struct\" serialization. This allows you to log complex objects like \"Pose2d\", \"Translation2d\", or custom classes efficiently, and AdvantageScope will automatically recognize them as 3D objects or vectors. (<a href='https://docs.advantagescope.org/guides/structured-data/' target='_blank'>Structured Data Documentation</a>)"
     },
     {
       "type": "rules-box",
@@ -36,7 +36,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "AdvantageKit",

@@ -1,209 +1,49 @@
 {
-  "title": "Motor Controller Configuration",
+  "title": "Motor Configuration",
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to Motor Controller Configuration",
-      "content": "Properly configuring your motor controller is essential for optimal robot performance. This lesson will guide you through configuring a motor controller for an elevator subsystem. An elevator needs to move smoothly, hold position reliably, and operate consistently throughout a match. We'll configure each parameter with these requirements in mind.<br><br>Motor controllers (SPARK MAX and Talon FX) can be configured using vendor-specific tools (REV Hardware Client or Phoenix Tuner) or programmatically in code. For production code, we recommend configuring everything in code so your configuration is documented and version-controlled.<br><br>While we are configuring a motor for an elevator, the same principles apply to any motor controller and any subsystem."
-    },
-    {
-      "type": "text",
-      "title": "Configuration Methods",
-      "content": "There are two main ways to configure motor controller parameters:<br><br><strong>Vendor Tools (Graphical):</strong><br>- REV Hardware Client for SPARK MAX<br>- Phoenix Tuner for Talon FX<br>- Visual interface for configuring devices<br>- Good for initial setup and testing<br>- Configuration is saved to device's non-volatile memory<br><br><strong>Code-Based Configuration:</strong><br>- Configure in your robot code<br>- Ensures consistent configuration across deployments<br>- Can be version controlled<br>- Recommended for production code<br><br><strong>Best Practice:</strong> Use vendor tools for initial setup and testing, but configure everything in code for your final robot program. This ensures your configuration is documented and consistent."
+      "title": "Essentials",
+      "content": "Every motor controller should be configured for safety and consistency. Key parameters:"
     },
     {
       "type": "rules-box",
-      "title": "Essential Configuration Parameters for Elevators",
-      "subtitle": "Parameters you should always configure:",
+      "title": "Parameters",
+      "subtitle": "Configure these:",
       "items": [
-        "<strong>Motor Inversion:</strong> Ensure elevator moves up with positive power",
-        "<strong>Idle/Neutral Mode:</strong> Brake mode to hold position when stopped",
-        "<strong>Current Limits:</strong> Protect motor from excessive loads",
-        "<strong>Voltage Compensation:</strong> Consistent elevator speed as battery drains",
-        "<strong>Encoder Configuration:</strong> Track elevator position accurately",
-        "<strong>Soft Limits:</strong> Prevent elevator from going beyond min/max height",
-        "<strong>Ramp Rates:</strong> Smooth acceleration and deceleration"
+        "<strong>Inversion:</strong> Positive input = Forward motion.",
+        "<strong>Idle Mode:</strong> Brake (Hold) vs Coast (Spin).",
+        "<strong>Current Limit:</strong> Protect motor/battery (e.g., 40A).",
+        "<strong>Voltage Comp:</strong> Consistent output despite battery drain (e.g., 12V).",
+        "<strong>Ramp Rate:</strong> Limit acceleration to prevent brownouts/wear."
       ]
     },
     {
-      "type": "text",
-      "title": "Motor Inversion",
-      "content": "Motor inversion determines whether positive power makes the motor spin forward or backward. For an elevator, you need positive power to move the elevator up and negative power to move it down.<br><br><strong>Testing Direction:</strong> Test your elevator motor direction before configuring inversion. If positive power makes the elevator go down instead of up, you need to invert the motor.<br><br><strong>Configuration:</strong> Set inversion based on your physical setup. You can invert the motor itself or handle inversion in your control code, but it's generally cleaner to configure it on the motor controller."
-    },
-    {
       "type": "code-tabs",
-      "title": "Configuring Motor Inversion for Elevator",
-      "content": "Configure motor inversion so positive power moves the elevator up:",
+      "title": "Configuration Code",
+      "content": "Applying these settings:",
       "tabs": [
         {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure motor inversion\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.inverted(false);  // or true, depending on your setup\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    com.revrobotics.ResetMode.kResetSafeParameters, \n    com.revrobotics.PersistMode.kPersistParameters);"
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\n\npublic class Drivetrain extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    // ... (other fields and methods)\n    \n    public void configureMotor() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Set motor direction\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        // Set neutral mode (Brake or Coast)\n        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n        \n        // Current limiting (Stator = motor protection, Supply = battery protection)\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 40.0;\n        \n        // Voltage compensation (maintains consistent output despite battery voltage)\n        config.Voltage.PeakForwardVoltage = 12.0;\n        config.Voltage.PeakReverseVoltage = -12.0;\n        \n        // Ramp rate: time to reach full output (reduces sudden changes)\n        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.25; // 0.25 seconds\n        \n        motor.getConfigurator().apply(config);\n    }\n    \n    // ... (rest of class)"
         },
         {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Configure so positive power moves elevator up\nconfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Idle/Neutral Mode (Brake Mode)",
-      "content": "For an elevator, you <strong>must</strong> use brake mode (not coast mode). Brake mode makes the motor actively resist rotation when it receives zero power, which prevents the elevator from falling due to gravity.<br><br><strong>Why Brake Mode:</strong><br>- Holds elevator position when stopped<br>- Prevents gravity from lowering the elevator<br>- Essential for safety and position control<br><br><strong>Coast Mode Warning:</strong> Never use coast mode for elevators. In coast mode, the motor free-spins and gravity will cause the elevator to fall, which is dangerous and prevents accurate position control."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Brake Mode for Elevator",
-      "content": "Always configure brake mode for elevators to hold position:",
-      "tabs": [
-        {
           "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure brake mode (essential for elevators to hold position)\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.idleMode(IdleMode.kBrake);\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Brake mode is essential for elevators to hold position\nconfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Current Limiting",
-      "content": "Current limiting protects your motor and battery from damage due to excessive current draw. Elevators can experience high loads when lifting heavy game pieces or when the mechanism binds, making current limiting especially important.<br><br><strong>SPARK MAX:</strong> Uses smart current limiting (continuous) and secondary current limiting (peak). Smart current limiting gradually reduces current when exceeded, preventing sudden stops.<br><br><strong>Talon FX:</strong> Uses stator current limiting (motor protection) and supply current limiting (battery protection). Both have threshold values and time limits.<br><br><strong>Configuration Values:</strong> Set current limits based on your motor's specifications. Typical values for elevator motors range from 30-50 amps depending on the motor and expected loads. Higher limits allow more lifting force but provide less protection."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Current Limits for Elevator",
-      "content": "Configure current limits to protect the motor while allowing sufficient lifting power:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure current limits\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.smartCurrentLimit(40);  // Smart current limit: 40 amps continuous\nconfig.secondaryCurrentLimit(60);  // Secondary limit: 60 amps peak (brief overloads)\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Stator current limiting (motor protection)\nconfig.CurrentLimits.StatorCurrentLimitEnable = true;\nconfig.CurrentLimits.StatorCurrentLimit = 40.0;\n// Supply current limiting (battery protection)\nconfig.CurrentLimits.SupplyCurrentLimitEnable = true;\nconfig.CurrentLimits.SupplyCurrentLimit = 40.0;\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Voltage Compensation",
-      "content": "As your robot battery drains during a match, the voltage decreases from around 12.6V when fully charged to around 11.0V near the end of a match. This voltage drop causes the elevator to move slower as the battery drains, making autonomous routines inconsistent and manual control feel different throughout the match.<br><br><strong>How It Works:</strong> Voltage compensation automatically adjusts motor output to maintain consistent performance regardless of battery voltage. You specify a nominal voltage (typically 12.0V), and the motor controller scales its output to compensate for the difference between actual and nominal voltage.<br><br><strong>Benefits for Elevators:</strong><br>- Consistent elevator speed throughout the match<br>- Predictable autonomous routines<br>- Same \"feel\" whether battery is full or nearly empty<br><br><strong>Always Enable:</strong> Voltage compensation is essential for elevators where consistent performance is critical."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Voltage Compensation for Elevator",
-      "content": "Enable voltage compensation to maintain consistent elevator speed:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure voltage compensation with 12.0V nominal voltage\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.voltageCompensation(12.0);\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Set peak forward and reverse voltage for compensation\nconfig.Voltage.PeakForwardVoltage = 12.0;\nconfig.Voltage.PeakReverseVoltage = -12.0;\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Encoder Configuration",
-      "content": "Elevators need accurate position feedback to move to specific heights. The encoder tracks the elevator's position, allowing you to move to precise heights and hold those positions.<br><br><strong>SPARK MAX:</strong> NEO motors have a built-in encoder with 42 counts per revolution. You can also configure position and velocity conversion factors to account for gear ratios.<br><br><strong>Talon FX:</strong> Has an integrated encoder with 2048 counts per revolution. You can configure the sensor-to-mechanism ratio to account for gear ratios and spool diameters.<br><br><strong>Position Tracking:</strong> Set the encoder position to zero when the elevator is at its lowest position (home position). This establishes a reference point for all subsequent movements.<br><br><strong>Gear Ratio:</strong> If your elevator uses gears or a spool, configure the conversion factors so encoder values represent actual elevator height, not just motor rotations."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Encoder for Elevator Position Tracking",
-      "content": "Configure the encoder to track elevator position accurately:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.RelativeEncoder;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\nRelativeEncoder encoder = m_elevatorMotor.getEncoder();\n\n// Configure encoder conversion factors\nSparkMaxConfig config = new SparkMaxConfig();\n// If you have a gear ratio or spool, set conversion factors\n// Example: 10:1 gear ratio means 1 motor rotation = 0.1 elevator rotations\nconfig.encoder.positionConversionFactor(1.0 / 10.0);  // Adjust based on your mechanism\nconfig.encoder.velocityConversionFactor(1.0 / 10.0);\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);\n\n// Reset position to zero at home (lowest position)\nencoder.setPosition(0);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Configure integrated encoder as feedback sensor\nconfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;\n// Set sensor-to-mechanism ratio (gear ratio and spool diameter)\n// Example: 10:1 gear ratio means 10 motor rotations = 1 elevator rotation\nconfig.Feedback.SensorToMechanismRatio = 10.0;  // Adjust based on your mechanism\nconfig.Feedback.FeedbackRotorOffset = 0.0;  // Offset in rotations\nm_elevatorMotor.getConfigurator().apply(config);\n// Reset position to zero at home (lowest position)\nm_elevatorMotor.setPosition(0);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Soft Limits",
-      "content": "Soft limits are software-based position limits that prevent the elevator from moving beyond safe minimum and maximum heights. They provide an additional safety layer beyond mechanical limits (like limit switches).<br><br><strong>Why Use Soft Limits:</strong><br>- Prevent over-extension or over-compression<br>- Protect mechanism from damage<br>- Provide safety backup if limit switches fail<br>- Can be configured based on measured positions<br><br><strong>Configuration:</strong> Set the minimum position (typically 0.0 at home) and maximum position (measured based on your elevator's travel). Enable soft limits after you've verified the values are correct.<br><br><strong>Important:</strong> Soft limits only work when using position control or when you check position in your code. They don't automatically stop open-loop (percent output) control."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Soft Limits for Elevator",
-      "content": "Configure soft limits to prevent elevator from exceeding safe positions:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure soft limits in encoder units (after configuring conversion factor)\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.softLimit.reverseSoftLimit(0.0f);  // Min height\nconfig.softLimit.forwardSoftLimit(100.0f);  // Max height\nconfig.softLimit.reverseSoftLimitEnabled(true);\nconfig.softLimit.forwardSoftLimitEnabled(true);\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Configure soft limits in rotations (after configuring sensor-to-mechanism ratio)\nconfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;\nconfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;  // Min height\nconfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;\nconfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10.0;  // Max height\nm_elevatorMotor.getConfigurator().apply(config);"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Ramp Rates",
-      "content": "Ramp rates control how quickly the motor reaches its commanded output. For elevators, ramping prevents sudden starts and stops, which reduces wear on the mechanism and makes movement smoother.<br><br><strong>Open Loop Ramp Rate:</strong> Controls how long it takes to reach full output when using percent output control (e.g., <code>motor.set(0.5)</code>). This affects manual control smoothness.<br><br><strong>Closed Loop Ramp Rate:</strong> Controls acceleration when using closed-loop control (PID, motion profiling). This affects autonomous movement smoothness.<br><br><strong>Typical Values:</strong> For elevators, ramp rates of 0.25 to 0.5 seconds work well. Shorter ramps provide faster response but may be jerky. Longer ramps are smoother but may feel sluggish.<br><br><strong>Balancing Act:</strong> Find a ramp rate that's smooth enough to prevent jerky motion but fast enough to feel responsive."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Configuring Ramp Rates for Smooth Elevator Motion",
-      "content": "Configure ramp rates to prevent jerky elevator movement:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "import com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\nSparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n\n// Configure ramp rates\nSparkMaxConfig config = new SparkMaxConfig();\nconfig.openLoopRampRate(0.5);  // Open loop ramp: time in seconds to reach full output\nconfig.closedLoopRampRate(0.5);  // Closed loop ramp: for PID/motion profiling control\n\n// Apply configuration (persist during initial setup)\nm_elevatorMotor.configure(config, \n    ResetMode.kResetSafeParameters, \n    PersistMode.kPersistParameters);"
-        },
-        {
-          "label": "Talon FX",
-          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Closed loop ramp rate for smooth acceleration\nconfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;  // Time in seconds\nconfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.5;\nm_elevatorMotor.getConfigurator().apply(config);\n// Note: Talon FX handles open loop ramping differently"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Complete Elevator Configuration",
-      "content": "Now that we've covered all the essential configuration parameters, let's see how they all come together in a complete elevator subsystem. This example shows a fully configured elevator with all parameters set appropriately for reliable, safe operation."
-    },
-    {
-      "type": "code-tabs",
-      "title": "Complete Elevator Subsystem Example",
-      "content": "A fully configured elevator subsystem with all essential settings:",
-      "tabs": [
-        {
-          "label": "SPARK MAX",
-          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.RelativeEncoder;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Elevator extends SubsystemBase {\n    private final SparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n    private final RelativeEncoder m_encoder = m_elevatorMotor.getEncoder();\n    \n    // Configuration constants\n    private static final int CURRENT_LIMIT = 40;\n    private static final int SECONDARY_CURRENT_LIMIT = 60;\n    private static final double VOLTAGE_COMPENSATION = 12.0;\n    private static final double RAMP_RATE = 0.5;\n    private static final double MAX_HEIGHT = 100.0;  // In encoder units\n    private static final double GEAR_RATIO = 10.0;  // 10:1 gear ratio\n    \n    public Elevator() {\n        SparkMaxConfig config = new SparkMaxConfig();\n\n        // Motor inversion: ensure positive power moves elevator up\n        config.inverted(false);  // Adjust based on your setup\n        \n        // Brake mode: essential for holding position\n        config.idleMode(IdleMode.kBrake);\n        \n        // Current limiting: protect motor and battery\n        config.smartCurrentLimit(CURRENT_LIMIT);\n        config.secondaryCurrentLimit(SECONDARY_CURRENT_LIMIT);\n        \n        // Voltage compensation: consistent speed throughout match\n        config.voltageCompensation(VOLTAGE_COMPENSATION);\n        \n        // Ramp rates: smooth acceleration and deceleration\n        config.openLoopRampRate(RAMP_RATE);\n        config.closedLoopRampRate(RAMP_RATE);\n        \n        // Encoder configuration: track elevator position\n        config.encoder.positionConversionFactor(1.0 / GEAR_RATIO);\n        config.encoder.velocityConversionFactor(1.0 / GEAR_RATIO);\n        \n        // Soft limits: prevent over-extension\n        config.softLimit.reverseSoftLimit(0.0f);\n        config.softLimit.forwardSoftLimit((float)MAX_HEIGHT);\n        config.softLimit.reverseSoftLimitEnabled(true);\n        config.softLimit.forwardSoftLimitEnabled(true);\n        \n        // Apply configuration (persist during initial setup)\n        m_elevatorMotor.configure(config, \n            ResetMode.kResetSafeParameters, \n            PersistMode.kPersistParameters);\n        \n        // Reset encoder position to zero at home position\n        m_encoder.setPosition(0);\n    }\n    \n    public void setPower(double power) {\n        m_elevatorMotor.set(power);\n    }\n    \n    public double getPosition() {\n        return m_encoder.getPosition();\n    }\n}"
-        },
-        {
-          "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.signals.FeedbackSensorSourceValue;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Elevator extends SubsystemBase {\n    private final TalonFX m_elevatorMotor = new TalonFX(3);\n    \n    // Configuration constants\n    private static final double CURRENT_LIMIT = 40.0;\n    private static final double VOLTAGE_PEAK = 12.0;\n    private static final double RAMP_RATE = 0.5;\n    private static final double MAX_HEIGHT = 10.0;  // In rotations\n    private static final double GEAR_RATIO = 10.0;  // 10:1 gear ratio\n    \n    public Elevator() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Motor inversion: ensure positive power moves elevator up\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        \n        // Brake mode: essential for holding position\n        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n        \n        // Current limiting: protect motor and battery\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = CURRENT_LIMIT;\n        \n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;\n        \n        // Voltage compensation: consistent speed throughout match\n        config.Voltage.PeakForwardVoltage = VOLTAGE_PEAK;\n        config.Voltage.PeakReverseVoltage = -VOLTAGE_PEAK;\n        \n        // Encoder configuration: track elevator position\n        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;\n        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;\n        config.Feedback.FeedbackRotorOffset = 0.0;\n        \n        // Soft limits: prevent over-extension\n        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;\n        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_HEIGHT;\n        \n        // Closed loop ramp rate: smooth acceleration\n        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = RAMP_RATE;\n        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = RAMP_RATE;\n        \n        // Apply all configuration\n        m_elevatorMotor.getConfigurator().apply(config);\n        \n        // Reset position to zero at home position\n        m_elevatorMotor.setPosition(0);\n    }\n    \n    public void setPower(double power) {\n        m_elevatorMotor.set(power);\n    }\n    \n    public double getPosition() {\n        return m_elevatorMotor.getPosition().getValueAsDouble();\n    }\n}"
+          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Drivetrain extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // ... (other fields and methods)\n    \n    public void configureMotor() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        \n        // Chain configuration methods\n        config\n            .inverted(false)              // Motor direction\n            .idleMode(IdleMode.kBrake)    // Neutral mode\n            .smartCurrentLimit(40)        // Current limit in amps\n            .voltageCompensation(12.0)    // Voltage compensation\n            .closedLoopRampRate(0.25);    // Ramp rate in seconds\n        \n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    // ... (rest of class)"
         }
       ]
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Related",
       "links": [
         {
           "label": "Motor PID Control",
           "id": "motor-pid-control"
         },
         {
-          "label": "Motor Current Limiting",
+          "label": "Current Limiting Details",
           "id": "motor-current-limiting"
-        },
-        {
-          "label": "SPARK MAX Setup",
-          "id": "spark-max-setup"
-        },
-        {
-          "label": "Talon FX Setup",
-          "id": "talon-fx-setup"
         }
       ]
     }

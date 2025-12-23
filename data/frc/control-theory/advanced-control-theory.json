@@ -1,81 +1,48 @@
 {
-  "title": "Advanced Control Theory",
+  "title": "Advanced Control",
   "sections": [
     {
       "type": "text",
-      "title": "Introduction to Advanced Control",
-      "content": "Advanced control theory encompasses sophisticated control techniques beyond basic PID control. These methods include state-space control, optimal control (LQR), adaptive control, and multi-input multi-output (MIMO) systems. While these techniques are more complex than PID, they can provide superior performance for challenging control problems.<br><br>In FRC, advanced control is typically used for complex mechanisms, systems with multiple coupled outputs, or when optimal performance is critical. Understanding these concepts helps you recognize when advanced control might be beneficial, even if full implementation may be beyond typical FRC needs.<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/index.html' target='_blank'>WPILib: State-Space Control</a>"
+      "title": "Overview",
+      "content": "Beyond PID, advanced control techniques like State-Space, LQR, and Feedforward offer superior performance for complex systems. These are useful for multi-joint arms, swerve drives, or systems requiring high precision."
     },
     {
       "type": "rules-box",
-      "title": "Advanced Control Use Cases",
-      "subtitle": "When advanced control is needed:",
+      "title": "Techniques",
+      "subtitle": "Key concepts:",
       "items": [
-        "Complex systems (multiple coupled states)",
-        "Multi-input multi-output (MIMO) control",
-        "Optimal control (minimize cost function)",
-        "Systems with constraints (state limits, input limits)",
-        "Adaptive control (changing system parameters)",
-        "Nonlinear systems (beyond linear control)",
-        "Precision requirements (extremely accurate control)",
-        "Research and development (exploring new techniques)"
+        "<strong>State-Space:</strong> Models systems using state variables (position, velocity) and matrix equations.",
+        "<strong>LQR (Linear Quadratic Regulator):</strong> Optimal control that balances error reduction with control effort.",
+        "<strong>Feedforward:</strong> Predicts required output based on physics models (gravity, friction, inertia).",
+        "<strong>MIMO:</strong> Multi-Input Multi-Output control for coupled systems (e.g., Swerve)."
       ]
     },
     {
       "type": "text",
       "title": "State-Space Control",
-      "content": "State-space control represents systems using state variables, inputs, and outputs:<br><br><strong>What is State-Space:</strong> A mathematical representation where the system's behavior is described by state variables (position, velocity, etc.), control inputs (motor voltages), and outputs (sensor readings). The system is represented as differential equations.<br><br><strong>State Variables:</strong> Variables that completely describe the system's current condition. For an arm, state variables might be angle and angular velocity. For a drivetrain, they might be position, velocity, and heading.<br><br><strong>State-Space Equations:</strong> <code>ẋ = Ax + Bu</code> (state equation) and <code>y = Cx + Du</code> (output equation), where x is state, u is input, y is output, and A, B, C, D are matrices.<br><br><strong>When to Use:</strong> State-space is useful for systems with multiple states that interact, systems requiring optimal control, or when you need to control multiple outputs simultaneously."
+      "content": "Uses the equation <code>ẋ = Ax + Bu</code> to model how system state changes. This allows controlling multiple coupled variables (like arm angle and velocity) simultaneously. WPILib provides <code>LinearSystem</code> and <code>LinearSystemLoop</code> for implementation."
     },
     {
       "type": "text",
-      "title": "LQR Control (Linear Quadratic Regulator)",
-      "content": "LQR is an optimal control technique that minimizes a cost function:<br><br><strong>What is LQR:</strong> Linear Quadratic Regulator finds the optimal control law that minimizes a quadratic cost function. It balances state error and control effort to find the best control strategy.<br><br><strong>Optimal Control Theory:</strong> LQR finds the control input that minimizes: <code>J = ∫(x^T Q x + u^T R u) dt</code>, where Q penalizes state error and R penalizes control effort.<br><br><strong>Q and R Matrices:</strong> Q matrix determines how much to penalize state errors (larger Q = more aggressive correction). R matrix determines how much to penalize control effort (larger R = more conservative control).<br><br><strong>When to Use:</strong> LQR is useful when you need optimal performance, have well-defined system models, and want to balance multiple objectives (accuracy vs control effort)."
+      "title": "LQR (Optimal Control)",
+      "content": "LQR finds the 'best' control gains by minimizing a cost function. You tune <strong>Q</strong> (penalty for error) and <strong>R</strong> (penalty for effort).<br>High Q = aggressive correction.<br>High R = smooth/efficient motion."
     },
     {
       "type": "text",
-      "title": "Adaptive Control",
-      "content": "Adaptive control adjusts controller parameters based on system behavior:<br><br><strong>What is Adaptive Control:</strong> Control systems that automatically adjust their parameters (like PID gains) based on observed system performance. The controller adapts to changing conditions or system characteristics.<br><br><strong>Self-Tuning Controllers:</strong> Controllers that measure system response and automatically adjust gains to maintain desired performance. Useful when system characteristics change over time or vary with conditions.<br><br><strong>When Adaptive Control is Useful:</strong> Systems with changing parameters (battery voltage changes, wear over time), systems with uncertain parameters, or when manual tuning is difficult. Can improve performance in varying conditions.<br><br><strong>Complexity:</strong> Adaptive control is more complex than fixed-parameter control and requires careful design to ensure stability."
-    },
-    {
-      "type": "text",
-      "title": "Multi-Input Multi-Output (MIMO) Control",
-      "content": "MIMO control handles systems with multiple inputs and outputs:<br><br><strong>What is MIMO:</strong> Systems where multiple control inputs affect multiple outputs simultaneously. For example, a swerve drivetrain where wheel angles and speeds must be coordinated to achieve desired robot motion.<br><br><strong>Coupling:</strong> In MIMO systems, inputs and outputs are coupled - changing one input affects multiple outputs. This requires coordinated control rather than independent control of each output.<br><br><strong>Control Approaches:</strong> MIMO systems can use state-space control, decoupling techniques, or coordinated PID controllers. The complexity depends on the degree of coupling.<br><br><strong>When to Use:</strong> MIMO control is needed for systems like swerve drivetrains, multi-axis arms, or any system where outputs must be coordinated."
-    },
-    {
-      "type": "text",
-      "title": "Advanced Control in FRC",
-      "content": "Advanced control techniques have real-world FRC applications:<br><br><strong>Swerve Drivetrains:</strong> MIMO control coordinates wheel angles and speeds. State-space or coordinated control can improve performance over independent control.<br><br><strong>Complex Arms:</strong> Multi-joint arms with gravity and coupling can benefit from state-space control or adaptive techniques.<br><br><strong>Optimal Path Following:</strong> LQR can optimize trajectory following, balancing accuracy and control effort.<br><br><strong>When It's Worth the Complexity:</strong> Advanced control is worth implementing when basic PID doesn't provide sufficient performance, when you have well-defined system models, or when optimal performance is critical for competition success.<br><br><strong>Start Simple:</strong> Always start with basic PID control. Only move to advanced techniques if PID doesn't meet your requirements. Advanced control adds complexity and requires more development time."
-    },
-    {
-      "type": "code",
-      "title": "State-Space Representation Example",
-      "content": "package frc.robot.examples;\n\n/**\n * Conceptual example of state-space representation for an arm.\n * This demonstrates the concept - full implementation requires\n * WPILib's state-space control classes.\n */\npublic class StateSpaceConcept {\n    // State variables: [angle, angular_velocity]\n    // For an arm, these completely describe the system state\n    \n    // State equation: ẋ = Ax + Bu\n    // Where:\n    //   x = [angle, angular_velocity]^T (state vector)\n    //   u = motor_voltage (input)\n    //   A = system matrix (describes how state evolves)\n    //   B = input matrix (describes how input affects state)\n    \n    // Output equation: y = Cx + Du\n    // Where:\n    //   y = sensor_reading (output)\n    //   C = output matrix\n    //   D = feedthrough matrix\n    \n    // In practice, WPILib provides LinearSystem and StateSpaceController\n    // classes that handle the mathematics for you.\n    \n    // Key advantage: Can control multiple states simultaneously,\n    // optimize for multiple objectives, handle constraints\n}"
-    },
-    {
-      "type": "text",
-      "title": "When to Use Advanced Control",
-      "content": "Deciding when to use advanced control techniques:<br><br><strong>Use Advanced Control When:</strong> Basic PID doesn't provide sufficient performance, you have a well-defined system model, you need to optimize multiple objectives, you're controlling coupled systems, or optimal performance is critical.<br><br><strong>Stick with PID When:</strong> PID provides adequate performance, system is simple or well-behaved, development time is limited, or you don't have system models. PID is sufficient for most FRC applications.<br><br><strong>Hybrid Approach:</strong> Use PID for most mechanisms, advanced control for specific challenging systems. Don't over-engineer - use the simplest solution that meets your requirements."
-    },
-    {
-      "type": "text",
-      "title": "Resources for Advanced Control",
-      "content": "Further learning and tools for advanced control:<br><br><strong>WPILib Documentation:</strong> WPILib provides state-space control classes and examples. The documentation includes tutorials and API references for advanced control.<br><br><strong>Control Theory Courses:</strong> Online courses and textbooks on control theory provide deeper understanding. Topics include state-space methods, optimal control, and system identification.<br><br><strong>Characterization Tools:</strong> WPILib's characterization tools help you build accurate system models needed for advanced control. Good models are essential for advanced techniques.<br><br><strong>Simulation:</strong> Test advanced control in simulation before deploying to hardware. Simulation helps verify correctness and tune parameters safely."
+      "title": "When to Use",
+      "content": "<strong>PID:</strong> Sufficient for 90% of FRC mechanisms (shooters, simple arms, intakes).<br><strong>Advanced Control:</strong> Needed for inverted pendulums, balancing robots, or highly coupled multi-joint arms."
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Resources",
       "links": [
+        {
+          "label": "WPILib State-Space",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/index.html"
+        },
         {
           "label": "PID Control",
           "id": "pid-control"
-        },
-        {
-          "label": "Feedforward Control",
-          "id": "feedforward-control"
-        },
-        {
-          "label": "Motion Profiling Basics",
-          "id": "motion-profiling-basics"
         }
       ]
     }

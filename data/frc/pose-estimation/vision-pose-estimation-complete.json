@@ -3,311 +3,50 @@
     "sections": [
         {
             "type": "text",
-            "title": "Why Vision-Based Pose Estimation?",
-            "content": "Imagine your robot driving across the field, relying solely on wheel encoders and a gyro. Over time, small errors accumulate—wheel slip, surface variations, measurement inaccuracies. Before you know it, your robot thinks it's in one place, but it's actually several feet away. This is drift, and it's the fundamental challenge of odometry-based localization.<br><br>Vision-based pose estimation solves this problem by providing absolute positioning. Instead of accumulating error over time, your robot can look at the field, see known markers (AprilTags), and instantly know exactly where it is. It's like having GPS for your robot—periodic corrections that eliminate drift and ensure accurate navigation.<br><br>When combined with odometry through sensor fusion, you get the best of both worlds: continuous, fast tracking from odometry, with periodic absolute corrections from vision. This creates a robust, accurate pose estimation system that works reliably in competition conditions."
+            "title": "Overview",
+            "content": "Vision-based pose estimation uses cameras to observe the environment and calculate the robot's position. In FRC, this primarily relies on <strong>AprilTags</strong>. Unlike odometry, which tracks relative movement, vision provides absolute coordinates on the field. This allows a robot to \"localize\" itself even after wheel slip or collisions."
         },
         {
             "type": "text",
-            "title": "Understanding AprilTags",
-            "content": "AprilTags are fiducial markers—visual markers with unique black and white patterns that encode a specific ID. Think of them as QR codes designed for robotics. Each AprilTag on an FRC field has a known position and orientation, specified in the official field layout documentation.<br><br>When your camera detects an AprilTag, the vision system can calculate the camera's position relative to that tag. Since the tag's field position is known, and the camera's position relative to your robot is known, the system can determine your robot's exact pose on the field. This happens in real-time, providing instant absolute positioning without any accumulated error.<br><br>FRC fields typically have AprilTags placed at strategic locations: scoring areas, corners, and mid-field positions. Each tag has a unique ID that corresponds to its field position, allowing your robot to identify which tag it's seeing and calculate its pose accordingly."
+            "title": "How It Works",
+            "content": "1. <strong>Detection:</strong> The camera identifies an AprilTag and its ID.<br>2. <strong>Lookup:</strong> The system looks up the tag's known field position (X, Y, Z, Rotation) from a standard field layout map.<br>3. <strong>Solve PnP:</strong> Using the tag's apparent size and orientation in the camera frame, the system calculates the camera's position relative to the tag.<br>4. <strong>Transformation:</strong> The system applies the camera-to-robot offset to find the robot's position on the field."
         },
         {
             "type": "text",
-            "title": "The Vision Processing Pipeline",
-            "content": "Here's how vision pose estimation works, step by step:<br><br><strong>Step 1: Image Capture</strong> - Your camera continuously captures images of the field at 10-30 frames per second. The camera needs to be properly calibrated to account for lens distortion and measure accurate distances.<br><br><strong>Step 2: Tag Detection</strong> - The vision processor analyzes each image, searching for AprilTag patterns. When a tag is found, the system identifies its unique ID and measures its position in the image.<br><br><strong>Step 3: Pose Calculation</strong> - Using the tag's known size and position in the image, the system calculates the camera's position and orientation relative to the tag. This involves complex geometry and camera calibration data.<br><br><strong>Step 4: Robot Pose Conversion</strong> - The camera pose is converted to robot pose by accounting for the camera's mounting position and orientation relative to the robot center. This gives you the robot's actual position on the field."
-        },
-        {
-            "type": "text",
-            "title": "Creating the Vision Subsystem",
-            "content": "Now let's create a vision subsystem that can detect AprilTags and provide pose estimates. Both PhotonVision and Limelight are excellent choices for FRC vision processing. PhotonVision is an open-source solution that runs on coprocessors, while Limelight is a dedicated smart camera. Both provide similar functionality for AprilTag detection and robot localization.<br><br>For PhotonVision, you'll configure your camera in the PhotonVision UI and use the PhotonCamera class in your code. For Limelight, you'll use the LimelightHelpers utility class which simplifies accessing Limelight's NetworkTables data. Both systems can provide pose estimates that work seamlessly with WPILib's PoseEstimator."
+            "title": "Implementation Approaches",
+            "content": "You can implement vision pose estimation using specific libraries that handle the complex math:<br><br><strong>PhotonLib (PhotonVision):</strong> Uses the <code>PhotonPoseEstimator</code> class. It takes a field layout, camera properties, and pipeline results to output a robot pose.<br><br><strong>LimelightHelpers:</strong> Limelight computes the pose on-board. You simply retrieve the <code>BotPose</code> array from NetworkTables (or use the helper methods) to get the calculated field position."
         },
         {
             "type": "code-tabs",
-            "title": "Step 1: Creating the Camera Object",
-            "description": "The first step is to create a camera object that connects to your vision system. For PhotonVision, you create a PhotonCamera object with the camera name that matches your PhotonVision configuration. For Limelight, you don't need to create a camera object—instead, you'll use the LimelightHelpers class with your camera's name (or \"limelight\" for the default camera).",
+            "title": "Example: PhotonPoseEstimator",
+            "description": "Setting up the estimator with PhotonVision. This requires defining the physical transform of the camera relative to the robot center.",
             "tabs": [
                 {
-                    "label": "PhotonVision",
-                    "code": "import org.photonvision.PhotonCamera;\n\npublic class VisionSubsystem {\n    private final PhotonCamera m_camera;\n    \n    public VisionSubsystem() {\n        // Camera name must match the name configured in PhotonVision UI\n        m_camera = new PhotonCamera(\"MainCamera\");\n    }\n}"
+                    "label": "Setup",
+                    "code": "package frc.robot.subsystems;\n\nimport org.photonvision.PhotonCamera;\nimport org.photonvision.PhotonPoseEstimator;\nimport org.photonvision.PhotonPoseEstimator.PoseStrategy;\nimport edu.wpi.first.apriltag.AprilTagFieldLayout;\nimport edu.wpi.first.apriltag.AprilTagFields;\nimport edu.wpi.first.math.geometry.Transform3d;\nimport edu.wpi.first.math.geometry.Translation3d;\nimport edu.wpi.first.math.geometry.Rotation3d;\n\npublic class VisionSubsystem extends SubsystemBase {\n    private PhotonCamera m_camera = new PhotonCamera(\"MainCamera\");\n    private PhotonPoseEstimator estimator;\n    \n    public VisionSubsystem() {\n        // Define camera position relative to robot center\n        // 0.5m forward, 0.0m left/right, 0.5m up\n        Transform3d robotToCamera = new Transform3d(\n            new Translation3d(0.5, 0.0, 0.5),\n            new Rotation3d(0, 0, 0) // No rotation\n        );\n\n        // Load AprilTag field layout for current game year\n        AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();\n\n        // Create pose estimator\n        estimator = new PhotonPoseEstimator(\n            fieldLayout,\n            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, // Use multi-tag when available\n            m_camera,\n            robotToCamera\n        );\n    }\n}"
                 },
                 {
-                    "label": "Limelight",
-                    "code": "import frc.robot.LimelightHelpers;\n\npublic class VisionSubsystem {\n    // Limelight camera name (use \"limelight\" for default)\n    private static final String LIMELIGHT_NAME = \"limelight\";\n    \n    public VisionSubsystem() {\n        // No camera object needed - LimelightHelpers handles connection\n        // Just store the camera name for later use\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "code-tabs",
-            "title": "Step 2: Configuring Camera Pose",
-            "description": "Your camera needs to know its position and orientation relative to your robot's center. This is critical for accurate pose estimation—the vision system uses this information to convert camera-relative measurements into robot-relative poses. For PhotonVision, you configure this in the PhotonVision UI under Camera Settings. For Limelight, you set it programmatically using setCameraPose_RobotSpace().",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "import edu.wpi.first.math.geometry.Transform3d;\n\npublic class VisionSubsystem {\n    // Camera position relative to robot center (in meters)\n    // Configure this in PhotonVision UI under \"Camera Settings\" -> \"Robot to Camera Transform\"\n    private static final Transform3d kRobotToCamera = new Transform3d(\n        0.3, 0.0, 0.2,  // X, Y, Z position (meters)\n        new edu.wpi.first.math.geometry.Rotation3d()  // Rotation\n    );\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "import frc.robot.LimelightHelpers;\n\npublic class VisionSubsystem {\n    private static final String LIMELIGHT_NAME = \"limelight\";\n    \n    public VisionSubsystem() {\n        // Configure camera pose relative to robot (in meters and degrees)\n        // Parameters: Forward, Side, Up, Roll, Pitch, Yaw\n        LimelightHelpers.setCameraPose_RobotSpace(\n            LIMELIGHT_NAME,\n            0.3,   // Forward (meters)\n            0.0,   // Side (meters)\n            0.2,   // Up (meters)\n            0.0,   // Roll (degrees)\n            0.0,   // Pitch (degrees)\n            0.0    // Yaw (degrees)\n        );\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "code-tabs",
-            "title": "Step 3: Getting AprilTag Detections",
-            "description": "Once your camera is configured, you can retrieve AprilTag detections. Both systems provide methods to check if targets are detected and to get information about those targets. PhotonVision uses getLatestResult() to get the current pipeline results, while Limelight uses getLatestResults() to get JSON-formatted results.",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "import org.photonvision.targeting.PhotonPipelineResult;\nimport org.photonvision.targeting.PhotonTrackedTarget;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private final PhotonCamera m_camera;\n    \n    public Optional<Integer> getDetectedTagId() {\n        PhotonPipelineResult result = m_camera.getLatestResult();\n        \n        if (result.hasTargets()) {\n            PhotonTrackedTarget bestTarget = result.getBestTarget();\n            int fiducialId = bestTarget.getFiducialId();\n            \n            // Fiducial ID >= 0 means it's an AprilTag\n            if (fiducialId >= 0) {\n                return Optional.of(fiducialId);\n            }\n        }\n        \n        return Optional.empty();\n    }\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "import frc.robot.LimelightHelpers;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private static final String LIMELIGHT_NAME = \"limelight\";\n    \n    public Optional<Integer> getDetectedTagId() {\n        LimelightHelpers.LimelightResults results = LimelightHelpers.getLatestResults(LIMELIGHT_NAME);\n        \n        if (results.targetingResults.targets_Fiducials.length > 0) {\n            LimelightHelpers.LimelightTarget_Fiducial target = \n                results.targetingResults.targets_Fiducials[0];\n            \n            return Optional.of((int) target.fiducialID);\n        }\n        \n        return Optional.empty();\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "code-tabs",
-            "title": "Step 4: Extracting Pose Estimates",
-            "description": "The most important part of vision-based pose estimation is extracting the robot's pose from AprilTag detections. PhotonVision provides getEstimatedPose() which automatically calculates the robot pose when the field layout is configured. Limelight provides getBotPoseEstimate_wpiBlue() which returns a PoseEstimate object containing the pose, timestamp, and metadata about the detection quality.",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "import edu.wpi.first.math.geometry.Pose2d;\nimport org.photonvision.targeting.PhotonPipelineResult;\nimport org.photonvision.targeting.PhotonTrackedTarget;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private final PhotonCamera m_camera;\n    \n    public Optional<Pose2d> getAprilTagPose() {\n        PhotonPipelineResult result = m_camera.getLatestResult();\n        \n        if (result.hasTargets()) {\n            PhotonTrackedTarget bestTarget = result.getBestTarget();\n            \n            // Check if it's a valid AprilTag (fiducial ID >= 0)\n            if (bestTarget.getFiducialId() >= 0) {\n                var poseEstimate = result.getEstimatedPose();\n                \n                if (poseEstimate.isPresent()) {\n                    return Optional.of(poseEstimate.get().toPose2d());\n                }\n            }\n        }\n        \n        return Optional.empty();\n    }\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "import edu.wpi.first.math.geometry.Pose2d;\nimport frc.robot.LimelightHelpers;\nimport frc.robot.LimelightHelpers.PoseEstimate;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private static final String LIMELIGHT_NAME = \"limelight\";\n    \n    public Optional<PoseEstimate> getAprilTagPoseEstimate() {\n        // Get MegaTag pose estimate in WPILib Blue coordinate system\n        // For 2024+, always use wpiBlue regardless of alliance\n        PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);\n        \n        // Validate the pose estimate\n        if (LimelightHelpers.validPoseEstimate(poseEstimate)) {\n            return Optional.of(poseEstimate);\n        }\n        \n        return Optional.empty();\n    }\n    \n    public Optional<Pose2d> getAprilTagPose() {\n        PoseEstimate estimate = getAprilTagPoseEstimate().orElse(null);\n        \n        if (estimate != null) {\n            return Optional.of(estimate.pose);\n        }\n        \n        return Optional.empty();\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "code-tabs",
-            "title": "Complete Vision Subsystem",
-            "description": "Here's the complete vision subsystem implementation combining all the steps above. For Limelight, you'll need to add the LimelightHelpers.java file to your project. Download it from the Limelight documentation.",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Transform3d;\nimport org.photonvision.PhotonCamera;\nimport org.photonvision.targeting.PhotonPipelineResult;\nimport org.photonvision.targeting.PhotonTrackedTarget;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private final PhotonCamera m_camera;\n    \n    // Camera position relative to robot center (in meters)\n    // Configure this in PhotonVision UI under \"Camera Settings\" -> \"Robot to Camera Transform\"\n    private static final Transform3d kRobotToCamera = new Transform3d(\n        0.3, 0.0, 0.2,  // X, Y, Z position (meters)\n        new edu.wpi.first.math.geometry.Rotation3d()  // Rotation\n    );\n    \n    public VisionSubsystem() {\n        // Camera name must match the name configured in PhotonVision UI\n        m_camera = new PhotonCamera(\"MainCamera\");\n    }\n    \n    public Optional<Pose2d> getAprilTagPose() {\n        PhotonPipelineResult result = m_camera.getLatestResult();\n        \n        if (result.hasTargets()) {\n            PhotonTrackedTarget bestTarget = result.getBestTarget();\n            \n            if (bestTarget.getFiducialId() >= 0) {\n                var poseEstimate = result.getEstimatedPose();\n                \n                if (poseEstimate.isPresent()) {\n                    return Optional.of(poseEstimate.get().toPose2d());\n                }\n            }\n        }\n        \n        return Optional.empty();\n    }\n    \n    public Optional<Integer> getDetectedTagId() {\n        PhotonPipelineResult result = m_camera.getLatestResult();\n        \n        if (result.hasTargets()) {\n            PhotonTrackedTarget bestTarget = result.getBestTarget();\n            int fiducialId = bestTarget.getFiducialId();\n            \n            if (fiducialId >= 0) {\n                return Optional.of(fiducialId);\n            }\n        }\n        \n        return Optional.empty();\n    }\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport frc.robot.LimelightHelpers;\nimport frc.robot.LimelightHelpers.PoseEstimate;\nimport java.util.Optional;\n\npublic class VisionSubsystem {\n    private static final String LIMELIGHT_NAME = \"limelight\";\n    \n    public VisionSubsystem() {\n        // Configure Limelight pipeline (0-9)\n        // Set pipeline type to \"Fiducial Markers\" in Limelight UI\n        LimelightHelpers.setPipelineIndex(LIMELIGHT_NAME, 0);\n        \n        // Configure camera pose relative to robot (in meters and degrees)\n        LimelightHelpers.setCameraPose_RobotSpace(\n            LIMELIGHT_NAME,\n            0.3,   // Forward (meters)\n            0.0,   // Side (meters)\n            0.2,   // Up (meters)\n            0.0,   // Roll (degrees)\n            0.0,   // Pitch (degrees)\n            0.0    // Yaw (degrees)\n        );\n    }\n    \n    public Optional<PoseEstimate> getAprilTagPoseEstimate() {\n        PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);\n        \n        if (LimelightHelpers.validPoseEstimate(poseEstimate)) {\n            return Optional.of(poseEstimate);\n        }\n        \n        return Optional.empty();\n    }\n    \n    public Optional<Pose2d> getAprilTagPose() {\n        PoseEstimate estimate = getAprilTagPoseEstimate().orElse(null);\n        \n        if (estimate != null) {\n            return Optional.of(estimate.pose);\n        }\n        \n        return Optional.empty();\n    }\n    \n    public Optional<Integer> getDetectedTagId() {\n        LimelightHelpers.LimelightResults results = LimelightHelpers.getLatestResults(LIMELIGHT_NAME);\n        \n        if (results.targetingResults.targets_Fiducials.length > 0) {\n            LimelightHelpers.LimelightTarget_Fiducial target = \n                results.targetingResults.targets_Fiducials[0];\n            \n            return Optional.of((int) target.fiducialID);\n        }\n        \n        return Optional.empty();\n    }\n}"
+                    "label": "Update Loop",
+                    "code": "package frc.robot.subsystems;\n\nimport java.util.Optional;\nimport org.photonvision.EstimatedRobotPose;\nimport org.photonvision.PhotonPoseEstimator;\n\npublic class VisionSubsystem extends SubsystemBase {\n    private PhotonPoseEstimator estimator;\n    \n    /**\n     * Get estimated global pose from vision\n     * @return Optional EstimatedRobotPose if valid, empty otherwise\n     */\n    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {\n        // Update estimator with latest camera result\n        return estimator.update();\n    }\n}"
                 }
             ]
         },
         {
             "type": "text",
-            "title": "The Power of Sensor Fusion",
-            "content": "Vision provides excellent absolute positioning, but it has limitations. Cameras can't always see tags—other robots might block them, lighting might be poor, or the camera might be looking in the wrong direction. Meanwhile, odometry provides continuous updates at 50 Hz, but it drifts over time.<br><br>Sensor fusion combines these complementary strengths. Think of it as having two navigation systems: odometry is your speedometer and compass (always working, but accumulating error), while vision is your GPS (occasionally available, but always accurate when it works). By intelligently combining both, you get continuous, accurate pose estimation that works in all conditions."
-        },
-        {
-            "type": "text",
-            "title": "How Fusion Works",
-            "content": "WPILib's PoseEstimator uses Kalman filtering principles to optimally combine measurements. Here's the concept:<br><br><strong>Continuous Odometry Updates</strong> - Every robot loop (50 times per second), odometry provides a pose update based on wheel movement and gyro readings. The estimator uses these for continuous tracking.<br><br><strong>Periodic Vision Corrections</strong> - When vision detects a tag (10-30 times per second), it provides an absolute pose measurement. The estimator compares this to the current odometry-based estimate and smoothly incorporates the correction.<br><br><strong>Intelligent Weighting</strong> - The estimator automatically weights measurements based on their uncertainty. High-confidence vision measurements have more influence than low-confidence ones. Odometry confidence decreases over time since the last vision update, naturally giving more weight to fresh vision corrections."
-        },
-        {
-            "type": "text",
-            "title": "Setting Up the Pose Estimator",
-            "content": "The PoseEstimator needs kinematics, sensor readings, and uncertainty parameters. Let's set it up step by step. The kinematics define your robot's geometry, the sensor readings provide initial state, and the uncertainty parameters control how much weight each measurement type receives."
-        },
-        {
-            "type": "code",
-            "title": "Defining Kinematics",
-            "description": "First, we define the robot's kinematics—the geometry of how modules are positioned relative to the robot center. For a swerve drive, you need to specify the position of each swerve module relative to the robot's center of rotation. This is typically done using Translation2d objects that represent the X and Y offsets of each module.",
-            "content": "import edu.wpi.first.math.geometry.Translation2d;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\n\n// Robot dimensions (in meters)\nprivate static final double kTrackWidth = 0.5;\nprivate static final double kWheelBase = 0.5;\n\n// Define module positions relative to robot center\nTranslation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);\nTranslation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);\nTranslation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);\nTranslation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);\n\nprivate final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(\n    frontLeft, frontRight, rearLeft, rearRight\n);"
-        },
-        {
-            "type": "code",
-            "title": "Configuring Standard Deviations",
-            "description": "Standard deviations control how much we trust each measurement. Lower values mean more trust. The state standard deviations represent how much uncertainty exists in your odometry measurements, while vision standard deviations represent the uncertainty in vision measurements. These values directly affect how the pose estimator weights different measurements.",
-            "content": "import edu.wpi.first.math.VecBuilder;\n\n// State uncertainty: how much odometry might drift\n// Lower values = more trust in odometry\nvar stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n\n// Vision uncertainty: how accurate vision measurements are\n// Lower values = more trust in vision\nvar visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);"
-        },
-        {
-            "type": "code",
-            "title": "Creating the Pose Estimator",
-            "description": "Now we create the SwerveDrivePoseEstimator with all the required parameters. You'll need the kinematics you defined, initial sensor readings (gyro heading and module positions), a starting pose, and the standard deviation parameters. The estimator uses these to initialize its internal state.",
-            "content": "import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\n\n// Get initial sensor readings\nRotation2d initialHeading = m_gyro.getRotation2d();\nSwerveModulePosition[] initialPositions = getModulePositions();\n\n// Create pose estimator\nm_poseEstimator = new SwerveDrivePoseEstimator(\n    m_kinematics,\n    initialHeading,\n    initialPositions,\n    new Pose2d(),\n    stateStdDevs,\n    visionStdDevs\n);"
-        },
-        {
-            "type": "code",
-            "title": "Complete Pose Estimator Setup",
-            "description": "This constructor sets up all components needed for fused pose estimation: kinematics, sensors, and the pose estimator itself. Adjust the robot dimensions and standard deviations to match your robot.",
-            "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.geometry.Translation2d;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\nimport edu.wpi.first.math.VecBuilder;\nimport edu.wpi.first.wpilibj.ADXRS450_Gyro;\n\npublic class FusedPoseEstimation {\n    private final SwerveDriveKinematics m_kinematics;\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private SwerveModulePosition[] m_modulePositions;\n    private final ADXRS450_Gyro m_gyro;\n    private SwerveModule[] m_modules;\n    private final VisionSubsystem m_vision;\n    \n    private static final double kTrackWidth = 0.5;\n    private static final double kWheelBase = 0.5;\n    \n    public FusedPoseEstimation(SwerveModule[] modules) {\n        Translation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);\n        Translation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);\n        \n        m_kinematics = new SwerveDriveKinematics(\n            frontLeft, frontRight, rearLeft, rearRight\n        );\n        \n        m_gyro = new ADXRS450_Gyro();\n        m_gyro.calibrate();\n        \n        m_modules = modules;\n        m_modulePositions = new SwerveModulePosition[4];\n        for (int i = 0; i < 4; i++) {\n            m_modulePositions[i] = m_modules[i].getPosition();\n        }\n        \n        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n        var visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);\n        \n        m_poseEstimator = new SwerveDrivePoseEstimator(\n            m_kinematics,\n            m_gyro.getRotation2d(),\n            m_modulePositions,\n            new Pose2d(),\n            stateStdDevs,\n            visionStdDevs\n        );\n        \n        m_vision = new VisionSubsystem();\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "Updating with Odometry",
-            "content": "Odometry updates happen continuously—every robot loop. This provides the fast, continuous tracking that keeps your pose estimate current even when vision isn't available."
-        },
-        {
-            "type": "code",
-            "title": "Getting Module Positions",
-            "description": "First, we need to get the current position of each swerve module. Each module tracks its own position (distance traveled and angle) through its encoder. We collect these positions into an array that the pose estimator can use.",
-            "content": "import edu.wpi.first.math.kinematics.SwerveModulePosition;\n\npublic void updateOdometry() {\n    m_modulePositions[0] = m_modules[0].getPosition();\n    m_modulePositions[1] = m_modules[1].getPosition();\n    m_modulePositions[2] = m_modules[2].getPosition();\n    m_modulePositions[3] = m_modules[3].getPosition();\n}"
-        },
-        {
-            "type": "code",
-            "title": "Updating the Estimator",
-            "description": "Now we update the pose estimator with the current gyro heading and module positions. The estimator uses these sensor readings to calculate how the robot has moved since the last update, incorporating this into its pose estimate.",
-            "content": "import edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\n\npublic void updateOdometry() {\n    Rotation2d heading = m_gyro.getRotation2d();\n    m_modulePositions[0] = m_modules[0].getPosition();\n    m_modulePositions[1] = m_modules[1].getPosition();\n    m_modulePositions[2] = m_modules[2].getPosition();\n    m_modulePositions[3] = m_modules[3].getPosition();\n    \n    m_poseEstimator.update(heading, m_modulePositions);\n}"
-        },
-        {
-            "type": "code",
-            "title": "Complete Odometry Update Method",
-            "description": "This method should be called every robot loop to continuously update the pose estimator with odometry data. It collects the current module positions and gyro heading, then updates the pose estimator.",
-            "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\nimport edu.wpi.first.wpilibj.ADXRS450_Gyro;\n\npublic class FusedPoseEstimation {\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private SwerveModulePosition[] m_modulePositions;\n    private final ADXRS450_Gyro m_gyro;\n    private SwerveModule[] m_modules;\n    \n    /**\n     * Update pose estimator with odometry. Call this every robot loop.\n     */\n    public void updateOdometry() {\n        m_modulePositions[0] = m_modules[0].getPosition();\n        m_modulePositions[1] = m_modules[1].getPosition();\n        m_modulePositions[2] = m_modules[2].getPosition();\n        m_modulePositions[3] = m_modules[3].getPosition();\n        \n        Rotation2d heading = m_gyro.getRotation2d();\n        m_poseEstimator.update(heading, m_modulePositions);\n    }\n    \n    /**\n     * Get current fused pose estimate.\n     *\n     * @return Current pose estimate\n     */\n    public Pose2d getPose() {\n        return m_poseEstimator.getEstimatedPosition();\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "Adding Vision Measurements",
-            "content": "Vision updates are asynchronous—they arrive when tags are detected, not on a fixed schedule. The pose estimator handles this automatically, incorporating vision measurements whenever they're available to correct any drift that has accumulated.<br><br>It's important to validate vision measurements before adding them to the pose estimator. Reject measurements with high ambiguity, measurements from tags that are too far away, or measurements that don't have enough tags detected. This prevents bad measurements from corrupting your pose estimate."
-        },
-        {
-            "type": "code-tabs",
-            "title": "Integrating Vision with Pose Estimator",
-            "content": "Adding vision measurements to your pose estimator. Both PhotonVision and Limelight provide pose estimates with timestamps for proper latency compensation.",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.wpilibj.Timer;\nimport java.util.Optional;\n\npublic class FusedPoseEstimation {\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private final VisionSubsystem m_vision;\n    \n    /**\n     * Add vision measurement when available\n     * PhotonVision provides pose estimates directly\n     */\n    public void updateVision() {\n        Optional<Pose2d> visionPose = m_vision.getAprilTagPose();\n        \n        if (visionPose.isPresent()) {\n            // PhotonVision timestamps are handled internally\n            // Use current FPGA timestamp\n            double timestamp = Timer.getFPGATimestamp();\n            \n            // Add vision measurement to pose estimator\n            m_poseEstimator.addVisionMeasurement(\n                visionPose.get(),\n                timestamp\n            );\n        }\n    }\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.VecBuilder;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport frc.robot.LimelightHelpers;\nimport frc.robot.LimelightHelpers.PoseEstimate;\nimport java.util.Optional;\n\npublic class FusedPoseEstimation {\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private final VisionSubsystem m_vision;\n    \n    /**\n     * Add vision measurement when available\n     * Limelight provides PoseEstimate with latency-compensated timestamp\n     */\n    public void updateVision() {\n        Optional<PoseEstimate> poseEstimate = m_vision.getAprilTagPoseEstimate();\n        \n        if (poseEstimate.isPresent()) {\n            PoseEstimate estimate = poseEstimate.get();\n            \n            // Validate the measurement before using it\n            boolean doRejectUpdate = false;\n            \n            // Reject single-tag measurements with high ambiguity\n            if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {\n                if (estimate.rawFiducials[0].ambiguity > 0.7) {\n                    doRejectUpdate = true;\n                }\n                // Reject tags that are too far away (less accurate)\n                if (estimate.rawFiducials[0].distToCamera > 3.0) {\n                    doRejectUpdate = true;\n                }\n            }\n            \n            // Reject if no tags detected\n            if (estimate.tagCount == 0) {\n                doRejectUpdate = true;\n            }\n            \n            if (!doRejectUpdate) {\n                // Adjust standard deviations based on tag count\n                // More tags = more accurate = lower uncertainty\n                if (estimate.tagCount >= 2) {\n                    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3, 0.3, 9999999));\n                } else {\n                    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.5, 0.5, 9999999));\n                }\n                \n                // Add vision measurement with latency-compensated timestamp\n                // Limelight's timestamp already accounts for latency\n                m_poseEstimator.addVisionMeasurement(\n                    estimate.pose,\n                    estimate.timestampSeconds\n                );\n            }\n        }\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "text",
-            "title": "Putting It All Together",
-            "content": "In your subsystem's periodic method, you'll update both odometry and vision. The pose estimator automatically handles the fusion, giving you the best possible pose estimate at any moment."
-        },
-        {
-            "type": "code",
-            "title": "Complete Periodic Update",
-            "description": "The periodic method is called every robot loop. It updates odometry continuously and incorporates vision measurements when available. This ensures the pose estimator always has the most current fused estimate.",
-            "content": "import edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\n@Override\npublic void periodic() {\n    // Update odometry continuously\n    updateOdometry();\n    \n    // Update vision when available\n    updateVision();\n    \n    // Get the fused pose estimate\n    Pose2d currentPose = getPose();\n    \n    // Display on SmartDashboard for debugging\n    SmartDashboard.putNumber(\"Fused X\", currentPose.getX());\n    SmartDashboard.putNumber(\"Fused Y\", currentPose.getY());\n    SmartDashboard.putNumber(\"Fused Heading\", \n        currentPose.getRotation().getDegrees());\n}"
-        },
-        {
-            "type": "text",
-            "title": "Calibration: The Foundation of Accuracy",
-            "content": "Even the best fusion algorithm can't overcome poor sensor calibration. Your pose estimation is only as good as your sensor measurements. Calibration ensures your sensors report accurate values, which directly translates to accurate pose estimation.<br><br>Think of calibration as teaching your robot to measure correctly. If your encoders think the wheels are a different size than they actually are, every distance calculation will be wrong. If your gyro has an offset, every heading will be wrong. These errors compound over time, making accurate pose estimation impossible."
-        },
-        {
-            "type": "text",
-            "title": "Calibrating Wheel Diameters",
-            "content": "Wheel diameter directly affects distance calculations. A small error in diameter measurement creates a systematic error in every distance measurement. Use calipers to measure the actual wheel diameter precisely—don't rely on manufacturer specifications, as wheels can compress or wear over time."
-        },
-        {
-            "type": "code",
-            "title": "Configuring Encoder Distance Per Pulse",
-            "description": "Once you have the actual wheel diameter, calculate the distance per encoder pulse. This tells the encoder how far the robot moves for each encoder count. The formula is: distance per pulse = (wheel diameter × π) / encoder counts per revolution.",
-            "content": "import edu.wpi.first.wpilibj.Encoder;\n\nprivate static final double kMeasuredWheelDiameter = 0.1524;\nprivate static final double kEncoderCPR = 2048.0;\n\nprivate static final double kDistancePerPulse = \n    (kMeasuredWheelDiameter * Math.PI) / kEncoderCPR;\n\nm_encoder.setDistancePerPulse(kDistancePerPulse);"
-        },
-        {
-            "type": "text",
-            "title": "Calibrating Track Width",
-            "content": "Track width (the distance between left and right wheels) affects rotation calculations. For swerve drives, you need both track width and wheelbase. Measure these carefully using precise tools—even a small error causes significant heading errors over time."
-        },
-        {
-            "type": "code",
-            "title": "Testing Calibration Accuracy",
-            "description": "Drive a known distance and compare the encoder reading to verify your calibration. This test helps you identify systematic errors in your encoder configuration. If the error is significant, adjust your wheel diameter measurement and recalculate the distance per pulse.",
-            "content": "import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic void testCalibration(double knownDistanceMeters) {\n    double encoderDistance = m_encoder.getDistance();\n    double error = Math.abs(encoderDistance - knownDistanceMeters);\n    double errorPercent = (error / knownDistanceMeters) * 100.0;\n    \n    SmartDashboard.putNumber(\"Calibration Error (m)\", error);\n    SmartDashboard.putNumber(\"Calibration Error (%)\", errorPercent);\n}"
-        },
-        {
-            "type": "code",
-            "title": "Complete Odometry Calibration",
-            "description": "This class demonstrates how to set up encoders with calibrated values and test calibration accuracy. Adjust the measured values to match your actual robot hardware.",
-            "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj.Encoder;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic class OdometryCalibration {\n    private final Encoder m_leftEncoder;\n    private final Encoder m_rightEncoder;\n    \n    private static final double kMeasuredWheelDiameter = 0.1524;\n    private static final double kEncoderCPR = 2048.0;\n    private static final double kMeasuredTrackWidth = 0.6;\n    \n    private static final double kDistancePerPulse = \n        (kMeasuredWheelDiameter * Math.PI) / kEncoderCPR;\n    \n    public OdometryCalibration() {\n        m_leftEncoder = new Encoder(0, 1);\n        m_rightEncoder = new Encoder(2, 3);\n        \n        m_leftEncoder.setDistancePerPulse(kDistancePerPulse);\n        m_rightEncoder.setDistancePerPulse(kDistancePerPulse);\n        \n        m_leftEncoder.reset();\n        m_rightEncoder.reset();\n    }\n    \n    /**\n     * Calibration test: drive known distance and compare.\n     *\n     * @param knownDistanceMeters Known distance in meters\n     */\n    public void testCalibration(double knownDistanceMeters) {\n        double leftDistance = m_leftEncoder.getDistance();\n        double rightDistance = m_rightEncoder.getDistance();\n        double averageDistance = (leftDistance + rightDistance) / 2.0;\n        \n        double error = Math.abs(averageDistance - knownDistanceMeters);\n        double errorPercent = (error / knownDistanceMeters) * 100.0;\n        \n        SmartDashboard.putNumber(\"Calibration Error (m)\", error);\n        SmartDashboard.putNumber(\"Calibration Error (%)\", errorPercent);\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "Vision System Calibration",
-            "content": "Vision systems require camera calibration to correct for lens distortion and measure accurate distances. This is typically done using calibration tools provided by your vision library (PhotonVision, Limelight, etc.). The calibration process captures images of a known pattern and calculates the camera's intrinsic parameters."
-        },
-        {
-            "type": "code",
-            "title": "Validating Vision Measurements",
-            "description": "Test vision accuracy by comparing vision estimates to known robot positions. Place your robot at a known field position (using a tape measure or field markings) and compare the vision pose estimate to the actual position. This helps identify calibration issues or camera mounting problems.",
-            "content": "import edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport java.util.Optional;\n\npublic void testVisionAccuracy(Pose2d knownActualPose) {\n    Optional<Pose2d> visionPose = m_vision.getAprilTagPose();\n    \n    if (visionPose.isPresent()) {\n        Pose2d estimatedPose = visionPose.get();\n        \n        double xError = Math.abs(estimatedPose.getX() - knownActualPose.getX());\n        double yError = Math.abs(estimatedPose.getY() - knownActualPose.getY());\n        \n        SmartDashboard.putNumber(\"Vision X Error (m)\", xError);\n        SmartDashboard.putNumber(\"Vision Y Error (m)\", yError);\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "Tuning Fusion Parameters",
-            "content": "The standard deviation parameters in your PoseEstimator control how much weight each measurement type receives. These are tuning parameters that you adjust based on your sensor accuracy and field conditions."
-        },
-        {
-            "type": "code",
-            "title": "Adjusting Standard Deviations",
-            "description": "Lower standard deviations mean more trust. If your odometry is very accurate (good encoders, well calibrated), use lower state standard deviations. If your vision is very accurate (good camera, multiple tags detected), use lower vision standard deviations. Tune these values based on your robot's actual sensor performance.",
-            "content": "import edu.wpi.first.math.VecBuilder;\n\n// Example: high accuracy odometry\nvar stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.05);\n\n// Example: high accuracy vision (multiple tags)\nvar visionStdDevs = VecBuilder.fill(0.3, 0.3, 0.3);"
-        },
-        {
-            "type": "text",
-            "title": "Testing and Validation",
-            "content": "Regular testing is essential to ensure your pose estimation remains accurate. Test at multiple field positions, under different conditions, and monitor for drift or errors. Use SmartDashboard to visualize your pose estimate and compare it to known positions."
-        },
-        {
-            "type": "code",
-            "title": "Pose Accuracy Testing",
-            "description": "Test pose accuracy by driving to known positions and comparing estimates. This comprehensive test measures both position and heading errors, giving you a complete picture of your pose estimation accuracy. Use this to validate your calibration and tuning.",
-            "content": "import edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\npublic void testPoseAccuracy(Pose2d targetPose, Pose2d actualPose) {\n    Pose2d estimatedPose = m_poseEstimation.getPose();\n    \n    double xError = Math.abs(estimatedPose.getX() - actualPose.getX());\n    double yError = Math.abs(estimatedPose.getY() - actualPose.getY());\n    double positionError = estimatedPose.getTranslation()\n        .getDistance(actualPose.getTranslation());\n    \n    SmartDashboard.putNumber(\"Pose X Error (m)\", xError);\n    SmartDashboard.putNumber(\"Pose Y Error (m)\", yError);\n    SmartDashboard.putNumber(\"Pose Position Error (m)\", positionError);\n}"
-        },
-        {
-            "type": "code",
-            "title": "Complete Tuning Utilities",
-            "description": "Utility classes for testing and validating vision and pose estimation accuracy. These methods help identify calibration issues and validate sensor fusion performance.",
-            "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport java.util.Optional;\n\npublic class VisionCalibration {\n    private VisionSubsystem m_vision;\n    \n    /**\n     * Test vision accuracy at known position.\n     *\n     * @param knownActualPose Known actual robot pose\n     */\n    public void testVisionAccuracy(Pose2d knownActualPose) {\n        Optional<Pose2d> visionPose = m_vision.getAprilTagPose();\n        \n        if (visionPose.isPresent()) {\n            Pose2d estimatedPose = visionPose.get();\n            \n            double xError = Math.abs(estimatedPose.getX() - knownActualPose.getX());\n            double yError = Math.abs(estimatedPose.getY() - knownActualPose.getY());\n            double headingError = Math.abs(\n                estimatedPose.getRotation().minus(knownActualPose.getRotation()).getDegrees()\n            );\n            \n            SmartDashboard.putNumber(\"Vision X Error (m)\", xError);\n            SmartDashboard.putNumber(\"Vision Y Error (m)\", yError);\n            SmartDashboard.putNumber(\"Vision Heading Error (deg)\", headingError);\n        }\n    }\n    \n    /**\n     * Validate vision measurements before using.\n     *\n     * @param visionPose Vision pose estimate\n     * @param currentOdometryPose Current odometry pose\n     * @return True if vision measurement is reasonable\n     */\n    public boolean isValidVisionMeasurement(Pose2d visionPose, Pose2d currentOdometryPose) {\n        double distance = visionPose.getTranslation()\n            .getDistance(currentOdometryPose.getTranslation());\n        \n        double maxReasonableDistance = 1.0;\n        return distance < maxReasonableDistance;\n    }\n}\n\npublic class PoseValidation {\n    private FusedPoseEstimation m_poseEstimation;\n    \n    /**\n     * Test pose accuracy by driving to known positions.\n     *\n     * @param targetPose Target pose\n     * @param actualPose Actual robot pose\n     */\n    public void testPoseAccuracy(Pose2d targetPose, Pose2d actualPose) {\n        Pose2d estimatedPose = m_poseEstimation.getPose();\n        \n        double xError = Math.abs(estimatedPose.getX() - actualPose.getX());\n        double yError = Math.abs(estimatedPose.getY() - actualPose.getY());\n        double headingError = Math.abs(\n            estimatedPose.getRotation().minus(actualPose.getRotation()).getDegrees()\n        );\n        \n        double positionError = estimatedPose.getTranslation()\n            .getDistance(actualPose.getTranslation());\n        \n        SmartDashboard.putNumber(\"Pose X Error (m)\", xError);\n        SmartDashboard.putNumber(\"Pose Y Error (m)\", yError);\n        SmartDashboard.putNumber(\"Pose Heading Error (deg)\", headingError);\n        SmartDashboard.putNumber(\"Pose Position Error (m)\", positionError);\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "Complete Implementation Example",
-            "content": "Here's a complete example that brings together all the concepts we've covered: vision detection, sensor fusion, and proper updates. This subsystem can be used directly in your robot code. Choose the version that matches your vision hardware."
-        },
-        {
-            "type": "code-tabs",
-            "title": "Complete Fused Pose Estimation System",
-            "content": "Complete implementation with vision integration. Both versions use the same odometry update logic, but differ in how they handle vision measurements.",
-            "tabs": [
-                {
-                    "label": "PhotonVision",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.geometry.Translation2d;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\nimport edu.wpi.first.math.VecBuilder;\nimport edu.wpi.first.wpilibj.ADXRS450_Gyro;\nimport edu.wpi.first.wpilibj.Timer;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport java.util.Optional;\n\npublic class FusedPoseEstimation extends SubsystemBase {\n    private final SwerveDriveKinematics m_kinematics;\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private SwerveModulePosition[] m_modulePositions;\n    private final ADXRS450_Gyro m_gyro;\n    private SwerveModule[] m_modules;\n    private final VisionSubsystem m_vision;\n    \n    private static final double kTrackWidth = 0.5;\n    private static final double kWheelBase = 0.5;\n    \n    public FusedPoseEstimation(SwerveModule[] modules) {\n        Translation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);\n        Translation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);\n        \n        m_kinematics = new SwerveDriveKinematics(\n            frontLeft, frontRight, rearLeft, rearRight\n        );\n        \n        m_gyro = new ADXRS450_Gyro();\n        m_gyro.calibrate();\n        \n        m_modules = modules;\n        m_modulePositions = new SwerveModulePosition[4];\n        for (int i = 0; i < 4; i++) {\n            m_modulePositions[i] = m_modules[i].getPosition();\n        }\n        \n        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n        var visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);\n        \n        m_poseEstimator = new SwerveDrivePoseEstimator(\n            m_kinematics,\n            m_gyro.getRotation2d(),\n            m_modulePositions,\n            new Pose2d(),\n            stateStdDevs,\n            visionStdDevs\n        );\n        \n        m_vision = new VisionSubsystem();\n    }\n    \n    public void updateOdometry() {\n        m_modulePositions[0] = m_modules[0].getPosition();\n        m_modulePositions[1] = m_modules[1].getPosition();\n        m_modulePositions[2] = m_modules[2].getPosition();\n        m_modulePositions[3] = m_modules[3].getPosition();\n        \n        Rotation2d heading = m_gyro.getRotation2d();\n        m_poseEstimator.update(heading, m_modulePositions);\n    }\n    \n    public void updateVision() {\n        Optional<Pose2d> visionPose = m_vision.getAprilTagPose();\n        \n        if (visionPose.isPresent()) {\n            double timestamp = Timer.getFPGATimestamp();\n            m_poseEstimator.addVisionMeasurement(\n                visionPose.get(),\n                timestamp\n            );\n        }\n    }\n    \n    public Pose2d getPose() {\n        return m_poseEstimator.getEstimatedPosition();\n    }\n    \n    public void resetPose(Pose2d pose) {\n        m_poseEstimator.resetPosition(\n            m_gyro.getRotation2d(),\n            m_modulePositions,\n            pose\n        );\n    }\n    \n    @Override\n    public void periodic() {\n        updateOdometry();\n        updateVision();\n        \n        Pose2d currentPose = getPose();\n        SmartDashboard.putNumber(\"Fused X\", currentPose.getX());\n        SmartDashboard.putNumber(\"Fused Y\", currentPose.getY());\n        SmartDashboard.putNumber(\"Fused Heading\", \n            currentPose.getRotation().getDegrees());\n    }\n}"
-                },
-                {
-                    "label": "Limelight",
-                    "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.geometry.Translation2d;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\nimport edu.wpi.first.math.VecBuilder;\nimport edu.wpi.first.wpilibj.ADXRS450_Gyro;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport frc.robot.LimelightHelpers.PoseEstimate;\nimport java.util.Optional;\n\npublic class FusedPoseEstimation extends SubsystemBase {\n    private final SwerveDriveKinematics m_kinematics;\n    private SwerveDrivePoseEstimator m_poseEstimator;\n    private SwerveModulePosition[] m_modulePositions;\n    private final ADXRS450_Gyro m_gyro;\n    private SwerveModule[] m_modules;\n    private final VisionSubsystem m_vision;\n    \n    private static final double kTrackWidth = 0.5;\n    private static final double kWheelBase = 0.5;\n    \n    public FusedPoseEstimation(SwerveModule[] modules) {\n        Translation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);\n        Translation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);\n        Translation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);\n        \n        m_kinematics = new SwerveDriveKinematics(\n            frontLeft, frontRight, rearLeft, rearRight\n        );\n        \n        m_gyro = new ADXRS450_Gyro();\n        m_gyro.calibrate();\n        \n        m_modules = modules;\n        m_modulePositions = new SwerveModulePosition[4];\n        for (int i = 0; i < 4; i++) {\n            m_modulePositions[i] = m_modules[i].getPosition();\n        }\n        \n        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n        var visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);\n        \n        m_poseEstimator = new SwerveDrivePoseEstimator(\n            m_kinematics,\n            m_gyro.getRotation2d(),\n            m_modulePositions,\n            new Pose2d(),\n            stateStdDevs,\n            visionStdDevs\n        );\n        \n        m_vision = new VisionSubsystem();\n    }\n    \n    public void updateOdometry() {\n        m_modulePositions[0] = m_modules[0].getPosition();\n        m_modulePositions[1] = m_modules[1].getPosition();\n        m_modulePositions[2] = m_modules[2].getPosition();\n        m_modulePositions[3] = m_modules[3].getPosition();\n        \n        Rotation2d heading = m_gyro.getRotation2d();\n        m_poseEstimator.update(heading, m_modulePositions);\n    }\n    \n    public void updateVision() {\n        Optional<PoseEstimate> poseEstimate = m_vision.getAprilTagPoseEstimate();\n        \n        if (poseEstimate.isPresent()) {\n            PoseEstimate estimate = poseEstimate.get();\n            \n            // Validate measurement\n            boolean doRejectUpdate = false;\n            \n            if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {\n                if (estimate.rawFiducials[0].ambiguity > 0.7) {\n                    doRejectUpdate = true;\n                }\n                if (estimate.rawFiducials[0].distToCamera > 3.0) {\n                    doRejectUpdate = true;\n                }\n            }\n            \n            if (estimate.tagCount == 0) {\n                doRejectUpdate = true;\n            }\n            \n            if (!doRejectUpdate) {\n                // Adjust uncertainty based on tag count\n                if (estimate.tagCount >= 2) {\n                    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3, 0.3, 9999999));\n                } else {\n                    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.5, 0.5, 9999999));\n                }\n                \n                // Add with latency-compensated timestamp\n                m_poseEstimator.addVisionMeasurement(\n                    estimate.pose,\n                    estimate.timestampSeconds\n                );\n            }\n        }\n    }\n    \n    public Pose2d getPose() {\n        return m_poseEstimator.getEstimatedPosition();\n    }\n    \n    public void resetPose(Pose2d pose) {\n        m_poseEstimator.resetPosition(\n            m_gyro.getRotation2d(),\n            m_modulePositions,\n            pose\n        );\n    }\n    \n    @Override\n    public void periodic() {\n        updateOdometry();\n        updateVision();\n        \n        Pose2d currentPose = getPose();\n        SmartDashboard.putNumber(\"Fused X\", currentPose.getX());\n        SmartDashboard.putNumber(\"Fused Y\", currentPose.getY());\n        SmartDashboard.putNumber(\"Fused Heading\", \n            currentPose.getRotation().getDegrees());\n    }\n}"
-                }
-            ]
+            "title": "Handling Ambiguity",
+            "content": "Sometimes, a single tag detection can result in two possible valid poses (ambiguity).<br>- <strong>Multi-Tag:</strong> Seeing multiple tags at once eliminates ambiguity and vastly improves accuracy.<br>- <strong>Filters:</strong> If using single tags, reject detections with high ambiguity errors or those that jump significantly far from the robot's current odometry pose."
         },
         {
             "type": "link-grid",
-            "title": "Related Topics and Documentation",
+            "title": "Related Topics",
             "links": [
                 {
-                    "label": "WPILib AprilTag Introduction",
+                    "label": "Sensor Fusion",
+                    "id": "vision-pose-estimation-fusion"
+                },
+                {
+                    "label": "WPILib AprilTags",
                     "url": "https://docs.wpilib.org/en/stable/docs/software/vision-processing/apriltag/apriltag-intro.html"
-                },
-                {
-                    "label": "WPILib Pose Estimator",
-                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators"
-                },
-                {
-                    "label": "PhotonVision AprilTag Pipelines",
-                    "url": "https://docs.photonvision.org/en/v2026.0.0-alpha-2/docs/apriltag-pipelines/index.html"
-                },
-                {
-                    "label": "Limelight AprilTag Tracking",
-                    "url": "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags"
-                },
-                {
-                    "label": "Limelight Robot Localization",
-                    "url": "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization"
-                },
-                {
-                    "label": "LimelightHelpers Download",
-                    "url": "https://github.com/LimelightVision/limelightlib-wpijava/blob/main/LimelightHelpers.java"
                 }
             ]
         }

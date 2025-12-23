@@ -110,14 +110,23 @@ class EventManager {
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
+            // Don't handle shortcuts when user is typing in input fields, textareas, or contenteditable elements
+            const target = e.target;
+            const isInputField = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable ||
+                                target.closest('input, textarea, [contenteditable="true"]');
+            
+            if (isInputField) {
+                return; // Let the input handle the key
+            }
+
             // Section-based navigation with Ctrl+Arrow or Ctrl+<, Ctrl+>
             if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === '>' || e.key === '<')) {
                 e.preventDefault();
                 this.navigateSectionTabs(e.key === 'ArrowRight' || e.key === '>' ? 'next' : 'prev');
                 return;
             }
-            // Legacy: global tab navigation with just arrows
-            this.navigateWithArrows(e.key);
         });
 
         // Copy to clipboard functionality
@@ -147,6 +156,13 @@ class EventManager {
 
         // Focus search on Ctrl+K
         document.addEventListener('keydown', (e) => {
+            // Don't handle if user is typing in input fields (except when they want to focus search)
+            const target = e.target;
+            const isInputField = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable;
+            
+            // Allow Ctrl+K even in search input to refocus it
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 this.focusSearch();
@@ -155,7 +171,14 @@ class EventManager {
 
         // Toggle all code blocks on Ctrl+Shift+C
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+            // Don't handle when user is typing in input fields
+            const target = e.target;
+            const isInputField = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable ||
+                                target.closest('input, textarea, [contenteditable="true"]');
+            
+            if (!isInputField && (e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
                 e.preventDefault();
                 this.toggleAllCodeBlocks();
             }
@@ -163,7 +186,14 @@ class EventManager {
 
         // Show keyboard shortcuts on ? key
         document.addEventListener('keydown', (e) => {
-            if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+            // Don't handle when user is typing in input fields
+            const target = e.target;
+            const isInputField = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable ||
+                                target.closest('input, textarea, [contenteditable="true"]');
+            
+            if (!isInputField && e.key === '?' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
                 e.preventDefault();
                 this.showKeyboardShortcuts();
             }
@@ -171,7 +201,14 @@ class EventManager {
 
         // Show keyboard shortcuts on Ctrl+/ key
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+            // Don't handle when user is typing in input fields
+            const target = e.target;
+            const isInputField = target.tagName === 'INPUT' || 
+                                target.tagName === 'TEXTAREA' || 
+                                target.isContentEditable ||
+                                target.closest('input, textarea, [contenteditable="true"]');
+            
+            if (!isInputField && (e.ctrlKey || e.metaKey) && e.key === '/') {
                 e.preventDefault();
                 this.showKeyboardShortcuts();
             }
@@ -274,54 +311,32 @@ class EventManager {
     }
 
     /**
-     * Navigate to next/previous tab within the current section config, wrapping around.
+     * Navigate to next/previous tab within the current section config.
+     * Uses the same logic as the navigation buttons.
      * @param {'next'|'prev'} direction
      */
     navigateSectionTabs(direction) {
-        // Find the current section config
-        const sectionId = appState.currentSection;
-        const config = appState.config && appState.config.sections && appState.config.sections[sectionId];
-        if (!config) return;
-
-        // Build ordered list of tab IDs in this section
-        const tabOrder = [];
-        // Add intro if present
-        if (config.intro && config.intro.id) tabOrder.push(config.intro.id);
-        // Add groups/children/items recursively
-        function addItemsFromGroups(groups) {
-            if (!Array.isArray(groups)) return;
-            groups.forEach(group => {
-                if (Array.isArray(group.items)) {
-                    group.items.forEach(item => tabOrder.push(item.id));
-                }
-                if (Array.isArray(group.children)) {
-                    addItemsFromGroups(group.children);
-                }
-            });
-        }
-        if (Array.isArray(config.groups)) addItemsFromGroups(config.groups);
-        if (Array.isArray(config.children)) addItemsFromGroups(config.children);
-        // Add top-level items if present
-        if (Array.isArray(config.items)) {
-            config.items.forEach(item => tabOrder.push(item.id));
+        // Use the content manager's method to get previous/next tabs (same as navigation buttons)
+        if (!window.app || !window.app.contentManager || !this.navigationManager) {
+            return;
         }
 
-        if (tabOrder.length === 0) return;
-        const currentTab = appState.currentTab;
-        let idx = tabOrder.indexOf(currentTab);
-        if (idx === -1) {
-            // If not found, default to first
-            idx = 0;
+        const currentTabId = appState.currentTab;
+        if (!currentTabId) return;
+
+        // Get previous and next tabs using the same method as navigation buttons
+        const { previous, next } = window.app.contentManager.getPreviousNextTabs(currentTabId);
+
+        // Navigate to the appropriate tab
+        let targetTab = null;
+        if (direction === 'next' && next) {
+            targetTab = next.id;
+        } else if (direction === 'prev' && previous) {
+            targetTab = previous.id;
         }
-        let newIdx;
-        if (direction === 'next') {
-            newIdx = (idx + 1) % tabOrder.length;
-        } else {
-            newIdx = (idx - 1 + tabOrder.length) % tabOrder.length;
-        }
-        const newTabId = tabOrder[newIdx];
-        if (newTabId && this.navigationManager) {
-            this.navigationManager.navigateToTab(newTabId);
+
+        if (targetTab) {
+            this.navigationManager.navigateToTab(targetTab);
         }
     }
 }

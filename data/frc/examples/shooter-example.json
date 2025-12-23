@@ -1,0 +1,71 @@
+{
+  "title": "Shooter Example",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Shooters require <strong>Velocity Control</strong>. The goal is to spin a flywheel at a specific RPM and maintain it despite load changes (launching a note/ball). We use Velocity PID and Feedforward."
+    },
+    {
+      "type": "rules-box",
+      "title": "Goals",
+      "subtitle": "The shooter subsystem must:",
+      "items": [
+        "Spin to target RPM (Close, Mid, Far).",
+        "Maintain speed (Velocity PID).",
+        "Recover quickly after shots.",
+        "Report \"Ready\" status."
+      ]
+    },
+    {
+      "type": "code-tabs",
+      "title": "Subsystem Code",
+      "content": "Implementation with Velocity PID:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.VelocityVoltage;\n\npublic class Shooter extends SubsystemBase {\n    // Shooter motor on CAN ID 7\n    private final TalonFX m_motor = new TalonFX(7);\n    // Velocity control request\n    private final VelocityVoltage m_request = new VelocityVoltage(0);\n    \n    public Shooter() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        // Coast mode allows flywheel to spin down naturally\n        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n        \n        // Velocity PID gains (Slot 0)\n        config.Slot0.kP = 0.1;  // Proportional gain\n        config.Slot0.kI = 0.0;  // Integral gain\n        config.Slot0.kD = 0.0;  // Derivative gain\n        config.Slot0.kV = 0.12; // Velocity feedforward (critical for maintaining speed)\n        \n        m_motor.getConfigurator().apply(config);\n    }\n    \n    /**\n     * Set shooter target velocity\n     * @param rps Target velocity in rotations per second\n     */\n    public void setSpeed(double rps) {\n        m_motor.setControl(m_request.withVelocity(rps));\n    }\n    \n    /**\n     * Check if shooter is at target speed\n     * @param target Target velocity in rotations per second\n     * @return True if within 2.0 RPS of target\n     */\n    public boolean isReady(double target) {\n        double currentVelocity = m_motor.getVelocity().getValue();\n        return Math.abs(currentVelocity - target) < 2.0;\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\nimport com.revrobotics.spark.RelativeEncoder;\n\npublic class Shooter extends SubsystemBase {\n    // Shooter motor on CAN ID 7, brushless type\n    private final SparkMax m_motor = new SparkMax(7, MotorType.kBrushless);\n    // Get closed-loop controller for velocity PID\n    private final SparkClosedLoopController m_pid = m_motor.getClosedLoopController();\n    // Get encoder for velocity feedback\n    private final RelativeEncoder m_encoder = m_motor.getEncoder();\n    \n    public Shooter() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Coast mode allows flywheel to spin down naturally\n        config.idleMode(IdleMode.kCoast);\n        \n        // Velocity PID gains with feedforward\n        config.closedLoop.p(0.0001).i(0.0).d(0.0).ff(0.00015);\n        \n        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    /**\n     * Set shooter target velocity\n     * @param rpm Target velocity in RPM\n     */\n    public void setSpeed(double rpm) {\n        m_pid.setReference(rpm, ControlType.kVelocity);\n    }\n    \n    /**\n     * Check if shooter is at target speed\n     * @param target Target velocity in RPM\n     * @return True if within 50 RPM of target\n     */\n    public boolean isReady(double target) {\n        double currentVelocity = m_encoder.getVelocity();\n        return Math.abs(currentVelocity - target) < 50;\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "State Management",
+      "content": "Shooters often need a state machine: <strong>Idle</strong> → <strong>SpinUp</strong> → <strong>Ready</strong> → <strong>Fire</strong>."
+    },
+    {
+      "type": "code",
+      "title": "Firing Sequence",
+      "content": "// ... (in RobotContainer or command class)\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.subsystems.Shooter;\nimport frc.robot.subsystems.Indexer;\n\n// ... (other code)\n\n/**\n * Create command sequence for shooting\n * @return Sequential command: spin up, wait, feed\n */\npublic Command getShootSequence() {\n    return Commands.sequence(\n        // Step 1: Start spinning up shooter to 4000 RPS\n        Commands.runOnce(() -> shooter.setSpeed(4000), shooter),\n        // Step 2: Wait until shooter reaches target speed\n        Commands.waitUntil(() -> shooter.isReady(4000)),\n        // Step 3: Feed note into shooter\n        new FeedCommand(indexer)\n    );\n}\n\n// ... (rest of class)"
+    },
+    {
+      "type": "rules-box",
+      "title": "Tuning Tips",
+      "subtitle": "For Velocity Control:",
+      "items": [
+        "<strong>Feedforward (kV):</strong> Most important! Tune this so it reaches target speed (open loop).",
+        "<strong>Proportional (kP):</strong> Add small P to correct errors and recover speed after shots.",
+        "<strong>D/I:</strong> Usually not needed for flywheels (inertia provides damping).",
+        "<strong>Coast Mode:</strong> Prevents rapid deceleration, saving energy and reducing wear."
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Related",
+      "links": [
+        {
+          "label": "Elevator Example",
+          "id": "elevator-example"
+        },
+        {
+          "label": "PID Control",
+          "id": "pid-control"
+        }
+      ]
+    }
+  ]
+}
