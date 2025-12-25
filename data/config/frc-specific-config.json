@@ -123,7 +123,7 @@
         {
           "id": "elastic-basics",
           "label": "Elastic Dashboard",
-          "file": "data/frc/environment-setup/elastic-basics.json",
+          "file": "data/frc/basics/elastic-basics.json",
           "difficulty": "beginner",
           "duration": "30 min"
         }
@@ -138,7 +138,7 @@
         {
           "id": "intro-to-command-based",
           "label": "Introduction to Command-Based",
-          "file": "data/frc/basics/intro-to-command-based.json",
+          "file": "data/frc/command-based/intro-to-command-based.json",
           "difficulty": "beginner",
           "duration": "30 min"
         },
@@ -173,14 +173,14 @@
         {
           "id": "intake-command-based",
           "label": "Intake Example (Command-Based)",
-          "file": "data/frc/basics/intake-command-based.json",
+          "file": "data/frc/command-based/intake-command-based.json",
           "difficulty": "beginner",
           "duration": "50 min"
         },
         {
           "id": "frc-code-organization",
           "label": "Code Organization",
-          "file": "data/frc/environment-setup/frc-code-organization.json",
+          "file": "data/frc/command-based/frc-code-organization.json",
           "difficulty": "intermediate",
           "duration": "40 min"
         }
@@ -359,7 +359,7 @@
           "duration": "45 min"
         },
         {
-          "id": "unit-testing",
+          "id": "frc-unit-testing",
           "label": "Unit Testing",
           "file": "data/frc/advanced-topics/unit-testing.json",
           "difficulty": "intermediate",

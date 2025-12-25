@@ -19,7 +19,7 @@
     {
       "type": "text",
       "title": "Logging",
-      "content": "AdvantageKit automatically logs all fields in classes annotated with <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/AutoLog.html' target='_blank'>@AutoLog</a>. It uses a high-performance binary format (WPILOG/RLOG) that records data every loop cycle with minimal overhead. (<a href='https://docs.advantagekit.org/logging/' target='_blank'>Logging Documentation</a>)<br><br>You can also log custom outputs using <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/Logger.html#recordOutput(java.lang.String,java.lang.Object)' target='_blank'>Logger.recordOutput()</a>:<br><code>Logger.recordOutput(\"MyState/Target\", targetValue);</code><br><code>Logger.recordOutput(\"Odometry/Pose\", pose);</code>"
+      "content": "AdvantageKit automatically logs all fields in classes annotated with <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/AutoLog.html' target='_blank'>@AutoLog</a>. It uses a high-performance binary format (WPILOG/RLOG) that records data every loop cycle with minimal overhead. (<a href='https://docs.advantagekit.org/getting-started/what-is-advantagekit/example-output-logging/' target='_blank'>Logging Documentation</a>)<br><br>You can also log custom outputs using <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/Logger.html#recordOutput(java.lang.String,java.lang.Object)' target='_blank'>Logger.recordOutput()</a>:<br><code>Logger.recordOutput(\"MyState/Target\", targetValue);</code><br><code>Logger.recordOutput(\"Odometry/Pose\", pose);</code>"
     },
     {
       "type": "text",

@@ -768,6 +768,12 @@ class NavigationManager {
             // Store the last opened tab ID
             localStorage.setItem('lastOpenedTab', tabId);
             
+            // Clear header navigation active state FIRST, before any early returns
+            // This prevents the underline from getting stuck when clicking header links
+            document.querySelectorAll('.header-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
             // Check if this is a main section navigation
             const isMainSection = ['java-training', 'ftc-specific', 'frc-specific', 'competitive-training', 'homepage'].includes(tabId);
             
@@ -779,11 +785,6 @@ class NavigationManager {
             // Clear current page classes
             document.querySelectorAll('.toctree-l1, .toctree-l2').forEach(li => {
                 li.classList.remove('current-page');
-            });
-            
-            // Clear header navigation active state
-            document.querySelectorAll('.header-nav-link').forEach(link => {
-                link.classList.remove('active');
             });
 
             // Find the target tab
@@ -970,6 +971,8 @@ class NavigationManager {
                 appState.setCurrentSection(sectionId);
                 // Generate navigation for sidebar (will render groups if they exist)
                 await this.generateNavigation();
+                // Update header navigation to show correct active state
+                this.updateHeaderNavigation(sectionId);
                 this.contentManager.renderContent(sectionId);
                 appState.setCurrentTab(sectionId);
                 return;
@@ -1056,6 +1059,8 @@ class NavigationManager {
             if (!updatedSection.intro && !firstItem) {
                 // Generate navigation (will disable sidebar for homepage)
                 await this.generateNavigation();
+                // Update header navigation to show correct active state
+                this.updateHeaderNavigation(sectionId);
                 this.contentManager.renderContent(sectionId);
                 appState.setCurrentTab(sectionId);
                 return;
