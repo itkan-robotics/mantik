@@ -1,64 +1,67 @@
 /
-├── frc-intro.json 💻 🔗 👀
+├── frc-intro.json
+│
 ├── environment-setup/
-│   ├── environment-setup.json 💻 🔗 👀
-│   ├── frc-programming-resources.json 💻 🔗 👀
+│   ├── environment-setup.json
+│   ├── project-creation.json
+│   ├── frc-programming-resources.json
+│
 ├── hardware-vendors/
 │   ├── rev/
-│   │   ├── rev-hardware-setup.json 💻 🔗 👀
+│   │   └── rev-hardware-setup.json
 │   ├── ctre/
-│   │   ├── ctre-hardware-setup.json 💻 🔗 👀
-├── basics/
-│   ├── intro-to-motors.json 💻 🔗 👀
-│   ├── controllers-and-bindings.json 💻 🔗 👀
-│   ├── motor-config.json 💻 🔗 👀
-│   ├── intake-example-robot.json 💻 🔗 👀
-├── environment-setup/
-│   ├── elastic-basics.json 💻 🔗 👀
-├── basics/
-│   ├── intro-to-command-based.json 💻 🔗 👀
-│   ├── intake-command-based.json 💻 🔗 👀
-├── command-based/
-│   ├── subsystems.json 💻 🔗 👀
-│   ├── commands.json 💻 🔗 👀
-│   ├── robot-container-and-bindings.json 💻 🔗 👀
-│   └── command-groups.json 💻 🔗 👀
-├── environment-setup/
-│   ├── frc-code-organization.json 💻 🔗 👀
-├── basics/
-│   ├── sensors-and-encoders.json 💻 🔗 👀
-├── hardware-vendors/
-│   ├── rev/
-│   ├── ctre/
+│   │   └── ctre-hardware-setup.json
 │   └── vendor-generic/
-│       ├── motor-controller-configuration.json 💻 🔗 👀
-│       ├── motor-current-limiting.json 💻 🔗 👀
-│       ├── motor-pid-control.json 💻 🔗 👀
+│       ├── motor-controller-configuration.json
+│       ├── motor-current-limiting.json
+│       └── motor-pid-control.json
+│
+├── basics/
+│   ├── intro-to-motors.json
+│   ├── controllers-and-bindings.json
+│   ├── motor-config.json
+│   ├── sensors-and-encoders.json
+│   ├── intake-example-robot.json
+│   └── elastic-basics.json
+│
+├── command-based/
+│   ├── intro-to-command-based.json
+│   ├── subsystems.json
+│   ├── commands.json
+│   ├── robot-container-and-bindings.json
+│   ├── command-groups.json
+│   ├── intake-command-based.json
+│   └── frc-code-organization.json
+│
 ├── control-theory/
-│   ├── pid-control.json 💻 🔗 👀
-│   ├── trapezoidal-motion-profiling.json 💻 🔗 👀
-│   ├── exponential-motion-profiling.json 💻 🔗 👀
-│   └── advanced-control-theory.json 💻 🔗 👀
+│   ├── pid-control.json
+│   ├── trapezoidal-motion-profiling.json
+│   ├── exponential-motion-profiling.json
+│   └── advanced-control-theory.json
+│
+├── pid-tuning-practice/
+│   ├── pid-practice-setup.json
+│   ├── pid-practice-elevator.json
+│   ├── pid-practice-arm.json
+│   └── pid-practice-exponential.json
+│
 ├── examples/
-│   ├── elevator-example.json 💻 🔗 👀
-│   └── shooter-example.json 💻 🔗 👀
+│   ├── elevator-example.json
+│   └── shooter-example.json
+│
 ├── pose-estimation/
-│   ├── pose-estimation-intro.json 💻 🔗 👀
-│   ├── odometry.json 💻 🔗 👀
-│   ├── vision-subsystem.json 💻 🔗 👀
-│   ├── vision-pose-estimation-fusion.json 💻 🔗 👀
-│   └── pose-estimation-calibration.json 💻 🔗 👀
+│   ├── pose-estimation-intro.json
+│   ├── odometry.json
+│   ├── vision-subsystem.json
+│   ├── vision-pose-estimation-fusion.json
+│   └── pose-estimation-calibration.json
+│
 ├── external-tools/
-│   ├── pathplanner.json 💻 🔗 👀
-│   ├── advantagescope.json 💻 🔗 👀
-│   ├── advantagekit.json 💻 🔗 👀
-│   └── yass.json 💻 🔗 👀
+│   ├── pathplanner.json
+│   ├── advantagescope.json
+│   ├── advantagekit.json
+│   └── yass.json
+│
 └── advanced-topics/
-    ├── simulation-basics.json 💻 🔗 👀
-    └── unit-testing.json 💻 🔗 👀
-
-
-
-rewrite ALL of the files in @data/frc so that they remove any fluff from the text. important explanations should be preserved while attempting to minimize the amouof redundant and/or unnecessary text. additionally, tr to make the tone and diction be suitable for a wide range of audiences. the website will be read from freshmen in low-income areas to professsionals in robotoics with 40+ years of experiene, so be sure to understand the wide range of views, experiences, and schooling into account when revising the wording of each page
-
- @WPILib Documentation @curatedWpilibExamples @AdvantageKit @PathPlannerLib API @CTRELib API @REVLib API @LimelightHelpers @Limelight Documentation @PathPlanner Documentation @Elastic Documentation @YAMS API @REV Code Examples @CTRE Code Examples @YAMS Code Examples @PathPlanner Code Examples @AdvantageKit Code Examples @Limelight Code Examples @PhotonVision Code Examples @PhotonVision Documentation  @CTRE Phoenix6 Documentation 
+    ├── simulation-basics.json
+    └── unit-testing.json
