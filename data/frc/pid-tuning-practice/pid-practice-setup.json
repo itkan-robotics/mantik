@@ -4,7 +4,7 @@
     {
       "type": "text",
       "title": "Overview",
-      "content": "This lesson covers setting up the PID tuning practice repository and configuring your development environment. You'll learn how to clone the practice repository, set up simulation, and configure the necessary tools for tuning PID controllers."
+      "content": "This guide covers setting up the PID tuning practice repository using YAMS simulation. YAMS provides better simulation than the default WPILib examples, which can be buggy and may not always load. The setup includes configuring the simulation, Elastic, and AdvantageScope for live tuning."
     },
     {
       "type": "text",
@@ -18,98 +18,76 @@
     {
       "type": "text",
       "title": "Prerequisites",
-      "content": "Before starting, ensure you have:<br><br>• Git installed on your computer<br>• GitHub Desktop downloaded and installed<br>• VS Code with WPILib extension installed<br>• WPILib package installed (includes Elastic and AdvantageScope)<br>• A folder on your C drive for robotics projects (to avoid OneDrive issues with WPILib)"
+      "content": "Before starting, ensure you have:<br><br>• Git installed<br>• GitHub Desktop installed<br>• WPILib installed (includes Elastic and AdvantageScope)<br>• Visual Studio Code with WPILib extension"
     },
     {
-      "type": "text",
-      "title": "Step 1: Clone the Practice Repository",
-      "content": "Navigate to the practice repository: <a href='https://github.com/itkan-robotics/mantik-pid-practice' target='_blank'>https://github.com/itkan-robotics/mantik-pid-practice</a><br><br>Click the green button and select \"Open with GitHub Desktop.\" This will open the repository in GitHub Desktop for cloning."
-    },
-    {
-      "type": "text",
-      "title": "Step 2: Choose Repository Location",
-      "content": "When cloning, choose a location on your C drive. It's recommended to have a single folder dedicated to all your robotics projects. This avoids OneDrive synchronization issues that can interfere with WPILib. Select your robotics projects folder as the destination."
-    },
-    {
-      "type": "text",
-      "title": "Step 3: Open Project in VS Code",
-      "content": "After cloning, open VS Code. Click on the WPILib button (next to the play button) or press <code>Ctrl+Shift+P</code> to open the command palette. Type \"simulate\" and select \"Simulate Robot Code.\" This will build the project and prepare it for simulation."
-    },
-    {
-      "type": "text",
-      "title": "Step 4: Launch Simulation GUI",
-      "content": "After the build succeeds, select \"Sim GUI\" (Simulation GUI) instead of the real Driver Station. This is easier to use and doesn't require FRC Game Tools to be installed. Click \"Okay\" to launch the simulation.<br><br>The Sim GUI provides controls for:<br>• Joystick input (you can drag joysticks from slot 16)<br>• Buttons Z, X, C, and V for various functions<br>• Mode selection (Autonomous, Teleoperated, Test)"
-    },
-    {
-      "type": "text",
-      "title": "Step 5: Open Elastic Dashboard",
-      "content": "With the simulation running, open Elastic dashboard. Elastic comes with the WPILib package installation. Elastic will be used for live tuning of PID constants during the practice sessions."
-    },
-    {
-      "type": "text",
-      "title": "Step 6: Open AdvantageScope",
-      "content": "Open AdvantageScope, which also comes with the WPILib package. AdvantageScope will be used to visualize the mechanism and graph position and velocity data during tuning."
-    },
-    {
-      "type": "text",
-      "title": "Step 7: Configure Mechanism Selection",
-      "content": "In SmartDashboard, select which mechanism you want to simulate:<br><br>• <strong>Elevator:</strong> For elevator PID tuning practice<br>• <strong>Arm:</strong> For arm PID tuning practice<br>• <strong>Flywheel:</strong> For flywheel PID tuning practice<br><br>For this setup, select the mechanism you'll be tuning. The mechanism will be visualized in AdvantageScope."
-    },
-    {
-      "type": "text",
-      "title": "Step 8: Set Up Live Tuning in Elastic",
-      "content": "In Elastic, create a new tab and rename it (e.g., \"Example\"). Right-click or use the \"Add Widget\" button, then search for \"live.\" Under \"Smart Dashboard Mechanisms Commands,\" select your mechanism (e.g., \"Elevator Subsystem\") and drag the \"Live Tuning Command\" widget into the tab. Place it anywhere in the workspace."
-    },
-    {
-      "type": "text",
-      "title": "Step 9: Enable Teleoperated Mode",
-      "content": "In the Sim GUI, enable Teleoperated mode. This puts the robot into the teleoperated period, which is required for live tuning. The live tuning button in Elastic should turn blue when enabled, indicating you can start tuning.<br><br><strong>Note:</strong> If using Phoenix Tuner or REV Hardware Client with physical hardware, you'll need teleoperated mode enabled and may need to enable the motor to work outside of what the code tells it to do."
-    },
-    {
-      "type": "text",
-      "title": "Step 10: Configure AdvantageScope Visualization",
-      "content": "In AdvantageScope, connect to the robot by pressing <code>Ctrl+Shift+K</code> or going to File → Connect to Robot. Drag in the simulated mechanism from Smart Dashboard (e.g., \"Elevator\") to visualize it. This visualization helps you see how the mechanism moves during tuning.<br><br><strong>Note:</strong> This visualization tab isn't necessary when using Phoenix Tuner or REV Hardware Client with physical hardware, as you have the actual mechanism in front of you."
-    },
-    {
-      "type": "text",
-      "title": "Step 11: Set Up Position and Velocity Graphs",
-      "content": "In AdvantageScope, create a line graph tab. Connect to the robot again, then search for position and velocity values. For the mechanism you're tuning:<br><br>• <strong>Arm:</strong> Look for \"arm motor/mechanism/position\" and velocity<br>• <strong>Elevator:</strong> Look for \"elevator/position\" and velocity<br><br>Drag these values into the graph. In Phoenix Tuner, you would look for \"rotor position\" and \"velocity\" to graph. REV Hardware Client has similar values."
-    },
-    {
-      "type": "text",
-      "title": "Step 12: Enable Tuning Values",
-      "content": "In AdvantageScope, go to the \"Tuning\" section and click the button that makes values publishable. This allows you to change tuning values in real-time. For example, you can change max velocity, max acceleration, and PID constants.<br><br>In Phoenix Tuner, these values are under the Config tab. Find your motor, click the config button, and scroll down to see the motor configuration values. REV Hardware Client has similar configuration options."
-    },
-    {
-      "type": "text",
-      "title": "Step 13: Configure Graph View",
-      "content": "In AdvantageScope, zoom the graph to show about 1-2 seconds of data. This makes it easier to see the mechanism's response. To zoom:<br><br>• <strong>Mouse wheel:</strong> Scroll in and out<br>• <strong>Touchpad:</strong> Swipe up and down with two fingers<br><br>To pause the graph, click the pause button. To navigate through time, drag along the axis with left click. Click pause again to resume."
-    },
-    {
-      "type": "text",
-      "title": "Step 14: Activate Live Tuning",
-      "content": "With everything set up and Teleoperated mode enabled, click the \"Live Tuning\" button in Elastic. When it turns blue, you're ready to start tuning your mechanism. The live tuning interface will show all the tunable values for your selected mechanism."
-    },
-    {
-      "type": "rules-box",
-      "title": "Setup Checklist",
-      "subtitle": "Before starting PID tuning:",
+      "type": "steps-box",
+      "title": "Setup Steps",
       "items": [
-        "Practice repository cloned to C drive",
-        "Project opened in VS Code",
-        "Simulation running (Sim GUI)",
-        "Elastic dashboard open with live tuning widget",
-        "AdvantageScope open with mechanism visualization",
-        "Position and velocity graphs configured",
-        "Tuning values enabled and publishable",
-        "Teleoperated mode enabled",
-        "Live tuning button active (blue)"
+        {
+          "text": "Navigate to the provided URL. Click the green \"Code\" button, then select \"Open with GitHub Desktop.\" Choose a location on your C: drive (avoid OneDrive, as WPILib doesn't work well with it). Create a dedicated folder for all your robotics projects to keep everything organized."
+        },
+        {
+          "text": "Open VS Code. Press <code>Ctrl+Shift+P</code> (Windows/Linux) or <code>Cmd+Shift+P</code> (Mac) to open the Command Palette. Type \"WPILib: Open Folder\" and select it. Navigate to the cloned repository folder and click \"Add Folder.\""
+        },
+        {
+          "text": "Start the simulation. In VS Code, click the WPI button (next to the play button). Alternatively, press <code>Ctrl+Shift+P</code> and type \"simulate.\" Select \"Simulate Robot Code.\" Wait for \"Build successful\" message. Choose \"Sim GUI\" when prompted (easier than using the real Driver Station, and not everyone has FRC Game Tools downloaded). Click \"OK.\""
+        },
+        {
+          "text": "Configure Sim GUI. If you don't have a joystick loaded, drag one from slot 16 into the joystick area. Note that the buttons are mapped to Z, X, C, and V keys. Set the mode to Teleoperated."
+        },
+        {
+          "text": "Open Elastic and AdvantageScope. Both tools should be included with your WPILib installation. These tools will be used for live tuning and visualization."
+        },
+        {
+          "text": "Select mechanism in Smart Dashboard. Choose which mechanism you want to simulate: arm, elevator, or flywheel. For this example, select \"Elevator.\" Individual tutorials will show you how to tune each mechanism."
+        },
+        {
+          "text": "Set up Elastic for live tuning. Create a new tab and rename it to \"example.\" Right-click (or use the menu) and select \"Add Widget.\" Search for \"live.\" Navigate to Smart Dashboard → Mechanisms → Commands. Select your mechanism (e.g., \"Elevator Subsystem\"). Drag the \"Live Tuning Command\" widget into the tab (top-left corner works well)."
+        },
+        {
+          "text": "Enable Teleoperated mode in Sim GUI. This is the driver-controlled period where tuning will occur. Note: If using Phoenix Tuner with real hardware, you need teleoperated mode enabled and the motor must be allowed to work outside of what the code tells it to do."
+        },
+        {
+          "text": "Set up AdvantageScope mechanism visualization. Press <code>Ctrl+Shift+K</code> (or go to File → Connect to Simulator). Go to the \"Mechanism\" view. In Smart Dashboard, select your mechanism (e.g., \"Elevator\") and drag it into AdvantageScope. You'll see a visualization of the mechanism you're coding. Note: This visualization tab isn't necessary when using Phoenix Tuner with real hardware, as you'll have the actual mechanism in front of you."
+        },
+        {
+          "text": "Create line graph in AdvantageScope. Connect to the simulator and go to \"Line Graph.\" Search for \"position.\" Based on your mechanism:",
+          "subitems": [
+            "For elevator: \"elevator/position\" and \"elevator/velocity\"",
+            "For flywheel: search for the corresponding position and velocity values"
+          ]
+        },
+        {
+          "text": "Drag these values into the graph. Note: In Phoenix Tuner, look for \"Rotor Position\" and \"Velocity\" to graph. REV Hardware Client should be similar."
+        },
+        {
+          "text": "Enable tuning mode. In AdvantageScope, go to \"Tuning\" and click the button next to the search bar to make all values publishable (editable). You can now change values like max velocity. These same values in Phoenix Tuner are under the Config tab: go to the top of your motor, click the config button, find the motor settings, and scroll down to see parallels with these values. REV Hardware Client should be similar."
+        },
+        {
+          "text": "Configure graph view. Zoom the graph to show about 1-2 seconds of data (otherwise it can be confusing).",
+          "subitems": [
+            "Use your scroll wheel to zoom in and out",
+            "If using a touchpad, swipe up and down with two fingers",
+            "To pause the graph, click the pause button",
+            "To scrub through time, left-click and drag along the timeline axis",
+            "To resume, click the play button again"
+          ]
+        },
+        {
+          "text": "Start live tuning. Ensure you're in teleoperated mode. Click the \"Live Tuning\" button in Elastic. When it turns blue, live tuning is active. You can now start tuning your mechanism. Watch the mechanism-specific tutorial videos for detailed tuning instructions."
+        }
       ]
     },
     {
-      "type": "text",
-      "title": "About the Practice Repository",
-      "content": "The practice repository uses YAMS (Yet Another Mechanism System) for simulation. YAMS provides better simulation than the default WPILib simulation examples, which can be buggy and don't always load properly. The repository includes examples for:<br><br>• <strong>Arm:</strong> Rotational mechanism affected by gravity<br>• <strong>Elevator:</strong> Vertical mechanism affected by gravity<br>• <strong>Flywheel:</strong> Velocity-controlled mechanism<br><br>Each mechanism has its own tuning tutorial that will show you how to tune it specifically."
+      "type": "rules-box",
+      "title": "Important Notes",
+      "items": [
+        "This setup works the same way regardless of which dashboard or graphing tool you're using.",
+        "If using Phoenix Tuner with real hardware, keep teleoperated mode enabled and allow motors to run outside code control.",
+        "The mechanism visualization in AdvantageScope isn't needed when using Phoenix Tuner with physical hardware.",
+        "YAMS simulation is more reliable than default WPILib simulation examples."
+      ]
     },
     {
       "type": "link-grid",
@@ -135,4 +113,3 @@
     }
   ]
 }
-

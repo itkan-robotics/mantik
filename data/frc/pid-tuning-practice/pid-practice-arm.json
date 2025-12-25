@@ -21,54 +21,104 @@
             "content": "Before starting this lesson, you should have:<br><br>• Completed the Setup lesson<br>• Completed the Elevator tuning lesson (for basic tuning concepts)<br>• Arm mechanism selected in SmartDashboard<br>• Live tuning enabled in Elastic<br>• Position and velocity graphs set up in AdvantageScope"
         },
         {
-            "type": "text",
-            "title": "Step 1: Set Appropriate Setpoint",
-            "content": "Set the setpoint to a position within the arm's range. In the video, the setpoint is set to 8 (in the mechanism's units). Watch for the red line in the visualization - this represents the soft limit (maximum position). Avoid setting the setpoint too close to or beyond the soft limit, as this can cause glitches in simulation. Find a position that works well for your arm mechanism."
-        },
-        {
-            "type": "text",
-            "title": "Step 2: Tune kG with High Precision",
-            "content": "Arms require more precise kG tuning than elevators. The process is similar but requires more decimal places:<br><br>1. Start with kG = 0.2, then 0.4, then 0.8 (doubling)<br>2. When you see movement, go back to negative to reset<br>3. Find the midpoint between the last good value and the too-high value<br>4. Continue narrowing down (0.6, 0.7, 0.75, 0.76, 0.77, 0.78, 0.79, etc.)<br>5. For finicky mechanisms, tune to 3-4 decimal places<br>6. The position line should be completely flat with no movement<br><br>In the video example, a kG value around 0.7815 worked well. The precision matters more for arms because lower gear ratios make these values more sensitive."
-        },
-        {
-            "type": "text",
-            "title": "Step 3: Verify kG Stability",
-            "content": "Once you've found a kG value, verify it's stable:<br><br>• Watch the position line - it should be completely flat<br>• Check for any small wiggles or movements<br>• Test values slightly above and below your chosen value<br>• The velocity graph should also be stable (some small changes may be due to simulation artifacts)"
-        },
-        {
-            "type": "text",
-            "title": "Step 4: Start Tuning kP",
-            "content": "Begin tuning kP using the same doubling method:<br><br>1. Start with kP = 0.1<br>2. Command the arm to move to a target position<br>3. Observe the response - arms with high inertia may move slowly<br>4. Double kP: 0.1 → 0.2 → 0.4 → 0.8 → 1.6, etc.<br>5. Watch for when the arm reaches the position<br><br>Arms with high inertia (heavy, large arms) require more force to move, so you may need to go higher with kP values."
-        },
-        {
-            "type": "text",
-            "title": "Step 5: Identify Overshoot",
-            "content": "As you increase kP, watch the position graph for overshoot:<br><br>• <strong>Overshoot:</strong> The position graph dips below the target line before settling<br>• This indicates the arm is moving too fast and overshooting the target<br>• Overshoot is dangerous if the arm has hard stops - it could ram into them<br>• The goal is to minimize or eliminate overshoot<br><br>If you see overshoot, you'll need to either reduce kP or use motion profiling to smooth the movement."
-        },
-        {
-            "type": "text",
-            "title": "Step 6: Configure Motion Profiling",
-            "content": "Motion profiling helps prevent overshoot and makes movement smoother. In the arm subsystem code, find the closed loop controller settings:<br><br>• <strong>Max Velocity:</strong> Maximum speed the arm can move (degrees per second)<br>• <strong>Max Acceleration:</strong> How quickly the arm can change speed (degrees per second per second)<br><br>These values control how the arm moves between positions, creating a trapezoidal motion profile."
-        },
-        {
-            "type": "text",
-            "title": "Step 7: Set Max Velocity",
-            "content": "To determine max velocity, consider:<br><br>• The distance the arm needs to travel<br>• How quickly you want it to reach the target (typically less than 1 second)<br>• Account for acceleration and deceleration time<br><br>Example: If moving from position 8 to -10 (about 60 degrees), and you want it to complete in less than a second including acceleration, set max velocity to around 90 degrees per second. Test different values and observe the effect on the position graph."
-        },
-        {
-            "type": "text",
-            "title": "Step 8: Set Max Acceleration",
-            "content": "Max acceleration should typically be higher than max velocity because:<br><br>• You want the mechanism to accelerate to max velocity in less than a second<br>• If acceleration is lower than velocity, it takes more than a second to reach max speed<br>• Higher acceleration creates sharper, more rectangular motion profiles<br><br>Adjust max acceleration to reduce the \"jump\" or sudden movement when starting. Lower acceleration values make the initial movement less noticeable and smoother."
-        },
-        {
-            "type": "text",
-            "title": "Step 9: Fine-Tune Motion Profile",
-            "content": "Work with both max velocity and max acceleration together:<br><br>• Test different combinations<br>• Watch for overshoot - motion profiling should help reduce it<br>• Look for smooth, rectangular motion in the position graph<br>• The motion should look like a rectangle: sharp up, flat across, sharp down<br>• Avoid curved, gradual transitions<br><br>Compare the motion with and without motion profiling to see the improvement."
-        },
-        {
-            "type": "text",
-            "title": "Step 10: Evaluate Final Motion",
-            "content": "The ideal motion profile should look rectangular/boxy:<br><br>• <strong>Sharp transition up:</strong> Quick acceleration to target<br>• <strong>Flat hold:</strong> Maintains position at target<br>• <strong>Sharp transition down:</strong> Quick return when commanded<br><br>Avoid motion that looks \"all over the place\" with lots of oscillation or overshoot. The rectangular shape indicates efficient, accurate movement. Motion profiling helps achieve this by controlling how the mechanism accelerates and decelerates."
+            "type": "steps-box",
+            "title": "Tuning Steps",
+            "items": [
+                {
+                    "text": "Set the setpoint to a position within the arm's range. Watch for the red line (soft limit) showing the maximum allowed position. Avoid setting the setpoint too close to or beyond it, as this can cause glitches in simulation. Find a position that works well for your arm mechanism."
+                },
+                {
+                    "text": "Find the smallest kG value that holds position without moving:",
+                    "subitems": [
+                        "Start with kG = 0.2, then 0.4, then 0.8 (doubling values)",
+                        "Watch the position graph (blue line) - it should stay completely flat",
+                        "When you see movement, set kG to a negative value to reset the position",
+                        "Use binary search (narrowing between the last good value and the first value that moves)",
+                        "Example progression: 0.75 (good) → 0.8 (too high) → 0.76 (good) → 0.77 (good) → 0.78 (good) → 0.79 (too high)",
+                        "For finicky mechanisms, continue to 3-4 decimal places",
+                        "Example: 0.785 (moving) → 0.782 (not moving) → 0.7815 (good, flat line)",
+                        "Test slightly above (e.g., 0.7817) to check for wiggles - if wiggles appear, use the lower value"
+                    ]
+                },
+                {
+                    "text": "Verify kG precision:",
+                    "subitems": [
+                        "Position line should be completely flat with no movement",
+                        "Check for any wiggles or small movements",
+                        "For arms with lower gear ratios (how motor rotation translates to mechanism movement), 2-3 decimal place precision is important",
+                        "Small velocity changes may be due to simulation limitations"
+                    ]
+                },
+                {
+                    "text": "Start tuning kP using the doubling method:",
+                    "subitems": [
+                        "Begin with kP = 0.1",
+                        "Command the arm to move to the target position",
+                        "Watch the position graph - arms with high inertia (resistance to changes in motion) may move slowly initially",
+                        "Double kP values: 0.1 → 0.2 → 0.4 → 0.8 → 1.6, etc.",
+                        "Continue until the arm reaches the target position",
+                        "Heavy arms with high inertia require more force to move, so you may need higher kP values"
+                    ]
+                },
+                {
+                    "text": "Watch for overshoot:",
+                    "subitems": [
+                        "Overshoot appears as the position graph traveling past the target position before settling",
+                        "This means the arm is moving too fast and overshooting the target",
+                        "Overshoot is dangerous if the arm has hard stops (physical limits) - it could ram into them",
+                        "The goal is to minimize or eliminate overshoot"
+                    ]
+                },
+                {
+                    "text": "Configure motion profiling in the arm subsystem code. Find the closed loop controller settings (motion profiling constraints):",
+                    "subitems": [
+                        "Max Velocity: Maximum speed the arm can move (degrees per second in this example)",
+                        "Max Acceleration: How quickly the arm can change speed (degrees per second per second)"
+                    ]
+                },
+                {
+                    "text": "Set max velocity:",
+                    "subitems": [
+                        "Consider the distance the arm needs to travel and desired completion time",
+                        "Example: Moving from position 8 to -10 (about 60 degrees) in less than 1 second including acceleration → set max velocity around 90 degrees per second",
+                        "Test different values and observe the effect on motion smoothness",
+                        "Lower values (e.g., 45) create smoother, slower motion",
+                        "Setting to zero (default) means immediate jump to max velocity, which is not how motors actually work - motors need time to ramp up"
+                    ]
+                },
+                {
+                    "text": "Set max acceleration:",
+                    "subitems": [
+                        "Max acceleration should typically be higher than max velocity",
+                        "This allows the mechanism to accelerate to max velocity in less than 1 second",
+                        "If acceleration is lower than velocity, it takes more than 1 second to reach max speed",
+                        "Higher values create sharper, more rectangular motion profiles",
+                        "Lower values reduce the initial \"jump\" and make movement smoother",
+                        "Adjust to reduce noticeable jumps at the start of movement"
+                    ]
+                },
+                {
+                    "text": "Fine-tune motion profile and kP together:",
+                    "subitems": [
+                        "Work with both max velocity and max acceleration to eliminate overshoot",
+                        "You may need to slightly decrease kP if there's still a small jump",
+                        "Test different combinations of values",
+                        "Goal: virtually no overshoot and smooth motion"
+                    ]
+                },
+                {
+                    "text": "Evaluate the final motion profile. The ideal motion should look rectangular/boxy in the position graph:",
+                    "subitems": [
+                        "Sharp transition up: Quick acceleration to target",
+                        "Flat hold: Maintains position at target",
+                        "Sharp transition down: Quick return when commanded to a new position",
+                        "Avoid motion that looks \"all over the place\" with oscillation or overshoot"
+                    ]
+                },
+                {
+                    "text": "Compare before and after motion profiling. Without motion profiling, the position graph may show erratic movement that takes longer and is less efficient. With proper tuning, you should see clean, rectangular transitions."
+                }
+            ]
         },
         {
             "type": "rules-box",

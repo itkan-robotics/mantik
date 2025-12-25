@@ -43,6 +43,7 @@
 │   ├── pid-practice-setup.json
 │   ├── pid-practice-elevator.json
 │   ├── pid-practice-arm.json
+│   ├── pid-practice-shooter.json
 │   └── pid-practice-exponential.json
 │
 ├── examples/

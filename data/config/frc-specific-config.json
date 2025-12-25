@@ -279,6 +279,13 @@
           "duration": "30 min"
         },
         {
+          "id": "pid-tuning-practice-shooter",
+          "label": "PID Tuning Practice - Shooter",
+          "file": "data/frc/pid-tuning-practice/pid-practice-shooter.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
           "id": "pid-tuning-practice-exponential",
           "label": "PID Tuning Practice - Exponential Motion Profiling",
           "file": "data/frc/pid-tuning-practice/pid-practice-exponential.json",

@@ -857,6 +857,7 @@ class ContentManager {
             'code': this.renderCodeSection.bind(this),
             'code-tabs': this.renderCodeTabsSection.bind(this),
             'rules-box': this.renderRulesBox.bind(this),
+            'steps-box': this.renderStepsBox.bind(this),
             'exercise-box': this.renderExerciseBox.bind(this),
             'data-types-grid': this.renderDataTypesGrid.bind(this),
             'logical-operators': this.renderLogicalOperators.bind(this),
@@ -1370,6 +1371,79 @@ class ContentManager {
         }
         
         container.appendChild(rulesBox);
+    }
+
+    renderStepsBox(container, data) {
+        const stepsBox = document.createElement('div');
+        stepsBox.className = 'rules-box';
+        
+        if (data.title) {
+            const h3 = document.createElement('h3');
+            h3.textContent = data.title;
+            stepsBox.appendChild(h3);
+        }
+        
+        if (data.subtitle) {
+            const h4 = document.createElement('h4');
+            h4.textContent = data.subtitle;
+            h4.style.marginTop = '0.5rem';
+            h4.style.marginBottom = '1rem';
+            h4.style.color = 'var(--color-foreground-secondary)';
+            h4.style.fontWeight = '500';
+            stepsBox.appendChild(h4);
+        }
+        
+        // Handle steps items (ordered list)
+        if (data.items && Array.isArray(data.items)) {
+            const stepsList = document.createElement('ol');
+            stepsList.style.margin = '0';
+            stepsList.style.paddingLeft = '1.5rem';
+            stepsList.style.listStyleType = 'decimal';
+            
+            data.items.forEach(item => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '0.75rem';
+                li.style.lineHeight = '1.6';
+                
+                // Handle both string items and object items with subitems
+                if (typeof item === 'string') {
+                    li.innerHTML = item;
+                } else if (typeof item === 'object' && item.text) {
+                    li.innerHTML = item.text;
+                    
+                    // Handle subitems if present
+                    if (item.subitems && Array.isArray(item.subitems)) {
+                        const subList = document.createElement('ul');
+                        subList.style.marginTop = '0.5rem';
+                        subList.style.marginBottom = '0';
+                        subList.style.paddingLeft = '1.5rem';
+                        subList.style.listStyleType = 'disc';
+                        
+                        item.subitems.forEach(subitem => {
+                            const subLi = document.createElement('li');
+                            subLi.innerHTML = subitem;
+                            subLi.style.marginBottom = '0.25rem';
+                            subLi.style.lineHeight = '1.5';
+                            subList.appendChild(subLi);
+                        });
+                        
+                        li.appendChild(subList);
+                    }
+                }
+                
+                stepsList.appendChild(li);
+            });
+            stepsBox.appendChild(stepsList);
+        }
+        
+        if (data.content) {
+            const content = document.createElement('div');
+            content.innerHTML = data.content;
+            content.style.marginTop = '1rem';
+            stepsBox.appendChild(content);
+        }
+        
+        container.appendChild(stepsBox);
     }
 
     renderExerciseBox(container, data) {
