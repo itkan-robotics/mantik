@@ -39,7 +39,7 @@
     {
       "type": "code",
       "title": "Registering Named Commands",
-      "content": "import com.pathplanner.lib.auto.NamedCommands;\n\npublic class RobotContainer {\n    public RobotContainer() {\n        // API: NamedCommands.registerCommand() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html#registerCommand(java.lang.String,edu.wpi.first.wpilibj2.command.Command)\n        // Register Named Commands\n        NamedCommands.registerCommand(\"intake\", new IntakeCommand(m_intake));\n        NamedCommands.registerCommand(\"shoot\", new ShootCommand(m_shooter));\n        NamedCommands.registerCommand(\"stop\", Commands.runOnce(m_intake::stop));\n\n        // Now build the auto\n        autoChooser = AutoBuilder.buildAutoChooser();\n    }\n}"
+      "content": "import com.pathplanner.lib.auto.NamedCommands;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\n\npublic class RobotContainer {\n    public RobotContainer() {\n        // API: NamedCommands.registerCommand() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html#registerCommand(java.lang.String,edu.wpi.first.wpilibj2.command.Command)\n        // Register Named Commands\n        NamedCommands.registerCommand(\"intake\", new IntakeCommand(m_intake));\n        NamedCommands.registerCommand(\"shoot\", new ShootCommand(m_shooter));\n        NamedCommands.registerCommand(\"stop\", new InstantCommand(m_intake::stop, m_intake));\n\n        // Now build the auto\n        autoChooser = AutoBuilder.buildAutoChooser();\n    }\n}"
     },
     {
       "type": "rules-box",

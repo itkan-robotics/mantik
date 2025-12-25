@@ -97,7 +97,7 @@
       "type": "code",
       "title": "Step 2a: RobotContainer Structure",
       "content": "The Command Robot template provides a <code>RobotContainer</code> class. Update it to include your intake subsystem:",
-      "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    // The template provides ExampleSubsystem - replace with your subsystems\n    // We'll add fields here next\n}"
+      "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.RunCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    // The template provides ExampleSubsystem - replace with your subsystems\n    // We'll add fields here next\n}"
     },
     {
       "type": "text",
@@ -117,7 +117,7 @@
     {
       "type": "code",
       "content": "Add constructor with button bindings:",
-      "code": "public RobotContainer() {\n    // Default command: Stop intake when no other command is running\n    m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));\n\n    // Button bindings\n    // Button A: Run intake forward (collect) while held\n    m_controller.a().whileTrue(Commands.run(() -> m_intake.run(0.6), m_intake));\n    // Button B: Run intake reverse (eject) while held\n    m_controller.b().whileTrue(Commands.run(() -> m_intake.run(-0.4), m_intake));\n}"
+      "code": "public RobotContainer() {\n    // Default command: Stop intake when no other command is running\n    m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stop(), m_intake));\n\n    // Button bindings\n    // Button A: Run intake forward (collect) while held\n    m_controller.a().whileTrue(new RunCommand(() -> m_intake.run(0.6), m_intake));\n    // Button B: Run intake reverse (eject) while held\n    m_controller.b().whileTrue(new RunCommand(() -> m_intake.run(-0.4), m_intake));\n}"
     },
     {
       "type": "text",
@@ -143,7 +143,7 @@
       "type": "code",
       "title": "Full Code - RobotContainer",
       "content": "The Command Robot template provides RobotContainer with configureBindings(). Update it with your intake subsystem and button bindings:",
-      "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    // Create subsystem instance\n    private final Intake m_intake = new Intake();\n    // The template uses Constants.OperatorConstants.kDriverControllerPort\n    // For this example, we'll use port 1 directly\n    private final CommandXboxController m_controller = new CommandXboxController(1);\n\n    public RobotContainer() {\n        // Configure button bindings (template provides configureBindings() method)\n        configureBindings();\n        \n        // Default command: Stop intake when no other command is running\n        m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));\n    }\n    \n    private void configureBindings() {\n        // Button A: Run intake forward (collect) while held\n        m_controller.a().whileTrue(Commands.run(() -> m_intake.run(0.6), m_intake));\n        // Button B: Run intake reverse (eject) while held\n        m_controller.b().whileTrue(Commands.run(() -> m_intake.run(-0.4), m_intake));\n    }\n}"
+      "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.RunCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    // Create subsystem instance\n    private final Intake m_intake = new Intake();\n    // The template uses Constants.OperatorConstants.kDriverControllerPort\n    // For this example, we'll use port 1 directly\n    private final CommandXboxController m_controller = new CommandXboxController(1);\n\n    public RobotContainer() {\n        // Configure button bindings (template provides configureBindings() method)\n        configureBindings();\n        \n        // Default command: Stop intake when no other command is running\n        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stop(), m_intake));\n    }\n    \n    private void configureBindings() {\n        // Button A: Run intake forward (collect) while held\n        m_controller.a().whileTrue(new RunCommand(() -> m_intake.run(0.6), m_intake));\n        // Button B: Run intake reverse (eject) while held\n        m_controller.b().whileTrue(new RunCommand(() -> m_intake.run(-0.4), m_intake));\n    }\n}"
     },
     {
       "type": "rules-box",

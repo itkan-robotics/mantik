@@ -163,7 +163,7 @@
     {
       "type": "code",
       "content": "Add button bindings in RobotContainer:",
-      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer with configureBindings()\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(Commands.runOnce(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(Commands.runOnce(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
+      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer with configureBindings()\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(new InstantCommand(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(new InstantCommand(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
     },
     {
       "type": "text",
@@ -189,7 +189,7 @@
       "type": "code",
       "title": "Full Code - RobotContainer",
       "content": "The Command Robot template provides RobotContainer. Update configureBindings() with your elevator button bindings:",
-      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer structure\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(Commands.runOnce(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(Commands.runOnce(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
+      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer structure\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(new InstantCommand(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(new InstantCommand(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
     },
     {
       "type": "rules-box",

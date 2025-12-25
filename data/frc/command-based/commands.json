@@ -30,12 +30,12 @@
     {
       "type": "text",
       "title": "Inline Commands",
-      "content": "For simple actions, use factory methods like <code>Commands.run()</code> or <code>Commands.runOnce()</code>. These reduce boilerplate for straightforward tasks."
+      "content": "For simple actions, use command constructors like <code>new RunCommand()</code> or <code>new InstantCommand()</code>. These reduce boilerplate for straightforward tasks."
     },
     {
       "type": "code",
       "title": "Inline Command Examples",
-      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.subsystems.Intake;\n\n// Run continuously while scheduled\nCommand runCmd = Commands.run(() -> intake.run(0.6), intake);\n\n// Run once immediately, then finish\nCommand stopCmd = Commands.runOnce(() -> intake.stop(), intake);\n\n// Run with a condition\nCommand conditionalCmd = Commands.run(() -> intake.run(0.6), intake)\n    .until(() -> intake.hasGamePiece());"
+      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.RunCommand;\nimport frc.robot.subsystems.Intake;\n\n// Run continuously while scheduled\nCommand runCmd = new RunCommand(() -> intake.run(0.6), intake);\n\n// Run once immediately, then finish\nCommand stopCmd = new InstantCommand(() -> intake.stop(), intake);\n\n// Run with a condition\nCommand conditionalCmd = new RunCommand(() -> intake.run(0.6), intake)\n    .until(() -> intake.hasGamePiece());"
     },
     {
       "type": "text",

@@ -20,7 +20,7 @@
     {
       "type": "code",
       "title": "Basic RobotContainer",
-      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private final Intake m_intake = new Intake();\n    private final CommandXboxController m_controller = new CommandXboxController(1);\n    \n    public RobotContainer() {\n        m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));\n        \n        m_controller.a().whileTrue(Commands.run(() -> m_intake.run(0.6), m_intake));\n    }\n}"
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.RunCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private final Intake m_intake = new Intake();\n    private final CommandXboxController m_controller = new CommandXboxController(1);\n    \n    public RobotContainer() {\n        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stop(), m_intake));\n        \n        m_controller.a().whileTrue(new RunCommand(() -> m_intake.run(0.6), m_intake));\n    }\n}"
     },
     {
       "type": "text",
@@ -30,7 +30,7 @@
     {
       "type": "code",
       "title": "Button Binding Examples",
-      "content": "// Run intake while A button held\nm_controller.a().whileTrue(Commands.run(() -> m_intake.run(0.6), m_intake));\n\n// Run intake reverse while B button held\nm_controller.b().whileTrue(Commands.run(() -> m_intake.run(-0.4), m_intake));\n\n// Toggle intake on/off with X button\nm_controller.x().toggleOnTrue(Commands.run(() -> m_intake.run(0.6), m_intake));"
+      "content": "// Run intake while A button held\nm_controller.a().whileTrue(new RunCommand(() -> m_intake.run(0.6), m_intake));\n\n// Run intake reverse while B button held\nm_controller.b().whileTrue(new RunCommand(() -> m_intake.run(-0.4), m_intake));\n\n// Toggle intake on/off with X button\nm_controller.x().toggleOnTrue(new RunCommand(() -> m_intake.run(0.6), m_intake));"
     },
     {
       "type": "text",
@@ -40,7 +40,7 @@
     {
       "type": "code",
       "title": "Default Commands in RobotContainer",
-      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Drivetrain;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private final Drivetrain m_drivetrain = new Drivetrain();\n    private final Intake m_intake = new Intake();\n    private final CommandXboxController m_controller = new CommandXboxController(0);\n    \n    public RobotContainer() {\n        // Default command: Stop intake when no other command is running\n        m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));\n        \n        // Default command: Drive with joystick input continuously\n        m_drivetrain.setDefaultCommand(Commands.run(\n            () -> m_drivetrain.arcadeDrive(m_controller.getLeftY(), m_controller.getRightX()),\n            m_drivetrain\n        ));\n    }\n}"
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.RunCommand;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Drivetrain;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private final Drivetrain m_drivetrain = new Drivetrain();\n    private final Intake m_intake = new Intake();\n    private final CommandXboxController m_controller = new CommandXboxController(0);\n    \n    public RobotContainer() {\n        // Default command: Stop intake when no other command is running\n        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stop(), m_intake));\n        \n        // Default command: Drive with joystick input continuously\n        m_drivetrain.setDefaultCommand(new RunCommand(\n            () -> m_drivetrain.arcadeDrive(m_controller.getLeftY(), m_controller.getRightX()),\n            m_drivetrain\n        ));\n    }\n}"
     },
     {
       "type": "link-grid",

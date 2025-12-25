@@ -24,7 +24,7 @@
     {
       "type": "code",
       "title": "Sequential Example",
-      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\nimport edu.wpi.first.wpilibj2.command.Commands;\n\n// Run commands one after another\nCommand autoRoutine = new SequentialCommandGroup(\n    new DriveForward(drivetrain).withTimeout(2.0),\n    new RunIntake(intake).withTimeout(1.0),\n    Commands.runOnce(() -> intake.stop(), intake)\n);"
+      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\n\n// Run commands one after another\nCommand autoRoutine = new SequentialCommandGroup(\n    new DriveForward(drivetrain).withTimeout(2.0),\n    new RunIntake(intake).withTimeout(1.0),\n    new InstantCommand(() -> intake.stop(), intake)\n);"
     },
     {
       "type": "text",
@@ -44,7 +44,7 @@
     {
       "type": "code",
       "title": "Autonomous Routine Example",
-      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\nimport edu.wpi.first.wpilibj2.command.ParallelCommandGroup;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.commands.DriveForward;\nimport frc.robot.commands.RunIntake;\nimport frc.robot.subsystems.Drivetrain;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private Drivetrain drivetrain = new Drivetrain();\n    private Intake intake = new Intake();\n    \n    public Command getAutoCommand() {\n        return new SequentialCommandGroup(\n            new ParallelCommandGroup(\n                new DriveForward(drivetrain).withTimeout(2.0),\n                new RunIntake(intake).withTimeout(2.0)\n            ),\n            Commands.runOnce(() -> intake.stop(), intake)\n        );\n    }\n}"
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\nimport edu.wpi.first.wpilibj2.command.ParallelCommandGroup;\nimport frc.robot.commands.DriveForward;\nimport frc.robot.commands.RunIntake;\nimport frc.robot.subsystems.Drivetrain;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private Drivetrain drivetrain = new Drivetrain();\n    private Intake intake = new Intake();\n    \n    public Command getAutoCommand() {\n        return new SequentialCommandGroup(\n            new ParallelCommandGroup(\n                new DriveForward(drivetrain).withTimeout(2.0),\n                new RunIntake(intake).withTimeout(2.0)\n            ),\n            new InstantCommand(() -> intake.stop(), intake)\n        );\n    }\n}"
     },
     {
       "type": "text",
