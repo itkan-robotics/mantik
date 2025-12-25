@@ -9,7 +9,7 @@
     {
       "type": "text",
       "title": "Setting Up Your Project",
-      "content": "When creating a new WPILib project, use the <strong>Command Robot</strong> template. This provides the correct command-based structure with <code>Robot.java</code>, <code>RobotContainer.java</code>, and the necessary directories.<br><br>In VS Code, use <strong>WPILib: Create a new project</strong> and select the Command Robot template. The template includes example subsystems and commands to help you get started.<br><br>For detailed instructions, see the <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html' target='_blank'>WPILib Creating a Robot Program documentation</a>."
+      "content": "When creating a new WPILib project, use the <strong>Command Robot</strong> template. This provides the correct command-based structure with <code>Robot.java</code>, <code>RobotContainer.java</code>, and the necessary directories.<br><br>In VS Code, use <strong>WPILib: Create a new project</strong> and select the Command Robot template. The template includes example subsystems and commands to help you get started.<br><br>For detailed instructions, see the <a href='#project-creation'>Project Creation guide</a>."
     },
     {
       "type": "rules-box",
@@ -44,6 +44,14 @@
         {
           "label": "Intake (Command-Based)",
           "id": "intake-command-based"
+        },
+        {
+          "label": "What Is Command-Based Programming?",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html"
+        },
+        {
+          "label": "Command-Based Programming Documentation",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/index.html"
         }
       ]
     }

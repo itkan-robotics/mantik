@@ -1,0 +1,109 @@
+{
+  "title": "PID Tuning Practice - Elevator",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "This lesson demonstrates PID tuning for an elevator mechanism. You'll learn the tuning method derived from SuperNURDS FRC 3255's 2025 build thread, combined with WPILib recommendations. The process involves tuning feedforward (kG) first, then proportional (kP) control."
+    },
+    {
+      "type": "text",
+      "title": "Video Tutorial",
+      "content": "Watch this video for a complete walkthrough of elevator PID tuning:"
+    },
+    {
+      "type": "text",
+      "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/Td7UHjy4DRY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+    },
+    {
+      "type": "text",
+      "title": "Prerequisites",
+      "content": "Before starting this lesson, you should have:<br><br>• Completed the Setup lesson<br>• Elevator mechanism selected in SmartDashboard<br>• Live tuning enabled in Elastic<br>• Position and velocity graphs set up in AdvantageScope<br>• Teleoperated mode enabled"
+    },
+    {
+      "type": "text",
+      "title": "Step 1: Set Unreasonable Setpoint",
+      "content": "The first step is to set the setpoint to an unreasonable value - something outside the mechanism's normal operating range. For an elevator, this might be 2-3 meters (depending on your mechanism's range). This allows us to test gravity feedforward without the mechanism actually trying to reach the target position."
+    },
+    {
+      "type": "text",
+      "title": "Step 2: Understanding kG (Gravity Feedforward)",
+      "content": "kG is the static voltage needed to keep the mechanism in place against gravity. It's similar to kS (static friction feedforward). Gravity is constantly acting on the elevator, so you need a small amount of voltage at all times to prevent it from moving up or down. We'll tune kG to find the smallest value that keeps the elevator stationary."
+    },
+    {
+      "type": "text",
+      "title": "Step 3: Tune kG Using Binary Search",
+      "content": "To tune kG, we use a binary search method:<br><br>1. Start with kG = 0.1<br>2. Watch the position graph (blue line) in AdvantageScope<br>3. If the position stays flat, the value is too low - double it (0.2, 0.4, 0.8, etc.)<br>4. When you see the position start to creep up, that value is too high<br>5. Set kG to a negative value to bring it back down quickly<br>6. Find the midpoint between the last good value and the too-high value<br>7. Continue narrowing down until you find the smallest value that keeps position stable<br><br>The goal is to find the smallest kG value that doesn't move the motor up but still keeps its position."
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Refine kG Value",
+      "content": "Once you've found a range (e.g., between 0.6 and 0.8), continue refining:<br><br>• Test values between your known good and too-high values<br>• Watch for any movement in the position line<br>• Look for small changes in velocity that might indicate movement<br>• The final kG value should keep the position line completely flat<br><br>For the elevator example in the video, a kG value around 0.61 worked well."
+    },
+    {
+      "type": "text",
+      "title": "Step 5: Start Tuning kP",
+      "content": "With kG tuned, we can now tune proportional control (kP). The process:<br><br>1. Start with kP = 0.1<br>2. Command the elevator to move to a target position<br>3. Observe how quickly it reaches the target<br>4. If it's too slow, double kP (0.1 → 0.2 → 0.4 → 0.8 → 1.6, etc.)<br>5. Continue doubling until the response looks good<br>6. Watch both the position graph and the mechanism visualization"
+    },
+    {
+      "type": "text",
+      "title": "Step 6: Evaluate Position Graph Shape",
+      "content": "When tuning kP, look at the position graph shape. The ideal shape is rectangular:<br><br>• <strong>Sharp up:</strong> Quick acceleration to target<br>• <strong>Sharp across:</strong> Holds at target with minimal overshoot<br>• <strong>Sharp down:</strong> Quick return when commanded<br><br>Avoid curved, gradual transitions. The graph should look like a rectangle, not a smooth curve. If you see a slow, curved approach to the target, kP is too low."
+    },
+    {
+      "type": "text",
+      "title": "Step 7: Compare Response Times",
+      "content": "As you increase kP, compare the response times in the position graph:<br><br>• At low kP: Notice how slowly the mechanism reaches the target<br>• As kP increases: The mechanism reaches the target faster<br>• The improvement should be visible in the graph - less time to reach target, sharper transitions<br><br>Keep increasing kP until you achieve a rectangular shape in the position graph."
+    },
+    {
+      "type": "text",
+      "title": "Step 8: Final kP Value",
+      "content": "The final kP value depends on your mechanism's characteristics:<br><br>• <strong>Gear ratio:</strong> Higher gear ratios may allow higher kP values<br>• <strong>Weight:</strong> Heavier mechanisms may need higher kP values<br>• <strong>Mechanism design:</strong> Different designs have different optimal values<br><br>In the video example, a kP value around 25.6-51.2 worked well for the simulated elevator, but your actual mechanism may need different values. The key is achieving that rectangular position graph shape."
+    },
+    {
+      "type": "rules-box",
+      "title": "Elevator Tuning Summary",
+      "subtitle": "The process:",
+      "items": [
+        "Set setpoint to unreasonable value (out of range)",
+        "Tune kG using binary search - find smallest value that holds position",
+        "Tune kP by doubling until position graph is rectangular",
+        "Look for sharp up, sharp across, sharp down in position graph",
+        "Compare response times - should get faster as kP increases"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Important Notes",
+      "content": "This elevator example was relatively simple and didn't require motion profiling. However, the arm mechanism (covered in the next lesson) is more complex and demonstrates:<br><br>• More finicky tuning requirements<br>• The need for motion profiling<br>• Trapezoidal motion profiles<br>• More realistic tuning scenarios<br><br>It's recommended to watch the arm tuning video as well to see a more complete example of the tuning process, including motion profiling."
+    },
+    {
+      "type": "text",
+      "title": "Applying to Physical Hardware",
+      "content": "The same principles apply when tuning with physical hardware using Phoenix Tuner or REV Hardware Client:<br><br>• <strong>Phoenix Tuner:</strong> Use the Config tab to adjust values. Look for \"rotor position\" and \"velocity\" for graphing.<br>• <strong>REV Hardware Client:</strong> Similar configuration options are available<br>• The tuning process is the same: tune kG first, then kP<br>• Watch for the same rectangular shape in position graphs<br><br>The tools may look different, but the techniques and principles remain the same."
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "PID Control",
+          "id": "frc-pid-control"
+        },
+        {
+          "label": "PID Tuning Practice - Setup",
+          "id": "pid-tuning-practice-setup"
+        },
+        {
+          "label": "PID Tuning Practice - Arm",
+          "id": "pid-tuning-practice-arm"
+        },
+        {
+          "label": "Elevator Example",
+          "id": "elevator-example"
+        }
+      ]
+    }
+  ]
+}
+

@@ -71,6 +71,13 @@
           "duration": "40 min"
         },
         {
+          "id": "project-creation",
+          "label": "Project Creation",
+          "file": "data/frc/environment-setup/project-creation.json",
+          "difficulty": "beginner",
+          "duration": "15 min"
+        },
+        {
           "id": "frc-programming-resources",
           "label": "FRC Programming Resources",
           "file": "data/frc/environment-setup/frc-programming-resources.json",
@@ -241,6 +248,42 @@
           "file": "data/frc/control-theory/advanced-control-theory.json",
           "difficulty": "advanced",
           "duration": "40 min"
+        }
+      ]
+    },
+    {
+      "id": "frc-pid-tuning-practice",
+      "label": "PID Tuning Practice",
+      "description": "Hands-on practice tuning PID controllers for different mechanisms",
+      "icon": "🎯",
+      "items": [
+        {
+          "id": "pid-tuning-practice-setup",
+          "label": "PID Tuning Practice - Setup",
+          "file": "data/frc/pid-tuning-practice/pid-practice-setup.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
+          "id": "pid-tuning-practice-elevator",
+          "label": "PID Tuning Practice - Elevator",
+          "file": "data/frc/pid-tuning-practice/pid-practice-elevator.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
+          "id": "pid-tuning-practice-arm",
+          "label": "PID Tuning Practice - Arm",
+          "file": "data/frc/pid-tuning-practice/pid-practice-arm.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
+          "id": "pid-tuning-practice-exponential",
+          "label": "PID Tuning Practice - Exponential Motion Profiling",
+          "file": "data/frc/pid-tuning-practice/pid-practice-exponential.json",
+          "difficulty": "intermediate",
+          "duration": "45 min"
         }
       ]
     },

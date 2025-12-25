@@ -1,0 +1,131 @@
+{
+    "title": "PID Tuning Practice - Arm",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "This lesson demonstrates PID tuning for an arm mechanism. Arms are more complex than elevators due to their rotational nature and varying gravity effects. You'll learn how to tune kG precisely, tune kP, and use motion profiling (trapezoidal profiles) to achieve smooth, accurate control."
+        },
+        {
+            "type": "text",
+            "title": "Video Tutorial",
+            "content": "Watch this video for a complete walkthrough of arm PID tuning:"
+        },
+        {
+            "type": "text",
+            "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/JXoCSk-9al4' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+        },
+        {
+            "type": "text",
+            "title": "Prerequisites",
+            "content": "Before starting this lesson, you should have:<br><br>• Completed the Setup lesson<br>• Completed the Elevator tuning lesson (for basic tuning concepts)<br>• Arm mechanism selected in SmartDashboard<br>• Live tuning enabled in Elastic<br>• Position and velocity graphs set up in AdvantageScope"
+        },
+        {
+            "type": "text",
+            "title": "Step 1: Set Appropriate Setpoint",
+            "content": "Set the setpoint to a position within the arm's range. In the video, the setpoint is set to 8 (in the mechanism's units). Watch for the red line in the visualization - this represents the soft limit (maximum position). Avoid setting the setpoint too close to or beyond the soft limit, as this can cause glitches in simulation. Find a position that works well for your arm mechanism."
+        },
+        {
+            "type": "text",
+            "title": "Step 2: Tune kG with High Precision",
+            "content": "Arms require more precise kG tuning than elevators. The process is similar but requires more decimal places:<br><br>1. Start with kG = 0.2, then 0.4, then 0.8 (doubling)<br>2. When you see movement, go back to negative to reset<br>3. Find the midpoint between the last good value and the too-high value<br>4. Continue narrowing down (0.6, 0.7, 0.75, 0.76, 0.77, 0.78, 0.79, etc.)<br>5. For finicky mechanisms, tune to 3-4 decimal places<br>6. The position line should be completely flat with no movement<br><br>In the video example, a kG value around 0.7815 worked well. The precision matters more for arms because lower gear ratios make these values more sensitive."
+        },
+        {
+            "type": "text",
+            "title": "Step 3: Verify kG Stability",
+            "content": "Once you've found a kG value, verify it's stable:<br><br>• Watch the position line - it should be completely flat<br>• Check for any small wiggles or movements<br>• Test values slightly above and below your chosen value<br>• The velocity graph should also be stable (some small changes may be due to simulation artifacts)"
+        },
+        {
+            "type": "text",
+            "title": "Step 4: Start Tuning kP",
+            "content": "Begin tuning kP using the same doubling method:<br><br>1. Start with kP = 0.1<br>2. Command the arm to move to a target position<br>3. Observe the response - arms with high inertia may move slowly<br>4. Double kP: 0.1 → 0.2 → 0.4 → 0.8 → 1.6, etc.<br>5. Watch for when the arm reaches the position<br><br>Arms with high inertia (heavy, large arms) require more force to move, so you may need to go higher with kP values."
+        },
+        {
+            "type": "text",
+            "title": "Step 5: Identify Overshoot",
+            "content": "As you increase kP, watch the position graph for overshoot:<br><br>• <strong>Overshoot:</strong> The position graph dips below the target line before settling<br>• This indicates the arm is moving too fast and overshooting the target<br>• Overshoot is dangerous if the arm has hard stops - it could ram into them<br>• The goal is to minimize or eliminate overshoot<br><br>If you see overshoot, you'll need to either reduce kP or use motion profiling to smooth the movement."
+        },
+        {
+            "type": "text",
+            "title": "Step 6: Configure Motion Profiling",
+            "content": "Motion profiling helps prevent overshoot and makes movement smoother. In the arm subsystem code, find the closed loop controller settings:<br><br>• <strong>Max Velocity:</strong> Maximum speed the arm can move (degrees per second)<br>• <strong>Max Acceleration:</strong> How quickly the arm can change speed (degrees per second per second)<br><br>These values control how the arm moves between positions, creating a trapezoidal motion profile."
+        },
+        {
+            "type": "text",
+            "title": "Step 7: Set Max Velocity",
+            "content": "To determine max velocity, consider:<br><br>• The distance the arm needs to travel<br>• How quickly you want it to reach the target (typically less than 1 second)<br>• Account for acceleration and deceleration time<br><br>Example: If moving from position 8 to -10 (about 60 degrees), and you want it to complete in less than a second including acceleration, set max velocity to around 90 degrees per second. Test different values and observe the effect on the position graph."
+        },
+        {
+            "type": "text",
+            "title": "Step 8: Set Max Acceleration",
+            "content": "Max acceleration should typically be higher than max velocity because:<br><br>• You want the mechanism to accelerate to max velocity in less than a second<br>• If acceleration is lower than velocity, it takes more than a second to reach max speed<br>• Higher acceleration creates sharper, more rectangular motion profiles<br><br>Adjust max acceleration to reduce the \"jump\" or sudden movement when starting. Lower acceleration values make the initial movement less noticeable and smoother."
+        },
+        {
+            "type": "text",
+            "title": "Step 9: Fine-Tune Motion Profile",
+            "content": "Work with both max velocity and max acceleration together:<br><br>• Test different combinations<br>• Watch for overshoot - motion profiling should help reduce it<br>• Look for smooth, rectangular motion in the position graph<br>• The motion should look like a rectangle: sharp up, flat across, sharp down<br>• Avoid curved, gradual transitions<br><br>Compare the motion with and without motion profiling to see the improvement."
+        },
+        {
+            "type": "text",
+            "title": "Step 10: Evaluate Final Motion",
+            "content": "The ideal motion profile should look rectangular/boxy:<br><br>• <strong>Sharp transition up:</strong> Quick acceleration to target<br>• <strong>Flat hold:</strong> Maintains position at target<br>• <strong>Sharp transition down:</strong> Quick return when commanded<br><br>Avoid motion that looks \"all over the place\" with lots of oscillation or overshoot. The rectangular shape indicates efficient, accurate movement. Motion profiling helps achieve this by controlling how the mechanism accelerates and decelerates."
+        },
+        {
+            "type": "rules-box",
+            "title": "Arm Tuning Process Summary",
+            "subtitle": "Complete workflow:",
+            "items": [
+                "Set setpoint to appropriate position (within soft limits)",
+                "Tune kG to 2-3 decimal places precision - position line must be flat",
+                "Tune kP by doubling until arm reaches position",
+                "Watch for overshoot in position graph",
+                "Configure motion profiling (max velocity and max acceleration)",
+                "Max acceleration should be higher than max velocity",
+                "Fine-tune to achieve rectangular motion profile",
+                "Motion should be sharp up, flat across, sharp down"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Why Motion Profiling Matters",
+            "content": "Motion profiling is crucial for arms because:<br><br>• <strong>Prevents overshoot:</strong> Controls acceleration to avoid ramming into hard stops<br>• <strong>Reduces jerkiness:</strong> Smooths out sudden movements that can break chains or damage mechanisms<br>• <strong>More efficient:</strong> Faster and more accurate than uncontrolled movement<br>• <strong>Protects hardware:</strong> Prevents the mechanism from being too energetic or extreme<br><br>Without motion profiling, mechanisms can experience sudden jerks that cause mechanical failures (like broken chains, as mentioned in the video)."
+        },
+        {
+            "type": "text",
+            "title": "Trapezoidal vs Exponential Profiles",
+            "content": "The video uses trapezoidal motion profiles because they're more intuitive. However, exponential profiles are often better because:<br><br>• Motors need time to ramp up - they don't instantly jump to max velocity<br>• Exponential profiles better match how motors actually behave<br>• They can provide even smoother motion<br><br>Trapezoidal profiles are a good starting point for learning, but consider exponential profiles for production code."
+        },
+        {
+            "type": "text",
+            "title": "Applying to Physical Hardware",
+            "content": "The same techniques apply when tuning with physical hardware:<br><br>• <strong>Phoenix Tuner:</strong> Use Config tab to adjust values. Graph \"rotor position\" and \"velocity.\"<br>• <strong>REV Hardware Client:</strong> Similar configuration options available<br>• The tuning process is identical: precise kG, kP tuning, then motion profiling<br>• Watch for the same rectangular motion profile<br><br>Even though the tools look different, the principles and techniques you learn here apply directly to physical mechanism tuning."
+        },
+        {
+            "type": "text",
+            "title": "Key Takeaways",
+            "content": "The complete arm tuning process involves:<br><br>1. <strong>Precise kG tuning:</strong> Get it accurate to 2-3 decimal places for finicky mechanisms<br>2. <strong>kP tuning:</strong> Double until you reach the target, but watch for overshoot<br>3. <strong>Motion profiling:</strong> Use max velocity and max acceleration to create smooth, rectangular motion<br>4. <strong>Rectangular shape goal:</strong> The position graph should look like a rectangle, not a curve or oscillation<br><br>These skills apply to all mechanism tuning, whether using simulation tools or physical hardware tuning tools."
+        },
+        {
+            "type": "link-grid",
+            "title": "Resources",
+            "links": [
+                {
+                    "label": "PID Control",
+                    "id": "frc-pid-control"
+                },
+                {
+                    "label": "PID Tuning Practice - Elevator",
+                    "id": "pid-tuning-practice-elevator"
+                },
+                {
+                    "label": "Trapezoidal Motion Profiling",
+                    "id": "trapezoidal-motion-profiling"
+                },
+                {
+                    "label": "Feedforward Control",
+                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward-control.html"
+                }
+            ]
+        }
+    ]
+}

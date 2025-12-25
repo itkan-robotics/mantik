@@ -1,0 +1,113 @@
+{
+    "title": "PID Tuning Practice - Exponential Motion Profiling",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "This guide covers tuning PID controllers with exponential motion profiling for elevator mechanisms. You'll learn how to tune feedforward constants (kG, kV, kA) and PID constants (kP, kD) to achieve smooth, accurate control. This tutorial uses YAMS simulation but the techniques apply to physical hardware tuning with Phoenix Tuner or REV Hardware Client."
+        },
+        {
+            "type": "text",
+            "title": "Video Tutorial",
+            "content": "Watch this video for a complete walkthrough of elevator PID tuning with exponential motion profiling:"
+        },
+        {
+            "type": "text",
+            "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/nlRjdr1KUg4' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+        },
+        {
+            "type": "text",
+            "title": "Prerequisites",
+            "content": "Before starting, ensure you have:<br><br>• Practice repository cloned and open in VS Code<br>• Simulation running (Sim GUI)<br>• Elastic dashboard configured with live tuning, tuning widgets, and position/velocity graphs<br>• Understanding of basic mechanism setup"
+        },
+        {
+            "type": "text",
+            "title": "Step 1: Initialize All Values to Zero",
+            "content": "Before starting tuning, set all PID and feedforward values to zero. This gives you a clean baseline to work from. You'll gradually increase values during the tuning process."
+        },
+        {
+            "type": "text",
+            "title": "Step 2: Enable Teleoperated Mode and Live Tuning",
+            "content": "In the Sim GUI, press \"Teleoperated\" to enable robot control. The orange bar in the mechanism visualization is what you use to control the robot. In Elastic, click the \"Live Tuning\" button - it should turn blue when active. Blue means live tuning is enabled and you can start adjusting values."
+        },
+        {
+            "type": "text",
+            "title": "Step 3: Tune kG (Gravity Feedforward)",
+            "content": "kG is the force used to counteract gravity. To tune it:<br><br>1. Set the setpoint to an unreasonably high value (e.g., 10 meters for a 7-foot elevator)<br>2. Watch the position graph (blue line)<br>3. Gradually increase kG (start with 0.25, then increase)<br>4. When you see the position bar start moving up, that value is too high<br>5. Set kG to zero to bring it back down<br>6. Use binary search: find the midpoint between the last good value and the too-high value<br>7. Continue refining until the position stays flat<br>8. Aim for 3-5 decimal places of precision (e.g., 2.495)<br><br>The goal is the smallest kG value that keeps the position completely stable."
+        },
+        {
+            "type": "text",
+            "title": "Step 4: Tune kV (Velocity Feedforward)",
+            "content": "kV is in volts per rotations per second. To tune it:<br><br>1. Turn off live tuning temporarily (it will turn gray when you press a joystick button)<br>2. Press 'C' on your keyboard to set duty cycle to a certain value (adjust if needed, e.g., 0.25)<br>3. Watch the velocity graph and note the velocity value (e.g., 27 rotations per second)<br>4. Note the voltage value (e.g., 3.552 volts)<br>5. Calculate: <code>kV = voltage / max_velocity</code><br>6. Copy the first 5 digits of the result<br>7. Publish that value as your kV<br><br>kV tells the controller how much voltage is needed per unit of velocity."
+        },
+        {
+            "type": "text",
+            "title": "Step 5: Tune kA (Acceleration Feedforward)",
+            "content": "kA is acceleration feedforward. To tune it:<br><br>1. Set the setpoint back down<br>2. Watch the velocity graph<br>3. Observe how long it takes for the velocity to ramp up (from lower to higher)<br>4. Measure the time (e.g., one section = 0.1 seconds)<br>5. Calculate: <code>kA = kV / time_to_ramp_up</code><br>6. Copy the first 4-5 digits<br>7. Publish that value as your kA<br><br>kA accounts for how quickly the mechanism can change velocity."
+        },
+        {
+            "type": "text",
+            "title": "Step 6: Tune kP (Proportional)",
+            "content": "With feedforward tuned, now tune proportional control:<br><br>1. Turn live tuning back on (make sure it's blue)<br>2. Set position to a reasonable value (e.g., 1 meter)<br>3. Start with kP = 0.1<br>4. Watch the position graph - if it's not moving or moving very slowly, double kP<br>5. Continue doubling (0.1 → 0.2 → 0.4 → 0.8 → 1.6 → 3.2, etc.)<br>6. Watch for the position graph to become straighter (less curved)<br>7. When you see oscillation or overshoot, you've gone too high<br>8. Find the midpoint between the last good value and the oscillating value<br>9. The goal is a straight, rectangular motion profile<br><br><strong>Important:</strong> Avoid touching joystick buttons while tuning - this disables live tuning (turns it gray)."
+        },
+        {
+            "type": "text",
+            "title": "Step 7: Refine kP to Eliminate Oscillation",
+            "content": "If you see oscillation (overshoot and correction):<br><br>1. You've doubled kP too high (e.g., went from 2 to 4 and now it oscillates)<br>2. Find the midpoint (e.g., 3) between the last good value and the oscillating value<br>3. Test that value<br>4. Continue refining until oscillation is minimal<br>5. The oscillation should be within \"one box\" on your graph<br>6. Watch both upward and downward movement - oscillation often appears more on the way down<br><br>The goal is smooth motion without overshoot or oscillation."
+        },
+        {
+            "type": "text",
+            "title": "Step 8: Tune kD (Derivative)",
+            "content": "Derivative control reduces oscillation. To tune it:<br><br>1. Start with a very low kD value (e.g., 0.05, or even 0.005 for first-time tuning)<br>2. Watch the position graph for oscillation reduction<br>3. Gradually increase kD by doubling (0.05 → 0.1 → 0.2, etc.)<br>4. Observe how oscillation decreases<br>5. Stop when oscillation is minimal<br>6. <strong>Warning:</strong> Too high kD causes jittery, unstable behavior (like the \"clack\" noise in swerve drive)<br>7. The mechanism should be smooth and steady, not jittery<br><br>kD is powerful but must be tuned carefully - don't be too aggressive."
+        },
+        {
+            "type": "text",
+            "title": "Step 9: Fine-Tune All Values Together",
+            "content": "Once you have baseline values, fine-tune them together:<br><br>1. Test movement to different positions<br>2. Make small adjustments to kP and kD<br>3. Watch for the \"box\" shape in the position graph - sharp up, flat across, sharp down<br>4. Avoid slow, curved motion<br>5. Avoid oscillation and jitter<br>6. The motion should look rectangular, not curved or oscillating<br><br>Much of this is by feel and experience. Practice in simulation before tuning physical hardware to avoid damaging mechanisms."
+        },
+        {
+            "type": "rules-box",
+            "title": "Complete Tuning Process Summary",
+            "subtitle": "Step-by-step workflow:",
+            "items": [
+                "Set all values to zero",
+                "Set position to unreasonably high value",
+                "Turn on live tuning (should be blue)",
+                "Tune kG: Increase until position starts moving up, then refine to smallest stable value",
+                "Tune kV: Use duty cycle, measure voltage and velocity, calculate volts/rotations per second",
+                "Tune kA: Measure velocity ramp-up time, calculate kV divided by time",
+                "Set position to reasonable value (1-2 meters for elevator)",
+                "Tune kP: Double until oscillation appears, then find midpoint",
+                "Tune kD: Start very low, double until oscillation is minimal",
+                "Fine-tune all values together for smooth, rectangular motion"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Important Notes",
+            "content": "<strong>Live Tuning:</strong> Keep live tuning active (blue) during tuning. Pressing joystick buttons disables it (turns gray). Avoid touching controls while tuning.<br><br><strong>Oscillation:</strong> If you see oscillation, you've increased values too aggressively. Find the midpoint between good and oscillating values.<br><br><strong>Jitter:</strong> Too high kD causes jittery behavior. This creates unwanted noise and wear on mechanisms. Keep kD tuned to eliminate oscillation without causing jitter.<br><br><strong>Practice:</strong> Tuning takes time and experience. It's better to practice in simulation than risk damaging physical hardware. Oscillation on a real robot can cause mechanisms to move at dangerous speeds (20-30 ft/s)."
+        },
+        {
+            "type": "link-grid",
+            "title": "Resources",
+            "links": [
+                {
+                    "label": "PID Control",
+                    "id": "frc-pid-control"
+                },
+                {
+                    "label": "PID Tuning Practice - Setup",
+                    "id": "pid-tuning-practice-setup"
+                },
+                {
+                    "label": "PID Tuning Practice - Elevator",
+                    "id": "pid-tuning-practice-elevator"
+                },
+                {
+                    "label": "Practice Repository",
+                    "url": "https://github.com/itkan-robotics/mantik-pid-practice"
+                }
+            ]
+        }
+    ]
+}
