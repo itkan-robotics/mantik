@@ -1,12 +1,158 @@
 {
+  "id": "competitive-training",
   "title": "Competitive Programming Training",
   "description": "Advanced competitive programming and algorithm training for robotics teams",
-  "intro": {
-    "id": "comp-intro",
-    "label": "Competitive Training Overview",
-    "file": "data/comp/foundation/comp-intro.json",
-    "type": "overview"
-  },
+  "sections": [
+    {
+      "type": "text",
+      "title": "Welcome to Competitive Programming",
+      "content": "Welcome to the comprehensive competitive programming training section! This curriculum is designed to take you from beginner to advanced problem solver, preparing you for coding competitions, technical interviews, and real-world programming challenges."
+    },
+    {
+      "type": "rules-box",
+      "title": "What is Competitive Programming?",
+      "subtitle": "Competitive programming is:",
+      "items": [
+        "Solving algorithmic problems under time constraints",
+        "Writing efficient, correct code quickly",
+        "Understanding data structures and algorithms deeply",
+        "Developing systematic problem-solving approaches",
+        "Preparing for technical interviews and coding challenges",
+        "Building strong analytical and programming skills"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Why Learn Competitive Programming?",
+      "content": "Competitive programming skills are valuable for:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "<strong>Technical Interviews:</strong> Most tech companies use algorithmic problems in interviews",
+        "<strong>Problem-Solving Skills:</strong> Develop systematic approaches to complex problems",
+        "<strong>Code Efficiency:</strong> Learn to write optimized, scalable code",
+        "<strong>Algorithm Knowledge:</strong> Deep understanding of data structures and algorithms",
+        "<strong>Career Advancement:</strong> Stand out in job applications and technical discussions",
+        "<strong>Robotics Applications:</strong> Apply algorithmic thinking to robot programming and autonomous systems"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Learning Path Overview",
+      "content": "This competitive programming training is organized into five main sections, each building upon the previous knowledge:"
+    },
+    {
+      "type": "list",
+      "title": "Curriculum Structure",
+      "items": [
+        "<strong>Foundation:</strong> Problem-solving framework, Big O notation, time complexity analysis, and interview preparation. This establishes the fundamental mindset and tools for competitive programming.",
+        "<strong>Data Structures:</strong> Master arrays, strings, linked lists, trees, graphs, heaps, hash tables, tries, and union-find. Understanding these structures is crucial for efficient problem solving.",
+        "<strong>Algorithms:</strong> Learn sorting, searching, binary search, two pointers, sliding window, dynamic programming, greedy algorithms, and backtracking. These are the core techniques used in competitive programming.",
+        "<strong>Advanced Topics:</strong> Dive into advanced dynamic programming, bit manipulation, and segment trees. These topics separate intermediate from advanced competitive programmers.",
+        "<strong>Competition Strategies:</strong> Learn problem patterns, code optimization techniques, contest strategies, and advanced problem-solving approaches. This prepares you for real competitions and interviews."
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Prerequisites",
+      "subtitle": "Before starting competitive programming training, you should have:",
+      "items": [
+        "Solid understanding of Java programming fundamentals",
+        "Familiarity with basic data structures (arrays, lists)",
+        "Understanding of control structures and loops",
+        "Basic knowledge of object-oriented programming",
+        "Willingness to practice regularly and solve problems"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Competitive Programming Platforms",
+      "content": "Practice on these platforms to apply your learning:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "<strong>LeetCode:</strong> Excellent for interview preparation with company-specific problems",
+        "<strong>HackerRank:</strong> Good for beginners with structured learning paths",
+        "<strong>Codeforces:</strong> Advanced competitive programming contests and problems",
+        "<strong>AtCoder:</strong> Japanese platform with regular contests and educational content",
+        "<strong>TopCoder:</strong> Classic competitive programming platform with SRM contests"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Problem-Solving Approach",
+      "content": "Successful competitive programmers follow a systematic approach:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "<strong>Understand the Problem:</strong> Read carefully, identify inputs, outputs, and constraints",
+        "<strong>Consider Examples:</strong> Work through small examples to understand the problem",
+        "<strong>Identify Patterns:</strong> Look for familiar problem patterns or data structures",
+        "<strong>Design Algorithm:</strong> Plan your approach before coding",
+        "<strong>Analyze Complexity:</strong> Ensure your solution meets time and space constraints",
+        "<strong>Implement Carefully:</strong> Write clean, correct code",
+        "<strong>Test Thoroughly:</strong> Test with edge cases and examples"
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Learning Tips",
+      "subtitle": "Maximize your learning with these strategies:",
+      "items": [
+        "Practice regularly - consistency is more important than long sessions",
+        "Solve problems in order of difficulty",
+        "Review solutions after attempting problems",
+        "Learn from others' solutions and approaches",
+        "Focus on understanding, not just memorizing",
+        "Participate in contests to test your skills under pressure",
+        "Join competitive programming communities for support"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Getting Started",
+      "content": "Ready to begin your competitive programming journey? Start with the <strong>Problem Solving Framework</strong> lesson to learn systematic approaches to algorithmic problems, then progress through data structures and algorithms."
+    },
+    {
+      "type": "link-grid",
+      "title": "Quick Navigation",
+      "links": [
+        {
+          "label": "Problem Solving Framework",
+          "id": "comp-problem-solving"
+        },
+        {
+          "label": "Big O Notation",
+          "id": "comp-big-o"
+        },
+        {
+          "label": "Arrays and Strings",
+          "id": "comp-arrays-strings"
+        },
+        {
+          "label": "Interview Preparation",
+          "id": "comp-interview-prep"
+        }
+      ]
+    },
+    {
+      "type": "exercise-box",
+      "title": "Competitive Programming Readiness",
+      "description": "Before starting competitive programming training, assess your readiness:",
+      "tasks": [
+        "Do you have a solid understanding of Java programming?",
+        "Are you comfortable with basic data structures like arrays and lists?",
+        "How much time can you dedicate to practice each week?",
+        "What are your goals (interviews, competitions, skill development)?",
+        "Are you comfortable with mathematical thinking and logic?",
+        "Do you enjoy solving puzzles and algorithmic problems?"
+      ],
+      "content": "// Competitive programming is about solving problems efficiently\n// Start with the fundamentals and build your skills systematically\n// Remember: practice is the key to improvement!"
+    }
+  ],
   "groups": [
     {
       "id": "comp-foundation",

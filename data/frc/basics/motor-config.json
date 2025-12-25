@@ -3,8 +3,13 @@
   "sections": [
     {
       "type": "text",
+      "title": "Template Project",
+      "content": "This lesson applies to both <strong>Timed Robot</strong> and <strong>Command Robot</strong> templates. For Timed Robot, configure motors in <code>robotInit()</code>. For Command Robot, configure motors in subsystem constructors."
+    },
+    {
+      "type": "text",
       "title": "Overview",
-      "content": "Proper configuration ensures motors operate safely and correctly. Essential settings include inversion, idle mode, and current limits."
+      "content": "Proper configuration ensures motors operate safely and correctly. We'll configure three essential settings: inversion, idle mode, and current limits. Each setting serves a specific purpose for safe and predictable motor behavior."
     },
     {
       "type": "rules-box",
@@ -18,67 +23,113 @@
     },
     {
       "type": "text",
-      "title": "1. Inversion",
-      "content": "Set this so that positive software values match the physical \"forward\" direction of the mechanism.<br><strong>Test:</strong> Apply small positive power (0.2). If it moves backward, enable inversion."
+      "title": "Step 1: Create Configuration Object",
+      "content": "Start by creating a configuration object. This object holds all the settings we'll apply to the motor. We create it, set properties, then apply it to the motor."
     },
     {
       "type": "code-tabs",
-      "title": "Inversion Code",
-      "content": "Setting inversion:",
+      "content": "Create and apply a configuration object:",
       "tabs": [
         {
           "label": "Talon FX",
-          "code": "// ... (in robotInit() or constructor)\n\nTalonFXConfiguration config = new TalonFXConfiguration();\n// Set motor direction (adjust based on your mechanism)\nconfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n// Alternative: InvertedValue.Clockwise_Positive\nm_motor.getConfigurator().apply(config);\n\n// ... (rest of method/class)"
+          "code": "// In robotInit() or constructor\nTalonFXConfiguration config = new TalonFXConfiguration();\n// We'll add settings here\nm_motor.getConfigurator().apply(config);"
         },
         {
           "label": "SPARK MAX",
-          "code": "// ... (in robotInit() or constructor)\n\nSparkMaxConfig config = new SparkMaxConfig();\n// Set motor direction (true = inverted, false = normal)\nconfig.inverted(true);\n// Alternative: config.inverted(false)\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n\n// ... (rest of method/class)"
+          "code": "// In constructor or configuration method\nSparkMaxConfig config = new SparkMaxConfig();\n// We'll add settings here\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
         }
       ]
     },
     {
       "type": "text",
-      "title": "2. Idle Mode",
-      "content": "<strong>Brake:</strong> Motor resists motion when output is 0. Use for elevators, arms, and drivetrains.<br><strong>Coast:</strong> Motor spins freely when output is 0. Use for flywheels and intakes."
+      "title": "Step 2: Configure Inversion",
+      "content": "Inversion controls which direction is \"positive.\" Set this so that positive software values match the physical \"forward\" direction of your mechanism. Test by applying small positive power (0.2). If it moves backward, enable inversion."
     },
     {
       "type": "code-tabs",
-      "title": "Idle Mode Code",
-      "content": "Setting idle mode:",
+      "content": "Add inversion to the configuration:",
       "tabs": [
         {
           "label": "Talon FX",
-          "code": "// ... (in configuration section)\n\n// Brake: Motor resists motion when stopped (good for elevators, arms)\nconfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n// Coast: Motor spins freely when stopped (good for flywheels, intakes)\n// Alternative: NeutralModeValue.Coast\n\n// ... (rest of configuration)"
+          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Set motor direction (adjust based on your mechanism)\nconfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n// Alternative: InvertedValue.Clockwise_Positive\nm_motor.getConfigurator().apply(config);"
         },
         {
           "label": "SPARK MAX",
-          "code": "// ... (in configuration section)\n\n// Brake: Motor resists motion when stopped (good for elevators, arms)\nconfig.idleMode(IdleMode.kBrake);\n// Coast: Motor spins freely when stopped (good for flywheels, intakes)\n// Alternative: IdleMode.kCoast\n\n// ... (rest of configuration)"
+          "code": "SparkMaxConfig config = new SparkMaxConfig();\n// Set motor direction (true = inverted, false = normal)\nconfig.inverted(true);\n// Alternative: config.inverted(false)\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
         }
       ]
     },
     {
       "type": "text",
-      "title": "3. Current Limits",
-      "content": "Prevents burnout and brownouts by capping amperage. Recommended values: 20-40A for small motors, 40-60A for drive motors."
+      "title": "Step 3: Configure Idle Mode",
+      "content": "Idle mode determines motor behavior when output is zero. <strong>Brake</strong> mode makes the motor resist motion when stopped. Use this for elevators, arms, and drivetrains where you want to hold position. <strong>Coast</strong> mode allows free spinning when stopped. Use this for flywheels and intakes."
     },
     {
       "type": "code-tabs",
-      "title": "Current Limit Code",
-      "content": "Setting limits:",
+      "content": "Add idle mode to the configuration:",
       "tabs": [
         {
           "label": "Talon FX",
-          "code": "// ... (in configuration section)\n\n// Enable current limiting to protect motor from overheating\nconfig.CurrentLimits.StatorCurrentLimitEnable = true;\n// Set limit to 40A (adjust based on motor and application)\nconfig.CurrentLimits.StatorCurrentLimit = 40.0;\n\n// ... (rest of configuration)"
+          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Brake: Motor resists motion when stopped (good for elevators, arms)\nconfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n// Coast: Motor spins freely when stopped (good for flywheels, intakes)\n// Alternative: NeutralModeValue.Coast\nm_motor.getConfigurator().apply(config);"
         },
         {
           "label": "SPARK MAX",
-          "code": "// ... (in configuration section)\n\n// Set smart current limit to 40A (adjust based on motor and application)\n// This protects the motor from overheating\nconfig.smartCurrentLimit(40);\n\n// ... (rest of configuration)"
+          "code": "SparkMaxConfig config = new SparkMaxConfig();\n// Brake: Motor resists motion when stopped (good for elevators, arms)\nconfig.idleMode(IdleMode.kBrake);\n// Coast: Motor spins freely when stopped (good for flywheels, intakes)\n// Alternative: IdleMode.kCoast\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
         }
       ]
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Configure Current Limits",
+      "content": "Current limiting prevents motor burnout and system brownouts by capping the maximum amperage. Recommended values: 20-40A for small motors, 40-60A for drive motors. Adjust based on your motor specifications and mechanical load."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add current limiting to the configuration:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "TalonFXConfiguration config = new TalonFXConfiguration();\n// Enable current limiting to protect motor from overheating\nconfig.CurrentLimits.StatorCurrentLimitEnable = true;\n// Set limit to 40A (adjust based on motor and application)\nconfig.CurrentLimits.StatorCurrentLimit = 40.0;\nm_motor.getConfigurator().apply(config);"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "SparkMaxConfig config = new SparkMaxConfig();\n// Set smart current limit to 40A (adjust based on motor and application)\n// This protects the motor from overheating\nconfig.smartCurrentLimit(40);\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Combining All Settings",
+      "content": "In practice, you configure all three settings together in one configuration object. Here's how they work together to create a complete motor configuration."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Configuration Example",
+      "content": "Complete configuration combining all settings:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "// In robotInit() or constructor\nTalonFXConfiguration config = new TalonFXConfiguration();\n\n// Step 1: Set inversion (ensure positive = forward direction)\nconfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n\n// Step 2: Set idle mode (Brake for elevators/arms, Coast for flywheels/intakes)\nconfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n\n// Step 3: Enable current limiting\nconfig.CurrentLimits.StatorCurrentLimitEnable = true;\nconfig.CurrentLimits.StatorCurrentLimit = 40.0;\n\n// Apply all settings at once\nm_motor.getConfigurator().apply(config);"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "// In constructor or configuration method\nSparkMaxConfig config = new SparkMaxConfig();\n\n// Step 1: Set inversion (true = inverted, false = normal)\nconfig.inverted(false);\n\n// Step 2: Set idle mode (kBrake for elevators/arms, kCoast for flywheels/intakes)\nconfig.idleMode(IdleMode.kBrake);\n\n// Step 3: Set current limit\nconfig.smartCurrentLimit(40);\n\n// Apply all settings at once\nm_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Configuration Order",
+      "content": "The order of settings in the configuration object doesn't matter. All settings are applied together when you call <code>apply()</code> or <code>configure()</code>. However, always apply the configuration to the motor after setting all properties."
+    },
+    {
+      "type": "text",
+      "title": "Testing Your Configuration",
+      "content": "After configuring, test each setting: <strong>Inversion:</strong> Apply 0.2 power, verify direction. <strong>Idle Mode:</strong> Stop motor, check if it holds or spins freely. <strong>Current Limit:</strong> Monitor current draw during operation to ensure it's within limits."
     },
     {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
           "label": "Intake Example",

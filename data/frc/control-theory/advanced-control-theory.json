@@ -42,7 +42,7 @@
         },
         {
           "label": "PID Control",
-          "id": "pid-control"
+          "id": "frc-pid-control"
         }
       ]
     }

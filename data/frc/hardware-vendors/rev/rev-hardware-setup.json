@@ -33,11 +33,11 @@
     },
     {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
-          "label": "REV Sensors",
-          "id": "rev-sensors-and-encoders"
+          "label": "Sensors and Encoders",
+          "id": "sensors-and-encoders"
         },
         {
           "label": "Motor Configuration",

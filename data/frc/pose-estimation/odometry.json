@@ -4,7 +4,7 @@
     {
       "type": "text",
       "title": "Introduction to Odometry",
-      "content": "Odometry is a method of pose estimation that uses wheel encoders and a gyroscope to track robot movement over time. By measuring how far each wheel has rotated and the robot's heading, odometry calculates the robot's position through dead reckoning - integrating movement changes to determine current position.<br><br>Odometry provides continuous, fast updates (typically every 20ms robot loop) and doesn't require external references like cameras or field features. However, odometry accumulates error over time (drift) due to wheel slippage, encoder inaccuracy, and measurement errors. Despite this limitation, odometry is the foundation of most FRC pose estimation systems.<br><br>This lesson covers odometry for both differential drive and swerve drive robots. The code examples below show the general structure and flow - your team's drivetrain template will have the complete, hardware-specific implementation.<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html' target='_blank'>WPILib: Odometry Documentation</a>"
+      "content": "Odometry is a method of pose estimation that uses wheel encoders and a gyroscope to track robot movement over time. By measuring how far each wheel has rotated and the robot's heading, odometry calculates the robot's position through dead reckoning - integrating movement changes to determine current position.<br><br>Odometry provides continuous, fast updates (typically every 20ms robot loop) and doesn't require external references like cameras or field features. However, odometry accumulates error over time (drift) due to wheel slippage, encoder inaccuracy, and measurement errors. Despite this limitation, odometry is the foundation of most FRC pose estimation systems.<br><br><i><b>This lesson covers odometry for both differential drive and swerve drive robots. The code examples below show the general structure and flow - your team's drivetrain template will have the complete, hardware-specific implementation.</b></i><br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html' target='_blank'>WPILib: Odometry Documentation</a>"
     },
     {
       "type": "text",
@@ -131,7 +131,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Resources",
       "links": [
         {
           "label": "Pose Estimation Introduction",
@@ -139,15 +139,15 @@
         },
         {
           "label": "Vision-Based Pose Estimation",
-          "id": "vision-pose-estimation-complete"
+          "id": "vision-pose-estimation-fusion"
         },
         {
           "label": "WPILib Kinematics and Odometry",
           "url": "https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"
         },
         {
-          "label": "CTRE Sensors",
-          "id": "ctre-sensors"
+          "label": "Sensors and Encoders",
+          "id": "sensors-and-encoders"
         }
       ]
     }

@@ -81,22 +81,12 @@
       ]
     },
     {
-      "type": "rules-box",
-      "title": "Motion Magic Tuning (if applicable)",
-      "subtitle": "Steps:",
-      "items": [
-        "Log motor output (-1 to 1).",
-        "Increase cruise velocity until motor uses 100% power to reach furthest setpoint.",
-        "Increase acceleration until comfortable speed without damaging the mechanism."
-      ]
-    },
-    {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
-          "label": "Motion Profiling",
-          "id": "motor-motion-profiling"
+          "label": "Trapezoidal Motion Profiling",
+          "id": "trapezoidal-motion-profiling"
         },
         {
           "label": "WPILib PID",

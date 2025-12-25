@@ -47,7 +47,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics and Documentation",
+      "title": "Resources",
       "links": [
         {
           "label": "WPILib Odometry Overview",

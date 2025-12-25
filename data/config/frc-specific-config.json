@@ -1,12 +1,47 @@
 {
+  "id": "frc-specific",
   "title": "FRC Training Curriculum",
   "description": "Comprehensive FIRST Robotics Competition programming training",
-  "intro": {
-    "id": "frc-intro",
-    "label": "FRC Curriculum Overview",
-    "file": "data/frc/frc-intro.json",
-    "type": "overview"
-  },
+  "sections": [
+    {
+      "type": "text",
+      "title": "Welcome to FRC Programming",
+      "content": "Welcome to the FRC programming curriculum. This guide takes you from a complete beginner to an advanced programmer, covering the WPILib framework, Command-Based programming, control theory, and professional development practices."
+    },
+    {
+      "type": "rules-box",
+      "title": "Important Disclaimer",
+      "subtitle": "Official Documentation",
+      "items": [
+        "This curriculum is a learning guide, not a rulebook.",
+        "Always refer to official FRC and WPILib documentation for the most up-to-date rules and APIs.",
+        "Safety first: Always follow safety procedures when working with physical robots."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Curriculum Structure",
+      "content": "The curriculum is divided into tiered modules to guide your learning journey:<br><br><strong>1. Environment Setup:</strong> Installing tools (VS Code, WPILib, Driver Station) and understanding the project structure.<br><strong>2. Basics:</strong> Motor control, reading sensors, and handling joystick inputs.<br><strong>3. Command-Based Programming:</strong> The industry-standard architecture for FRC robots, separating hardware from logic.<br><strong>4. Control Theory:</strong> PID control, feedforward, and motion profiling for smooth, accurate movement.<br><strong>5. Pose Estimation:</strong> Tracking your robot's position on the field using odometry and vision.<br><strong>6. Advanced Topics:</strong> Simulation, unit testing, and path planning."
+    },
+    {
+      "type": "link-grid",
+      "title": "Start Learning",
+      "links": [
+        {
+          "label": "Environment Setup",
+          "id": "environment-setup"
+        },
+        {
+          "label": "Intro to Motors",
+          "id": "intro-to-motors"
+        },
+        {
+          "label": "Command-Based Guide",
+          "id": "intro-to-command-based"
+        }
+      ]
+    }
+  ],
   "groups": [
     {
       "id": "frc-environment-setup",
@@ -47,7 +82,7 @@
     {
       "id": "frc-basics",
       "label": "Basics",
-      "description": "Fundamental FRC programming concepts - motors, controllers, and your first mechanism",
+      "description": "Fundamental FRC programming concepts - motors, controllers, sensors, and your first mechanism",
       "icon": "🔰",
       "items": [
         {
@@ -70,6 +105,13 @@
           "file": "data/frc/basics/motor-config.json",
           "difficulty": "beginner",
           "duration": "35 min"
+        },
+        {
+          "id": "sensors-and-encoders",
+          "label": "Sensors and Encoders",
+          "file": "data/frc/basics/sensors-and-encoders.json",
+          "difficulty": "intermediate",
+          "duration": "60 min"
         },
         {
           "id": "intake-example-robot",
@@ -145,28 +187,6 @@
       ]
     },
     {
-      "id": "frc-hardware-features",
-      "label": "Hardware Features & Sensors",
-      "description": "Using encoders, sensors, and vendor-specific features",
-      "icon": "🔧",
-      "items": [
-        {
-          "id": "rev-sensors-and-encoders",
-          "label": "REV Sensors and Encoders",
-          "file": "data/frc/hardware-vendors/rev/rev-sensors-and-encoders.json",
-          "difficulty": "intermediate",
-          "duration": "50 min"
-        },
-        {
-          "id": "ctre-sensors",
-          "label": "CTRE Sensors",
-          "file": "data/frc/hardware-vendors/ctre/ctre-sensors.json",
-          "difficulty": "intermediate",
-          "duration": "45 min"
-        }
-      ]
-    },
-    {
       "id": "frc-advanced-motor-config",
       "label": "Advanced Motor Control",
       "description": "Advanced configuration, current limiting, and on-controller PID",
@@ -195,18 +215,25 @@
       "icon": "📊",
       "items": [
         {
-          "id": "pid-control",
+          "id": "frc-pid-control",
           "label": "PID Control",
           "file": "data/frc/control-theory/pid-control.json",
           "difficulty": "intermediate",
           "duration": "60 min"
         },
         {
-          "id": "motor-motion-profiling",
-          "label": "Motion Profiling",
-          "file": "data/frc/control-theory/motor-motion-profiling.json",
+          "id": "trapezoidal-motion-profiling",
+          "label": "Motion Profiling: Trapezoidal",
+          "file": "data/frc/control-theory/trapezoidal-motion-profiling.json",
           "difficulty": "intermediate",
-          "duration": "90 min"
+          "duration": "45 min"
+        },
+        {
+          "id": "exponential-motion-profiling",
+          "label": "Motion Profiling: Exponential",
+          "file": "data/frc/control-theory/exponential-motion-profiling.json",
+          "difficulty": "intermediate",
+          "duration": "45 min"
         },
         {
           "id": "advanced-control-theory",
@@ -267,18 +294,18 @@
           "duration": "45 min"
         },
         {
-          "id": "vision-pose-estimation-complete",
-          "label": "Vision-Based Pose Estimation",
-          "file": "data/frc/pose-estimation/vision-pose-estimation-complete.json",
-          "difficulty": "advanced",
-          "duration": "60 min"
-        },
-        {
           "id": "vision-pose-estimation-fusion",
           "label": "Fused Pose Estimation",
           "file": "data/frc/pose-estimation/vision-pose-estimation-fusion.json",
           "difficulty": "advanced",
           "duration": "60 min"
+        },
+        {
+          "id": "pose-estimation-calibration",
+          "label": "Pose Estimation Calibration",
+          "file": "data/frc/pose-estimation/pose-estimation-calibration.json",
+          "difficulty": "advanced",
+          "duration": "45 min"
         }
       ]
     },

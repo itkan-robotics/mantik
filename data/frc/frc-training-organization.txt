@@ -25,18 +25,19 @@
 │   └── command-groups.json 💻 🔗 👀
 ├── environment-setup/
 │   ├── frc-code-organization.json 💻 🔗 👀
+├── basics/
+│   ├── sensors-and-encoders.json 💻 🔗 👀
 ├── hardware-vendors/
 │   ├── rev/
-│   │   ├── rev-sensors-and-encoders.json 💻 🔗 👀
 │   ├── ctre/
-│   │   ├── ctre-sensors.json 💻 🔗 👀
 │   └── vendor-generic/
 │       ├── motor-controller-configuration.json 💻 🔗 👀
 │       ├── motor-current-limiting.json 💻 🔗 👀
 │       ├── motor-pid-control.json 💻 🔗 👀
 ├── control-theory/
 │   ├── pid-control.json 💻 🔗 👀
-│   ├── motor-motion-profiling.json 💻 🔗 👀
+│   ├── trapezoidal-motion-profiling.json 💻 🔗 👀
+│   ├── exponential-motion-profiling.json 💻 🔗 👀
 │   └── advanced-control-theory.json 💻 🔗 👀
 ├── examples/
 │   ├── elevator-example.json 💻 🔗 👀
@@ -45,8 +46,8 @@
 │   ├── pose-estimation-intro.json 💻 🔗 👀
 │   ├── odometry.json 💻 🔗 👀
 │   ├── vision-subsystem.json 💻 🔗 👀
-│   ├── vision-pose-estimation-complete.json 💻 🔗 👀
-│   └── vision-pose-estimation-fusion.json 💻 🔗 👀
+│   ├── vision-pose-estimation-fusion.json 💻 🔗 👀
+│   └── pose-estimation-calibration.json 💻 🔗 👀
 ├── external-tools/
 │   ├── pathplanner.json 💻 🔗 👀
 │   ├── advantagescope.json 💻 🔗 👀

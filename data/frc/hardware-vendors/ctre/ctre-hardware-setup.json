@@ -33,11 +33,11 @@
     },
     {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
-          "label": "CTRE Sensors",
-          "id": "ctre-sensors"
+          "label": "Sensors and Encoders",
+          "id": "sensors-and-encoders"
         },
         {
           "label": "Motor Configuration",

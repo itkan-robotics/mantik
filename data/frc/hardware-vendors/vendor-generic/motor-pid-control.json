@@ -43,15 +43,15 @@
     },
     {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
-          "label": "Motion Profiling",
-          "id": "motor-motion-profiling"
+          "label": "Trapezoidal Motion Profiling",
+          "id": "trapezoidal-motion-profiling"
         },
         {
           "label": "PID Overview",
-          "id": "pid-control"
+          "id": "frc-pid-control"
         }
       ]
     }

@@ -3,8 +3,13 @@
   "sections": [
     {
       "type": "text",
+      "title": "Template Project",
+      "content": "Start with the <strong>Command Robot</strong> template project. Elevators are implemented as subsystems, so the command-based structure is ideal. Create a new subsystem class in the <code>subsystems</code> package."
+    },
+    {
+      "type": "text",
       "title": "Overview",
-      "content": "Elevators require <strong>Position Control</strong>. Unlike intakes (speed), elevators must move to precise heights and hold them against gravity. We use PID control with Feedforward and Motion Profiling to achieve smooth, accurate movement."
+      "content": "Elevators require <strong>Position Control</strong>. Unlike intakes (speed), elevators must move to precise heights and hold them against gravity. We'll build an elevator subsystem using PID control with Feedforward and Motion Profiling to achieve smooth, accurate movement."
     },
     {
       "type": "rules-box",
@@ -18,9 +23,157 @@
       ]
     },
     {
+      "type": "text",
+      "title": "Step 1: Create Subsystem Structure",
+      "content": "Start by creating the <code>Elevator</code> class that extends <code>SubsystemBase</code>. This class will manage the elevator motor and all configuration."
+    },
+    {
       "type": "code-tabs",
-      "title": "Subsystem Code",
-      "content": "Implementation with PID + Feedforward:",
+      "content": "Create a new subsystem class in the <code>subsystems</code> package. The Command Robot template provides <code>ExampleSubsystem</code> as a reference. Create your <code>Elevator</code> class with necessary imports:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.MotionMagicVoltage;\n\npublic class Elevator extends SubsystemBase {\n    // We'll add fields here\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\n\npublic class Elevator extends SubsystemBase {\n    // We'll add fields here\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 2: Declare Motor and Control Objects",
+      "content": "Add fields for the motor and control request. The motor is on CAN ID 6. For Talon FX, we create a <code>MotionMagicVoltage</code> control request that we'll reuse. For SPARK MAX, we get the closed-loop controller."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add motor and controller fields:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public class Elevator extends SubsystemBase {\n    // Elevator motor on CAN ID 6\n    private final TalonFX m_motor = new TalonFX(6);\n    \n    // Motion Magic control request (trapezoidal motion profile)\n    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public class Elevator extends SubsystemBase {\n    // Elevator motor on CAN ID 6, brushless type\n    private final SparkMax m_motor = new SparkMax(6, MotorType.kBrushless);\n    // Get closed-loop controller for PID control\n    private final SparkClosedLoopController m_pid = m_motor.getClosedLoopController();\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 3: Configure Motor - Basic Settings",
+      "content": "In the constructor, configure the motor. Start with basic settings: Brake mode to hold position against gravity. This prevents the elevator from falling when power is removed."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Set idle mode to Brake:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Elevator() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    // Brake mode to hold position against gravity\n    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Elevator() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Brake mode to hold position against gravity\n    config.idleMode(IdleMode.kBrake);\n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Configure PID Gains",
+      "content": "Add PID gains for position control. <strong>kP</strong> (Proportional) corrects position errors. <strong>kD</strong> (Derivative) dampens oscillations. <strong>kI</strong> (Integral) is usually set to 0 for elevators. These values work with the motion profile to follow the trajectory accurately."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add PID gains to the configuration:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Elevator() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n    \n    // PID gains for position control (Slot 0)\n    config.Slot0.kP = 0.5;  // Proportional gain\n    config.Slot0.kI = 0.0;  // Integral gain\n    config.Slot0.kD = 0.05; // Derivative gain\n    \n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Elevator() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    config.idleMode(IdleMode.kBrake);\n    \n    // PID gains for position control\n    config.closedLoop.p(0.5).i(0.0).d(0.05);\n    \n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 5: Add Feedforward Constants",
+      "content": "Feedforward compensates for known forces. <strong>kG</strong> (Gravity) compensates for the elevator's weight pulling downward. <strong>kS</strong> (Static friction) overcomes initial friction to start moving. These values help the motor work less hard and move more smoothly."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add feedforward constants:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Elevator() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n    config.Slot0.kP = 0.5;\n    config.Slot0.kI = 0.0;\n    config.Slot0.kD = 0.05;\n    \n    // Feedforward constants\n    config.Slot0.kG = 0.12; // Gravity feedforward (compensates for weight)\n    config.Slot0.kS = 0.05; // Static friction feedforward\n    \n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Elevator() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    config.idleMode(IdleMode.kBrake);\n    config.closedLoop.p(0.5).i(0.0).d(0.05);\n    \n    // Note: Feedforward is typically handled separately with WPILib feedforward classes\n    // This example focuses on motion profiling with PID\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 6: Configure Motion Profile Constraints",
+      "content": "Motion profiling smooths the movement. Set <strong>Max Velocity</strong> to the desired top speed and <strong>Max Acceleration</strong> to control how quickly it speeds up and slows down. Higher values mean faster movement but more stress on the mechanism."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add motion profile constraints:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Elevator() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n    config.Slot0.kP = 0.5;\n    config.Slot0.kI = 0.0;\n    config.Slot0.kD = 0.05;\n    config.Slot0.kG = 0.12;\n    config.Slot0.kS = 0.05;\n    \n    // Motion profile constraints\n    config.MotionMagic.MotionMagicCruiseVelocity = 10; // Max velocity (rotations/sec)\n    config.MotionMagic.MotionMagicAcceleration = 20;   // Max acceleration (rotations/sec²)\n    \n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Elevator() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    config.idleMode(IdleMode.kBrake);\n    config.closedLoop.p(0.5).i(0.0).d(0.05);\n    \n    // Motion profile constraints (MAXMotion = trapezoidal profile)\n    config.closedLoop.maxMotion.maxVelocity(3000).maxAcceleration(2000);\n    \n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 7: Add Method to Set Target Height",
+      "content": "Create a public method that commands the elevator to move to a specific position. The motion profile and PID controller handle the smooth movement automatically."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add method to set target position:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "/**\n * Set elevator to target height\n * @param rotations Target position in rotations\n */\npublic void setHeight(double rotations) {\n    m_motor.setControl(m_request.withPosition(rotations));\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "/**\n * Set elevator to target height\n * @param rotations Target position in rotations\n */\npublic void setHeight(double rotations) {\n    m_pid.setReference(rotations, ControlType.kMAXMotionPositionControl);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 8: Create Commands in RobotContainer",
+      "content": "In <code>RobotContainer</code>, bind buttons to commands that set the elevator to different heights. Use simple <code>runOnce</code> commands that call <code>setHeight()</code> with the desired position."
+    },
+    {
+      "type": "code",
+      "content": "Add button bindings in RobotContainer:",
+      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer with configureBindings()\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(Commands.runOnce(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(Commands.runOnce(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
+    },
+    {
+      "type": "text",
+      "title": "Understanding the Complete System",
+      "content": "When you call <code>setHeight()</code>, the motion profile generates a smooth trajectory from the current position to the target. The PID controller follows this trajectory, using feedforward to compensate for gravity and friction. The result is smooth, accurate movement that holds position at the target."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Code - Elevator Subsystem",
+      "content": "Complete elevator subsystem implementation:",
       "tabs": [
         {
           "label": "Talon FX",
@@ -33,14 +186,10 @@
       ]
     },
     {
-      "type": "text",
-      "title": "Commands",
-      "content": "Use simple commands to set targets."
-    },
-    {
       "type": "code",
-      "title": "RobotContainer",
-      "content": "// ... (in RobotContainer class)\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// ... (other fields)\n\npublic RobotContainer() {\n    // ... (other initialization)\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(Commands.runOnce(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(Commands.runOnce(() -> m_elevator.setHeight(10.0), m_elevator));\n    \n    // ... (rest of constructor)\n}"
+      "title": "Full Code - RobotContainer",
+      "content": "The Command Robot template provides RobotContainer. Update configureBindings() with your elevator button bindings:",
+      "code": "// In RobotContainer class - update the configureBindings() method\n\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.button.CommandXboxController;\nimport frc.robot.subsystems.Elevator;\n\n// The template provides RobotContainer structure\nprivate void configureBindings() {\n    // ... other button bindings\n    \n    // Button A: Move to low position (0 rotations)\n    m_controller.a().onTrue(Commands.runOnce(() -> m_elevator.setHeight(0.0), m_elevator));\n    // Button B: Move to high position (10 rotations)\n    m_controller.b().onTrue(Commands.runOnce(() -> m_elevator.setHeight(10.0), m_elevator));\n}"
     },
     {
       "type": "rules-box",
@@ -54,16 +203,25 @@
       ]
     },
     {
+      "type": "text",
+      "title": "Practice with WPILib Documentation",
+      "content": "WPILib provides a complete tuning tutorial for elevators with motion profiling. This interactive guide walks through the entire tuning process with examples and simulations. Use it to practice the concepts covered in this lesson."
+    },
+    {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
           "label": "PID Control",
-          "id": "pid-control"
+          "id": "frc-pid-control"
         },
         {
-          "label": "Motion Profiling",
-          "id": "motor-motion-profiling"
+          "label": "Trapezoidal Motion Profiling",
+          "id": "trapezoidal-motion-profiling"
+        },
+        {
+          "label": "WPILib: Tuning a Vertical Elevator (Practice)",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html"
         }
       ]
     }

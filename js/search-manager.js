@@ -1114,7 +1114,7 @@ class SearchManager {
         window.history.pushState({ search: this.currentSearchQuery }, '', newUrl);
         
         // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0 });
     }
 
     groupResultsByType() {

@@ -165,6 +165,20 @@ class ContentManager {
             }
         }
 
+        // Handle sections with sections array (new homepage-style sections)
+        // These can also have groups, so we need to store the section config as tab data
+        if (sectionConfig.sections && Array.isArray(sectionConfig.sections)) {
+            const tabInfo = {
+                ...sectionConfig,
+                sectionId,
+                sectionLabel: sectionConfig.label || sectionConfig.title,
+                loaded: true
+            };
+            
+            appState.addTabData(sectionId, tabInfo);
+            appState.allTabs.push(tabInfo);
+        }
+
         // Load intro content if exists
         if (sectionConfig.intro) {
             contentPromises.push(this.loadIntroContent(sectionConfig.intro, sectionId, sectionConfig));
@@ -301,9 +315,35 @@ class ContentManager {
         section.appendChild(contentSection);
         
         // Add navigation buttons at the bottom
+        // For section homepages (tabId === sectionId), show a "Start Learning" button if available
         const navButtons = this.createNavigationButtons(tabId);
+        console.log(`[Debug] renderContent: tabId=${tabId}, currentSection=${appState.currentSection}, navButtons=${!!navButtons}`);
         if (navButtons) {
             section.appendChild(navButtons);
+        } else if (tabId === appState.currentSection && tabId !== 'homepage') {
+            // For section homepages, add a button to start the first lesson
+            // Ensure section config is loaded first - try both appState and configManager
+            let sectionConfig = appState.config?.sections?.[tabId];
+            if (!sectionConfig || !(sectionConfig.groups || sectionConfig.children || sectionConfig.items)) {
+                // Try to get from config manager cache
+                if (this.configManager) {
+                    const cachedConfig = this.configManager.configCache?.get(tabId);
+                    if (cachedConfig) {
+                        sectionConfig = cachedConfig;
+                    }
+                }
+            }
+            console.log(`[Debug] renderContent: Checking for Start Learning button. sectionConfig exists: ${!!sectionConfig}, hasGroups: ${!!(sectionConfig?.groups)}, hasChildren: ${!!(sectionConfig?.children)}, hasItems: ${!!(sectionConfig?.items)}`);
+            if (sectionConfig && (sectionConfig.groups || sectionConfig.children || sectionConfig.items)) {
+                const startButton = this.createStartLearningButton(tabId);
+                console.log(`[Debug] renderContent: Start Learning button created: ${!!startButton}`);
+                if (startButton) {
+                    section.appendChild(startButton);
+                    console.log(`[Debug] renderContent: Start Learning button appended to section`);
+                }
+            } else {
+                console.warn(`[Debug] renderContent: Not adding Start Learning button - sectionConfig missing or no groups/children/items`);
+            }
         }
         
         tabContent.appendChild(section);
@@ -480,8 +520,14 @@ class ContentManager {
             return null;
         }
         
-        // Debug logging for navigation
+        // Don't show navigation buttons if currentTabId is the section ID itself
+        // (this means we're viewing the section's homepage, not a tab within it)
         const sectionId = appState.currentSection;
+        if (currentTabId === sectionId) {
+            return null;
+        }
+        
+        // Debug logging for navigation
         const tabOrder = this.getSectionTabOrder(sectionId);
         console.log(`[Debug] Navigation Debug: Section=${sectionId}, Tab=${currentTabId}, OrderLength=${tabOrder.length}`);
         
@@ -555,6 +601,118 @@ class ContentManager {
         return navContainer;
     }
     
+    /**
+     * Gets the first tab ID for a section
+     */
+    getFirstTabIdForSection(sectionId) {
+        // Get config from appState (should already be loaded)
+        let config = appState.config && appState.config.sections && appState.config.sections[sectionId];
+        
+        // If config doesn't have groups, try config manager cache
+        if (!config || (!config.groups && !config.children && !config.items)) {
+            if (this.configManager && this.configManager.configCache) {
+                const cachedConfig = this.configManager.configCache.get(sectionId);
+                if (cachedConfig && (cachedConfig.groups || cachedConfig.children || cachedConfig.items)) {
+                    config = cachedConfig;
+                }
+            }
+        }
+        
+        if (!config) {
+            console.warn(`[Debug] getFirstTabIdForSection: No config found for ${sectionId}`);
+            return null;
+        }
+        
+        console.log(`[Debug] getFirstTabIdForSection: Using config with groups: ${!!config.groups}`);
+        return this._findFirstTabInConfig(config);
+    }
+
+    /**
+     * Helper method to find first tab ID in a config object
+     */
+    _findFirstTabInConfig(config) {
+        console.log(`[Debug] _findFirstTabInConfig called. Config has groups: ${!!config.groups}, groups is array: ${Array.isArray(config.groups)}`);
+        // Helper function to find first valid item recursively
+        const findFirstItem = (items) => {
+            if (!Array.isArray(items)) return null;
+            for (const item of items) {
+                if (item.file) {
+                    console.log(`[Debug] Found first item with file: ${item.id}`);
+                    return item; // Found a leaf item
+                }
+                if (item.items && Array.isArray(item.items)) {
+                    const found = findFirstItem(item.items);
+                    if (found) return found;
+                }
+                if (item.children && Array.isArray(item.children)) {
+                    const found = findFirstItem(item.children);
+                    if (found) return found;
+                }
+                if (item.groups && Array.isArray(item.groups)) {
+                    const found = findFirstItem(item.groups);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        let firstItem = null;
+        if (config.groups && Array.isArray(config.groups)) {
+            console.log(`[Debug] Searching in ${config.groups.length} groups`);
+            firstItem = findFirstItem(config.groups);
+        }
+        if (!firstItem && config.children && Array.isArray(config.children)) {
+            firstItem = findFirstItem(config.children);
+        }
+        if (!firstItem && config.items && Array.isArray(config.items)) {
+            firstItem = findFirstItem(config.items);
+        }
+        
+        console.log(`[Debug] _findFirstTabInConfig result: ${firstItem ? firstItem.id : 'null'}`);
+        return firstItem ? firstItem.id : null;
+    }
+
+    /**
+     * Creates a "Start Learning" button for section homepages
+     */
+    createStartLearningButton(sectionId) {
+        const firstTabId = this.getFirstTabIdForSection(sectionId);
+        console.log(`[Debug] createStartLearningButton for ${sectionId}: firstTabId=${firstTabId}`);
+        if (!firstTabId) {
+            console.warn(`[Debug] No first tab found for section ${sectionId}`);
+            return null;
+        }
+
+        // Get the first tab's label
+        const firstTab = appState.getTabData(firstTabId);
+        const buttonLabel = firstTab?.title || firstTab?.label || 'Start Learning';
+        console.log(`[Debug] Creating Start Learning button with label: ${buttonLabel}`);
+
+        const navContainer = document.createElement('div');
+        navContainer.className = 'page-navigation';
+        navContainer.style.display = 'flex';
+        navContainer.style.justifyContent = 'flex-end'; // Align to right like next button
+
+        const startButton = document.createElement('button');
+        startButton.className = 'nav-button nav-button-next';
+        startButton.innerHTML = `
+            <span class="nav-button-content">
+                <span class="nav-button-label">Start Learning</span>
+                <span class="nav-button-title">${this.escapeHtml(buttonLabel)}</span>
+            </span>
+            <span class="nav-button-icon">→</span>
+        `;
+        startButton.onclick = (e) => {
+            e.preventDefault();
+            if (window.app && window.app.navigationManager) {
+                window.app.navigationManager.navigateToTab(firstTabId);
+            }
+        };
+        
+        navContainer.appendChild(startButton);
+        return navContainer;
+    }
+
     /**
      * Escapes HTML to prevent XSS
      */

@@ -1,12 +1,107 @@
 {
+  "id": "java-training",
   "title": "Java Programming Fundamentals",
   "description": "Comprehensive Java programming training for robotics teams",
-  "intro": {
-    "id": "java-intro",
-    "label": "Java Training Overview",
-    "file": "data/java/java-basics/java-intro.json",
-    "type": "overview"
-  },
+  "sections": [
+    {
+      "type": "text",
+      "title": "Welcome to Java Training",
+      "content": "Welcome to the comprehensive Java programming training section! This curriculum is designed to take you from complete beginner to confident Java programmer, with a focus on practical applications in robotics and programming."
+    },
+    {
+      "type": "rules-box",
+      "title": "Why Learn Java?",
+      "items": [
+        "It's the primary language for FTC (FIRST Tech Challenge) robotics",
+        "Strong object-oriented programming principles",
+        "Excellent for learning programming fundamentals",
+        "Wide industry adoption and community support",
+        "Cross-platform compatibility",
+        "Robust error handling and debugging tools"
+      ],
+      "subtitle": "Java is an excellent choice for robotics programming because:"
+    },
+    {
+      "type": "text",
+      "title": "Learning Path Overview",
+      "content": "This Java training is organized into four main sections, each building upon the previous knowledge:"
+    },
+    {
+      "type": "list",
+      "title": "Curriculum Structure",
+      "items": [
+        "<strong>Java Basics:</strong> Start with fundamental concepts like variables, data types, printing, calculations, and arrays. This is where you'll learn the building blocks of Java programming.",
+        "<strong>Programming Logic:</strong> Master decision-making with conditionals, create reusable code with methods, understand control structures, and learn to handle errors with exception handling.",
+        "<strong>Loops and Iteration:</strong> Learn to repeat code efficiently with while loops, for loops, and understand when and how to use different loop types. Includes best practices for writing clean, efficient loops.",
+        "<strong>Object-Oriented Programming:</strong> Dive into classes, objects, references, and method overloading. This is where you'll learn to think like a programmer and create well-structured code."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "How to Use This Training",
+      "content": "Each lesson includes practical examples, exercises, and real-world applications. We recommend:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "Complete lessons in order - each builds on previous concepts",
+        "Practice with the provided code examples",
+        "Complete the exercises at the end of each lesson",
+        "Apply concepts to your own projects when possible",
+        "Use the search function to find specific topics quickly"
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Prerequisites",
+      "items": [
+        "No prior programming experience required",
+        "Basic computer literacy (using a web browser, text editor)",
+        "Access to a computer for practice",
+        "Willingness to experiment and learn through trial and error"
+      ],
+      "subtitle": "This training assumes:"
+    },
+    {
+      "type": "text",
+      "title": "Getting Started",
+      "content": "Ready to begin your Java programming journey? Start with the first lesson in Java Basics: <strong>Introduction to Java</strong>. This will teach you about the Java programming language, its history, and how to write your first Java program."
+    },
+    {
+      "type": "link-grid",
+      "title": "Quick Navigation",
+      "links": [
+        {
+          "label": "Introduction to Java",
+          "id": "java-intro"
+        },
+        {
+          "label": "Printing and Output",
+          "id": "java-printing"
+        },
+        {
+          "label": "Variables and Data Types",
+          "id": "java-variables"
+        },
+        {
+          "label": "Calculations and Math",
+          "id": "java-calculations"
+        }
+      ]
+    },
+    {
+      "type": "exercise-box",
+      "title": "Pre-Assessment",
+      "description": "Before starting the lessons, take a moment to assess your current knowledge:",
+      "tasks": [
+        "Do you have any prior programming experience?",
+        "What do you hope to achieve with Java programming?",
+        "Are you planning to use Java for robotics (FTC/FRC) or general programming?",
+        "How much time can you dedicate to learning each week?"
+      ],
+      "content": "// This is where your Java journey begins!\n// In the next lesson, you'll write your first Java program\n// and learn about the basic structure of Java code."
+    }
+  ],
   "groups": [
     {
       "id": "java-basics",

@@ -35,7 +35,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
           "label": "Motor PID Control",

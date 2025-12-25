@@ -1,5 +1,5 @@
 {
-      "title": "PathPlanner: Visual Autonomous Routines",
+  "title": "PathPlanner: Visual Autonomous Routines",
   "sections": [
     {
       "type": "text",
@@ -8,8 +8,13 @@
     },
     {
       "type": "text",
-      "title": "AutoBuilder",
-      "content": "The <strong>AutoBuilder</strong> library connects PathPlanner to your robot code. You configure it once in your Drive subsystem, and then you can load any path or full auto routine with a single line of code."
+      "title": "Key Concepts",
+      "content": "<strong>Path:</strong> A single trajectory from point A to point B, with waypoints and rotation targets. (<a href='https://pathplanner.dev/api/java/com/pathplanner/lib/path/PathPlannerPath.html' target='_blank'>PathPlannerPath API</a>)<br><strong>Auto:</strong> A full autonomous routine consisting of multiple paths and commands (e.g., \"Score -> Taxi -> Balance\").<br><strong>Event Markers:</strong> Triggers placed along a path that execute commands (like running an intake) when the robot reaches that point. (<a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html' target='_blank'>NamedCommands API</a>)<br><strong>Holonomic Mode:</strong> For swerve/mecanum drives, allows the robot to rotate independently of its movement direction.<br><strong>AutoBuilder:</strong> A utility that builds a full \"Command\" from a PathPlanner file, handling path following, event markers, and telemetry automatically. (<a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html' target='_blank'>AutoBuilder API</a>)"
+    },
+    {
+      "type": "text",
+      "title": "Configuring AutoBuilder",
+      "content": "To use PathPlanner, you must configure <a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html' target='_blank'>AutoBuilder</a> in your \"RobotContainer\" or \"Drivetrain\" subsystem. This tells PathPlanner how to control your robot and where it is. See <a href='https://pathplanner.dev/pplib-build-an-auto.html' target='_blank'>AutoBuilder Configuration Documentation</a>."
     },
     {
       "type": "code",
@@ -29,7 +34,7 @@
     {
       "type": "text",
       "title": "Event Markers and Named Commands",
-      "content": "To use Event Markers, you must register your commands with <a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html' target='_blank'>NamedCommands</a> <strong>before</strong> building the auto. This maps the string names in the PathPlanner GUI to actual Java commands. See <a href='https://pathplanner.dev/pplib-overview/using-event-markers' target='_blank'>Event Markers Documentation</a>."
+      "content": "To use Event Markers, you must register your commands with <a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html' target='_blank'>NamedCommands</a> <strong>before</strong> building the auto. This maps the string names in the PathPlanner GUI to actual Java commands. See <a href='https://pathplanner.dev/gui-editing-paths-and-autos.html#event-markers' target='_blank'>Event Markers Documentation</a>."
     },
     {
       "type": "code",
@@ -42,7 +47,6 @@
       "subtitle": "Best practices for success:",
       "items": [
         "Always measure your robot's max velocity and acceleration accurately.",
-        "Tune PID constants in the <a href='https://pathplanner.dev/api/java/com/pathplanner/lib/util/HolonomicPathFollowerConfig.html' target='_blank'>HolonomicPathFollowerConfig</a>; start low and increase.",
         "Use 'On-the-fly' generation for dynamic pathing if needed, but pre-generated paths are safer.",
         "Visualize path following in AdvantageScope or Field2d to debug tracking errors.",
         "Remember to register <a href='https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html' target='_blank'>NamedCommands</a> before building the auto chooser."
@@ -50,7 +54,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "PathPlanner Docs",
@@ -62,7 +66,7 @@
         },
         {
           "label": "Command-Based Programming",
-          "id": "command-based-intro"
+          "id": "intro-to-command-based"
         },
         {
           "label": "Pose Estimation",

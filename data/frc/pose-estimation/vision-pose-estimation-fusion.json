@@ -3,33 +3,89 @@
     "sections": [
         {
             "type": "text",
-            "title": "What is Sensor Fusion?",
-            "content": "Sensor fusion combines data from multiple sources to create a result better than any single source could provide. In FRC, we fuse <strong>Odometry</strong> (fast, smooth, but drifts) with <strong>Vision</strong> (accurate, absolute, but slower/noisier).<br><br>WPILib provides the <code>PoseEstimator</code> classes (e.g., <code>SwerveDrivePoseEstimator</code>, <code>DifferentialDrivePoseEstimator</code>) to handle this. It uses a Kalman Filter to merge the continuous odometry stream with periodic vision updates."
+            "title": "Introduction to Sensor Fusion",
+            "content": "Sensor fusion combines odometry and vision-based pose estimation to create a robust, accurate localization system. This lesson covers how to use WPILib's PoseEstimator to fuse odometry measurements with vision corrections.<br><br>The code examples below show the general structure and flow for integrating vision with pose estimation. Your team's drivetrain template will have the complete, hardware-specific implementation with all the details needed for your specific robot configuration.<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators' target='_blank'>WPILib: Pose Estimator Documentation</a>"
         },
         {
             "type": "text",
-            "title": "How it Works",
-            "content": "1. <strong>Predict (Odometry):</strong> Every loop (20ms), the estimator adds the distance traveled since the last loop to the previous pose. This keeps the pose update rate high for smooth control.<br>2. <strong>Correct (Vision):</strong> When a vision measurement arrives, the estimator compares it to where it <em>thought</em> the robot was. It adjusts the current pose based on the vision data, weighted by how much you \"trust\" the vision system (standard deviations)."
-        },
-        {
-      "type": "code",
-      "title": "Initializing Pose Estimator",
-      "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.numbers.N3;\nimport edu.wpi.first.math.Vector;\nimport edu.wpi.first.math.VecBuilder;\nimport com.ctre.phoenix6.hardware.Pigeon2;\n\npublic class DriveSubsystem extends SubsystemBase {\n    // Standard deviations: How much we trust our measurements\n    // Low numbers = High trust\n    // (0.1, 0.1, 0.1) for State means we trust odometry a lot\n    // (0.9, 0.9, 0.9) for Vision means we trust vision less (it's noisier)\n    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n    private static final Vector<N3> visionStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);\n\n    private SwerveDriveKinematics m_kinematics;\n    private Pigeon2 m_gyro = new Pigeon2(0);\n    private final SwerveDrivePoseEstimator m_poseEstimator;\n\n    // ... (other fields)\n\n    public DriveSubsystem() {\n        // Initialize pose estimator with kinematics, gyro, module positions, starting pose, and trust values\n        m_poseEstimator = new SwerveDrivePoseEstimator(\n            m_kinematics,\n            m_gyro.getRotation2d(),\n            getModulePositions(),\n            new Pose2d(),\n            stateStdDevs,  // Trust in odometry measurements\n            visionStdDevs  // Trust in vision measurements\n        );\n        \n        // ... (rest of constructor)\n    }\n    \n    // ... (rest of class)"
-        },
-        {
-      "type": "code",
-      "title": "Updating the Estimator",
-      "content": "// ... (in DriveSubsystem class)\n\nimport java.util.Optional;\nimport org.photonvision.EstimatedRobotPose;\nimport frc.robot.subsystems.VisionSubsystem;\n\n// ... (other fields and methods)\n\n@Override\npublic void periodic() {\n    // Step 1: Update odometry every loop (20ms) with gyro and module positions\n    m_poseEstimator.update(\n        m_gyro.getRotation2d(),\n        getModulePositions()\n    );\n\n    // Step 2: Add vision measurement if available\n    Optional<EstimatedRobotPose> visionEst = m_vision.getEstimatedGlobalPose();\n    if (visionEst.isPresent()) {\n        EstimatedRobotPose camPose = visionEst.get();\n        \n        // Add vision measurement with its timestamp\n        // The estimator uses the timestamp to \"go back in time\" and apply correction correctly\n        m_poseEstimator.addVisionMeasurement(\n            camPose.estimatedPose.toPose2d(),\n            camPose.timestampSeconds\n        );\n    }\n}\n\n// ... (rest of class)"
+            "title": "The Power of Sensor Fusion",
+            "content": "Vision provides excellent absolute positioning, but it has limitations. Cameras can't always see tags—other robots might block them, lighting might be poor, or the camera might be looking in the wrong direction. Meanwhile, odometry provides continuous updates at 50 Hz, but it drifts over time.<br><br>Sensor fusion combines these complementary strengths. Think of it as having two navigation systems: odometry is your speedometer and compass (always working, but accumulating error), while vision is your GPS (occasionally available, but always accurate when it works). By intelligently combining both, you get continuous, accurate pose estimation that works in all conditions."
         },
         {
             "type": "text",
-            "title": "Tuning Trust (Standard Deviations)",
-            "content": "The standard deviation values control the fusion mix:<br><br><strong>High Vision Std Devs (e.g., 2.0):</strong> You trust vision less. Corrections will be gradual. Good if vision is noisy.<br><strong>Low Vision Std Devs (e.g., 0.1):</strong> You trust vision highly. The pose will snap to the vision estimate. Good if vision is very stable.<br><br><strong>Dynamic Tuning:</strong> You can pass different standard deviations with each vision update. For example, trust multi-tag detections highly, but trust single-tag detections (which are prone to flipping) very little."
+            "title": "How Fusion Works",
+            "content": "WPILib's PoseEstimator uses Kalman filtering principles to optimally combine measurements. Here's the concept:<br><br><strong>Continuous Odometry Updates</strong> - Every robot loop (50 times per second), odometry provides a pose update based on wheel movement and gyro readings. The estimator uses these for continuous tracking.<br><br><strong>Periodic Vision Corrections</strong> - When vision detects a tag (10-30 times per second), it provides an absolute pose measurement. The estimator compares this to the current odometry-based estimate and smoothly incorporates the correction.<br><br><strong>Intelligent Weighting</strong> - The estimator automatically weights measurements based on their uncertainty. High-confidence vision measurements have more influence than low-confidence ones. Odometry confidence decreases over time since the last vision update, naturally giving more weight to fresh vision corrections."
+        },
+        {
+            "type": "text",
+            "title": "Setting Up the Pose Estimator",
+            "content": "The PoseEstimator needs kinematics, sensor readings, and uncertainty parameters. Let's set it up step by step. The kinematics define your robot's geometry, the sensor readings provide initial state, and the uncertainty parameters control how much weight each measurement type receives."
+        },
+        {
+            "type": "code",
+            "title": "Defining Kinematics",
+            "description": "First, we define the robot's kinematics—the geometry of how modules are positioned relative to the robot center. For a swerve drive, you need to specify the position of each swerve module relative to the robot's center of rotation. This is typically done using Translation2d objects that represent the X and Y offsets of each module.",
+            "content": "import edu.wpi.first.math.geometry.Translation2d;\nimport edu.wpi.first.math.kinematics.SwerveDriveKinematics;\n\n// Robot dimensions (measured from your robot, in meters)\nprivate static final double kTrackWidth = 0.5;\nprivate static final double kWheelBase = 0.5;\n\n// Calculate module positions from robot center\nTranslation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);\nTranslation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);\nTranslation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);\nTranslation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);\n\n// Create kinematics object\nSwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(\n    frontLeft, frontRight, rearLeft, rearRight\n);"
+        },
+        {
+            "type": "code",
+            "title": "Configuring Standard Deviations",
+            "description": "Standard deviations control how much we trust each measurement. Lower values mean more trust. The state standard deviations represent how much uncertainty exists in your odometry measurements, while vision standard deviations represent the uncertainty in vision measurements. These values directly affect how the pose estimator weights different measurements.",
+            "content": "import edu.wpi.first.math.VecBuilder;\n\n// State uncertainty: how much odometry might drift\n// Tune based on your encoder and gyro accuracy\nvar stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);\n\n// Vision uncertainty: how accurate vision measurements are\n// Tune based on camera quality and tag detection accuracy\nvar visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);"
+        },
+        {
+            "type": "code",
+            "title": "Creating the Pose Estimator",
+            "description": "Now we create the SwerveDrivePoseEstimator with all the required parameters. You'll need the kinematics you defined, initial sensor readings (gyro heading and module positions), a starting pose, and the standard deviation parameters. The estimator uses these to initialize its internal state.",
+            "content": "import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\n\n// Get initial sensor readings from hardware\nRotation2d initialHeading = m_gyro.getRotation2d();\nSwerveModulePosition[] initialModulePositions = getModulePositions();\nPose2d initialPose = new Pose2d();\n\n// Create pose estimator with all required parameters\nm_poseEstimator = new SwerveDrivePoseEstimator(\n    m_kinematics,\n    initialHeading,\n    initialModulePositions,\n    initialPose,\n    stateStdDevs,\n    visionStdDevs\n);"
+        },
+        {
+            "type": "text",
+            "title": "Updating with Odometry",
+            "content": "Odometry updates happen continuously—every robot loop. This provides the fast, continuous tracking that keeps your pose estimate current even when vision isn't available."
+        },
+        {
+            "type": "code",
+            "title": "Getting Module Positions",
+            "description": "First, we need to get the current position of each swerve module. Each module tracks its own position (distance traveled and angle) through its encoder. We collect these positions into an array that the pose estimator can use.",
+            "content": "import edu.wpi.first.math.kinematics.SwerveModulePosition;\n\npublic void updateOdometry() {\n    // Read position from each swerve module\n    m_modulePositions[0] = m_modules[0].getPosition();\n    m_modulePositions[1] = m_modules[1].getPosition();\n    m_modulePositions[2] = m_modules[2].getPosition();\n    m_modulePositions[3] = m_modules[3].getPosition();\n}"
+        },
+        {
+            "type": "code",
+            "title": "Updating the Estimator",
+            "description": "Now we update the pose estimator with the current gyro heading and module positions. The estimator uses these sensor readings to calculate how the robot has moved since the last update, incorporating this into its pose estimate.",
+            "content": "import edu.wpi.first.math.geometry.Rotation2d;\nimport edu.wpi.first.math.kinematics.SwerveModulePosition;\n\npublic void updateOdometry() {\n    // Get current sensor readings\n    Rotation2d heading = m_gyro.getRotation2d();\n    \n    // Get module positions\n    SwerveModulePosition[] modulePositions = getModulePositions();\n    \n    // Update pose estimator\n    m_poseEstimator.update(heading, modulePositions);\n}"
+        },
+        {
+            "type": "text",
+            "title": "Adding Vision Measurements",
+            "content": "Vision updates are asynchronous—they arrive when tags are detected, not on a fixed schedule. The pose estimator handles this automatically, incorporating vision measurements whenever they're available to correct any drift that has accumulated.<br><br>It's important to validate vision measurements before adding them to the pose estimator. Reject measurements with high ambiguity, measurements from tags that are too far away, or measurements that don't have enough tags detected. This prevents bad measurements from corrupting your pose estimate."
+        },
+        {
+            "type": "code",
+            "title": "Integrating Vision with Pose Estimator",
+            "description": "Adding vision measurements to your pose estimator. Both PhotonVision and Limelight provide pose estimates with timestamps for proper latency compensation.",
+            "content": "import edu.wpi.first.math.VecBuilder;\nimport edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;\nimport frc.robot.LimelightHelpers.PoseEstimate;\nimport java.util.Optional;\n\npublic void updateVision() {\n    // Get pose estimate from vision subsystem\n    Optional<PoseEstimate> visionPoseEstimate = m_vision.getAprilTagPoseEstimate();\n    \n    if (visionPoseEstimate.isPresent()) {\n        PoseEstimate estimate = visionPoseEstimate.get();\n        \n        // Validate measurement quality\n        boolean shouldReject = false;\n        \n        // Reject single-tag measurements with high ambiguity\n        if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {\n            if (estimate.rawFiducials[0].ambiguity > 0.7) {\n                shouldReject = true;\n            }\n        }\n        \n        // Reject tags that are too far away\n        if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {\n            if (estimate.rawFiducials[0].distToCamera > 3.0) {\n                shouldReject = true;\n            }\n        }\n        \n        // Reject if no tags detected\n        if (estimate.tagCount == 0) {\n            shouldReject = true;\n        }\n        \n        if (!shouldReject) {\n            // Adjust uncertainty based on tag count\n            // More tags = more accurate = lower uncertainty\n            if (estimate.tagCount >= 2) {\n                m_poseEstimator.setVisionMeasurementStdDevs(\n                    VecBuilder.fill(0.3, 0.3, 9999999)\n                );\n            } else {\n                m_poseEstimator.setVisionMeasurementStdDevs(\n                    VecBuilder.fill(0.5, 0.5, 9999999)\n                );\n            }\n            \n            // Add vision measurement with timestamp\n            m_poseEstimator.addVisionMeasurement(\n                estimate.pose,\n                estimate.timestampSeconds\n            );\n        }\n    }\n}"
+        },
+        {
+            "type": "text",
+            "title": "Putting It All Together",
+            "content": "In your subsystem's periodic method, you'll update both odometry and vision. The pose estimator automatically handles the fusion, giving you the best possible pose estimate at any moment."
+        },
+        {
+            "type": "code",
+            "title": "Complete Periodic Update",
+            "description": "This shows the periodic update flow that combines odometry and vision updates.",
+            "content": "import edu.wpi.first.math.geometry.Pose2d;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\n@Override\npublic void periodic() {\n    // Update odometry continuously (always available)\n    updateOdometry();\n    \n    // Update vision when available (asynchronous)\n    updateVision();\n    \n    // Get the fused pose estimate\n    Pose2d currentPose = m_poseEstimator.getEstimatedPosition();\n    \n    // Optional: Display on SmartDashboard for debugging\n    SmartDashboard.putNumber(\"Fused X\", currentPose.getX());\n    SmartDashboard.putNumber(\"Fused Y\", currentPose.getY());\n    SmartDashboard.putNumber(\"Fused Heading\", \n        currentPose.getRotation().getDegrees());\n}"
         },
         {
             "type": "link-grid",
-            "title": "Related Topics",
+            "title": "Resources",
             "links": [
+                {
+                    "label": "Pose Estimation Introduction",
+                    "id": "pose-estimation-intro"
+                },
                 {
                     "label": "Odometry",
                     "id": "odometry"
@@ -39,8 +95,16 @@
                     "id": "vision-subsystem"
                 },
                 {
-                    "label": "WPILib Pose Estimators",
-                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html"
+                    "label": "Pose Estimation Calibration",
+                    "id": "pose-estimation-calibration"
+                },
+                {
+                    "label": "WPILib Pose Estimator",
+                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators"
+                },
+                {
+                    "label": "WPILib Kinematics and Odometry",
+                    "url": "https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"
                 }
             ]
         }

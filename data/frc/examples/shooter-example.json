@@ -3,8 +3,13 @@
   "sections": [
     {
       "type": "text",
+      "title": "Template Project",
+      "content": "Start with the <strong>Command Robot</strong> template project. Shooters are implemented as subsystems, so the command-based structure is ideal. Create a new subsystem class in the <code>subsystems</code> package."
+    },
+    {
+      "type": "text",
       "title": "Overview",
-      "content": "Shooters require <strong>Velocity Control</strong>. The goal is to spin a flywheel at a specific RPM and maintain it despite load changes (launching a note/ball). We use Velocity PID and Feedforward."
+      "content": "Shooters require <strong>Velocity Control</strong>. The goal is to spin a flywheel at a specific RPM and maintain it despite load changes (launching a note/ball). We'll build a shooter subsystem using Velocity PID and Feedforward to maintain consistent speed."
     },
     {
       "type": "rules-box",
@@ -18,9 +23,157 @@
       ]
     },
     {
+      "type": "text",
+      "title": "Step 1: Create Subsystem Structure",
+      "content": "Start by creating the <code>Shooter</code> class that extends <code>SubsystemBase</code>. This class will manage the shooter motor and velocity control."
+    },
+    {
       "type": "code-tabs",
-      "title": "Subsystem Code",
-      "content": "Implementation with Velocity PID:",
+      "content": "Create a new subsystem class in the <code>subsystems</code> package. The Command Robot template provides <code>ExampleSubsystem</code> as a reference. Create your <code>Shooter</code> class with necessary imports:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.VelocityVoltage;\n\npublic class Shooter extends SubsystemBase {\n    // We'll add fields here\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\nimport com.revrobotics.spark.RelativeEncoder;\n\npublic class Shooter extends SubsystemBase {\n    // We'll add fields here\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 2: Declare Motor and Control Objects",
+      "content": "Add fields for the motor and velocity control. The motor is on CAN ID 7. For Talon FX, we create a <code>VelocityVoltage</code> control request. For SPARK MAX, we get the closed-loop controller and encoder."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add motor and controller fields:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public class Shooter extends SubsystemBase {\n    // Shooter motor on CAN ID 7\n    private final TalonFX m_motor = new TalonFX(7);\n    // Velocity control request\n    private final VelocityVoltage m_request = new VelocityVoltage(0);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public class Shooter extends SubsystemBase {\n    // Shooter motor on CAN ID 7, brushless type\n    private final SparkMax m_motor = new SparkMax(7, MotorType.kBrushless);\n    // Get closed-loop controller for velocity PID\n    private final SparkClosedLoopController m_pid = m_motor.getClosedLoopController();\n    // Get encoder for velocity feedback\n    private final RelativeEncoder m_encoder = m_motor.getEncoder();\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 3: Configure Motor - Idle Mode",
+      "content": "Set the motor to Coast mode. This allows the flywheel to spin down naturally when stopped, preventing rapid deceleration that wastes energy and causes wear. Brake mode would make the flywheel stop abruptly, which is undesirable for shooters."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Set motor to Coast mode:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Shooter() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    // Coast mode allows flywheel to spin down naturally\n    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Shooter() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Coast mode allows flywheel to spin down naturally\n    config.idleMode(IdleMode.kCoast);\n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Configure Velocity PID Gains",
+      "content": "Configure PID gains for velocity control. <strong>kP</strong> (Proportional) corrects velocity errors to maintain target speed. For flywheels, kP is typically small since feedforward does most of the work. <strong>kI</strong> and <strong>kD</strong> are usually set to 0 for velocity control."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add velocity PID gains:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Shooter() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n    \n    // Velocity PID gains (Slot 0)\n    config.Slot0.kP = 0.1;  // Proportional gain\n    config.Slot0.kI = 0.0;  // Integral gain\n    config.Slot0.kD = 0.0;  // Derivative gain\n    \n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Shooter() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    config.idleMode(IdleMode.kCoast);\n    \n    // Velocity PID gains\n    config.closedLoop.p(0.0001).i(0.0).d(0.0);\n    \n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 5: Configure Velocity Feedforward",
+      "content": "Velocity feedforward (<strong>kV</strong>) is critical for maintaining speed. It provides the base voltage needed to maintain a given velocity. This is the most important value for velocity control—tune this first so the flywheel reaches target speed without PID correction."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add velocity feedforward:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "public Shooter() {\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n    config.Slot0.kP = 0.1;\n    config.Slot0.kI = 0.0;\n    config.Slot0.kD = 0.0;\n    \n    // Velocity feedforward (critical for maintaining speed)\n    config.Slot0.kV = 0.12;\n    \n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "public Shooter() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    config.idleMode(IdleMode.kCoast);\n    \n    // Velocity PID gains with feedforward\n    config.closedLoop.p(0.0001).i(0.0).d(0.0).ff(0.00015);\n    \n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 6: Add Method to Set Target Speed",
+      "content": "Create a public method that sets the target velocity. The PID controller and feedforward work together to reach and maintain this speed."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add method to set target velocity:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "/**\n * Set shooter target velocity\n * @param rps Target velocity in rotations per second\n */\npublic void setSpeed(double rps) {\n    m_motor.setControl(m_request.withVelocity(rps));\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "/**\n * Set shooter target velocity\n * @param rpm Target velocity in RPM\n */\npublic void setSpeed(double rpm) {\n    m_pid.setReference(rpm, ControlType.kVelocity);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 7: Add Ready Status Check",
+      "content": "Add a method to check if the shooter has reached the target speed. This is useful for coordinating with other mechanisms (like an indexer) that need to wait for the shooter to be ready before feeding game pieces."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add method to check if shooter is at target speed:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "/**\n * Check if shooter is at target speed\n * @param target Target velocity in rotations per second\n * @return True if within 2.0 RPS of target\n */\npublic boolean isReady(double target) {\n    double currentVelocity = m_motor.getVelocity().getValue();\n    return Math.abs(currentVelocity - target) < 2.0;\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "/**\n * Check if shooter is at target speed\n * @param target Target velocity in RPM\n * @return True if within 50 RPM of target\n */\npublic boolean isReady(double target) {\n    double currentVelocity = m_encoder.getVelocity();\n    return Math.abs(currentVelocity - target) < 50;\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 8: Create Firing Sequence Command",
+      "content": "Shooters often work with other mechanisms. Create a command sequence that spins up the shooter, waits until it's ready, then feeds the game piece. This ensures consistent shot velocity."
+    },
+    {
+      "type": "code",
+      "content": "Create command sequence for shooting:",
+      "code": "// In RobotContainer class - add this method or use in configureBindings()\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.subsystems.Shooter;\nimport frc.robot.subsystems.Indexer;\n\n/**\n * Create command sequence for shooting\n * @return Sequential command: spin up, wait, feed\n */\npublic Command getShootSequence() {\n    return Commands.sequence(\n        // Step 1: Start spinning up shooter to 4000 RPS\n        Commands.runOnce(() -> m_shooter.setSpeed(4000), m_shooter),\n        // Step 2: Wait until shooter reaches target speed\n        Commands.waitUntil(() -> m_shooter.isReady(4000)),\n        // Step 3: Feed note into shooter\n        new FeedCommand(m_indexer)\n    );\n}"
+    },
+    {
+      "type": "text",
+      "title": "Understanding Velocity Control",
+      "content": "Velocity control maintains speed rather than position. Feedforward (kV) provides most of the power needed to maintain speed. PID (kP) corrects small errors caused by load changes or friction. Together, they keep the flywheel spinning at a consistent RPM despite disturbances."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Code - Shooter Subsystem",
+      "content": "Complete shooter subsystem implementation:",
       "tabs": [
         {
           "label": "Talon FX",
@@ -33,14 +186,10 @@
       ]
     },
     {
-      "type": "text",
-      "title": "State Management",
-      "content": "Shooters often need a state machine: <strong>Idle</strong> → <strong>SpinUp</strong> → <strong>Ready</strong> → <strong>Fire</strong>."
-    },
-    {
       "type": "code",
-      "title": "Firing Sequence",
-      "content": "// ... (in RobotContainer or command class)\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.subsystems.Shooter;\nimport frc.robot.subsystems.Indexer;\n\n// ... (other code)\n\n/**\n * Create command sequence for shooting\n * @return Sequential command: spin up, wait, feed\n */\npublic Command getShootSequence() {\n    return Commands.sequence(\n        // Step 1: Start spinning up shooter to 4000 RPS\n        Commands.runOnce(() -> shooter.setSpeed(4000), shooter),\n        // Step 2: Wait until shooter reaches target speed\n        Commands.waitUntil(() -> shooter.isReady(4000)),\n        // Step 3: Feed note into shooter\n        new FeedCommand(indexer)\n    );\n}\n\n// ... (rest of class)"
+      "title": "Full Code - Firing Sequence",
+      "content": "The Command Robot template provides RobotContainer. Add this method to create the firing sequence:",
+      "code": "// In RobotContainer class - add this method\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport frc.robot.subsystems.Shooter;\nimport frc.robot.subsystems.Indexer;\n\n// The template provides RobotContainer structure\n/**\n * Create command sequence for shooting\n * @return Sequential command: spin up, wait, feed\n */\npublic Command getShootSequence() {\n    return Commands.sequence(\n        // Step 1: Start spinning up shooter to 4000 RPS\n        Commands.runOnce(() -> m_shooter.setSpeed(4000), m_shooter),\n        // Step 2: Wait until shooter reaches target speed\n        Commands.waitUntil(() -> m_shooter.isReady(4000)),\n        // Step 3: Feed note into shooter\n        new FeedCommand(m_indexer)\n    );\n}"
     },
     {
       "type": "rules-box",
@@ -54,8 +203,18 @@
       ]
     },
     {
+      "type": "text",
+      "title": "State Management",
+      "content": "Shooters often need a state machine: <strong>Idle</strong> → <strong>SpinUp</strong> → <strong>Ready</strong> → <strong>Fire</strong>. Use commands and the <code>isReady()</code> method to manage these states and coordinate with other mechanisms."
+    },
+    {
+      "type": "text",
+      "title": "Practice with WPILib Documentation",
+      "content": "WPILib provides tuning documentation for velocity controllers, including feedforward control strategies essential for flywheels. Use these guides to practice tuning velocity controllers and understanding feedforward principles."
+    },
+    {
       "type": "link-grid",
-      "title": "Related",
+      "title": "Resources",
       "links": [
         {
           "label": "Elevator Example",
@@ -63,7 +222,11 @@
         },
         {
           "label": "PID Control",
-          "id": "pid-control"
+          "id": "frc-pid-control"
+        },
+        {
+          "label": "WPILib: Feedforward Control (Practice)",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward.html"
         }
       ]
     }

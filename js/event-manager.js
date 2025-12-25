@@ -41,8 +41,36 @@ class EventManager {
         const navToggle = document.getElementById('__navigation');
         if (navToggle) {
             navToggle.addEventListener('change', (e) => {
+                console.log(`[Debug] Sidebar toggle changed. Checked: ${e.target.checked}`);
                 if (e.target.checked) {
-                    // Sidebar is now visible - ensure smooth transition
+                    // Sidebar is now visible - ensure it's shown
+                    console.log('[Debug] Showing sidebar...');
+                    const sidebarDrawer = document.querySelector('.sidebar-drawer');
+                    if (sidebarDrawer) {
+                        sidebarDrawer.style.display = '';
+                        sidebarDrawer.style.visibility = 'visible';
+                        sidebarDrawer.style.opacity = '1';
+                        
+                        // Ensure child elements are also visible
+                        const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
+                        const sidebarScroll = sidebarDrawer.querySelector('.sidebar-scroll');
+                        const sidebarTree = sidebarDrawer.querySelector('.sidebar-tree');
+                        
+                        if (sidebarContainer) {
+                            sidebarContainer.style.visibility = 'visible';
+                            sidebarContainer.style.opacity = '1';
+                        }
+                        if (sidebarScroll) {
+                            sidebarScroll.style.visibility = 'visible';
+                            sidebarScroll.style.opacity = '1';
+                        }
+                        if (sidebarTree) {
+                            sidebarTree.style.visibility = 'visible';
+                            sidebarTree.style.opacity = '1';
+                            console.log(`[Debug] Sidebar tree visible. Has content: ${sidebarTree.innerHTML.length > 0}`);
+                        }
+                    }
+                    // Ensure smooth transition
                     this.navigationManager.ensureSmoothSidebarTransition();
                     // Adjust layout immediately for smooth animation
                     this.navigationManager.adjustLayoutForSidebar();
@@ -56,7 +84,8 @@ class EventManager {
                         }
                     }, 100);
                 } else {
-                    // Sidebar is now hidden
+                    // Sidebar is now hidden - reset layout without animation
+                    console.log('[Debug] Hiding sidebar...');
                     this.navigationManager.resetLayoutForHiddenSidebar();
                 }
             });

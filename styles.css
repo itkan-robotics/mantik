@@ -966,12 +966,6 @@ body {
   
   .tab-content.active {
     display: block;
-    animation: fadeIn 0.5s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
   }
   
   /* Typography */
@@ -2114,9 +2108,9 @@ a:hover {
       /* SWYFT: no decorative borders */
   }
   
-  /* Add smooth scrolling to sidebar */
+  /* Sidebar scroll */
   .sidebar-scroll {
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
   }
   
   /* Responsive adjustments for mobile */

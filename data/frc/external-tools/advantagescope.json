@@ -1,5 +1,5 @@
 {
-      "title": "AdvantageScope: Data Logging and Analysis"
+  "title": "AdvantageScope: Data Logging and Analysis",
   "sections": [
     {
       "type": "text",
@@ -9,17 +9,17 @@
     {
       "type": "text",
       "title": "Key Features",
-      "content": "<strong>1. Multi-Format Support:</strong> Opens WPILib data logs (.wpilog), AdvantageKit logs (.rlog), CTRE logs (.hoot), and Driver Station logs (.dslog). (<a href='https://docs.advantagescope.org/guides/loading-data/' target='_blank'>Loading Data Documentation</a>)<br><br><strong>2. 3D Field Visualization:</strong> Visualize your robot's pose, mechanism states (arm angles, elevator heights), and trajectory in full 3D. This is critical for debugging odometry and autonomous paths. (<a href='https://docs.advantagescope.org/views/field3d/' target='_blank'>3D Field View Documentation</a>)<br><br><strong>3. Video Synchronization:</strong> If you have match video, you can sync it with the log data. Clicking a point on the graph jumps the video to that exact moment. (<a href='https://docs.advantagescope.org/guides/video-sync/' target='_blank'>Video Sync Documentation</a>)<br><br><strong>4. Swerve Visualization:</strong> Dedicated views for swerve module states (vectors) to debug drive issues. (<a href='https://docs.advantagescope.org/views/swerve/' target='_blank'>Swerve View Documentation</a>)<br><br><strong>5. Console Log Review:</strong> Filter and search through robot console output synchronized with the data. (<a href='https://docs.advantagescope.org/views/console/' target='_blank'>Console View Documentation</a>)"
-    },
-    {
-      "type": "code",
-      "title": "Logging for Visualization",
-      "content": "// In your robot code (RobotPeriodic or Subsystem)\n\n// Log a Pose2d for 3D field visualization\n// See: https://docs.advantagescope.org/views/field3d/\nLogger.recordOutput(\"Odometry/RobotPose\", m_drive.getPose());\n\n// Log a Trajectory to see the path\nLogger.recordOutput(\"Auto/Trajectory\", m_trajectory);\n\n// Log mechanism states (e.g. Arm Angle)\nLogger.recordOutput(\"Arm/AngleDegrees\", m_arm.getAngle());\n\n// Log Swerve Module States for vector visualization\n// See: https://docs.advantagescope.org/views/swerve/\nLogger.recordOutput(\"Swerve/ModuleStates\", m_drive.getModuleStates());"
+      "content": "<strong>1. Multi-Format Support:</strong> Opens WPILib data logs (.wpilog), AdvantageKit logs (.rlog), CTRE logs (.hoot), and Driver Station logs (.dslog). (<a href='https://docs.advantagescope.org/overview/log-files/' target='_blank'>Loading Data Documentation</a>)<br><br><strong>2. 3D Field Visualization:</strong> Visualize your robot's pose, mechanism states (arm angles, elevator heights), and trajectory in full 3D. This is critical for debugging odometry and autonomous paths. (<a href='https://docs.advantagescope.org/tab-reference/3d-field/' target='_blank'>3D Field View Documentation</a>)<br><br><strong>3. Video Synchronization:</strong> If you have match video, you can sync it with the log data. Clicking a point on the graph jumps the video to that exact moment. (<a href='https://docs.advantagescope.org/tab-reference/video#automatic-synchronization' target='_blank'>Video Sync Documentation</a>)<br><br><strong>4. Swerve Visualization:</strong> Dedicated views for swerve module states (vectors) to debug drive issues. (<a href='https://docs.advantagescope.org/tab-reference/swerve/' target='_blank'>Swerve View Documentation</a>)<br><br><strong>5. Console Log Review:</strong> Filter and search through robot console output synchronized with the data. (<a href='https://docs.advantagescope.org/tab-reference/console/' target='_blank'>Console View Documentation</a>)"
     },
     {
       "type": "text",
       "title": "Using AdvantageScope with WPILib",
-      "content": "To get the most out of AdvantageScope, you should use <a href='https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DataLogManager.html' target='_blank'>\"DataLogManager\"</a> in your WPILib code to record data to a USB stick or the RIO's internal storage. (<a href='https://docs.advantagescope.org/guides/recording-data/' target='_blank'>Recording Data Documentation</a>)<br><br><strong>Structured Data:</strong> AdvantageScope supports the new WPILib \"Struct\" serialization. This allows you to log complex objects like \"Pose2d\", \"Translation2d\", or custom classes efficiently, and AdvantageScope will automatically recognize them as 3D objects or vectors. (<a href='https://docs.advantagescope.org/guides/structured-data/' target='_blank'>Structured Data Documentation</a>)"
+      "content": "To get the most out of AdvantageScope, you should use <a href='https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DataLogManager.html' target='_blank'>\"DataLogManager\"</a> in your WPILib code to record data to a USB stick or the RIO's internal storage. (<a href='https://docs.advantagescope.org/overview/live-sources/' target='_blank'>Recording Data Documentation</a>)<br><br><strong>Structured Data:</strong> AdvantageScope supports the new WPILib \"Struct\" serialization. This allows you to log complex objects like \"Pose2d\", \"Translation2d\", or custom classes efficiently, and AdvantageScope will automatically recognize them as 3D objects or vectors. (<a href='https://docs.advantagescope.org/tab-reference/line-graph/units/#-struct-units' target='_blank'>Structured Data Documentation</a>)"
+    },
+    {
+      "type": "code",
+      "title": "Logging for Visualization",
+      "content": "// In your robot code (RobotPeriodic or Subsystem)\n\n// Log a Pose2d for 3D field visualization\n// See: https://docs.advantagescope.org/tab-reference/3d-field/\nLogger.recordOutput(\"Odometry/RobotPose\", m_drive.getPose());\n\n// Log a Trajectory to see the path\nLogger.recordOutput(\"Auto/Trajectory\", m_trajectory);\n\n// Log mechanism states (e.g. Arm Angle)\nLogger.recordOutput(\"Arm/AngleDegrees\", m_arm.getAngle());\n\n// Log Swerve Module States for vector visualization\n// See: https://docs.advantagescope.org/tab-reference/swerve/\nLogger.recordOutput(\"Swerve/ModuleStates\", m_drive.getModuleStates());"
     },
     {
       "type": "rules-box",
@@ -27,11 +27,11 @@
       "subtitle": "How to debug effectively:",
       "items": [
         "Download the log file from the robot after a run.",
-        "Open in AdvantageScope. (<a href='https://docs.advantagescope.org/guides/loading-data/' target='_blank'>Loading Data Guide</a>)",
-        "Drag 'Odometry/RobotPose' to the '3D Field' tab to verify location. (<a href='https://docs.advantagescope.org/views/field3d/' target='_blank'>3D Field View Guide</a>)",
-        "Drag target vs actual values (e.g. 'Arm/Target' vs 'Arm/Actual') to a 'Line Graph' to check PID tuning. (<a href='https://docs.advantagescope.org/views/graph/' target='_blank'>Graph View Guide</a>)",
-        "If investigating a crash/error, look at the 'Console' tab. (<a href='https://docs.advantagescope.org/views/console/' target='_blank'>Console View Guide</a>)",
-        "Sync match video if available to correlate physical behavior with data. (<a href='https://docs.advantagescope.org/guides/video-sync/' target='_blank'>Video Sync Guide</a>)"
+        "Open in AdvantageScope. (<a href='https://docs.advantagescope.org/overview/log-files/' target='_blank'>Loading Data Guide</a>)",
+        "Drag 'Odometry/RobotPose' to the '3D Field' tab to verify location. (<a href='https://docs.advantagescope.org/tab-reference/3d-field/' target='_blank'>3D Field View Guide</a>)",
+        "Drag target vs actual values (e.g. 'Arm/Target' vs 'Arm/Actual') to a 'Line Graph' to check PID tuning. (<a href='https://docs.advantagescope.org/tab-reference/line-graph/' target='_blank'>Graph View Guide</a>)",
+        "If investigating a crash/error, look at the 'Console' tab. (<a href='https://docs.advantagescope.org/tab-reference/console/' target='_blank'>Console View Guide</a>)",
+        "Sync match video if available to correlate physical behavior with data. (<a href='https://docs.advantagescope.org/tab-reference/video#automatic-synchronization' target='_blank'>Video Sync Guide</a>)"
       ]
     },
     {

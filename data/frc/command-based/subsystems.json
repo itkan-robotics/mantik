@@ -39,7 +39,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Next Steps",
+      "title": "Resources",
       "links": [
         {
           "label": "Commands",
@@ -48,6 +48,10 @@
         {
           "label": "Intake Example",
           "id": "intake-command-based"
+        },
+        {
+          "label": "WPILib Subsystems Documentation",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html"
         }
       ]
     }

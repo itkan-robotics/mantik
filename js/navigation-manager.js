@@ -159,43 +159,89 @@ class NavigationManager {
         const navigationContainer = document.querySelector('.sidebar-tree');
         if (!navigationContainer) return;
 
-        navigationContainer.innerHTML = '';
-
+        const navCheckbox = document.getElementById('__navigation');
+        const sidebarDrawer = document.querySelector('.sidebar-drawer');
+        const navToggleLabels = document.querySelectorAll('label[for="__navigation"]');
+        
         if (appState.currentSection === 'homepage') {
-            this.renderHomepageNavigation(navigationContainer);
+            // Disable sidebar on homepage
+            navigationContainer.innerHTML = '';
+            if (navCheckbox) {
+                navCheckbox.checked = false;
+                navCheckbox.disabled = true;
+            }
+            if (sidebarDrawer) {
+                sidebarDrawer.style.display = 'none';
+            }
+            navToggleLabels.forEach(label => {
+                label.style.display = 'none';
+            });
+            // Reset layout for hidden sidebar
+            this.resetLayoutForHiddenSidebar();
             // Update title for homepage
             this.updateSectionTitle('homepage', { title: 'Home' });
         } else {
-            await this.renderSectionNavigation(navigationContainer);
+            // Check if navigation is already rendered for this section
+            const section = appState.config.sections[appState.currentSection];
+            const containerHasContent = navigationContainer.children.length > 0;
+            const lastRenderedSection = navigationContainer.dataset.renderedSection;
+            
+            // Only clear and re-render if we're switching sections or if container is empty
+            if (!containerHasContent || lastRenderedSection !== appState.currentSection) {
+                console.log(`[Debug] Rendering navigation for section ${appState.currentSection} (was: ${lastRenderedSection || 'none'})`);
+                navigationContainer.innerHTML = '';
+                await this.renderSectionNavigation(navigationContainer);
+                navigationContainer.dataset.renderedSection = appState.currentSection;
+            } else {
+                console.log(`[Debug] Skipping navigation render - already rendered for section ${appState.currentSection} with ${navigationContainer.children.length} items`);
+            }
+            
+            // Enable sidebar for other sections
+            if (navCheckbox) {
+                navCheckbox.disabled = false;
+                // Ensure sidebar starts hidden (not checked) and stays hidden until user opens it
+                if (!navCheckbox.checked) {
+                    if (sidebarDrawer) {
+                        sidebarDrawer.style.display = 'none';
+                        sidebarDrawer.style.visibility = 'hidden';
+                        sidebarDrawer.style.opacity = '0';
+                    }
+                } else {
+                    // If checked, show it
+                    if (sidebarDrawer) {
+                        sidebarDrawer.style.display = '';
+                        sidebarDrawer.style.visibility = '';
+                        sidebarDrawer.style.opacity = '';
+                    }
+                }
+            }
+            navToggleLabels.forEach(label => {
+                label.style.display = '';
+            });
         }
 
         // Ensure sidebar CSS variable is initialized
-        const sidebarDrawer = document.querySelector('.sidebar-drawer');
         if (sidebarDrawer) {
             const currentWidth = sidebarDrawer.style.width || localStorage.getItem('sidebarWidth') || '15em';
             sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
         }
 
-        // Adjust layout after navigation is generated
-        setTimeout(() => {
-            this.adjustLayoutForSidebar();
-            // If sidebar navigation is empty, forcibly close sidebar and reset layout
-            const navList = document.getElementById('sidebar-navigation');
-            const navCheckbox = document.getElementById('__navigation');
-            if (navList && navList.children.length === 0 && navCheckbox) {
-                // Ensure the CSS variable is set before closing
-                if (sidebarDrawer) {
-                    const currentWidth = sidebarDrawer.style.width || '15em';
-                    sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
+        // Adjust layout after navigation is generated (only if not homepage and sidebar is checked)
+        if (appState.currentSection !== 'homepage') {
+            setTimeout(() => {
+                // Only adjust layout if sidebar is actually checked/open
+                if (navCheckbox && navCheckbox.checked) {
+                    this.adjustLayoutForSidebar();
+                    // Highlight current tab and scroll to it if sidebar is open
+                    if (appState.currentTab) {
+                        this.ensureCurrentTabHighlighted();
+                    }
+                } else {
+                    // Sidebar is closed, make sure it's completely hidden
+                    this.resetLayoutForHiddenSidebar();
                 }
-                navCheckbox.checked = false;
-            }
-            
-            // Highlight current tab and scroll to it if sidebar is open
-            if (appState.currentTab) {
-                this.ensureCurrentTabHighlighted();
-            }
-        }, 100);
+            }, 100);
+        }
     }
 
     renderHomepageNavigation(container) {
@@ -210,30 +256,46 @@ class NavigationManager {
             return;
         }
 
-        // Load section content if needed
-        if (!section.groups && !section.tiers && !section.intro && !section.children) {
-            await this.contentManager.loadSectionContent(appState.currentSection);
-        } else if (section.groups || section.tiers || section.children) {
+        // Check if section already has groups loaded (avoid re-loading if already loaded)
+        const hasGroupsAlready = section.groups && Array.isArray(section.groups) && section.groups.length > 0;
+        
+        // Only load section content if groups are not already present
+        if (!hasGroupsAlready) {
             await this.contentManager.loadSectionContent(appState.currentSection);
         }
 
         const updatedSection = appState.config.sections[appState.currentSection];
+        console.log(`[Debug] renderSectionNavigation for ${appState.currentSection}:`, {
+            hasGroups: !!updatedSection.groups,
+            hasChildren: !!updatedSection.children,
+            hasTiers: !!updatedSection.tiers,
+            hasIntro: !!updatedSection.intro,
+            hasSections: !!(updatedSection.sections && Array.isArray(updatedSection.sections)),
+            groupsCount: updatedSection.groups ? updatedSection.groups.length : 0,
+            groupsType: updatedSection.groups ? typeof updatedSection.groups : 'none',
+            groupsIsArray: updatedSection.groups ? Array.isArray(updatedSection.groups) : false,
+            container: container ? container.tagName : 'null'
+        });
 
         // Support new nested parent/child structure
         if (updatedSection.groups) {
             // Check if groups have children (nested structure)
             const hasNestedStructure = updatedSection.groups.some(group => group.children);
+            console.log(`[Debug] Rendering groups. Has nested structure: ${hasNestedStructure}, Groups count: ${updatedSection.groups.length}`);
             if (hasNestedStructure) {
                 this.renderParentGroupsNavigation(container, updatedSection.groups);
             } else {
                 this.renderGroupsNavigation(container, updatedSection.groups);
             }
+            console.log(`[Debug] After rendering groups. Container children count: ${container.children.length}`);
         } else if (updatedSection.children) {
             this.renderParentGroupsNavigation(container, updatedSection.children);
         } else if (updatedSection.tiers) {
             this.renderTiersNavigation(container, updatedSection.tiers);
         } else if (updatedSection.intro) {
             this.renderIntroNavigation(container, updatedSection.intro);
+        } else {
+            console.warn(`[Debug] No navigation structure found for section ${appState.currentSection}`);
         }
     }
 
@@ -394,42 +456,54 @@ class NavigationManager {
         const isSidebarVisible = navCheckbox && navCheckbox.checked;
         console.log(`[Debug] adjustLayoutForSidebar called. Visible: ${isSidebarVisible}`);
 
-        // If sidebar is hidden, we don't need to force visibility to measure.
-        // We can just use the stored width or default to avoid visual glitches.
+        // If sidebar is hidden, completely hide it and return early
         if (!isSidebarVisible) {
-            let storedWidth = sidebarDrawer.dataset.storedWidth || localStorage.getItem('sidebarWidth') || '15em';
-            console.log(`[Debug] Sidebar hidden. Using stored/default width: ${storedWidth}`);
-            
-            // If stored width is just a number (from resize manager), append px
-            if (/^\d+(\.\d+)?$/.test(storedWidth)) {
-                storedWidth += 'px';
-            }
-            
-            // Set the CSS variable and width styles just in case
-            sidebarDrawer.style.width = storedWidth;
-            if (sidebarDrawer.querySelector('.sidebar-container')) {
-                sidebarDrawer.querySelector('.sidebar-container').style.width = storedWidth;
-            }
-            sidebarDrawer.style.setProperty('--sidebar-width', storedWidth);
-            
+            console.log(`[Debug] Sidebar hidden. Hiding completely.`);
+            sidebarDrawer.style.display = 'none';
+            sidebarDrawer.style.visibility = 'hidden';
+            sidebarDrawer.style.opacity = '0';
             // Ensure main content is reset
             mainContent.style.removeProperty('margin-left');
             mainContent.style.removeProperty('max-width');
-            
             return;
         }
-
-        // Temporarily make sidebar visible to measure content
+        
+        // Sidebar should be visible - ensure it's shown
+        console.log(`[Debug] Sidebar should be visible. Showing sidebar.`);
+        // Store original values before making changes
         const originalLeft = sidebarDrawer.style.left;
-        const originalVisibility = sidebarDrawer.style.visibility;
         const originalPosition = sidebarDrawer.style.position;
+        
+        // Make sidebar visible first - remove all hiding styles
+        sidebarDrawer.style.display = '';
+        sidebarDrawer.style.visibility = 'visible';
+        sidebarDrawer.style.opacity = '1';
+        
+        // Also ensure child elements are visible
+        const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
+        if (sidebarContainer) {
+            sidebarContainer.style.visibility = '';
+            sidebarContainer.style.opacity = '';
+        }
+        const sidebarScroll = sidebarDrawer.querySelector('.sidebar-scroll');
+        if (sidebarScroll) {
+            sidebarScroll.style.visibility = '';
+            sidebarScroll.style.opacity = '';
+        }
+        const sidebarTree = sidebarDrawer.querySelector('.sidebar-tree');
+        if (sidebarTree) {
+            console.log(`[Debug] Sidebar tree found. Children count: ${sidebarTree.children.length}`);
+            sidebarTree.style.visibility = '';
+            sidebarTree.style.opacity = '';
+        } else {
+            console.warn(`[Debug] Sidebar tree NOT found!`);
+        }
         
         let optimalWidth = 240; // Default min width
 
         try {
             console.log('[Debug] Measuring sidebar content width...');
             sidebarDrawer.style.left = '0';
-            sidebarDrawer.style.visibility = 'visible';
             sidebarDrawer.style.position = 'absolute'; // Temporarily change to absolute to measure
 
             // Count visible navigation items and measure their content
@@ -467,9 +541,9 @@ class NavigationManager {
             // Ensure width doesn't exceed maximum
             optimalWidth = Math.min(maxSidebarWidth, optimalWidth);
         } finally {
-            // Restore original positioning
-            sidebarDrawer.style.left = originalLeft;
-            sidebarDrawer.style.visibility = originalVisibility;
+            // Restore original positioning (but keep visibility as visible since sidebar is checked)
+            sidebarDrawer.style.left = originalLeft || '';
+            sidebarDrawer.style.visibility = 'visible'; // Keep visible when sidebar is checked
             sidebarDrawer.style.position = originalPosition || 'fixed';
         }
 
@@ -502,25 +576,36 @@ class NavigationManager {
             sidebarDrawer.style.setProperty('--sidebar-width', optimalWidth ? `${optimalWidth}px` : '15em');
         }
 
-        // Only adjust main content if sidebar is actually visible
-        if (isSidebarVisible) {
-            // Adjust main content area with more generous spacing
-            const sidebarOffset = optimalWidth + 0; // Reduced buffer for better spacing
-            mainContent.style.marginLeft = `${sidebarOffset}px`;
-            mainContent.style.maxWidth = `calc(100% - ${sidebarOffset}px)`;
-        } else {
-            // If sidebar is not visible, remove inline styles to let CSS handle transitions
-            mainContent.style.removeProperty('margin-left');
-            mainContent.style.removeProperty('max-width');
-            // Store the width for the next time it opens
-            sidebarDrawer.dataset.storedWidth = optimalWidth;
+        // Adjust main content area with sidebar spacing
+        console.log(`[Debug] Adjusting main content. Sidebar width: ${optimalWidth}px`);
+        const sidebarOffset = optimalWidth + 0; // Reduced buffer for better spacing
+        mainContent.style.marginLeft = `${sidebarOffset}px`;
+        mainContent.style.maxWidth = `calc(100% - ${sidebarOffset}px)`;
+        
+        // Ensure sidebar stays visible with all child elements (elements already declared above)
+        sidebarDrawer.style.display = '';
+        sidebarDrawer.style.visibility = 'visible';
+        sidebarDrawer.style.opacity = '1';
+        
+        // Ensure all child containers are also visible (using elements already declared above)
+        if (sidebarContainer) {
+            sidebarContainer.style.visibility = 'visible';
+            sidebarContainer.style.opacity = '1';
+        }
+        if (sidebarScroll) {
+            sidebarScroll.style.visibility = 'visible';
+            sidebarScroll.style.opacity = '1';
+        }
+        if (sidebarTree) {
+            sidebarTree.style.visibility = 'visible';
+            sidebarTree.style.opacity = '1';
+            console.log(`[Debug] Sidebar tree visible. Content length: ${sidebarTree.innerHTML.length}`);
         }
 
         // Store the current sidebar width for responsive adjustments
         sidebarDrawer.dataset.currentWidth = optimalWidth;
         
-        // Ensure sidebar scroll area is properly sized
-        const sidebarScroll = sidebarDrawer.querySelector('.sidebar-scroll');
+        // Ensure sidebar scroll area is properly sized (sidebarScroll already declared above)
         if (sidebarScroll) {
             sidebarScroll.style.height = `calc(100vh - var(--header-height) - 4rem)`;
             sidebarScroll.style.overflowY = 'auto';
@@ -609,26 +694,58 @@ class NavigationManager {
     resetLayoutForHiddenSidebar() {
         const sidebarDrawer = document.querySelector('.sidebar-drawer');
         const mainContent = document.querySelector('.main');
+        const navCheckbox = document.getElementById('__navigation');
         if (!sidebarDrawer || !mainContent) {
             return;
         }
         
-        // Get current width before resetting
-        const currentWidth = sidebarDrawer.style.width || '15em';
+        // Disable transitions before hiding
+        const originalTransition = sidebarDrawer.style.transition;
+        sidebarDrawer.style.transition = 'none';
+        if (mainContent.style.transition) {
+            mainContent.style.transition = 'none';
+        }
+        
+        // Completely hide the sidebar when unchecked (no animation, no display)
+        if (!navCheckbox || !navCheckbox.checked) {
+            console.log('[Debug] Hiding sidebar completely');
+            sidebarDrawer.style.display = 'none';
+            sidebarDrawer.style.visibility = 'hidden';
+            sidebarDrawer.style.opacity = '0';
+            
+            // Also hide child elements to ensure nothing is visible
+            const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
+            const sidebarScroll = sidebarDrawer.querySelector('.sidebar-scroll');
+            if (sidebarContainer) {
+                sidebarContainer.style.visibility = 'hidden';
+                sidebarContainer.style.opacity = '0';
+            }
+            if (sidebarScroll) {
+                sidebarScroll.style.visibility = 'hidden';
+                sidebarScroll.style.opacity = '0';
+            }
+        }
         
         // Reset sidebar width to default
         sidebarDrawer.style.width = '15em';
-        sidebarDrawer.querySelector('.sidebar-container').style.width = '15em';
+        const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
+        if (sidebarContainer) {
+            sidebarContainer.style.width = '15em';
+        }
         
-        // Set the CSS variable to current width for smooth closing
-        sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
-        
-        // Remove inline styles from main content to let CSS handle the transition
+        // Remove inline styles from main content
         mainContent.style.removeProperty('margin-left');
         mainContent.style.removeProperty('max-width');
         
         // Clear stored width
         delete sidebarDrawer.dataset.currentWidth;
+        
+        // Re-enable transitions after a brief delay (only if sidebar should be visible)
+        setTimeout(() => {
+            if (navCheckbox && navCheckbox.checked) {
+                sidebarDrawer.style.transition = originalTransition || '';
+            }
+        }, 50);
     }
 
     // Method to ensure smooth sidebar opening
@@ -777,7 +894,7 @@ class NavigationManager {
                 }
                 
                 // Scroll to top of the page
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0 });
             } else {
                 // Handle section navigation
                 await this.handleSectionNavigation(tabId);
@@ -785,16 +902,8 @@ class NavigationManager {
 
             // Close mobile navigation and reset layout
             const navCheckbox = document.getElementById('__navigation');
-            if (navCheckbox && navCheckbox.checked) {
-                console.log('[Debug] Closing sidebar after navigation (mobile/standard)');
-                // Set the CSS variable before closing to ensure smooth transition
-                const sidebarDrawer = document.querySelector('.sidebar-drawer');
-                if (sidebarDrawer) {
-                    const currentWidth = sidebarDrawer.style.width || '15em';
-                    sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
-                }
+            if (navCheckbox) {
                 navCheckbox.checked = false;
-                // Reset layout immediately to ensure smooth transition
                 this.resetLayoutForHiddenSidebar();
             }
             // Restore search results if there was an active search
@@ -813,22 +922,9 @@ class NavigationManager {
         const sidebarDrawer = document.querySelector('.sidebar-drawer');
         
         if (navCheckbox && sidebarDrawer) {
-            // Set the CSS variable before closing to ensure smooth transition
-            const currentWidth = sidebarDrawer.style.width || '15em';
-            sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
-            
-            // Temporarily disable transition
-            const originalTransition = sidebarDrawer.style.transition;
-            sidebarDrawer.style.transition = 'none';
-            
-            // Force close
+            // Force close immediately without animation
             navCheckbox.checked = false;
             this.resetLayoutForHiddenSidebar();
-            
-            // Re-enable transition after a brief delay
-            setTimeout(() => {
-                sidebarDrawer.style.transition = originalTransition;
-            }, 50);
         }
 
         const section = appState.config.sections[sectionId];
@@ -841,19 +937,14 @@ class NavigationManager {
         const currentSection = appState.currentSection;
         const isDifferentSection = currentSection !== sectionId;
         
-        // Close sidebar if navigating to a different section (but not on mobile)
-        if (isDifferentSection && window.innerWidth > 1008) {
-            const navCheckbox = document.getElementById('__navigation');
-            if (navCheckbox && navCheckbox.checked) {
-                // Set the CSS variable before closing to ensure smooth transition
-                const currentWidth = sidebarDrawer.style.width || '15em';
-                sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
-                
-                navCheckbox.checked = false;
-                // Reset layout immediately to ensure smooth transition
-                this.resetLayoutForHiddenSidebar();
+            // Close sidebar if navigating to a different section (but not on mobile)
+            if (isDifferentSection && window.innerWidth > 1008) {
+                const navCheckbox = document.getElementById('__navigation');
+                if (navCheckbox) {
+                    navCheckbox.checked = false;
+                    this.resetLayoutForHiddenSidebar();
+                }
             }
-        }
 
         try {
             await this.contentManager.loadSectionContent(sectionId);
@@ -863,17 +954,25 @@ class NavigationManager {
             this.updateSectionTitle(sectionId, updatedSection);
             
             // Scroll to top of the page
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0 });
             
             // After loading content and updating navigation, ensure sidebar is properly closed
             const navCheckbox2 = document.getElementById('__navigation');
-            if (navCheckbox2 && navCheckbox2.checked) {
-                // Ensure the CSS variable is set before closing
-                const currentWidth = sidebarDrawer.style.width || '15em';
-                sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
+            if (navCheckbox2) {
                 navCheckbox2.checked = false;
-                // Reset layout immediately to ensure smooth transition
                 this.resetLayoutForHiddenSidebar();
+            }
+
+            // If section has a sections array (homepage-style), render it directly
+            // But still generate navigation for the sidebar (for sections with groups)
+            if (updatedSection.sections && Array.isArray(updatedSection.sections)) {
+                // Update current section before generating navigation
+                appState.setCurrentSection(sectionId);
+                // Generate navigation for sidebar (will render groups if they exist)
+                await this.generateNavigation();
+                this.contentManager.renderContent(sectionId);
+                appState.setCurrentTab(sectionId);
+                return;
             }
 
             // Navigate to intro if it exists
@@ -955,6 +1054,8 @@ class NavigationManager {
 
             // Fix: If section has no intro/groups/children, it's likely a standalone page (like homepage)
             if (!updatedSection.intro && !firstItem) {
+                // Generate navigation (will disable sidebar for homepage)
+                await this.generateNavigation();
                 this.contentManager.renderContent(sectionId);
                 appState.setCurrentTab(sectionId);
                 return;
@@ -1042,10 +1143,9 @@ class NavigationManager {
         // Center the tab in the sidebar
         const targetScrollTop = scrollTop + tabTop - (sidebarHeight / 2) + (tabHeight / 2);
         
-        // Smooth scroll to the target position
+        // Scroll to the target position
         sidebarScroll.scrollTo({
-            top: targetScrollTop,
-            behavior: 'smooth'
+            top: targetScrollTop
         });
     }
 

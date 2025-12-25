@@ -44,14 +44,18 @@
     },
     {
       "type": "link-grid",
-      "title": "Next Steps",
+      "title": "Resources",
       "links": [
         {
           "label": "Command Groups",
           "id": "command-groups"
         },
         {
-          "label": "WPILib Documentation",
+          "label": "WPILib RobotContainer Documentation",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/structuring-command-based-project.html"
+        },
+        {
+          "label": "WPILib Binding Commands to Triggers",
           "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html"
         }
       ]

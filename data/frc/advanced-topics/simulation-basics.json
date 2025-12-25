@@ -1,5 +1,5 @@
 {
-      "title": "Simulation Basics for FRC Robots"
+  "title": "Simulation Basics for FRC Robots",
   "sections": [
     {
       "type": "text",
@@ -41,7 +41,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "Unit Testing",

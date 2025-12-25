@@ -44,7 +44,7 @@
     },
     {
       "type": "link-grid",
-      "title": "Next Steps",
+      "title": "Resources",
       "links": [
         {
           "label": "RobotContainer & Bindings",
@@ -53,6 +53,10 @@
         {
           "label": "Command Groups",
           "id": "command-groups"
+        },
+        {
+          "label": "WPILib Commands Documentation",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html"
         }
       ]
     }
