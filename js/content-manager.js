@@ -165,6 +165,20 @@ class ContentManager {
             }
         }
 
+        // Handle sections with sections array (new homepage-style sections)
+        // These can also have groups, so we need to store the section config as tab data
+        if (sectionConfig.sections && Array.isArray(sectionConfig.sections)) {
+            const tabInfo = {
+                ...sectionConfig,
+                sectionId,
+                sectionLabel: sectionConfig.label || sectionConfig.title,
+                loaded: true
+            };
+            
+            appState.addTabData(sectionId, tabInfo);
+            appState.allTabs.push(tabInfo);
+        }
+
         // Load intro content if exists
         if (sectionConfig.intro) {
             contentPromises.push(this.loadIntroContent(sectionConfig.intro, sectionId, sectionConfig));
@@ -180,6 +194,11 @@ class ContentManager {
 
     async loadIntroContent(intro, sectionId, sectionConfig) {
         try {
+            if (!intro.file) {
+                console.error(`Intro for section ${sectionId} is missing file property:`, intro);
+                return;
+            }
+            
             const data = await this.configManager.loadContentFile(intro.file);
             const tabInfo = {
                 ...intro,
@@ -192,7 +211,8 @@ class ContentManager {
             appState.addTabData(intro.id, tabInfo);
             appState.allTabs.push(tabInfo);
         } catch (error) {
-            console.error(`Error loading intro content for ${sectionId}:`, error);
+            console.error(`Error loading intro content for ${sectionId} from file ${intro.file}:`, error);
+            // Don't throw - allow section to continue loading even if intro fails
         }
     }
 
@@ -295,9 +315,35 @@ class ContentManager {
         section.appendChild(contentSection);
         
         // Add navigation buttons at the bottom
+        // For section homepages (tabId === sectionId), show a "Start Learning" button if available
         const navButtons = this.createNavigationButtons(tabId);
+        console.log(`[Debug] renderContent: tabId=${tabId}, currentSection=${appState.currentSection}, navButtons=${!!navButtons}`);
         if (navButtons) {
             section.appendChild(navButtons);
+        } else if (tabId === appState.currentSection && tabId !== 'homepage') {
+            // For section homepages, add a button to start the first lesson
+            // Ensure section config is loaded first - try both appState and configManager
+            let sectionConfig = appState.config?.sections?.[tabId];
+            if (!sectionConfig || !(sectionConfig.groups || sectionConfig.children || sectionConfig.items)) {
+                // Try to get from config manager cache
+                if (this.configManager) {
+                    const cachedConfig = this.configManager.configCache?.get(tabId);
+                    if (cachedConfig) {
+                        sectionConfig = cachedConfig;
+                    }
+                }
+            }
+            console.log(`[Debug] renderContent: Checking for Start Learning button. sectionConfig exists: ${!!sectionConfig}, hasGroups: ${!!(sectionConfig?.groups)}, hasChildren: ${!!(sectionConfig?.children)}, hasItems: ${!!(sectionConfig?.items)}`);
+            if (sectionConfig && (sectionConfig.groups || sectionConfig.children || sectionConfig.items)) {
+                const startButton = this.createStartLearningButton(tabId);
+                console.log(`[Debug] renderContent: Start Learning button created: ${!!startButton}`);
+                if (startButton) {
+                    section.appendChild(startButton);
+                    console.log(`[Debug] renderContent: Start Learning button appended to section`);
+                }
+            } else {
+                console.warn(`[Debug] renderContent: Not adding Start Learning button - sectionConfig missing or no groups/children/items`);
+            }
         }
         
         tabContent.appendChild(section);
@@ -305,42 +351,88 @@ class ContentManager {
     }
 
     /**
-     * Gets the ordered list of tabs for the current section
+     * Gets the ordered list of tabs for the current section based strictly on configuration
      */
     getSectionTabOrder(sectionId) {
-        const config = appState.config && appState.config.sections && appState.config.sections[sectionId];
-        if (!config) return [];
+        console.log(`[Debug] getSectionTabOrder called for ${sectionId}`);
+        // Try to get config from ConfigManager or appState
+        let config = this.configManager ? this.configManager.getSectionConfig(sectionId) : null;
+        
+        if (!config) {
+            config = appState.config && appState.config.sections && appState.config.sections[sectionId];
+        }
+        
+        // If no config found for this section, we can't determine order based on config file
+        if (!config) {
+            console.warn(`[Debug] No configuration found for section: ${sectionId}`);
+            return [];
+        }
+        
+        // Check if config has been fully loaded (has groups/children/items/tiers)
+        // If it only has {id, label, file}, it hasn't been loaded yet
+        const isFullyLoaded = this.configManager ? this.configManager.isSectionConfigLoaded(sectionId) : 
+            !!(config.groups || config.children || config.items || config.tiers || config.intro);
+        
+        if (!isFullyLoaded && config.file) {
+            console.warn(`[Debug] Section config for ${sectionId} appears to not be fully loaded. Has file: ${config.file}, but no groups/children/items.`);
+            console.warn(`[Debug] Config keys: ${Object.keys(config).join(', ')}`);
+            return [];
+        }
         
         const tabOrder = [];
         
+        // Helper to add a tab to the order
+        const addTab = (item) => {
+            // Only add items that are actual pages (have a file property)
+            // Groups/folders without content files should not be navigation targets
+            if (item && item.id && item.file) {
+                tabOrder.push({ 
+                    id: item.id, 
+                    label: item.label || item.title || item.id,
+                    file: item.file
+                });
+            }
+        };
+        
         // Add intro if present
-        if (config.intro && config.intro.id) {
-            tabOrder.push({ id: config.intro.id, label: config.intro.label || config.intro.title });
+        if (config.intro) {
+            addTab(config.intro);
         }
         
-        // Add groups/children/items recursively
-        const addItemsFromGroups = (groups) => {
-            if (!Array.isArray(groups)) return;
-            groups.forEach(group => {
-                if (Array.isArray(group.items)) {
-                    group.items.forEach(item => {
-                        tabOrder.push({ id: item.id, label: item.label || item.title });
-                    });
+        // Recursive function to process groups/children/items
+        const processItems = (items) => {
+            if (!Array.isArray(items)) return;
+            
+            items.forEach(item => {
+                // First, check if this item itself is a page
+                addTab(item);
+
+                // Then recurse into children (it can be both a page and a container)
+                if (item.items && Array.isArray(item.items)) {
+                    processItems(item.items);
                 }
-                if (Array.isArray(group.children)) {
-                    addItemsFromGroups(group.children);
+                if (item.children && Array.isArray(item.children)) {
+                    processItems(item.children);
+                }
+                if (item.groups && Array.isArray(item.groups)) {
+                    processItems(item.groups);
                 }
             });
         };
         
-        if (Array.isArray(config.groups)) addItemsFromGroups(config.groups);
-        if (Array.isArray(config.children)) addItemsFromGroups(config.children);
+        // Process groups (which may contain items or children)
+        if (Array.isArray(config.groups)) {
+            processItems(config.groups);
+        }
         
-        // Add top-level items if present
+        // Process children (if used at top level)
+        if (Array.isArray(config.children)) {
+            processItems(config.children);
+        }
+        
+        // Process top-level items
         if (Array.isArray(config.items)) {
-            config.items.forEach(item => {
-                tabOrder.push({ id: item.id, label: item.label || item.title });
-            });
+            processItems(config.items);
         }
         
         // Handle tiers structure (for FTC)
@@ -350,12 +442,22 @@ class ContentManager {
                     tier.lessons.forEach(lesson => {
                         // Extract ID from lesson file path
                         const lessonId = lesson.replace(/^.*\/([^/]+)\.json$/, '$1');
-                        tabOrder.push({ id: lessonId, label: lessonId });
+                        // For tiers, we might not have label available directly without loading
+                        // We use ID as label fallback
+                        tabOrder.push({ 
+                            id: lessonId, 
+                            label: lessonId, 
+                            file: lesson
+                        });
                     });
                 }
             });
         }
         
+        console.log(`[Debug] tabOrder length for ${sectionId}: ${tabOrder.length}`);
+        if (tabOrder.length > 0) {
+            console.log(`[Debug] First few tabs: ${tabOrder.slice(0, 3).map(t => t.id).join(', ')}`);
+        }
         return tabOrder;
     }
     
@@ -365,6 +467,8 @@ class ContentManager {
     getPreviousNextTabs(currentTabId) {
         const sectionId = appState.currentSection;
         
+        console.log(`[Debug] getPreviousNextTabs called for ${currentTabId} in section ${sectionId}`);
+
         // Don't show navigation for homepage or if section is not found
         if (!sectionId || sectionId === 'homepage') {
             return { previous: null, next: null };
@@ -372,26 +476,37 @@ class ContentManager {
         
         const tabOrder = this.getSectionTabOrder(sectionId);
         
-        if (tabOrder.length === 0) return { previous: null, next: null };
+        if (tabOrder.length === 0) {
+            console.warn(`[Debug] tabOrder is empty for section ${sectionId}`);
+            return { previous: null, next: null };
+        }
         
         const currentIndex = tabOrder.findIndex(tab => tab.id === currentTabId);
-        if (currentIndex === -1) return { previous: null, next: null };
+        console.log(`[Debug] Current tab index: ${currentIndex}`);
+
+        if (currentIndex === -1) {
+            console.warn(`[Debug] Current tab ${currentTabId} not found in tab order`);
+            return { previous: null, next: null };
+        }
         
         const previousIndex = currentIndex > 0 ? currentIndex - 1 : null;
         const nextIndex = currentIndex < tabOrder.length - 1 ? currentIndex + 1 : null;
         
-        // Get tab data to use actual titles if available
-        const getTabInfo = (tab) => {
-            const tabData = appState.getTabData(tab.id);
+        console.log(`[Debug] Previous index: ${previousIndex}, Next index: ${nextIndex}`);
+
+        // Helper to get full tab info (including title from loaded content if available)
+        const getFullTabInfo = (tab) => {
+            const loadedData = appState.getTabData(tab.id);
             return {
                 id: tab.id,
-                label: tabData?.title || tab.label || tab.id
+                label: loadedData?.title || tab.label, // Prefer loaded title, fallback to config label
+                file: tab.file
             };
         };
         
         return {
-            previous: previousIndex !== null ? getTabInfo(tabOrder[previousIndex]) : null,
-            next: nextIndex !== null ? getTabInfo(tabOrder[nextIndex]) : null
+            previous: previousIndex !== null ? getFullTabInfo(tabOrder[previousIndex]) : null,
+            next: nextIndex !== null ? getFullTabInfo(tabOrder[nextIndex]) : null
         };
     }
     
@@ -399,18 +514,36 @@ class ContentManager {
      * Creates navigation buttons for previous/next tabs
      */
     createNavigationButtons(currentTabId) {
+        console.log(`[Debug] createNavigationButtons called for ${currentTabId}`);
         // Don't show navigation for homepage
         if (appState.currentSection === 'homepage') {
             return null;
         }
         
+        // Don't show navigation buttons if currentTabId is the section ID itself
+        // (this means we're viewing the section's homepage, not a tab within it)
+        const sectionId = appState.currentSection;
+        if (currentTabId === sectionId) {
+            return null;
+        }
+        
+        // Debug logging for navigation
+        const tabOrder = this.getSectionTabOrder(sectionId);
+        console.log(`[Debug] Navigation Debug: Section=${sectionId}, Tab=${currentTabId}, OrderLength=${tabOrder.length}`);
+        
         const { previous, next } = this.getPreviousNextTabs(currentTabId);
         
+        console.log(`[Debug] Navigation Debug: Previous=${previous?.id}, Next=${next?.id}`);
+        
         // Don't show navigation if there's no previous or next tab
-        if (!previous && !next) return null;
+        if (!previous && !next) {
+            console.warn(`[Debug] No previous or next tab found for: ${currentTabId}`);
+            return null;
+        }
         
         const navContainer = document.createElement('div');
         navContainer.className = 'page-navigation';
+        navContainer.style.display = 'flex'; // Explicitly set display flex
         
         // Previous button
         if (previous) {
@@ -423,7 +556,8 @@ class ContentManager {
                     <span class="nav-button-title">${this.escapeHtml(previous.label)}</span>
                 </span>
             `;
-            prevButton.onclick = () => {
+            prevButton.onclick = (e) => {
+                e.preventDefault();
                 if (window.app && window.app.navigationManager) {
                     window.app.navigationManager.navigateToTab(previous.id);
                 }
@@ -447,17 +581,138 @@ class ContentManager {
                 </span>
                 <span class="nav-button-icon">→</span>
             `;
-            nextButton.onclick = () => {
+            nextButton.onclick = (e) => {
+                e.preventDefault();
                 if (window.app && window.app.navigationManager) {
                     window.app.navigationManager.navigateToTab(next.id);
                 }
             };
             navContainer.appendChild(nextButton);
+        } else {
+            // Spacer to keep prev button on the left if no next button
+            const spacer = document.createElement('div');
+            spacer.style.flex = '1';
+            navContainer.appendChild(spacer);
         }
+        
+        // Ensure the container is visible
+        navContainer.style.display = 'flex';
         
         return navContainer;
     }
     
+    /**
+     * Gets the first tab ID for a section
+     */
+    getFirstTabIdForSection(sectionId) {
+        // Get config from appState (should already be loaded)
+        let config = appState.config && appState.config.sections && appState.config.sections[sectionId];
+        
+        // If config doesn't have groups, try config manager cache
+        if (!config || (!config.groups && !config.children && !config.items)) {
+            if (this.configManager && this.configManager.configCache) {
+                const cachedConfig = this.configManager.configCache.get(sectionId);
+                if (cachedConfig && (cachedConfig.groups || cachedConfig.children || cachedConfig.items)) {
+                    config = cachedConfig;
+                }
+            }
+        }
+        
+        if (!config) {
+            console.warn(`[Debug] getFirstTabIdForSection: No config found for ${sectionId}`);
+            return null;
+        }
+        
+        console.log(`[Debug] getFirstTabIdForSection: Using config with groups: ${!!config.groups}`);
+        return this._findFirstTabInConfig(config);
+    }
+
+    /**
+     * Helper method to find first tab ID in a config object
+     */
+    _findFirstTabInConfig(config) {
+        console.log(`[Debug] _findFirstTabInConfig called. Config has groups: ${!!config.groups}, groups is array: ${Array.isArray(config.groups)}`);
+        // Helper function to find first valid item recursively
+        const findFirstItem = (items) => {
+            if (!Array.isArray(items)) return null;
+            for (const item of items) {
+                if (item.file) {
+                    console.log(`[Debug] Found first item with file: ${item.id}`);
+                    return item; // Found a leaf item
+                }
+                if (item.items && Array.isArray(item.items)) {
+                    const found = findFirstItem(item.items);
+                    if (found) return found;
+                }
+                if (item.children && Array.isArray(item.children)) {
+                    const found = findFirstItem(item.children);
+                    if (found) return found;
+                }
+                if (item.groups && Array.isArray(item.groups)) {
+                    const found = findFirstItem(item.groups);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        let firstItem = null;
+        if (config.groups && Array.isArray(config.groups)) {
+            console.log(`[Debug] Searching in ${config.groups.length} groups`);
+            firstItem = findFirstItem(config.groups);
+        }
+        if (!firstItem && config.children && Array.isArray(config.children)) {
+            firstItem = findFirstItem(config.children);
+        }
+        if (!firstItem && config.items && Array.isArray(config.items)) {
+            firstItem = findFirstItem(config.items);
+        }
+        
+        console.log(`[Debug] _findFirstTabInConfig result: ${firstItem ? firstItem.id : 'null'}`);
+        return firstItem ? firstItem.id : null;
+    }
+
+    /**
+     * Creates a "Start Learning" button for section homepages
+     */
+    createStartLearningButton(sectionId) {
+        const firstTabId = this.getFirstTabIdForSection(sectionId);
+        console.log(`[Debug] createStartLearningButton for ${sectionId}: firstTabId=${firstTabId}`);
+        if (!firstTabId) {
+            console.warn(`[Debug] No first tab found for section ${sectionId}`);
+            return null;
+        }
+
+        // Get the first tab's label
+        const firstTab = appState.getTabData(firstTabId);
+        const buttonLabel = firstTab?.title || firstTab?.label || 'Start Learning';
+        console.log(`[Debug] Creating Start Learning button with label: ${buttonLabel}`);
+
+        const navContainer = document.createElement('div');
+        navContainer.className = 'page-navigation';
+        navContainer.style.display = 'flex';
+        navContainer.style.justifyContent = 'flex-end'; // Align to right like next button
+
+        const startButton = document.createElement('button');
+        startButton.className = 'nav-button nav-button-next';
+        startButton.innerHTML = `
+            <span class="nav-button-content">
+                <span class="nav-button-label">Start Learning</span>
+                <span class="nav-button-title">${this.escapeHtml(buttonLabel)}</span>
+            </span>
+            <span class="nav-button-icon">→</span>
+        `;
+        startButton.onclick = (e) => {
+            e.preventDefault();
+            if (window.app && window.app.navigationManager) {
+                window.app.navigationManager.navigateToTab(firstTabId);
+            }
+        };
+        
+        navContainer.appendChild(startButton);
+        return navContainer;
+    }
+
     /**
      * Escapes HTML to prevent XSS
      */
@@ -602,6 +857,7 @@ class ContentManager {
             'code': this.renderCodeSection.bind(this),
             'code-tabs': this.renderCodeTabsSection.bind(this),
             'rules-box': this.renderRulesBox.bind(this),
+            'steps-box': this.renderStepsBox.bind(this),
             'exercise-box': this.renderExerciseBox.bind(this),
             'data-types-grid': this.renderDataTypesGrid.bind(this),
             'logical-operators': this.renderLogicalOperators.bind(this),
@@ -788,11 +1044,15 @@ class ContentManager {
         pre.appendChild(code);
         codeBlock.appendChild(pre);
         
-        // Add toggle functionality
-        let isCollapsed = false;
-        toggleButton.addEventListener('click', () => {
-            isCollapsed = !isCollapsed;
-            if (isCollapsed) {
+        // Add toggle functionality - store state on the code block element
+        codeBlock.dataset.collapsed = 'false';
+        toggleButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            const isCollapsed = codeBlock.dataset.collapsed === 'true';
+            const newState = !isCollapsed;
+            codeBlock.dataset.collapsed = newState.toString();
+            
+            if (newState) {
                 pre.style.display = 'none';
                 toggleButton.innerHTML = '+'; // Plus sign for expand
                 codeBlock.style.borderRadius = '6px';
@@ -1113,6 +1373,79 @@ class ContentManager {
         container.appendChild(rulesBox);
     }
 
+    renderStepsBox(container, data) {
+        const stepsBox = document.createElement('div');
+        stepsBox.className = 'rules-box';
+        
+        if (data.title) {
+            const h3 = document.createElement('h3');
+            h3.textContent = data.title;
+            stepsBox.appendChild(h3);
+        }
+        
+        if (data.subtitle) {
+            const h4 = document.createElement('h4');
+            h4.textContent = data.subtitle;
+            h4.style.marginTop = '0.5rem';
+            h4.style.marginBottom = '1rem';
+            h4.style.color = 'var(--color-foreground-secondary)';
+            h4.style.fontWeight = '500';
+            stepsBox.appendChild(h4);
+        }
+        
+        // Handle steps items (ordered list)
+        if (data.items && Array.isArray(data.items)) {
+            const stepsList = document.createElement('ol');
+            stepsList.style.margin = '0';
+            stepsList.style.paddingLeft = '1.5rem';
+            stepsList.style.listStyleType = 'decimal';
+            
+            data.items.forEach(item => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '0.75rem';
+                li.style.lineHeight = '1.6';
+                
+                // Handle both string items and object items with subitems
+                if (typeof item === 'string') {
+                    li.innerHTML = item;
+                } else if (typeof item === 'object' && item.text) {
+                    li.innerHTML = item.text;
+                    
+                    // Handle subitems if present
+                    if (item.subitems && Array.isArray(item.subitems)) {
+                        const subList = document.createElement('ul');
+                        subList.style.marginTop = '0.5rem';
+                        subList.style.marginBottom = '0';
+                        subList.style.paddingLeft = '1.5rem';
+                        subList.style.listStyleType = 'disc';
+                        
+                        item.subitems.forEach(subitem => {
+                            const subLi = document.createElement('li');
+                            subLi.innerHTML = subitem;
+                            subLi.style.marginBottom = '0.25rem';
+                            subLi.style.lineHeight = '1.5';
+                            subList.appendChild(subLi);
+                        });
+                        
+                        li.appendChild(subList);
+                    }
+                }
+                
+                stepsList.appendChild(li);
+            });
+            stepsBox.appendChild(stepsList);
+        }
+        
+        if (data.content) {
+            const content = document.createElement('div');
+            content.innerHTML = data.content;
+            content.style.marginTop = '1rem';
+            stepsBox.appendChild(content);
+        }
+        
+        container.appendChild(stepsBox);
+    }
+
     renderExerciseBox(container, data) {
         const exerciseBox = document.createElement('div');
         exerciseBox.className = 'exercise-box';
@@ -1235,11 +1568,15 @@ class ContentManager {
             pre.appendChild(code);
             codeBlock.appendChild(pre);
             
-            // Add toggle functionality
-            let isCollapsed = false;
-            toggleButton.addEventListener('click', () => {
-                isCollapsed = !isCollapsed;
-                if (isCollapsed) {
+            // Add toggle functionality - store state on the code block element
+            codeBlock.dataset.collapsed = 'false';
+            toggleButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                const isCollapsed = codeBlock.dataset.collapsed === 'true';
+                const newState = !isCollapsed;
+                codeBlock.dataset.collapsed = newState.toString();
+                
+                if (newState) {
                     pre.style.display = 'none';
                     toggleButton.innerHTML = '+'; // Plus sign for expand
                     codeBlock.style.borderRadius = '6px';
@@ -1357,11 +1694,15 @@ class ContentManager {
                     pre.appendChild(code);
                     codeBlock.appendChild(pre);
                     
-                    // Add toggle functionality
-                    let isCollapsed = false;
-                    toggleButton.addEventListener('click', () => {
-                        isCollapsed = !isCollapsed;
-                        if (isCollapsed) {
+                    // Add toggle functionality - store state on the code block element
+                    codeBlock.dataset.collapsed = 'false';
+                    toggleButton.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent event bubbling
+                        const isCollapsed = codeBlock.dataset.collapsed === 'true';
+                        const newState = !isCollapsed;
+                        codeBlock.dataset.collapsed = newState.toString();
+                        
+                        if (newState) {
                             pre.style.display = 'none';
                             toggleButton.innerHTML = '+'; // Plus sign for expand
                             codeBlock.style.borderRadius = '6px';
@@ -1513,6 +1854,10 @@ class ContentManager {
                     const textContent = anchor.textContent || anchor.innerText || 'Link';
                     linkButton.textContent = textContent;
                     
+                    if (anchor.href) {
+                        linkButton.setAttribute('data-url', anchor.href);
+                    }
+                    
                     linkButton.onclick = () => {
                         // Always open external links in new tab
                         if (anchor.href && (anchor.href.startsWith('http') || anchor.href.startsWith('https'))) {
@@ -1529,6 +1874,7 @@ class ContentManager {
                 }
             } else if (link.url) {
                 // External link format
+                linkButton.setAttribute('data-url', link.url);
                 linkButton.onclick = () => {
                     // Always open external URLs in new tab
                     if (link.url.startsWith('http') || link.url.startsWith('https') || link.external) {
@@ -1540,6 +1886,7 @@ class ContentManager {
                 linkButton.textContent = link.title || link.label;
             } else if (link.id) {
                 // Internal navigation format (like homepage)
+                linkButton.setAttribute('data-tab-id', link.id);
                 linkButton.onclick = () => {
                     if (app && app.navigationManager) {
                         app.navigationManager.navigateToTab(link.id);
@@ -1630,7 +1977,9 @@ class ContentManager {
         let shouldCollapse = false;
         for (const block of codeBlocks) {
             const pre = block.querySelector('pre');
-            if (pre && pre.style.display !== 'none') {
+            const isCurrentlyCollapsed = block.dataset.collapsed === 'true';
+            // Check if block is actually visible (not collapsed)
+            if (pre && !isCurrentlyCollapsed && pre.style.display !== 'none') {
                 shouldCollapse = true;
                 break;
             }
@@ -1640,6 +1989,10 @@ class ContentManager {
             const pre = block.querySelector('pre');
             const toggleBtn = block.querySelector('.code-toggle-btn');
             if (!pre || !toggleBtn) continue;
+            
+            // Update the data attribute to reflect the new state
+            block.dataset.collapsed = shouldCollapse ? 'true' : 'false';
+            
             if (shouldCollapse) {
                 pre.style.display = 'none';
                 toggleBtn.innerHTML = '+';

@@ -1,0 +1,96 @@
+{
+    "title": "Introduction to Motors",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "Motors drive your robot's movement. In FRC, you will primarily use motor controllers from CTRE (Talon FX) and REV (SPARK MAX). This lesson covers creating and controlling these motors in <code>Robot.java</code>."
+        },
+        {
+            "type": "rules-box",
+            "title": "Objectives",
+            "subtitle": "You will learn to:",
+            "items": [
+                "Create motor instances in code.",
+                "Control motor speed and direction.",
+                "Stop motors safely.",
+                "Work with CTRE and REV hardware."
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Robot.java Lifecycle",
+            "content": "<strong>robotInit():</strong> Runs once at startup. Create your motors here.<br><strong>teleopPeriodic():</strong> Runs repeatedly during driver control. Update motor outputs here."
+        },
+        {
+            "type": "text",
+            "title": "CTRE: Talon FX",
+            "content": "The Talon FX is a high-performance motor controller with a built-in encoder. It requires the CTRE Phoenix 6 library."
+        },
+        {
+            "type": "code",
+            "title": "Talon FX Example",
+            "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // Create motor instance with CAN ID 1\n    private TalonFX m_motor = new TalonFX(1);\n    // Create control request for duty cycle output\n    private DutyCycleOut m_output = new DutyCycleOut(0);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Set motor to 50% speed forward (range: -1.0 to 1.0)\n        m_motor.setControl(m_output.withOutput(0.5));\n    }\n}"
+        },
+        {
+            "type": "text",
+            "title": "REV: SPARK MAX",
+            "content": "The SPARK MAX supports both brushless (NEO) and brushed motors. It requires the REVLib library."
+        },
+        {
+            "type": "code",
+            "title": "SPARK MAX Example",
+            "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Robot extends TimedRobot {\n    // Create motor instance: CAN ID 1, Brushless motor type\n    private SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Set motor to 50% speed forward (range: -1.0 to 1.0)\n        m_motor.set(0.5);\n    }\n}"
+        },
+        {
+            "type": "text",
+            "title": "Control Basics",
+            "content": "<strong>Speed:</strong> Values range from -1.0 (full reverse) to 1.0 (full forward). 0.0 stops the motor.<br><strong>Multiple Motors:</strong> Create separate instances for each motor (e.g., left and right drive motors)."
+        },
+        {
+            "type": "code-tabs",
+            "title": "Multiple Motors",
+            "content": "Controlling two motors:",
+            "tabs": [
+                {
+                    "label": "Talon FX",
+                    "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // Create left and right motors with different CAN IDs\n    private TalonFX m_left = new TalonFX(1);\n    private TalonFX m_right = new TalonFX(2);\n    private DutyCycleOut m_output = new DutyCycleOut(0);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Set both motors to 50% speed\n        m_left.setControl(m_output.withOutput(0.5));\n        m_right.setControl(m_output.withOutput(0.5));\n    }\n}"
+                },
+                {
+                    "label": "SPARK MAX",
+                    "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Robot extends TimedRobot {\n    // Create left and right motors with different CAN IDs\n    private SparkMax m_left = new SparkMax(1, MotorType.kBrushless);\n    private SparkMax m_right = new SparkMax(2, MotorType.kBrushless);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Set both motors to 50% speed\n        m_left.set(0.5);\n        m_right.set(0.5);\n    }\n}"
+                }
+            ]
+        },
+        {
+            "type": "rules-box",
+            "title": "Key Points",
+            "subtitle": "Remember:",
+            "items": [
+                "Create motors as private fields.",
+                "Use unique CAN IDs.",
+                "Talon FX uses <code>setControl</code>.",
+                "SPARK MAX uses <code>set</code>.",
+                "Range is -1.0 to 1.0."
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Resources",
+            "links": [
+                {
+                    "label": "Controllers & Inputs",
+                    "id": "controllers-and-bindings"
+                },
+                {
+                    "label": "CTRE Setup",
+                    "id": "ctre-hardware-setup"
+                },
+                {
+                    "label": "REV Setup",
+                    "id": "rev-hardware-setup"
+                }
+            ]
+        }
+    ]
+}

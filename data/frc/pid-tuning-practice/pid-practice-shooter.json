@@ -1,0 +1,103 @@
+{
+  "title": "PID Tuning Practice - Shooter",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "This lesson demonstrates PID tuning for a shooter mechanism using velocity control. Shooters differ from position-controlled mechanisms because they need to maintain a constant speed (RPM) rather than reach a specific position. You'll learn how to tune velocity feedforward (kV) by first using duty cycle mode (kS) to find the value that produces one rotation per second, then copy that to kV. You'll also learn about unit conversions and adding small proportional (kP) control to handle disturbances."
+    },
+    {
+      "type": "text",
+      "title": "Video Tutorial",
+      "content": "Watch this video for a complete walkthrough of shooter velocity control tuning:"
+    },
+    {
+      "type": "text",
+      "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/guKZn1h-oeI' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+    },
+    {
+      "type": "text",
+      "title": "Prerequisites",
+      "content": "Ensure AdvantageScope 2026 is installed. If it isn't, download it. Simulation should already be running."
+    },
+    {
+      "type": "text",
+      "title": "Initial Setup",
+      "content": "Enable teleoperated mode (teleop). Turn on live tuning. Open AdvantageScope 2026. Graph velocity (do not graph position, as it interferes with the display). Turn on the tunable numbers button."
+    },
+    {
+      "type": "steps-box",
+      "title": "Tuning Steps",
+      "items": [
+        {
+          "text": "Tune kS (static feedforward). kS compensates for static friction - the minimum voltage needed to start the flywheel moving. Start with kS = 0.1. Set the setpoint to a nonzero value (e.g., 1 rotation per second). In simulation, this may not be necessary due to lack of friction, but it's important for real hardware. If needed, adjust kS to find the minimum voltage that gets the flywheel moving. Make kS as small as possible while still starting motion. Zoom the graph to show 1-2 seconds of data (prevents lag later)."
+        },
+        {
+          "text": "Tune kV (velocity feedforward) using kS temporarily. kV is the voltage required to maintain 1 rotation per second. Temporarily use the kS parameter to find this value:",
+          "subitems": [
+            "Set the velocity setpoint to 1",
+            "Start with a very small kS value (e.g., 0.1)",
+            "Watch the velocity graph - it should reach and maintain 1 rotation per second",
+            "If the velocity is too low, double the kS value (0.1 to 0.2 to 0.4 to ...)",
+            "Keep doubling until the velocity hovers around 1 rotation per second",
+            "Fine-tune by decreasing slightly if it stays slightly above 1, or increasing if it's below",
+            "Once stable at 1 rotation per second, copy this kS value into kV",
+            "Note: kV depends on velocity, so we use kS to tune at 1 rotation per second before setting up P"
+          ]
+        },
+        {
+          "text": "Convert units in AdvantageScope. The velocity graph shows rotations per second, but the setpoint uses degrees per second. Click the three dots on the velocity graph. Select \"Edit Units\". Choose \"Angular Velocity\" (not regular velocity - angular is for rotation/spinning). Convert from <b>rotations per second</b> to <b>degrees per second</b>. Ignore any \"extra factor\" mentioned in the conversion dialog. The graph should now match the setpoint units."
+        },
+        {
+          "text": "Set target velocity. Convert from RPM to degrees per second to set your setpoint. Say you want to set the flywheel to 417 RPM. To convert from RPM to rotations per second, divide by 60 (60 seconds in a minute). Example: 417 ÷ 60 = 6.94 rotations per second. To convert from rotations per second to degrees per second, multiply by 360 (one rotation equals 360 degrees). Example: 6.94 × 360 = 2500 degrees per second. Set the setpoint to this calculated value. Verify the flywheel reaches and maintains this velocity. If it can't reach the target, it may exceed the motor's maximum capability - reduce to a realistic value."
+        },
+        {
+          "text": "Tune kP (proportional gain). kP helps the motor recover quickly from disturbances (like when a ball passes through). kP values are typically very small (three decimal places, e.g., 0.001). Even though the number looks small, it can add significant voltage. Example: 2500 degrees per second times 0.001 equals 2.5 volts. This 2.5V is added on top of the kV voltage. Increase if the flywheel is slow to reach setpoint or recover from disturbances. kV should do most of the work; kP helps with accuracy and disturbance rejection."
+        }
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Key Points",
+      "subtitle": "Process and important notes:",
+      "items": [
+        "Process: Graph velocity, use kS temporarily at 1 rps to find kV, copy to kV, convert units (rotations/sec to degrees/sec), set target (RPM ÷60 ×360), fine-tune kP",
+        "Mechanisms: Flywheel/Shooter uses velocity-based (kV, kP). Arm/Turret uses position-based. Elevator uses kG + position control",
+        "Units: Velocity graph shows rotations per second, setpoint may use degrees per second (convert with ×360). Phoenix Tuner/REV Hardware Client also use rotations per second - always verify units",
+        "kV is critical for velocity control (does most work), kP is very small (0.001-0.01), kI/kD usually 0. Watch velocity graph, not position",
+        "Common mistakes: Wrong units, kP too high (causes oscillation), kV incorrect, forgetting kS in real hardware, wrong setpoint for finding kV (must use 1 rps)",
+        "Real hardware: Verify tuning on physical mechanism, kS more important in real life, test with game pieces, same process applies to Phoenix Tuner/REV Hardware Client"
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "Shooter Example",
+          "id": "shooter-example"
+        },
+        {
+          "label": "PID Control",
+          "id": "frc-pid-control"
+        },
+        {
+          "label": "PID Tuning Practice - Setup",
+          "id": "pid-tuning-practice-setup"
+        },
+        {
+          "label": "PID Tuning Practice - Arm",
+          "id": "pid-tuning-practice-arm"
+        },
+        {
+          "label": "PID Tuning Practice - Elevator",
+          "id": "pid-tuning-practice-elevator"
+        },
+        {
+          "label": "WPILib: Feedforward Control",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward.html"
+        }
+      ]
+    }
+  ]
+}

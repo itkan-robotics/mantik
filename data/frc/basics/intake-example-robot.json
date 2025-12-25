@@ -1,0 +1,124 @@
+{
+  "title": "Intake Example (Basic)",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Template Project",
+      "content": "Start with the <strong>Timed Robot</strong> template project. In VS Code, create a new WPILib project and select \"Timed Robot\" from the template list. This template provides the basic <code>Robot.java</code> structure with all lifecycle methods."
+    },
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "This lesson demonstrates building a complete intake mechanism in <code>Robot.java</code>. We will configure a motor and control it with buttons (A to collect, B to eject)."
+    },
+    {
+      "type": "rules-box",
+      "title": "Requirements",
+      "subtitle": "The intake must:",
+      "items": [
+        "Run forward (collect) on 'A' press.",
+        "Run reverse (eject) on 'B' press.",
+        "Stop when no button is pressed.",
+        "Be configured (Coast mode, Current Limit)."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 1: Imports and Class Setup",
+      "content": "We start by creating the basic structure. Import the necessary classes for robot control, motor hardware, and configuration."
+    },
+    {
+      "type": "code",
+      "content": "The Timed Robot template provides a <code>Robot</code> class that extends <code>TimedRobot</code>. Add the necessary imports for motor control. The template already includes the class structure with all lifecycle methods.",
+      "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // The template provides all lifecycle methods\n    // We'll add fields here next\n}"
+    },
+    {
+      "type": "text",
+      "title": "Step 2: Declare Hardware",
+      "content": "Create instances for the controller and motor. The controller is on USB port 1, and the motor is on CAN ID 5."
+    },
+    {
+      "type": "code",
+      "content": "Add fields for the controller, motor, and control request:",
+      "code": "public class Robot extends TimedRobot {\n    // Controller on USB port 1\n    private XboxController m_controller = new XboxController(1);\n    // Intake motor on CAN ID 5\n    private TalonFX m_motor = new TalonFX(5);\n    private DutyCycleOut m_out = new DutyCycleOut(0);\n}"
+    },
+    {
+      "type": "text",
+      "title": "Step 3: Configure Motor in robotInit()",
+      "content": "In <code>robotInit()</code>, we configure the motor. This runs once at startup. We set the inversion direction, idle mode to Coast (allows free spinning when stopped), and enable current limiting to protect the motor from damage."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Configure the motor with proper settings:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "@Override\npublic void robotInit() {\n    // Configure motor settings\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    // Set motor direction (adjust if needed for your mechanism)\n    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n    // Coast mode allows free spinning when stopped (good for intakes)\n    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n    // Enable current limiting to protect motor (30A limit)\n    config.CurrentLimits.StatorCurrentLimitEnable = true;\n    config.CurrentLimits.StatorCurrentLimit = 30.0;\n    m_motor.getConfigurator().apply(config);\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "@Override\npublic void robotInit() {\n    // Configure motor settings\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Set motor direction (adjust if needed for your mechanism)\n    config.inverted(false);\n    // Coast mode allows free spinning when stopped (good for intakes)\n    config.idleMode(IdleMode.kCoast);\n    // Enable current limiting to protect motor (30A limit)\n    config.smartCurrentLimit(30);\n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Add Button Control Logic",
+      "content": "In <code>teleopPeriodic()</code>, we read button presses and control the motor. This method runs repeatedly (every 20ms) during teleoperated mode. We check if button A is pressed to collect, button B to eject, or no button to stop."
+    },
+    {
+      "type": "code-tabs",
+      "content": "Add logic to read buttons and control the motor:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "@Override\npublic void teleopPeriodic() {\n    // Button A: Run intake forward (collect)\n    if (m_controller.getAButton()) {\n        m_motor.setControl(m_out.withOutput(0.6));\n    }\n    // Button B: Run intake reverse (eject)\n    else if (m_controller.getBButton()) {\n        m_motor.setControl(m_out.withOutput(-0.4));\n    }\n    // No button: Stop motor\n    else {\n        m_motor.setControl(m_out.withOutput(0.0));\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "@Override\npublic void teleopPeriodic() {\n    // Button A: Run intake forward (collect)\n    if (m_controller.getAButton()) {\n        m_motor.set(0.6);\n    }\n    // Button B: Run intake reverse (eject)\n    else if (m_controller.getBButton()) {\n        m_motor.set(-0.4);\n    }\n    // No button: Stop motor\n    else {\n        m_motor.set(0.0);\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Understanding the Control Logic",
+      "content": "The <code>if-else if-else</code> structure ensures only one action happens at a time. Button A runs the motor forward at 60% power to collect game pieces. Button B runs reverse at 40% power to eject. The final <code>else</code> ensures the motor stops when no button is pressed."
+    },
+    {
+      "type": "text",
+      "title": "Power Values",
+      "content": "The values 0.6 (60%) forward and -0.4 (40%) reverse are starting points. 60% forward is usually enough to grab game pieces. 40% reverse is enough to eject without being too aggressive. Test and adjust these values for your specific mechanism."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Code",
+      "content": "Complete implementation combining all steps:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.InvertedValue;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    // Controller on USB port 1\n    private XboxController m_controller = new XboxController(1);\n    // Intake motor on CAN ID 5\n    private TalonFX m_motor = new TalonFX(5);\n    private DutyCycleOut m_out = new DutyCycleOut(0);\n    \n    // The template provides robotInit() - add your configuration here\n    @Override\n    public void robotInit() {\n        // Configure motor settings\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        // Set motor direction (adjust if needed for your mechanism)\n        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n        // Coast mode allows free spinning when stopped (good for intakes)\n        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n        // Enable current limiting to protect motor (30A limit)\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 30.0;\n        m_motor.getConfigurator().apply(config);\n    }\n    \n    // The template provides teleopPeriodic() - add your control logic here\n    @Override\n    public void teleopPeriodic() {\n        // Button A: Run intake forward (collect)\n        if (m_controller.getAButton()) {\n            m_motor.setControl(m_out.withOutput(0.6));\n        }\n        // Button B: Run intake reverse (eject)\n        else if (m_controller.getBButton()) {\n            m_motor.setControl(m_out.withOutput(-0.4));\n        }\n        // No button: Stop motor\n        else {\n            m_motor.setControl(m_out.withOutput(0.0));\n        }\n    }\n    \n    // The template provides other lifecycle methods (autonomousInit, disabledInit, etc.)\n    // You can leave them empty or add code as needed\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.config.SparkBaseConfig.IdleMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Robot extends TimedRobot {\n    // Controller on USB port 1\n    private XboxController m_controller = new XboxController(1);\n    // Intake motor on CAN ID 5, brushless type\n    private SparkMax m_motor = new SparkMax(5, MotorType.kBrushless);\n    \n    // The template provides robotInit() - add your configuration here\n    @Override\n    public void robotInit() {\n        // Configure motor settings\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Set motor direction (adjust if needed for your mechanism)\n        config.inverted(false);\n        // Coast mode allows free spinning when stopped (good for intakes)\n        config.idleMode(IdleMode.kCoast);\n        // Enable current limiting to protect motor (30A limit)\n        config.smartCurrentLimit(30);\n        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    // The template provides teleopPeriodic() - add your control logic here\n    @Override\n    public void teleopPeriodic() {\n        // Button A: Run intake forward (collect)\n        if (m_controller.getAButton()) {\n            m_motor.set(0.6);\n        }\n        // Button B: Run intake reverse (eject)\n        else if (m_controller.getBButton()) {\n            m_motor.set(-0.4);\n        }\n        // No button: Stop motor\n        else {\n            m_motor.set(0.0);\n        }\n    }\n    \n    // The template provides other lifecycle methods (autonomousInit, disabledInit, etc.)\n    // You can leave them empty or add code as needed\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Troubleshooting",
+      "content": "<strong>Wrong Direction:</strong> Change inversion setting in <code>robotInit()</code>.<br><strong>No Movement:</strong> Check CAN IDs and power values.<br><strong>Motor Drifts:</strong> Ensure the <code>else { stop }</code> block exists to stop the motor when no button is pressed."
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "Command-Based Intro",
+          "id": "intro-to-command-based"
+        }
+      ]
+    }
+  ]
+}

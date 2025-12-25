@@ -41,11 +41,11 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "Unit Testing",
-          "id": "unit-testing"
+          "id": "frc-unit-testing"
         },
         {
           "label": "AdvantageKit",

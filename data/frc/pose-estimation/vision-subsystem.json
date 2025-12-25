@@ -102,7 +102,7 @@
         },
         {
             "type": "link-grid",
-            "title": "Related Topics and Documentation",
+            "title": "Resources",
             "links": [
                 {
                     "label": "Vision-Based Pose Estimation with Fusion",

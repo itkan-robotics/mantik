@@ -1,0 +1,95 @@
+{
+  "title": "Controllers & Inputs",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Controllers (gamepads/joysticks) allow drivers to operate the robot. WPILib supports Xbox controllers, PS4 controllers, and generic joysticks. We will focus on the <code>XboxController</code> class."
+    },
+    {
+      "type": "rules-box",
+      "title": "Objectives",
+      "subtitle": "You will learn to:",
+      "items": [
+        "Initialize controllers.",
+        "Read joystick axes and buttons.",
+        "Control motors with input.",
+        "Handle joystick deadband."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Setup",
+      "content": "Create a controller instance by specifying its USB port (usually 0 for driver, 1 for operator).<br><strong>Note:</strong> Connect controllers to the Driver Station computer, not the robot."
+    },
+    {
+      "type": "code",
+      "title": "Initialization",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\n\npublic class Robot extends TimedRobot {\n    // Create controller on USB port 0 (driver station)\n    private XboxController m_driver = new XboxController(0);\n}"
+    },
+    {
+      "type": "text",
+      "title": "Reading Inputs",
+      "content": "<strong>Axes (-1.0 to 1.0):</strong><br><code>getLeftX()</code>, <code>getLeftY()</code><br><code>getRightX()</code>, <code>getRightY()</code><br><br><strong>Triggers (0.0 to 1.0):</strong><br><code>getLeftTriggerAxis()</code>, <code>getRightTriggerAxis()</code><br><br><strong>Buttons (boolean):</strong><br><code>getAButton()</code>, <code>getBButton()</code>, etc."
+    },
+    {
+      "type": "code",
+      "title": "Reading Values",
+      "content": "// ... (rest of Robot class)\n\n@Override\npublic void teleopPeriodic() {\n    // Read joystick Y-axis (-1.0 to 1.0, negative is forward)\n    double speed = m_driver.getLeftY();\n    // Read button state (true when pressed)\n    boolean isPressed = m_driver.getAButton();\n}\n\n// ... (rest of class)"
+    },
+    {
+      "type": "text",
+      "title": "Tank Drive Example",
+      "content": "Map left/right joysticks directly to left/right motors."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Tank Drive Code",
+      "content": "Control motors with joysticks:",
+      "tabs": [
+        {
+          "label": "Talon FX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.DutyCycleOut;\n\npublic class Robot extends TimedRobot {\n    private TalonFX m_left = new TalonFX(1);\n    private TalonFX m_right = new TalonFX(2);\n    private DutyCycleOut m_out = new DutyCycleOut(0);\n    private XboxController m_driver = new XboxController(0);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Left joystick controls left motor, right joystick controls right motor\n        m_left.setControl(m_out.withOutput(m_driver.getLeftY()));\n        m_right.setControl(m_out.withOutput(m_driver.getRightY()));\n    }\n}"
+        },
+        {
+          "label": "SPARK MAX",
+          "code": "package frc.robot;\n\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\n\npublic class Robot extends TimedRobot {\n    private SparkMax m_left = new SparkMax(1, MotorType.kBrushless);\n    private SparkMax m_right = new SparkMax(2, MotorType.kBrushless);\n    private XboxController m_driver = new XboxController(0);\n    \n    @Override\n    public void teleopPeriodic() {\n        // Left joystick controls left motor, right joystick controls right motor\n        m_left.set(m_driver.getLeftY());\n        m_right.set(m_driver.getRightY());\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Button Control",
+      "content": "Use buttons for discrete actions (e.g., run intake). Always include an <code>else</code> block to stop the motor."
+    },
+    {
+      "type": "code",
+      "title": "Button Logic",
+      "content": "// ... (rest of Robot class)\n\n@Override\npublic void teleopPeriodic() {\n    // Button A: Run motor forward\n    if (m_driver.getAButton()) {\n        m_motor.set(0.6);\n    }\n    // Button B: Run motor reverse\n    else if (m_driver.getBButton()) {\n        m_motor.set(-0.4);\n    }\n    // No button pressed: Stop motor\n    else {\n        m_motor.set(0.0);\n    }\n}\n\n// ... (rest of class)"
+    },
+    {
+      "type": "text",
+      "title": "Deadband",
+      "content": "Joysticks may not return exactly 0.0 when centered. Use <code>MathUtil.applyDeadband()</code> to ignore small values."
+    },
+    {
+      "type": "code",
+      "title": "Deadband Example",
+      "content": "// ... (rest of Robot class)\n\nimport edu.wpi.first.math.MathUtil;\n\n@Override\npublic void teleopPeriodic() {\n    // Apply deadband: ignore values between -0.1 and 0.1\n    // This prevents drift when joystick is centered\n    double speed = MathUtil.applyDeadband(m_driver.getLeftY(), 0.1);\n    m_motor.set(speed);\n}\n\n// ... (rest of class)"
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "Motor Configuration",
+          "id": "motor-config"
+        },
+        {
+          "label": "Intake Example",
+          "id": "intake-example-robot"
+        }
+      ]
+    }
+  ]
+}

@@ -3,71 +3,70 @@
   "sections": [
     {
       "type": "text",
-      "title": "Welcome to FRC Environment Setup",
-      "content": "This module covers the essential setup steps for FRC development. Before you can start programming your robot, you need to install and configure the necessary tools and software. The setup process includes installing WPILib, configuring your development environment, creating projects, understanding the build system, and setting up the Driver Station.<br><br>For detailed step-by-step instructions, please refer to the <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html' target='_blank'>WPILib Documentation: Zero to Robot Guide</a>."
+      "title": "Overview",
+      "content": "Essential setup for FRC development includes installing WPILib, configuring the environment, and setting up the Driver Station.<br><br>Full guide: <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html' target='_blank'>WPILib Zero to Robot</a>."
     },
     {
       "type": "rules-box",
-      "title": "What You'll Need",
-      "subtitle": "Essential components for FRC development:",
+      "title": "Requirements",
+      "subtitle": "Essential components:",
       "items": [
-        "<strong>WPILib:</strong> The official FRC programming framework",
-        "<strong>Visual Studio Code:</strong> Recommended IDE with WPILib extension",
-        "<strong>Gradle Build System:</strong> Build automation tool (included with WPILib)",
-        "<strong>FRC Driver Station:</strong> Software for controlling and monitoring your robot",
-        "<strong>FRC Game Tools:</strong> Additional utilities for robot management"
+        "<strong>WPILib:</strong> The core framework.",
+        "<strong>VS Code:</strong> The IDE (with WPILib extension).",
+        "<strong>Gradle:</strong> Build system (included).",
+        "<strong>Driver Station:</strong> Robot control software.",
+        "<strong>Game Tools:</strong> Utilities."
       ]
     },
     {
       "type": "text",
       "title": "WPILib Installation",
-      "content": "WPILib (Worcester Polytechnic Institute Library) is the official programming framework for FRC robots. It provides libraries, tools, and templates for robot programming in Java, C++, and Python.<br><br><strong>What's Included:</strong> WPILib installer includes the WPILib libraries, Java Development Kit (JDK), Gradle build system, Visual Studio Code with WPILib extension, and FRC utilities.<br><br><strong>System Requirements:</strong> Windows 10/11, macOS 10.14+, or Linux (Ubuntu 18.04+). At least 5 GB free disk space required.<br><br>For detailed installation instructions, system requirements, and troubleshooting, please see the <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html' target='_blank'>WPILib Documentation: WPILib Installation Guide</a>."
+      "content": "WPILib is the official FRC framework. The installer includes libraries, JDK, Gradle, VS Code, and utilities.<br><br><strong>System:</strong> Windows 10/11, macOS 10.14+, or Ubuntu 18.04+ (5GB+ space).<br><br>Instructions: <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html' target='_blank'>WPILib Installation Guide</a>."
     },
     {
       "type": "text",
-      "title": "Creating Your First Robot Project",
-      "content": "WPILib provides project templates that give you a starting point with the correct structure and configuration. Projects can be created using the WPILib VS Code extension, which ensures proper setup with all necessary files and dependencies.<br><br><strong>Project Templates:</strong> WPILib offers TimedRobot (simple, beginner-friendly) and Command Robot (command-based framework, recommended for most teams) templates.<br><br><strong>Project Structure:</strong> WPILib projects have a specific directory structure with source code in <code>src/main/java/</code>, configuration files at the root, and vendor dependencies in <code>vendordeps/</code>.<br><br>For detailed instructions on creating projects, understanding project structure, and configuring team numbers, please see the <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html' target='_blank'>WPILib Documentation: Creating a Robot Program</a>."
+      "title": "First Project",
+      "content": "<strong>Templates:</strong> Use the Command Robot template (recommended).<br><strong>Structure:</strong> Code in <code>src/main/java/</code>, vendor libs in <code>vendordeps/</code>.<br><br>Guide: <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html' target='_blank'>Creating a Robot Program</a>."
     },
     {
       "type": "text",
-      "title": "Visual Studio Code Setup",
-      "content": "Visual Studio Code (VS Code) is the recommended IDE for FRC programming. When installed with WPILib, it comes pre-configured with the WPILib extension, providing code editing, building, deploying, and debugging capabilities all in one place.<br><br><strong>WPILib Extension:</strong> The extension adds FRC-specific features including project creation, code deployment, robot management tools, and IntelliSense for WPILib classes.<br><br><strong>Key Features:</strong> Command Palette integration, integrated terminal, build tasks, code navigation, and Git integration make VS Code a powerful development environment for FRC.<br><br>For detailed VS Code setup, extension configuration, keyboard shortcuts, and workspace customization, please see the <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/index.html' target='_blank'>WPILib Documentation: VS Code Overview</a>."
+      "title": "VS Code",
+      "content": "VS Code with the WPILib extension is the standard IDE. It handles code editing, building, deploying, and debugging.<br><br>Overview: <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/index.html' target='_blank'>VS Code Overview</a>."
     },
     {
       "type": "text",
-      "title": "Gradle Build System",
-      "content": "Gradle is the build automation tool used by WPILib projects. It handles compiling your Java code, managing dependencies, and deploying code to the robot. Every WPILib project uses Gradle through the Gradle Wrapper, which ensures consistent builds across team members.<br><br><strong>Key Concepts:</strong> The <code>build.gradle</code> file configures plugins, repositories, and dependencies. Gradle automatically downloads required libraries and manages vendor dependencies from CTRE, REV, and other vendors.<br><br><strong>Common Tasks:</strong> Use <code>./gradlew build</code> to compile your project and <code>./gradlew deploy</code> to upload code to the robot.<br><br>For detailed information on Gradle configuration, managing dependencies, adding vendor libraries, and understanding the build lifecycle, please see the <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/3rd-party-libraries.html' target='_blank'>WPILib Documentation: Third-Party Libraries and Gradle</a>."
+      "title": "Gradle",
+      "content": "Gradle manages builds and dependencies. It downloads libraries and compiles code.<br><strong>Commands:</strong> <code>gradlew build</code> (compile), <code>gradlew deploy</code> (upload).<br><br>Details: <a href='https://docs.wpilib.org/en/stable/docs/software/vscode-overview/3rd-party-libraries.html' target='_blank'>Gradle & Libraries</a>."
     },
     {
       "type": "text",
-      "title": "FRC Driver Station Setup",
-      "content": "The FRC Driver Station is software that runs on your computer and communicates with your robot during matches and testing. It provides the interface for controlling robot modes, viewing robot status, and monitoring telemetry. The Driver Station is part of the FRC Game Tools package.<br><br><strong>System Requirements:</strong> Windows 10 or higher with x86 CPU (ARM CPUs not supported due to LabVIEW dependency). Administrator access required for installation.<br><br><strong>Key Features:</strong> Control robot modes (Disabled, Autonomous, Teleop, Test), monitor connection status, view telemetry and logs, configure joysticks/gamepads, display camera streams, and emergency stop functionality.<br><br>For detailed installation instructions, configuration, usage, and troubleshooting, please see the <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html' target='_blank'>WPILib Documentation: Installing the FRC Game Tools</a> and <a href='https://docs.wpilib.org/en/stable/docs/software/driverstation/driver-station.html' target='_blank'>Driver Station Documentation</a>."
+      "title": "Driver Station",
+      "content": "The Driver Station (DS) controls the robot during operation (Teleop, Auto, Test). It is part of the FRC Game Tools (Windows only).<br><br>Docs: <a href='https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html' target='_blank'>Installing Game Tools</a>."
     },
     {
       "type": "rules-box",
-      "title": "Setup Checklist",
-      "subtitle": "Complete these steps to get started:",
+      "title": "Checklist",
+      "subtitle": "Setup steps:",
       "items": [
-        "Install WPILib using the official installer",
-        "Verify WPILib extension is installed in VS Code",
-        "Create your first robot project using the WPILib template",
-        "Configure your team number in the project",
-        "Install FRC Game Tools (including Driver Station)",
-        "Verify you can build and deploy code to your robot",
-        "Test Driver Station connection to your robot"
+        "Install WPILib.",
+        "Verify VS Code extension.",
+        "Create a project (configure team number).",
+        "Install FRC Game Tools.",
+        "Verify build and deploy.",
+        "Test Driver Station connection."
       ]
     },
     {
       "type": "text",
-      "title": "Getting Help",
-      "content": "If you encounter issues during setup:<br><br><strong>Official Documentation:</strong> The <a href='https://docs.wpilib.org/en/stable/' target='_blank'>WPILib Documentation</a> is your primary resource for setup, troubleshooting, and learning.<br><br><strong>Community Support:</strong> Visit the <a href='https://www.chiefdelphi.com/' target='_blank'>Chief Delphi Forums</a> for community help and discussions.<br><br><strong>WPILib Support:</strong> Check the <a href='https://github.com/wpilibsuite/allwpilib/issues' target='_blank'>WPILib GitHub Issues</a> for known issues and solutions."
+      "title": "Support",
+      "content": "<strong>Docs:</strong> <a href='https://docs.wpilib.org/en/stable/' target='_blank'>WPILib Documentation</a><br><strong>Community:</strong> <a href='https://www.chiefdelphi.com/' target='_blank'>Chief Delphi</a><br><strong>Issues:</strong> <a href='https://github.com/wpilibsuite/allwpilib/issues' target='_blank'>WPILib GitHub</a>"
     },
     {
       "type": "link-grid",
-      "title": "Essential WPILib Documentation Links",
+      "title": "Resources",
       "links": [
         {
-          "label": "Zero to Robot Guide",
+          "label": "Zero to Robot",
           "url": "https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html"
         },
         {
@@ -75,16 +74,8 @@
           "url": "https://docs.wpilib.org/en/stable/docs/software/vscode-overview/index.html"
         },
         {
-          "label": "Creating a Robot Program",
+          "label": "Creating Projects",
           "url": "https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html"
-        },
-        {
-          "label": "Third-Party Libraries",
-          "url": "https://docs.wpilib.org/en/stable/docs/software/vscode-overview/3rd-party-libraries.html"
-        },
-        {
-          "label": "FRC Game Tools",
-          "url": "https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html"
         },
         {
           "label": "Driver Station",

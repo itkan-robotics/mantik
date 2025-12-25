@@ -116,6 +116,7 @@ class AppState {
         };
 
         try {
+            console.log(`[Debug] Saving state. Sidebar open: ${this.sidebarOpen}`);
             localStorage.setItem('mantik_state', JSON.stringify(state));
         } catch (error) {
             // Handle localStorage errors silently
@@ -196,10 +197,10 @@ class AppState {
      * Restore sidebar state
      */
     restoreSidebarState() {
-        // Always close the sidebar when restoring state after navigation
-        this.sidebarOpen = false;
         const sidebarCheckbox = document.getElementById('__navigation');
+        console.log(`[Debug] restoreSidebarState called. Saved state: ${this.sidebarOpen}`);
         if (sidebarCheckbox && sidebarCheckbox.checked !== this.sidebarOpen) {
+            console.log(`[Debug] Restoring sidebar state to: ${this.sidebarOpen}`);
             sidebarCheckbox.checked = this.sidebarOpen;
             // Trigger change event
             sidebarCheckbox.dispatchEvent(new Event('change'));

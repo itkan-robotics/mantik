@@ -1,46 +1,47 @@
 {
-  "title": "AdvantageKit: Advanced Logging & Simulation",
+  "title": "AdvantageKit: Logging and Replay Framework",
   "sections": [
     {
       "type": "text",
       "title": "What is AdvantageKit?",
-      "content": "AdvantageKit is a logging and simulation framework developed by Team 6328 (Mechanical Advantage). It enables <a href='https://docs.advantagekit.org/log-replay/' target='_blank'>\"Log Replay\"</a>, allowing you to replay data recorded during a match through your robot code to debug issues and verify fixes. It fundamentally changes how you structure your robot code to separate hardware interaction from logic.<br><br><strong>Key Philosophy:</strong> Logic should be deterministic and hardware-independent. By isolating hardware inputs (sensors) into a separate \"IO\" layer, you can swap real hardware for simulated hardware or a log file player without changing your subsystem logic.<br><br>Learn more: <a href='https://docs.advantagekit.org/' target='_blank'>AdvantageKit Documentation</a> | <a href='https://github.com/Mechanical-Advantage/AdvantageKit' target='_blank'>AdvantageKit GitHub</a>"
+      "content": "AdvantageKit is a logging, telemetry, and replay framework developed by Team 6328 (Mechanical Advantage). It records every input to your robot code—every sensor reading, button press, and joystick value—during a match. After the match, you can replay these recorded inputs through your robot code in simulation to debug issues and verify fixes.<br><br>Unlike traditional logging that records selected outputs, AdvantageKit records all inputs. This enables <a href='https://docs.advantagekit.org/data-flow/built-in-logging' target='_blank'>deterministic log replay</a>: your robot code runs exactly as it did during the match, using the same sensor values in the same order.<br><br>AdvantageKit is free, open-source, and works with any vendor hardware. Learn more: <a href='https://docs.advantagekit.org/' target='_blank'>AdvantageKit Documentation</a> | <a href='https://github.com/Mechanical-Advantage/AdvantageKit' target='_blank'>AdvantageKit GitHub</a>"
     },
     {
       "type": "text",
-      "title": "The IO Layer Pattern",
-      "content": "To use AdvantageKit effectively, you must structure your subsystems using the <a href='https://docs.advantagekit.org/io-layer/' target='_blank'>IO Layer pattern</a>:<br><br>1. <strong>SubsystemIO Interface:</strong> Defines the inputs (sensor data) and output methods (voltage/position) for the subsystem.<br>2. <strong>IO Implementation (Real):</strong> Wraps the real hardware (TalonFX, SparkMax) to read inputs and write outputs.<br>3. <strong>IO Implementation (Sim):</strong> Uses physics sims to generate inputs based on outputs. (<a href='https://docs.advantagekit.org/simulation/' target='_blank'>Simulation Documentation</a>)<br>4. <strong>Subsystem Logic:</strong> Interacts <em>only</em> with the IO interface, never directly with hardware classes."
+      "title": "How It Works",
+      "content": "AdvantageKit requires you to structure your code using the <a href='https://docs.advantagekit.org/data-flow/recording-inputs/io-interfaces/' target='_blank'>IO Layer pattern</a>. Instead of reading sensors directly, your subsystems interact with an IO interface that can be swapped between real hardware, simulation, or a log file player.<br><br>During a match, the IO layer reads real hardware and AdvantageKit automatically logs all input values. After the match, you can run your code in replay mode, where the IO layer reads from the log file instead of hardware. Your robot code runs unchanged, receiving the exact same inputs it received during the match."
     },
     {
       "type": "code",
       "title": "AdvantageKit Subsystem Structure",
-      "content": "public class Flywheel extends SubsystemBase {\n    // 1. Define the inputs\n    // API: @AutoLog annotation - https://docs.advantagekit.org/api/org/littletonrobotics/junction/annotation/AutoLog.html\n    @AutoLog\n    public static class FlywheelInputs {\n        public double velocityRadPerSec = 0.0;\n        public double appliedVolts = 0.0;\n        public double currentAmps = 0.0;\n    }\n\n    // 2. Define the IO Interface\n    public interface FlywheelIO {\n        default void updateInputs(FlywheelInputs inputs) {}\n        default void setVoltage(double volts) {}\n    }\n\n    private final FlywheelIO io;\n    private final FlywheelInputsAutoLogged inputs = new FlywheelInputsAutoLogged();\n\n    // Constructor injects the implementation\n    public Flywheel(FlywheelIO io) {\n        this.io = io;\n    }\n\n    @Override\n    public void periodic() {\n        // 3. Update inputs from the IO layer (Real, Sim, or Replay)\n        io.updateInputs(inputs);\n        \n        // 4. Log the inputs automatically\n        // API: Logger.processInputs() - https://docs.advantagekit.org/api/org/littletonrobotics/junction/Logger.html#processInputs(java.lang.String,java.lang.Object)\n        Logger.processInputs(\"Flywheel\", inputs);\n\n        // Logic uses 'inputs.velocityRadPerSec' instead of 'motor.getVelocity()'\n    }\n\n    public void runVolts(double volts) {\n        io.setVoltage(volts);\n    }\n}"
+      "content": "public class Flywheel extends SubsystemBase {\n    // 1. Define the inputs that will be logged\n    // API: @AutoLog annotation - https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/AutoLog.html\n    @AutoLog\n    public static class FlywheelInputs {\n        public double velocityRadPerSec = 0.0;\n        public double appliedVolts = 0.0;\n        public double currentAmps = 0.0;\n    }\n\n    // 2. Define the IO Interface\n    public interface FlywheelIO {\n        default void updateInputs(FlywheelInputs inputs) {}\n        default void setVoltage(double volts) {}\n    }\n\n    private final FlywheelIO io;\n    private final FlywheelInputsAutoLogged inputs = new FlywheelInputsAutoLogged();\n\n    // Constructor injects the implementation (Real, Sim, or Replay)\n    public Flywheel(FlywheelIO io) {\n        this.io = io;\n    }\n\n    @Override\n    public void periodic() {\n        // 3. Update inputs from the IO layer\n        io.updateInputs(inputs);\n        \n        // 4. Log the inputs automatically\n        // API: Logger.processInputs() - https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/Logger.html#processInputs(java.lang.String,java.lang.Object)\n        Logger.processInputs(\"Flywheel\", inputs);\n\n        // Your logic uses 'inputs.velocityRadPerSec' instead of 'motor.getVelocity()'\n    }\n\n    public void runVolts(double volts) {\n        io.setVoltage(volts);\n    }\n}"
     },
     {
       "type": "text",
-      "title": "Logging Features",
-      "content": "AdvantageKit automatically logs all fields in your <a href='https://docs.advantagekit.org/api/org/littletonrobotics/junction/annotation/AutoLog.html' target='_blank'>\"@AutoLog\"</a> input classes. It uses a high-performance binary format (WPILOG/RLOG) that can record data every loop cycle with minimal overhead. (<a href='https://docs.advantagekit.org/logging/' target='_blank'>Logging Documentation</a>)<br><br>You can also log custom data using <a href='https://docs.advantagekit.org/api/org/littletonrobotics/junction/Logger.html#recordOutput(java.lang.String,java.lang.Object)' target='_blank'>\"Logger.recordOutput()\"</a>:<br><code>Logger.recordOutput(\"MyState/Target\", targetValue);</code><br><code>Logger.recordOutput(\"Odometry/Pose\", pose);</code>"
+      "title": "Logging",
+      "content": "AdvantageKit automatically logs all fields in classes annotated with <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/AutoLog.html' target='_blank'>@AutoLog</a>. It uses a high-performance binary format (WPILOG/RLOG) that records data every loop cycle with minimal overhead. (<a href='https://docs.advantagekit.org/getting-started/what-is-advantagekit/example-output-logging/' target='_blank'>Logging Documentation</a>)<br><br>You can also log custom outputs using <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/Logger.html#recordOutput(java.lang.String,java.lang.Object)' target='_blank'>Logger.recordOutput()</a>:<br><code>Logger.recordOutput(\"MyState/Target\", targetValue);</code><br><code>Logger.recordOutput(\"Odometry/Pose\", pose);</code>"
     },
     {
       "type": "text",
       "title": "Log Replay",
-      "content": "The killer feature of AdvantageKit. If a bug occurs in a match:<br>1. Download the log file.<br>2. Run your robot code in \"Replay\" mode pointing to that log file.<br>3. The \"SubsystemIO\" layers will be replaced by a \"Replay\" implementation that feeds the recorded sensor values into your code.<br>4. You can step through the code, inspect variables, and fix the bug, verifying that the fix works against the real match data.<br><br>Learn more: <a href='https://docs.advantagekit.org/log-replay/' target='_blank'>Log Replay Documentation</a>"
+      "content": "Log replay is AdvantageKit's core feature. After a match, download the log file and run your robot code in replay mode. The IO layer reads from the log file instead of hardware, feeding the recorded sensor values into your code in the same order they occurred during the match.<br><br>This lets you debug match issues without the robot. You can step through code, inspect variables, modify logic, and verify that fixes work against real match data. The replay is deterministic: if your code is deterministic, the replay will match the robot's behavior exactly.<br><br>Learn more: <a href='https://docs.advantagekit.org/data-flow/built-in-logging' target='_blank'>Log Replay Documentation</a>"
     },
     {
       "type": "rules-box",
-      "title": "AdvantageKit Best Practices",
-      "subtitle": "Getting started:",
+      "title": "Getting Started",
+      "subtitle": "Best practices:",
       "items": [
-        "Adopt the <a href='https://docs.advantagekit.org/io-layer/' target='_blank'>IO Layer pattern</a> for all subsystems.",
-        "Log EVERYTHING: inputs, outputs, targets, and internal states using <a href='https://docs.advantagekit.org/api/org/littletonrobotics/junction/Logger.html' target='_blank'>Logger</a>.",
-        "Keep the 'inputs' record classes simple (primitives, structs).",
-        "Use <a href='https://docs.advantagescope.org' target='_blank'>AdvantageScope</a> to visualize the logs.",
-        "Commit to the structure: mixing direct hardware access with IO layers defeats the purpose."
+        "Use the <a href='https://docs.advantagekit.org/data-flow/recording-inputs/io-interfaces/' target='_blank'>IO Layer pattern</a> for all subsystems that interact with hardware.",
+        "Log all inputs using <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/AutoLog.html' target='_blank'>@AutoLog</a> annotations.",
+        "Log important outputs and states using <a href='https://docs.advantagekit.org/javadoc/org/littletonrobotics/junction/Logger.html#recordOutput(java.lang.String,java.lang.Object)' target='_blank'>Logger.recordOutput()</a>.",
+        "Keep input classes simple: use primitives and basic data structures.",
+        "Use <a href='https://docs.advantagescope.org' target='_blank'>AdvantageScope</a> to visualize and analyze log files.",
+        "Keep your code deterministic: avoid random numbers, timestamps, or other non-deterministic sources in logic."
       ]
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "AdvantageScope",
@@ -51,12 +52,16 @@
           "id": "simulation-basics"
         },
         {
+          "label": "AdvantageKit Documentation",
+          "url": "https://docs.advantagekit.org/"
+        },
+        {
           "label": "AdvantageKit GitHub",
           "url": "https://github.com/Mechanical-Advantage/AdvantageKit"
         },
         {
           "label": "AdvantageKit API",
-          "url": "https://docs.advantagekit.org/api/"
+          "url": "https://docs.advantagekit.org/javadoc/"
         }
       ]
     }

@@ -1,0 +1,70 @@
+{
+  "title": "Command Groups",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Command groups combine multiple commands to create complex behaviors. Use them for autonomous routines or coordinated mechanism movements."
+    },
+    {
+      "type": "rules-box",
+      "title": "Group Types",
+      "subtitle": "Two main patterns:",
+      "items": [
+        "<strong>Sequential:</strong> Commands run one after another, waiting for each to finish.",
+        "<strong>Parallel:</strong> Commands run simultaneously, all finishing when the last one completes.",
+        "<strong>Mixed:</strong> Combine both patterns for complex routines."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Sequential Commands",
+      "content": "Commands execute in order. Each command waits for the previous one to finish before starting. Use <code>new SequentialCommandGroup()</code> to create sequential groups."
+    },
+    {
+      "type": "code",
+      "title": "Sequential Example",
+      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\n\n// Run commands one after another\nCommand autoRoutine = new SequentialCommandGroup(\n    new DriveForward(drivetrain).withTimeout(2.0),\n    new RunIntake(intake).withTimeout(1.0),\n    new InstantCommand(() -> intake.stop(), intake)\n);"
+    },
+    {
+      "type": "text",
+      "title": "Parallel Commands",
+      "content": "Commands run at the same time. The group finishes when all commands finish. Use <code>new ParallelCommandGroup()</code> to create parallel groups."
+    },
+    {
+      "type": "code",
+      "title": "Parallel Example",
+      "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.ParallelCommandGroup;\n\n// Run commands simultaneously\nCommand simultaneous = new ParallelCommandGroup(\n    new RaiseElevator(elevator).withTimeout(3.0),\n    new ExtendArm(arm).withTimeout(2.0)\n);"
+    },
+    {
+      "type": "text",
+      "title": "Mixed Groups",
+      "content": "Combine sequential and parallel commands to create complex routines. Groups can contain other groups."
+    },
+    {
+      "type": "code",
+      "title": "Autonomous Routine Example",
+      "content": "package frc.robot;\n\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.InstantCommand;\nimport edu.wpi.first.wpilibj2.command.SequentialCommandGroup;\nimport edu.wpi.first.wpilibj2.command.ParallelCommandGroup;\nimport frc.robot.commands.DriveForward;\nimport frc.robot.commands.RunIntake;\nimport frc.robot.subsystems.Drivetrain;\nimport frc.robot.subsystems.Intake;\n\npublic class RobotContainer {\n    private Drivetrain drivetrain = new Drivetrain();\n    private Intake intake = new Intake();\n    \n    public Command getAutoCommand() {\n        return new SequentialCommandGroup(\n            new ParallelCommandGroup(\n                new DriveForward(drivetrain).withTimeout(2.0),\n                new RunIntake(intake).withTimeout(2.0)\n            ),\n            new InstantCommand(() -> intake.stop(), intake)\n        );\n    }\n}"
+    },
+    {
+      "type": "text",
+      "title": "Timeout & Conditions",
+      "content": "Use <code>.withTimeout(seconds)</code> to limit command duration. Use <code>.until(condition)</code> to finish when a condition is met. Chain these methods for precise control."
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "WPILib Command-Based",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/index.html"
+        },
+        {
+          "label": "Command Groups Documentation",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/command-groups.html"
+        }
+      ]
+    }
+  ]
+}
+

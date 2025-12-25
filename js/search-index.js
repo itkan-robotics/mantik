@@ -5,8 +5,8 @@
 
 class SearchIndex {
     constructor() {
-        this.index = new Map(); // term -> array of document matches
-        this.documents = new Map(); // documentId -> document metadata
+        this.index = new Map(); // term → array of document matches
+        this.documents = new Map(); // documentId → document metadata
         this.isIndexed = false;
         this.indexingProgress = 0;
         this.totalDocuments = 0;
@@ -260,7 +260,7 @@ class SearchIndex {
         if (queryTerms.length === 0) return [];
         
         // Score documents
-        const docScores = new Map(); // docId -> { score, matches: [] }
+        const docScores = new Map(); // docId → { score, matches: [] }
         
         queryTerms.forEach(term => {
             const matches = this.index.get(term) || [];

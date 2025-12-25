@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (!anchor?.getAttribute('href')) return;
                 
                 const href = anchor.getAttribute('href');
+                
+                // Prevent navigation to invalid URLs (like "frc:1" which looks like a protocol)
+                if (href && /^[a-z]+:\d+$/.test(href)) {
+                    // Looks like an invalid protocol URL (e.g., "frc:1"), prevent default navigation
+                    e.preventDefault();
+                    console.warn('Prevented navigation to invalid URL:', href);
+                    return;
+                }
+                
                 // Match ../motors/basic-motor-control.json or similar
                 const match = href.match(/\.\.\/([\w-]+)\/([\w-]+)\.json$/);
                 let tabId = null;
@@ -44,6 +53,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             });
         }
+        
+        // Check for developer mode
+        checkDevMode();
+        
     } catch (error) {
         console.error('Failed to initialize application:', error);
         // Hide loading overlay even if initialization fails
@@ -213,19 +226,45 @@ function handleSidebarOpen() {
 
 // Mobile header scroll behavior
 let lastScrollTop = 0;
-const mobileHeader = document.querySelector('.mobile-header');
+let mobileHeader = null;
 
-window.addEventListener('scroll', function() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (scrollTop < lastScrollTop) {
-        mobileHeader.classList.remove('visible');
-    } else {
-        mobileHeader.classList.add('visible');
+// Initialize header on DOM ready
+function initHeaderVisibility() {
+    mobileHeader = document.querySelector('.mobile-header');
+    if (!mobileHeader) {
+        // Retry if header not found yet
+        setTimeout(initHeaderVisibility, 100);
+        return;
     }
+    
+    // Show header initially
+    mobileHeader.classList.add('visible');
+    
+    window.addEventListener('scroll', function() {
+        if (!mobileHeader) return;
+        
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDelta = scrollTop - lastScrollTop;
 
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-}, false);
+        // Show header when scrolling up, hide when scrolling down
+        if (scrollDelta < 0 || scrollTop <= 10) {
+            // Scrolling up or near top - show header
+            mobileHeader.classList.add('visible');
+        } else if (scrollDelta > 5) {
+            // Scrolling down significantly - hide header
+            mobileHeader.classList.remove('visible');
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, { passive: true });
+}
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeaderVisibility);
+} else {
+    initHeaderVisibility();
+}
 
 // Keyboard shortcuts overlay toggle
 function toggleKeyboardShortcuts() {
@@ -280,4 +319,94 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-}); 
+});
+
+// Add keyboard shortcut for Developer Mode (Ctrl + L)
+document.addEventListener('keydown', function(e) {
+    // Check for Ctrl + L (case insensitive)
+    // Note: Ctrl + L is commonly used to focus address bar, so we preventDefault
+    if (e.ctrlKey && !e.altKey && !e.shiftKey && (e.key === 'l' || e.key === 'L')) {
+        e.preventDefault();
+        // If toggleDevMode is available, call it
+        if (typeof window.toggleDevMode === 'function') {
+            const isEnabled = window.toggleDevMode();
+            // Optional: show a small toast notification since this is a keyboard action
+            // but for now the visual appearance of the button is feedback enough
+        }
+    }
+});
+
+/**
+ * Developer Mode Functions
+ */
+
+// Check if developer mode is enabled
+function checkDevMode() {
+    const isDev = localStorage.getItem('mantik_dev_mode') === 'true';
+    const devContainer = document.getElementById('dev-open-links-container');
+    
+    if (devContainer) {
+        devContainer.style.display = isDev ? 'flex' : 'none';
+    }
+    
+    // Expose toggle function globally
+    window.toggleDevMode = function() {
+        const currentState = localStorage.getItem('mantik_dev_mode') === 'true';
+        localStorage.setItem('mantik_dev_mode', !currentState);
+        checkDevMode();
+        console.log(`Developer mode ${!currentState ? 'enabled' : 'disabled'}`);
+        return !currentState;
+    };
+}
+
+// Open all links on the current page
+function openAllPageLinks() {
+    const tabContainer = document.getElementById('tab-container');
+    if (!tabContainer) return;
+    
+    // Select standard links
+    const links = Array.from(tabContainer.querySelectorAll('a[href]'));
+    
+    // Select link-grid buttons that have data-url or data-tab-id attributes
+    const gridButtons = Array.from(tabContainer.querySelectorAll('.link-grid-button[data-url], .link-grid-button[data-tab-id]'));
+    
+    // Combine all clickable items
+    const allItems = [...links, ...gridButtons];
+    
+    if (allItems.length === 0) {
+        alert('No links found on this page.');
+        return;
+    }
+    
+    const confirmMessage = `Found ${allItems.length} links (including ${gridButtons.length} grid buttons). Are you sure you want to open all of them? This might trigger a popup blocker.`;
+    if (!confirm(confirmMessage)) return;
+    
+    let openedCount = 0;
+    
+    allItems.forEach(item => {
+        let url = null;
+        
+        // Determine URL based on element type
+        if (item.tagName === 'A') {
+            const href = item.getAttribute('href');
+            // Skip internal anchors if they just scroll the page
+            if (href.startsWith('#') && !href.includes('/')) return;
+            // Skip javascript: links
+            if (href.startsWith('javascript:')) return;
+            
+            url = href;
+        } else if (item.hasAttribute('data-url')) {
+            url = item.getAttribute('data-url');
+        } else if (item.hasAttribute('data-tab-id')) {
+            // For internal tab IDs, construct a hash URL that the app likely supports
+            url = '#' + item.getAttribute('data-tab-id');
+        }
+        
+        if (url) {
+            window.open(url, '_blank');
+            openedCount++;
+        }
+    });
+    
+    console.log(`Opened ${openedCount} links.`);
+}

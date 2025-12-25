@@ -1,0 +1,142 @@
+{
+  "title": "Motion Profiling: Exponential",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Template Project",
+      "content": "Start with the <strong>Command Robot</strong> template project. Motion profiling is typically implemented in subsystems, so the command-based structure works well. Create a new subsystem class in the <code>subsystems</code> package."
+    },
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Exponential motion profiling uses smooth, continuous acceleration changes instead of constant acceleration. This creates natural-feeling movement that's ideal for elevators and arms. The profile continuously adjusts acceleration, eliminating sudden changes that cause mechanical stress."
+    },
+    {
+      "type": "text",
+      "title": "What is Exponential Profiling?",
+      "content": "Exponential profiles change acceleration smoothly over time, creating a velocity curve that looks like an exponential function. Unlike trapezoidal profiles with sharp corners, exponential profiles have smooth transitions, making them feel more natural and reducing wear on mechanisms."
+    },
+    {
+      "type": "rules-box",
+      "title": "Hardware Support",
+      "subtitle": "Built-in controller features:",
+      "items": [
+        "<strong>SPARK MAX:</strong> Use WPILib's <code>ExponentialProfile</code> class with PID control.",
+        "<strong>CTRE (Talon FX):</strong> Uses <code>Motion Magic Expo</code> (built-in exponential profile)."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Step 1: Understand Exponential Profile Parameters",
+      "content": "Exponential profiles require feedforward constants: <strong>kV</strong> (velocity feedforward) compensates for velocity-dependent forces. <strong>kA</strong> (acceleration feedforward) compensates for inertia during acceleration. <strong>kMaxV</strong> (max velocity) limits the top speed."
+    },
+    {
+      "type": "text",
+      "title": "Step 2: Configure Exponential Profile (Talon FX)",
+      "content": "For Talon FX, configure the exponential profile constants in the Motion Magic configuration. These values work with the PID gains to create smooth motion."
+    },
+    {
+      "type": "code",
+      "content": "Configure exponential profile for Talon FX:",
+      "code": "public void configureExponentialProfile() {\n    // Configure Motion Magic Exponential profile\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n    mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n    motor.getConfigurator().apply(mm);\n}"
+    },
+    {
+      "type": "text",
+      "title": "Step 3: Use Exponential Profile Control (Talon FX)",
+      "content": "Once configured, use <code>MotionMagicExpoVoltage</code> control request when setting positions. The controller automatically generates the exponential profile."
+    },
+    {
+      "type": "code",
+      "content": "Set position using exponential profile:",
+      "code": "public void setPosition(double target) {\n    // Use exponential motion profile\n    motor.setControl(new MotionMagicExpoVoltage(target));\n}"
+    },
+    {
+      "type": "text",
+      "title": "Step 4: Configure Exponential Profile (SPARK MAX with WPILib)",
+      "content": "For SPARK MAX, use WPILib's <code>ExponentialProfile</code> class. Create profile constraints from system characteristics, then calculate setpoints each loop cycle."
+    },
+    {
+      "type": "code",
+      "title": "Step 4a: Create Profile Constraints",
+      "content": "Define constants and create profile constraints:",
+      "code": "// Define profile constraints from system characteristics\nprivate static final double kMaxV = 10.0; // Max velocity\nprivate static final double kV = 0.12;    // Velocity feedforward\nprivate static final double kA = 0.01;    // Acceleration feedforward\n\nprivate ExponentialProfile.Constraints constraints = \n    ExponentialProfile.Constraints.fromCharacteristics(kMaxV, kV, kA);\nprivate ExponentialProfile profile = new ExponentialProfile(constraints);"
+    },
+    {
+      "type": "text",
+      "title": "Step 4b: Calculate Profile Setpoints",
+      "content": "In <code>periodic()</code>, calculate the next setpoint from the profile each loop cycle. The profile takes the current position and goal position, returning the target position and velocity for this timestep."
+    },
+    {
+      "type": "code",
+      "content": "Calculate profile setpoint each loop:",
+      "code": "@Override\npublic void periodic() {\n    // Calculate next setpoint from profile\n    double dt = 0.02; // 20ms loop time\n    double current = getCurrentPosition();\n    double goal = getTargetPosition();\n    \n    var state = profile.calculate(dt, current, goal);\n    // Apply position setpoint to PID controller\n    pid.setReference(state.position, ControlType.kPosition);\n}"
+    },
+    {
+      "type": "text",
+      "title": "Tuning Exponential Profiles",
+      "content": "Tune feedforward first (kG, kV, kA), then feedback (kP, kD). Use simulation and dashboard tools like Elastic for live tuning. Log position and velocity graphs to observe behavior."
+    },
+    {
+      "type": "rules-box",
+      "title": "Feedforward Tuning",
+      "subtitle": "Physical forces:",
+      "items": [
+        "<strong>kG (Gravity):</strong> Set setpoint high, increase kG from 0. Find value where mechanism just starts to creep upward, then back off slightly.",
+        "<strong>kV (Velocity):</strong> Run at fixed duty cycle, observe voltage and max velocity. kV = Voltage / Max Velocity (RPS). Use first 4-5 decimal places.",
+        "<strong>kA (Acceleration):</strong> Trigger movement, measure time from 0 to max velocity. kA = kV / Time to Max Velocity."
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Feedback Tuning",
+      "subtitle": "Position correction:",
+      "items": [
+        "<strong>kP (Proportional):</strong> Start small (0.1). Double values until mechanism moves. Too low = slow/sluggish curve. Too high = overshoot/oscillation. Ideal = straight line to setpoint.",
+        "<strong>kD (Derivative):</strong> Start tiny (0.005-0.05). Increase to dampen oscillations. Too high = high-frequency jitter/noise causing motor heating. Goal = smooth flat line."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Tuning Goals",
+      "content": "Position graph should look like a square wave: sharp rise, flat top, sharp drop without wobbling at corners. Ensure no oscillation causing mechanism to slam into limits. Simulation provides baseline values; physical robots may need slight adjustments for friction and gravity."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Full Code Example",
+      "content": "Complete examples for both platforms:",
+      "tabs": [
+        {
+          "label": "SPARK MAX (WPILib)",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport edu.wpi.first.math.trajectory.ExponentialProfile;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    private SparkClosedLoopController pid = motor.getClosedLoopController();\n    \n    // Define profile constraints from system characteristics\n    private static final double kMaxV = 10.0; // Max velocity\n    private static final double kV = 0.12;    // Velocity feedforward\n    private static final double kA = 0.01;    // Acceleration feedforward\n    \n    private ExponentialProfile.Constraints constraints = \n        ExponentialProfile.Constraints.fromCharacteristics(kMaxV, kV, kA);\n    private ExponentialProfile profile = new ExponentialProfile(constraints);\n    \n    private double targetPosition = 0.0;\n    \n    public Elevator() {\n        // Configure motor and PID here\n    }\n    \n    public void setTarget(double target) {\n        targetPosition = target;\n    }\n    \n    // The template provides periodic() - update it with profile calculation\n    @Override\n    public void periodic() {\n        // Calculate next setpoint from profile\n        double dt = 0.02; // 20ms loop time\n        double current = motor.getEncoder().getPosition();\n        \n        var state = profile.calculate(dt, current, targetPosition);\n        // Apply position setpoint to PID controller\n        pid.setReference(state.position, ControlType.kPosition);\n    }\n}"
+        },
+        {
+          "label": "Talon FX (MM Expo)",
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicExpoVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    public Elevator() {\n        configureExponentialProfile();\n    }\n    \n    public void configureExponentialProfile() {\n        // Configure Motion Magic Exponential profile\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n        mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use exponential motion profile\n        motor.setControl(new MotionMagicExpoVoltage(target));\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "Trapezoidal Motion Profiling",
+          "id": "trapezoidal-motion-profiling"
+        },
+        {
+          "label": "PID Control",
+          "id": "frc-pid-control"
+        },
+        {
+          "label": "CTRE Motion Magic Documentation",
+          "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"
+        },
+        {
+          "label": "Expo PID Tutorial",
+          "url": "https://www.youtube.com/watch?v=nlRjdr1KUg4"
+        }
+      ]
+    }
+  ]
+}
+

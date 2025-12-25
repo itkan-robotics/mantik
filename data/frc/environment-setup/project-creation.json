@@ -1,0 +1,193 @@
+{
+    "title": "Project Creation",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "This guide covers creating a new WPILib project in VS Code. WPILib projects can use two main templates: <strong>Timed Robot</strong> and <strong>Command Robot</strong>. Timed Robot is simpler and uses periodic methods that run at fixed intervals. Command Robot uses a command-based architecture that organizes code into reusable commands and subsystems."
+        },
+        {
+            "type": "text",
+            "title": "Prerequisites",
+            "content": "Before creating a project, ensure you have:<br><br>• Visual Studio Code installed<br>• WPILib extension installed in VS Code<br>• Your FRC team number ready<br>• A location on your computer where you want to save the project"
+        },
+        {
+            "type": "text",
+            "title": "Creating a Timed Robot Project",
+            "content": "The Timed Robot template provides a simple structure with periodic methods that run at fixed intervals. This template is good for beginners and simpler robots. The template includes a <code>Robot.java</code> file with all lifecycle methods pre-defined."
+        },
+        {
+            "type": "text",
+            "title": "Timed Robot Video Tutorial",
+            "content": "Watch this video for a complete walkthrough of creating a Timed Robot project:"
+        },
+        {
+            "type": "text",
+            "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/oZJdN_DjRiw' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+        },
+        {
+            "type": "text",
+            "title": "Step 1: Open Command Palette",
+            "content": "Open VS Code. Press <code>Ctrl+Shift+P</code> (Windows/Linux) or <code>Cmd+Shift+P</code> (Mac) to open the Command Palette. This is where you access WPILib commands."
+        },
+        {
+            "type": "text",
+            "title": "Step 2: Start Project Creation",
+            "content": "In the Command Palette, type \"WPILib: Create a new project\" and select it from the dropdown. The New Project Creator window will open."
+        },
+        {
+            "type": "text",
+            "title": "Step 3: Select Project Type",
+            "content": "In the New Project Creator window, choose <strong>Template</strong> as the project type. This gives you access to pre-configured project templates."
+        },
+        {
+            "type": "text",
+            "title": "Step 4: Choose Programming Language",
+            "content": "Select your preferred programming language. Choose <strong>Java</strong> or <strong>C++</strong> based on your team's preference. Most teams use Java."
+        },
+        {
+            "type": "text",
+            "title": "Step 5: Select Timed Robot Base Class",
+            "content": "Select <strong>TimedRobot</strong> as the base class. This template provides control through a collection of <code>init()</code> and <code>periodic()</code> methods that are called by WPILib during specific robot states."
+        },
+        {
+            "type": "text",
+            "title": "Step 6: Configure Project Details",
+            "content": "Enter the following information:<br><br>• <strong>Team Number:</strong> Enter your FRC team number<br>• <strong>Project Location:</strong> Choose the folder where you want to save the project<br>• <strong>Project Name:</strong> Enter a descriptive name (e.g., \"MantikTimedRobot\")"
+        },
+        {
+            "type": "text",
+            "title": "Step 7: Generate the Project",
+            "content": "Click <strong>Generate Project</strong> to create the new robot project. VS Code will generate all necessary files and folders. Once complete, the project will open automatically in VS Code."
+        },
+        {
+            "type": "text",
+            "title": "Step 8: Understanding the Project Structure",
+            "content": "After creation, your Timed Robot project will have this structure:"
+        },
+        {
+            "type": "list",
+            "title": "Timed Robot Project Files",
+            "content": [
+                "<code>src/main/java/frc/robot/Robot.java</code> - Main robot class with lifecycle methods",
+                "<code>src/main/java/frc/robot/Main.java</code> - Entry point that starts the robot program",
+                "<code>build.gradle</code> - Build configuration and dependencies",
+                "<code>wpilib.json</code> - WPILib project configuration",
+                "<code>.vscode/</code> - VS Code settings and launch configurations"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Step 9: Understanding Robot.java",
+            "content": "Open <code>Robot.java</code> to see the template structure. The Timed Robot template includes these lifecycle methods:"
+        },
+        {
+            "type": "list",
+            "title": "Timed Robot Lifecycle Methods",
+            "content": [
+                "<code>robotInit()</code> - Runs once when the robot starts",
+                "<code>robotPeriodic()</code> - Runs repeatedly (every 20ms) regardless of mode",
+                "<code>autonomousInit()</code> - Runs once when autonomous mode starts",
+                "<code>autonomousPeriodic()</code> - Runs repeatedly during autonomous (every 20ms)",
+                "<code>teleopInit()</code> - Runs once when teleoperated mode starts",
+                "<code>teleopPeriodic()</code> - Runs repeatedly during teleoperated mode (every 20ms)",
+                "<code>disabledInit()</code> - Runs once when robot is disabled",
+                "<code>disabledPeriodic()</code> - Runs repeatedly when robot is disabled (every 20ms)",
+                "<code>testInit()</code> - Runs once when test mode starts",
+                "<code>testPeriodic()</code> - Runs repeatedly during test mode (every 20ms)"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Creating a Command Robot Project",
+            "content": "The Command Robot template uses a command-based architecture. This organizes code into reusable commands and subsystems, making it easier to manage complex robots. The Command Robot framework builds upon the TimedRobot base class by introducing a structure that allows for modular and reusable code."
+        },
+        {
+            "type": "text",
+            "title": "Command Robot Video Tutorial",
+            "content": "Watch this video for a complete walkthrough of creating a Command Robot project:"
+        },
+        {
+            "type": "text",
+            "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/jFct5Wbtswo' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+        },
+        {
+            "type": "text",
+            "title": "Step 1: Open Command Palette",
+            "content": "Open VS Code. Press <code>Ctrl+Shift+P</code> (Windows/Linux) or <code>Cmd+Shift+P</code> (Mac) to open the Command Palette."
+        },
+        {
+            "type": "text",
+            "title": "Step 2: Start Project Creation",
+            "content": "In the Command Palette, type \"WPILib: Create a new project\" and select it from the dropdown. The New Project Creator window will open."
+        },
+        {
+            "type": "text",
+            "title": "Step 3: Select Project Type",
+            "content": "In the New Project Creator window, choose <strong>Template</strong> as the project type."
+        },
+        {
+            "type": "text",
+            "title": "Step 4: Choose Programming Language",
+            "content": "Select your preferred programming language. Choose <strong>Java</strong> or <strong>C++</strong> based on your team's preference."
+        },
+        {
+            "type": "text",
+            "title": "Step 5: Select Command Robot Base Class",
+            "content": "Select <strong>Command Robot</strong> as the base class. This template includes a command-based structure with subsystems and commands."
+        },
+        {
+            "type": "text",
+            "title": "Step 6: Configure Project Details",
+            "content": "Enter the following information:<br><br>• <strong>Team Number:</strong> Enter your FRC team number<br>• <strong>Project Location:</strong> Choose the folder where you want to save the project<br>• <strong>Project Name:</strong> Enter a descriptive name (e.g., \"MantikCommandRobot\")"
+        },
+        {
+            "type": "text",
+            "title": "Step 7: Generate the Project",
+            "content": "Click <strong>Generate Project</strong> to create the new robot project. VS Code will generate all necessary files and folders. Once complete, the project will open automatically in VS Code."
+        },
+        {
+            "type": "text",
+            "title": "Step 8: Understanding the Project Structure",
+            "content": "After creation, your Command Robot project will have this structure:"
+        },
+        {
+            "type": "list",
+            "title": "Command Robot Project Files",
+            "content": [
+                "<code>src/main/java/frc/robot/Robot.java</code> - Main robot class",
+                "<code>src/main/java/frc/robot/Main.java</code> - Entry point that starts the robot program",
+                "<code>src/main/java/frc/robot/commands/</code> - Folder for command classes",
+                "<code>src/main/java/frc/robot/subsystems/</code> - Folder for subsystem classes",
+                "<code>build.gradle</code> - Build configuration and dependencies",
+                "<code>wpilib.json</code> - WPILib project configuration",
+                "<code>.vscode/</code> - VS Code settings and launch configurations"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Step 9: Understanding Command Robot Architecture",
+            "content": "The Command Robot template uses a different architecture:"
+        },
+        {
+            "type": "list",
+            "title": "Command Robot Components",
+            "content": [
+                "<strong>Subsystems:</strong> Represent physical parts of the robot (drivetrain, intake, shooter, etc.). Each subsystem manages its own hardware.",
+                "<strong>Commands:</strong> Represent actions the robot can perform (drive forward, collect game piece, shoot, etc.). Commands use subsystems to perform actions.",
+                "<strong>Robot.java:</strong> Sets up subsystems, creates command bindings, and schedules commands based on robot state.",
+                "<strong>Command Scheduler:</strong> Automatically runs scheduled commands and manages their lifecycle."
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Choosing Between Templates",
+            "content": "Choose <strong>Timed Robot</strong> if you're new to FRC programming or building a simple robot. Choose <strong>Command Robot</strong> if you're building a complex robot with multiple mechanisms that need to work together, or if you want better code organization and reusability."
+        },
+        {
+            "type": "text",
+            "title": "Next Steps",
+            "content": "After creating your project, you can start adding hardware configuration, writing code for your mechanisms, and testing your robot. Make sure to configure your team number in <code>wpilib.json</code> if you haven't already."
+        }
+    ]
+}

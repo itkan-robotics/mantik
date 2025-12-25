@@ -138,11 +138,19 @@
                     <h3>Navigation</h3>
                     <div class="shortcut-item">
                         <span class="shortcut-key">Ctrl + ←</span>
-                        <span class="shortcut-description">Previous tab</span>
+                        <span class="shortcut-description">Previous tab in section</span>
                     </div>
                     <div class="shortcut-item">
                         <span class="shortcut-key">Ctrl + →</span>
-                        <span class="shortcut-description">Next tab</span>
+                        <span class="shortcut-description">Next tab in section</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">Ctrl + &lt;</span>
+                        <span class="shortcut-description">Previous tab (alternative)</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">Ctrl + &gt;</span>
+                        <span class="shortcut-description">Next tab (alternative)</span>
                     </div>
                 </div>
                 <div class="shortcut-group">
@@ -164,6 +172,14 @@
                     <div class="shortcut-item">
                         <span class="shortcut-key">Ctrl + /</span>
                         <span class="shortcut-description">Show this help</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">?</span>
+                        <span class="shortcut-description">Show this help (alternative)</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">Esc</span>
+                        <span class="shortcut-description">Close help overlay</span>
                     </div>
                 </div>
             </div>
@@ -195,6 +211,12 @@
                     <button class="help-toggle" onclick="toggleKeyboardShortcuts()">
                         <div class="visually-hidden">Show keyboard shortcuts</div>
                         <span class="help-icon">?</span>
+                    </button>
+                </div>
+                <div class="help-toggle-container" id="dev-open-links-container" style="display: none;">
+                    <button class="help-toggle" onclick="openAllPageLinks()" title="Open all links on page">
+                        <div class="visually-hidden">Open all links</div>
+                        <span class="help-icon">🔗</span>
                     </button>
                 </div>
                 <div class="theme-toggle-container theme-toggle-header">

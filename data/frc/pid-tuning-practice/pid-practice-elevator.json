@@ -1,0 +1,119 @@
+{
+  "title": "PID Tuning Practice - Elevator",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "This lesson demonstrates PID tuning for an elevator mechanism. You'll learn the tuning method derived from SuperNURDS FRC 3255's 2025 build thread, combined with WPILib recommendations. The process involves tuning kG (gravity feedforward) first, then P (proportional gain).<br><br>kG is a type of feedforward, which is open-loop control that doesn't depend on the setpoint. kS is a constant voltage added to counteract friction. Setpoint units depend on your mechanism - in this example, meters are used."
+    },
+    {
+      "type": "text",
+      "title": "Video Tutorial",
+      "content": "Watch this video for a complete walkthrough of elevator PID tuning:"
+    },
+    {
+      "type": "text",
+      "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/Td7UHjy4DRY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+    },
+    {
+      "type": "text",
+      "title": "Prerequisites",
+      "content": "Before starting this lesson, you should have:<br><br>• Completed the Setup lesson<br>• Elevator mechanism selected in SmartDashboard<br>• Live tuning enabled in Elastic<br>• Position and velocity graphs set up in AdvantageScope<br>• Teleoperated mode enabled"
+    },
+    {
+      "type": "steps-box",
+      "title": "Tuning Steps",
+      "items": [
+        {
+          "text": "Set the setpoint to an unreasonable value (outside the mechanism's normal range). Setpoint units depend on your mechanism - for an elevator, this might be 2-3 meters."
+        },
+        {
+          "text": "Find the smallest kG value that holds position without moving up:",
+          "subitems": [
+            "Start with a low value (e.g., 0.1)",
+            "Watch the position graph (blue line) - it should stay flat",
+            "If it creeps up, the value is too high",
+            "Double the value until it starts moving",
+            "Use binary search between the last good value and the first value that moves",
+            "Example: 0.4 (good) → 0.8 (too high) → 0.6 (good) → 0.7 (too high) → 0.61 (final)"
+          ]
+        },
+        {
+          "text": "Verify the kG result:",
+          "subitems": [
+            "Position stays stable",
+            "Velocity stays stable",
+            "Small velocity changes may be due to simulation limitations"
+          ]
+        },
+        {
+          "text": "Set the setpoint to a valid position."
+        },
+        {
+          "text": "Start with a low P value (e.g., 0.1)."
+        },
+        {
+          "text": "Double P until the response looks good:",
+          "subitems": [
+            "Watch the position graph",
+            "Target: rectangular shape (sharp rise, flat hold, sharp fall)",
+            "Avoid slow curves or gradual taper"
+          ]
+        },
+        {
+          "text": "Watch the mechanism's motion."
+        },
+        {
+          "text": "Continue increasing P until the response is fast and clean."
+        },
+        {
+          "text": "Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6-51.2 worked well for the simulated elevator, but your actual mechanism may need different values."
+        }
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "Elevator Tuning Summary",
+      "subtitle": "The process:",
+      "items": [
+        "Set setpoint to unreasonable value (out of range) - units depend on your mechanism",
+        "Tune kG using binary search - find smallest value that holds position",
+        "Tune P by doubling until position graph is rectangular",
+        "Look for sharp up, sharp across, sharp down in position graph",
+        "Compare response times - should get faster as P increases"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Important Notes",
+      "content": "This elevator example was relatively simple and didn't require motion profiling. However, the arm mechanism (covered in the next lesson) is more complex and demonstrates:<br><br>• More finicky tuning requirements<br>• The need for motion profiling<br>• Trapezoidal motion profiles<br>• More realistic tuning scenarios<br><br>It's recommended to watch the arm tuning video as well to see a more complete example of the tuning process, including motion profiling."
+    },
+    {
+      "type": "text",
+      "title": "Applying to Physical Hardware",
+      "content": "The same principles apply when tuning with physical hardware using Phoenix Tuner or REV Hardware Client:<br><br>• <strong>Phoenix Tuner:</strong> Use the Config tab to adjust values. Look for \"rotor position\" and \"velocity\" for graphing.<br>• <strong>REV Hardware Client:</strong> Similar configuration options are available<br>• The tuning process is the same: tune kG first, then kP<br>• Watch for the same rectangular shape in position graphs<br><br>The tools may look different, but the techniques and principles remain the same."
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "PID Control",
+          "id": "frc-pid-control"
+        },
+        {
+          "label": "PID Tuning Practice - Setup",
+          "id": "pid-tuning-practice-setup"
+        },
+        {
+          "label": "PID Tuning Practice - Arm",
+          "id": "pid-tuning-practice-arm"
+        },
+        {
+          "label": "Elevator Example",
+          "id": "elevator-example"
+        }
+      ]
+    }
+  ]
+}

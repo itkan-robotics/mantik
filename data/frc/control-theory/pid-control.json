@@ -1,190 +1,102 @@
 {
-    "title": "PID Control for Elevators",
-    "sections": [
+  "title": "PID Control",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "PID (Proportional-Integral-Derivative) is a feedback loop that corrects errors. It drives a mechanism to a target setpoint (like an elevator height or shooter speed) by adjusting motor output."
+    },
+    {
+      "type": "text",
+      "title": "The Terms",
+      "content": "<strong>P (Proportional):</strong> Reacts to current error. \"I'm far away, go fast.\" Main driver of motion.<br><strong>I (Integral):</strong> Reacts to accumulated error. \"I've been close for a while, push harder.\" Fixes steady-state error (e.g., gravity).<br><strong>D (Derivative):</strong> Reacts to rate of change. \"I'm closing in fast, slow down.\" Dampens oscillation."
+    },
+    {
+      "type": "rules-box",
+      "title": "Implementation Methods",
+      "subtitle": "Where to run PID:",
+      "items": [
+        "<strong>On-RIO (WPILib PIDController):</strong> Runs in user code (20ms loop). Flexible, easy to debug.",
+        "<strong>On-Controller (Spark/Talon):</strong> Runs on motor controller (1ms loop). Faster, frees up RIO CPU."
+      ]
+    },
+    {
+      "type": "text",
+      "title": "WPILib PIDController",
+      "content": "Best for learning and complex logic."
+    },
+    {
+      "type": "code",
+      "title": "RIO PID Example",
+      "content": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport edu.wpi.first.math.controller.PIDController;\n\npublic class Elevator extends SubsystemBase {\n    // Create PID controller: kP, kI, kD\n    private PIDController pid = new PIDController(0.5, 0.0, 0.0);\n    \n    // Example: encoder and motor would be defined elsewhere\n    // private Encoder encoder;\n    // private Motor motor;\n    private double targetHeight = 0.0;\n    \n    // ... (other methods and fields)\n    \n    @Override\n    public void periodic() {\n        // Calculate PID output: current position vs target\n        double currentPosition = encoder.getPosition();\n        double output = pid.calculate(currentPosition, targetHeight);\n        \n        // Apply output to motor\n        motor.set(output);\n    }\n    \n    // ... (rest of class)"
+    },
+    {
+      "type": "text",
+      "title": "On-Controller PID",
+      "content": "Best for performance."
+    },
+    {
+      "type": "code-tabs",
+      "title": "Hardware PID",
+      "content": "Configuration:",
+      "tabs": [
         {
-            "type": "text",
-            "title": "Introduction to PID Control",
-            "content": "PID (Proportional-Integral-Derivative) control is a feedback control algorithm that enables precise positioning and velocity control of mechanisms like elevators. PID control automatically adjusts motor output based on the difference between the desired value (setpoint) and the actual value (measured by sensors), creating a closed-loop control system that corrects errors and handles disturbances.<br><br>For elevators, PID control is essential for:<br>- Moving to specific heights accurately<br>- Maintaining position against gravity<br>- Compensating for load changes<br>- Ensuring consistent performance throughout a match<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-pid.html' target='_blank'>WPILib: Introduction to PID</a>"
+          "label": "Talon FX",
+          "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.configs.Slot0Configs;\nimport com.ctre.phoenix6.controls.PositionVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\npublic class Example {\n    private TalonFX motor = new TalonFX(1);\n    \n    public void configurePID() {\n        // Configure PID gains for Slot 0\n        Slot0Configs config = new Slot0Configs();\n        config.kP = 0.1;  // Proportional gain\n        config.kI = 0.0;  // Integral gain\n        config.kD = 0.01; // Derivative gain\n        motor.getConfigurator().apply(config);\n    }\n    \n    public void setPosition(double targetRotations) {\n        // Use position control with configured PID\n        motor.setControl(new PositionVoltage(targetRotations));\n    }\n}"
         },
         {
-            "type": "text",
-            "title": "PID Components",
-            "content": "PID control combines three components that respond to different aspects of the error:<br><br><strong>Proportional (P):</strong> Responds to the current error. The output is proportional to how far the elevator is from the target height. Large error = large correction. However, P alone often results in overshoot and oscillation.<br><br><strong>Integral (I):</strong> Responds to accumulated error over time. If there's a persistent error (steady-state error where the elevator doesn't quite reach the target), I gradually increases output to eliminate it. I is useful for overcoming friction and constant disturbances, but too much I can cause oscillation and windup.<br><br><strong>Derivative (D):</strong> Responds to the rate of change of error. D predicts future error based on how quickly the error is changing. It acts as a dampening force, reducing overshoot and oscillation. D helps stabilize the system but can be sensitive to sensor noise.<br><br>These three components work together: <code>Output = (kP × error) + (kI × accumulated_error) + (kD × error_rate)</code>"
-        },
-        {
-            "type": "text",
-            "title": "How PID Works for Elevators",
-            "content": "PID control operates in a continuous feedback loop for elevator control:<br><br><strong>1. Setpoint:</strong> You specify the desired elevator height (e.g., 100 encoder units for high position, 0 for home).<br><br><strong>2. Process Variable:</strong> The encoder measures the current elevator position.<br><br><strong>3. Error Calculation:</strong> Error = Setpoint - Current Position (e.g., if target is 100 units and current is 80 units, error = 20 units).<br><br><strong>4. PID Calculation:</strong> The PID algorithm calculates three terms:<br>- P term = kP × error<br>- I term = kI × accumulated error<br>- D term = kD × rate of error change<br><br><strong>5. Output:</strong> The three terms are summed to produce the control output, which is applied to the motor to move the elevator.<br><br><strong>6. Repeat:</strong> The process repeats continuously (typically every 20ms for in-code PID, or 1ms for on-controller PID), creating a closed-loop control system that automatically corrects errors until the elevator reaches the target height."
-        },
-        {
-            "type": "rules-box",
-            "title": "PID Control Methods for Elevators",
-            "subtitle": "Two main approaches:",
-            "items": [
-                "<strong>WPILib PIDController (In-Code):</strong> Runs on the roboRIO, provides flexibility for custom logic, easier to debug and modify",
-                "<strong>On-Controller PID (SPARK MAX/Talon FX):</strong> Runs on motor controller hardware, faster response (1ms vs 20ms), offloads roboRIO processing",
-                "<strong>Hybrid Approach:</strong> Use on-controller PID for individual motor control, in-code PID for coordination or complex strategies",
-                "<strong>Recommendation:</strong> Start with WPILib PIDController for learning, use on-controller PID for production for better performance"
-            ]
-        },
-        {
-            "type": "text",
-            "title": "WPILib PIDController Overview",
-            "content": "WPILib's PIDController class provides a complete PID implementation that runs in your robot code on the roboRIO. It's ideal for elevators when you need flexibility, custom control logic, or easier debugging. While it runs at 20ms intervals (50Hz) compared to on-controller PID's 1ms rate, it's sufficient for most elevator applications.<br><br>Key features:<br>- Simple API for setting setpoints and calculating outputs<br>- Automatic error calculation and PID computation<br>- Tolerance checking to determine when elevator reaches target<br>- Support for continuous input (for rotating mechanisms)<br>- Output limiting and integral windup prevention<br><br>Learn more: <a href='https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html' target='_blank'>WPILib: PIDController</a>"
-        },
-        {
-            "type": "code",
-            "title": "Creating a PIDController",
-            "content": "import edu.wpi.first.math.controller.PIDController;\n\n// Create a PIDController with kP, kI, kD values\n// Tune these values for your mechanism\nprivate final PIDController pid = new PIDController(0.5, 0.0, 0.0);\n\n// Optional: Set tolerance for \"at setpoint\" checks\npid.setTolerance(0.01);  // 1 cm tolerance for elevator"
-        },
-        {
-            "type": "code",
-            "title": "Setting the Setpoint",
-            "content": "// Set the target position (setpoint)\ndouble targetHeight = 1.2;  // 1.2 meters\npid.setSetpoint(targetHeight);\n\n// Or set it inline when calculating:\ndouble output = pid.calculate(currentPosition, targetHeight);"
-        },
-        {
-            "type": "code",
-            "title": "Calculating PID Output",
-            "content": "// Calculate PID output based on current position\n// Pass current position (measured value) and setpoint\ndouble currentHeight = getHeightMeters();\ndouble targetHeight = 1.2;\ndouble output = pid.calculate(currentHeight, targetHeight);\n\n// Output is the voltage/motor power needed to reach the target\n// Positive output = move up, negative output = move down\nmotor.setVoltage(output);"
-        },
-        {
-            "type": "code",
-            "title": "Checking if at Setpoint",
-            "content": "// Check if elevator has reached target height\nif (pid.atSetpoint()) {\n    // Elevator is within tolerance of target\n    System.out.println(\"Elevator reached target!\");\n}\n\n// Get the position error (setpoint - current)\ndouble error = pid.getPositionError();\nSystem.out.println(\"Current error: \" + error + \" meters\");"
-        },
-        {
-            "type": "text",
-            "title": "Building an Elevator Subsystem with WPILib PIDController",
-            "content": "Now let's build an elevator subsystem that uses WPILib PIDController. We'll break this down into steps: creating the PIDController and feedforward, reading the current height, calculating control output in periodic(), and setting the target height."
-        },
-        {
-            "type": "code",
-            "title": "Step 1: Create PIDController and Feedforward",
-            "content": "import edu.wpi.first.math.controller.PIDController;\nimport edu.wpi.first.math.controller.SimpleMotorFeedforward;\n\n// Create PIDController with tuned values\nprivate final PIDController pid = new PIDController(0.5, 0.0, 0.0);\n\n// Optional: Create feedforward for gravity compensation\n// kS = static friction, kG = gravity, kV = velocity feedforward\nprivate final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(0.2, 0.0, 1.2);\n\n// Store target height\nprivate double targetHeightMeters = 0.0;\n\npublic Elevator() {\n    // Set tolerance for \"at setpoint\" checks\n    pid.setTolerance(0.01);  // 1 cm tolerance\n}"
-        },
-        {
-            "type": "code",
-            "title": "Step 2: Read Current Height from Encoder",
-            "content": "// Convert encoder rotations to elevator height\nprivate double getHeightMeters() {\n    double rotations = elevatorMotor.getPosition().getValueAsDouble();\n    return rotations * kMotorRotationsToMeters;\n}\n\n// Example constants\npublic static final double kMotorRotationsToMeters = 0.05;  // conversion factor"
-        },
-        {
-            "type": "code",
-            "title": "Step 3: Calculate PID Output in periodic()",
-            "content": "@Override\npublic void periodic() {\n    // Get current position\n    double currentHeight = getHeightMeters();\n    \n    // Calculate PID output (voltage)\n    double pidOutput = pid.calculate(currentHeight, targetHeightMeters);\n    \n    // Optional: Add feedforward for gravity compensation\n    double ffOutput = ff.calculate(0.0);  // Velocity = 0 for position control\n    \n    // Combine PID and feedforward\n    double voltage = pidOutput + ffOutput;\n    \n    // Clamp to safe voltage range\n    voltage = Math.max(-12, Math.min(12, voltage));\n    \n    // Apply to motor\n    elevatorMotor.setVoltage(voltage);\n}"
-        },
-        {
-            "type": "code",
-            "title": "Step 4: Set Target Height",
-            "content": "// Set target height with safety limits\npublic void setHeight(double meters) {\n    targetHeightMeters = Math.max(kElevatorMinHeight, \n                                  Math.min(kElevatorMaxHeight, meters));\n}\n\n// Check if at target\npublic boolean atSetpoint() {\n    return pid.atSetpoint();\n}\n\n// Get current target\npublic double getTarget() {\n    return targetHeightMeters;\n}"
-        },
-        {
-            "type": "text",
-            "title": "Step 5: Create Inline Command",
-            "content": "You can create an inline command factory method in your elevator subsystem to move to a specific height. Since the PIDController runs continuously in periodic(), the command just needs to set the target and check when the elevator reaches it. If you're unfamiliar with inline commands, see the <a href='#command-based-intro' target='_blank'>Command-Based Programming</a> lesson."
-        },
-        {
-            "type": "code",
-            "title": "Step 5: Create Inline Command Method",
-            "content": "import edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\n\n// Factory method to create command that moves elevator to specified height\npublic Command moveToHeight(double heightMeters) {\n    return Commands.runOnce(\n        () -> setHeight(heightMeters),\n        this\n    ).andThen(\n        Commands.run(() -> {}, this)\n            .until(() -> atSetpoint())\n    );\n}"
-        },
-        {
-            "type": "text",
-            "title": "Complete Example: Elevator Subsystem with Inline Commands",
-            "content": "Here's a complete example combining everything we've learned - a full elevator subsystem with WPILib PIDController and inline commands for moving to different heights."
-        },
-        {
-            "type": "code",
-            "title": "Complete Elevator Subsystem",
-            "content": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\nimport com.ctre.phoenix6.signals.NeutralModeValue;\nimport edu.wpi.first.math.controller.PIDController;\nimport edu.wpi.first.math.controller.SimpleMotorFeedforward;\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.Commands;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class Elevator extends SubsystemBase {\n    /** Hardware */\n    private final TalonFX elevatorMotor = new TalonFX(10);\n\n    /** PID + Feedforward */\n    private final PIDController pid = new PIDController(0.5, 0.0, 0.0);\n    private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(0.2, 0.0, 1.2);\n\n    /** State */\n    private double targetHeightMeters = 0.0;\n\n    /** Elevator constants */\n    public static final double kElevatorMinHeight = 0.0;\n    public static final double kElevatorMaxHeight = 1.5;\n    public static final double kMotorRotationsToMeters = 0.05;\n\n    public Elevator() {\n        /* Motor configuration */\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        config.CurrentLimits.SupplyCurrentLimit = 40;\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;\n        \n        // Soft limits\n        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;\n        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = \n            kElevatorMaxHeight / kMotorRotationsToMeters;\n        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = \n            kElevatorMinHeight / kMotorRotationsToMeters;\n        \n        elevatorMotor.getConfigurator().apply(config);\n        pid.setTolerance(0.01);  // 1 cm tolerance\n    }\n\n    /** Convert encoder rotations to elevator height in meters */\n    private double getHeightMeters() {\n        double rotations = elevatorMotor.getPosition().getValueAsDouble();\n        return rotations * kMotorRotationsToMeters;\n    }\n\n    /** Main control loop runs every robot cycle */\n    @Override\n    public void periodic() {\n        double currentHeight = getHeightMeters();\n        \n        // Calculate PID output\n        double pidOutput = pid.calculate(currentHeight, targetHeightMeters);\n        \n        // Add feedforward for gravity compensation\n        double ffOutput = ff.calculate(0.0);\n        \n        double voltage = pidOutput + ffOutput;\n        voltage = Math.max(-12, Math.min(12, voltage));\n        \n        elevatorMotor.setVoltage(voltage);\n    }\n\n    /** Set elevator target in meters */\n    public void setHeight(double meters) {\n        targetHeightMeters = Math.max(kElevatorMinHeight, \n                                     Math.min(kElevatorMaxHeight, meters));\n    }\n\n    /** Manual control for teleop override */\n    public void setManualPower(double percent) {\n        elevatorMotor.set(percent);\n    }\n\n    public boolean atSetpoint() {\n        return pid.atSetpoint();\n    }\n\n    public double getTarget() {\n        return targetHeightMeters;\n    }\n\n    public double getHeight() {\n        return getHeightMeters();\n    }\n\n    /** Factory method to create command that moves elevator to specified height */\n    public Command moveToHeight(double heightMeters) {\n        return Commands.runOnce(\n            () -> setHeight(heightMeters),\n            this\n        ).andThen(\n            Commands.run(() -> {}, this)\n                .until(() -> atSetpoint())\n        );\n    }\n}"
-        },
-        {
-            "type": "text",
-            "title": "On-Controller PID Overview",
-            "content": "On-controller PID runs directly on the motor controller hardware (SPARK MAX or Talon FX) rather than in robot code. The PID algorithm executes on the motor controller's processor, providing extremely fast response times (typically 1ms update rate) and offloading computation from the roboRIO.<br><br>On-controller PID is ideal for elevators because:<br>- Fast response time (1ms vs 20ms) for better control<br>- Consistent timing regardless of roboRIO load<br>- Offloads processing from roboRIO<br>- Supports advanced features like feedforward<br>- Multiple PID slots for different control scenarios<br><br>Both SPARK MAX and Talon FX support position control (move to specific encoder count) and velocity control (maintain specific speed), each with independently configurable PID parameters. For more information on how to configure and use on-controller PID, refer to the <a href='#motor-pid-control' target='_blank'>Motor PID Control</a> lesson in the hardware vendors section."
-        },
-        {
-            "type": "rules-box",
-            "title": "Parameter Effects on Elevator Behavior",
-            "subtitle": "Understanding how each parameter affects elevator control:",
-            "items": [
-                "<strong>kP Too High:</strong> Elevator oscillates, overshoots significantly, may become unstable",
-                "<strong>kP Too Low:</strong> Elevator responds slowly, may not reach target height, steady-state error persists",
-                "<strong>kI Too High:</strong> Elevator oscillates, integral windup occurs, overshoot increases",
-                "<strong>kI Too Low (or Zero):</strong> Steady-state error may persist if friction or gravity offset exists",
-                "<strong>kD Too High:</strong> Elevator responds slowly, sensitive to sensor noise, may become unstable",
-                "<strong>kD Too Low (or Zero):</strong> Oscillations and overshoot may occur, elevator takes longer to settle"
-            ]
-        },
-        {
-            "type": "code-tabs",
-            "title": "On-Controller PID Tuning Helper",
-            "content": "Helper code for tuning on-controller PID parameters from SmartDashboard:",
-            "tabs": [
-                {
-                    "label": "SPARK MAX",
-                    "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.SparkBase.ControlType;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkClosedLoopController;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.RelativeEncoder;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class ElevatorTuning extends SubsystemBase {\n    private final SparkMax m_elevatorMotor = new SparkMax(3, MotorType.kBrushless);\n    private final RelativeEncoder m_encoder = m_elevatorMotor.getEncoder();\n    private final SparkClosedLoopController m_closedLoopController = m_elevatorMotor.getClosedLoopController();\n    \n    public ElevatorTuning() {\n        // Put initial values on SmartDashboard\n        SmartDashboard.putNumber(\"Elevator kP\", 0.5);\n        SmartDashboard.putNumber(\"Elevator kI\", 0.0);\n        SmartDashboard.putNumber(\"Elevator kD\", 0.1);\n        SmartDashboard.putNumber(\"Elevator kFF\", 0.0);\n        SmartDashboard.putNumber(\"Elevator Setpoint\", 0.0);\n        \n        // Initial motor configuration\n        SparkMaxConfig config = new SparkMaxConfig();\n        m_elevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    @Override\n    public void periodic() {\n        // Read PID values from SmartDashboard\n        double kP = SmartDashboard.getNumber(\"Elevator kP\", 0.5);\n        double kI = SmartDashboard.getNumber(\"Elevator kI\", 0.0);\n        double kD = SmartDashboard.getNumber(\"Elevator kD\", 0.1);\n        double kFF = SmartDashboard.getNumber(\"Elevator kFF\", 0.0);\n        \n        // Update PID gains by reconfiguring (Slot 0)\n        SparkMaxConfig config = new SparkMaxConfig();\n        config.closedLoop.pidf(kP, kI, kD, kFF, ClosedLoopSlot.kSlot0);\n        config.closedLoop.outputRange(-1.0, 1.0, ClosedLoopSlot.kSlot0);\n        m_elevatorMotor.configure(config,\n        ResetMode.kResetSafeParameters,\n        PersistMode.kPersistParameters);\n        \n        // Get setpoint and set reference\n        double setpoint = SmartDashboard.getNumber(\"Elevator Setpoint\", 0.0);\n        m_closedLoopController.setReference(setpoint, ControlType.kPosition, ClosedLoopSlot.kSlot0);\n        \n        // Display status\n        SmartDashboard.putNumber(\"Elevator Height\", m_encoder.getPosition());\n        SmartDashboard.putNumber(\"Elevator Velocity\", m_encoder.getVelocity());\n        SmartDashboard.putNumber(\"Elevator Output\", m_elevatorMotor.getAppliedOutput());\n        \n        double error = setpoint - m_encoder.getPosition();\n        SmartDashboard.putNumber(\"Elevator Error\", error);\n    }\n}"
-                },
-                {
-                    "label": "Talon FX",
-                    "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.controls.PositionVoltage;\nimport com.ctre.phoenix6.configs.Slot0Configs;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\npublic class ElevatorTuning extends SubsystemBase {\n    private final TalonFX m_elevatorMotor = new TalonFX(3);\n    private final PositionVoltage m_positionRequest = new PositionVoltage(0);\n    \n    public ElevatorTuning() {\n        // Put initial values on SmartDashboard\n        SmartDashboard.putNumber(\"Elevator kP\", 0.5);\n        SmartDashboard.putNumber(\"Elevator kI\", 0.0);\n        SmartDashboard.putNumber(\"Elevator kD\", 0.1);\n        SmartDashboard.putNumber(\"Elevator kV\", 0.0);\n        SmartDashboard.putNumber(\"Elevator Setpoint\", 0.0);\n    }\n    \n    @Override\n    public void periodic() {\n        // Read PID values from SmartDashboard\n        double kP = SmartDashboard.getNumber(\"Elevator kP\", 0.5);\n        double kI = SmartDashboard.getNumber(\"Elevator kI\", 0.0);\n        double kD = SmartDashboard.getNumber(\"Elevator kD\", 0.1);\n        double kV = SmartDashboard.getNumber(\"Elevator kV\", 0.0);\n        \n        // Update PID gains (Slot0)\n        Slot0Configs slotConfig = new Slot0Configs();\n        slotConfig.kP = kP;\n        slotConfig.kI = kI;\n        slotConfig.kD = kD;\n        slotConfig.kV = kV;\n        m_elevatorMotor.getConfigurator().apply(slotConfig);\n        \n        // Get setpoint and set control\n        double setpoint = SmartDashboard.getNumber(\"Elevator Setpoint\", 0.0);\n        m_elevatorMotor.setControl(m_positionRequest.withPosition(setpoint).withSlot(0));\n        \n        // Display status\n        SmartDashboard.putNumber(\"Elevator Height\", m_elevatorMotor.getPosition().getValueAsDouble());\n        SmartDashboard.putNumber(\"Elevator Velocity\", m_elevatorMotor.getVelocity().getValueAsDouble());\n        SmartDashboard.putNumber(\"Elevator Output\", m_elevatorMotor.getDutyCycle().getValueAsDouble());\n        \n        double error = setpoint - m_elevatorMotor.getPosition().getValueAsDouble();\n        SmartDashboard.putNumber(\"Elevator Error\", error);\n    }\n}"
-                }
-            ]
-        },
-        {
-            "type": "rules-box",
-            "title": "Common Tuning Issues and Solutions",
-            "subtitle": "Troubleshooting elevator PID problems:",
-            "items": [
-                "<strong>Oscillation:</strong> Reduce kP, increase kD, or reduce kI",
-                "<strong>Overshoot:</strong> Reduce kP or increase kD to add damping",
-                "<strong>Slow Response:</strong> Increase kP, but watch for oscillation",
-                "<strong>Steady-State Error:</strong> Add small kI value, increase gradually",
-                "<strong>Windup:</strong> Reduce kI, add integral limits or reset logic",
-                "<strong>Noise Sensitivity:</strong> Reduce kD, add filtering to encoder readings",
-                "<strong>Inconsistent Behavior:</strong> Check for mechanical issues, verify encoder readings",
-                "<strong>Doesn't Hold Position:</strong> Ensure brake mode is enabled, check for excessive load"
-            ]
-        },
-        {
-            "type": "rules-box",
-            "title": "Best Practices for Elevator PID Control",
-            "items": [
-                "<strong>Configuration:</strong> Always use brake mode (not coast) to hold position when stopped",
-                "<strong>Configuration:</strong> Configure soft limits to prevent over-extension and enable voltage compensation",
-                "<strong>Configuration:</strong> Set appropriate current limits and configure encoder conversion factors correctly",
-                "<strong>Control:</strong> Always call PID calculate() in periodic() for in-code PID",
-                "<strong>Control:</strong> Set appropriate tolerance for \"at setpoint\" checks and use integral limits to prevent windup",
-                "<strong>Control:</strong> Monitor elevator position, velocity, and output during tuning",
-                "<strong>Tuning:</strong> Start with P only, then add D, then I if needed",
-                "<strong>Tuning:</strong> Test with multiple setpoints (low, mid, high) and different loads",
-                "<strong>Tuning:</strong> Use SmartDashboard/Shuffleboard for real-time tuning and document final PID values"
-            ]
-        },
-        {
-            "type": "link-grid",
-            "title": "Related Topics and Documentation",
-            "links": [
-                {
-                    "label": "WPILib PIDController",
-                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html"
-                },
-                {
-                    "label": "WPILib Advanced Controls",
-                    "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/index.html"
-                },
-                {
-                    "label": "Motor Controller Configuration",
-                    "id": "motor-controller-configuration"
-                },
-                {
-                    "label": "Feedforward Control",
-                    "id": "feedforward-control"
-                },
-                {
-                    "label": "Motion Profiling",
-                    "id": "motion-profiling-basics"
-                }
-            ]
+          "label": "SPARK MAX",
+          "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\n\npublic class Example {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    private SparkClosedLoopController controller = motor.getClosedLoopController();\n    \n    public void configurePID() {\n        // Configure PID gains\n        SparkMaxConfig config = new SparkMaxConfig();\n        config.closedLoop.p(0.1).i(0.0).d(0.01);\n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    public void setPosition(double target) {\n        // Use position control with configured PID\n        controller.setReference(target, ControlType.kPosition);\n    }\n}"
         }
-    ]
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Tuning Process",
+      "content": "Tune feedforward first, then PID. Use Phoenix Tuner or similar tools for quick constant changes. Log desired vs actual position using a vendor-specific tool (Phoenix Tuner, REV Hardware Client) or an external tool (AdvantageScope, Elastic) to see system behavior. (Credits to <a href='https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116'>SuperNURDS FRC 3255</a> for the original method)"
+    },
+    {
+      "type": "rules-box",
+      "title": "Feedforward Tuning",
+      "subtitle": "Steps:",
+      "items": [
+        "Set all PID constants to 0.",
+        "Command the mechanism to a non-zero position.",
+        "Manually raise to that position and release.",
+        "Observe if it holds, raises, or falls.",
+        "Adjust kG (gravity feedforward) and repeat until it holds position."
+      ]
+    },
+    {
+      "type": "rules-box",
+      "title": "PID Tuning",
+      "subtitle": "Steps:",
+      "items": [
+        "Log desired position and actual position.",
+        "Slowly increase kP until you see overshoot, then set kP slightly below that value.",
+        "(For a riskier strategy, double kP until you see overshoot, then set kP to the midpoint between the old and current kP values until oscillation mostly disappears)",
+        "If steady-state error appears (doesn't reach target), increase kS (static feedforward) slightly.",
+        "This makes kP temporarily too large (overshoot), but your final kP will be close.",
+        "Repeat adjusting kS and kP until properly tuned."
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Resources",
+      "links": [
+        {
+          "label": "Trapezoidal Motion Profiling",
+          "id": "trapezoidal-motion-profiling"
+        },
+        {
+          "label": "WPILib PID",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html"
+        },
+        {
+          "label": "Mechanism PID Tuning Practice",
+          "url": "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tutorial-intro.html"
+        }
+      ]
+    }
+  ]
 }

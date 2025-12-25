@@ -56,15 +56,15 @@
     },
     {
       "type": "link-grid",
-      "title": "Related Topics",
+      "title": "Resources",
       "links": [
         {
           "label": "Simulation Basics",
           "id": "simulation-basics"
         },
         {
-          "label": "Code Organization",
-          "id": "code-organization"
+          "label": "Command-Based Code Organization",
+          "id": "frc-code-organization"
         },
         {
           "label": "JUnit 5 Documentation",

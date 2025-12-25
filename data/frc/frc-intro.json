@@ -4,130 +4,40 @@
     {
       "type": "text",
       "title": "Welcome to FRC Programming",
-      "content": "Welcome to the comprehensive FRC (FIRST Robotics Competition) programming curriculum! This curriculum is designed to take you from complete beginner to advanced FRC programmer, covering WPILib framework, command-based programming, control theory, and professional robotics development practices."
+      "content": "Welcome to the FRC programming curriculum. This guide takes you from a complete beginner to an advanced programmer, covering the WPILib framework, Command-Based programming, control theory, and professional development practices."
     },
     {
       "type": "rules-box",
       "title": "Important Disclaimer",
       "subtitle": "Official Documentation",
       "items": [
-        "This curriculum is designed as a learning resource and guide",
-        "For official documentation, specifications, and the most up-to-date information, please refer to the official FRC and WPILib documentation",
-        "If you have questions about FRC rules, hardware specifications, or official APIs, consult the official FIRST Robotics Competition resources",
-        "Official documentation should always be your primary reference for competition rules and technical specifications"
-      ]
-    },
-    {
-      "type": "rules-box",
-      "title": "What is FRC?",
-      "subtitle": "FIRST Robotics Competition is:",
-      "items": [
-        "A robotics competition for high school students (grades 9-12)",
-        "A platform for learning professional engineering and programming practices",
-        "An opportunity to work with industrial-grade robotics hardware and software",
-        "A chance to develop advanced problem-solving and teamwork skills",
-        "A pathway to careers in engineering, programming, and STEM fields",
-        "A competition that combines strategy, design, and programming excellence"
+        "This curriculum is a learning guide, not a rulebook.",
+        "Always refer to official FRC and WPILib documentation for the most up-to-date rules and APIs.",
+        "Safety first: Always follow safety procedures when working with physical robots."
       ]
     },
     {
       "type": "text",
       "title": "Curriculum Structure",
-      "content": "This FRC curriculum is organized into comprehensive learning modules, each building essential skills for competitive robotics:"
-    },
-    {
-      "type": "list",
-      "title": "Learning Modules",
-      "items": [
-        "<strong>Environment Setup:</strong> Master WPILib installation, project creation, VS Code setup, Gradle build system, Driver Station configuration, and SmartDashboard usage. Essential foundation for all FRC development.",
-        "<strong>Hardware Vendors:</strong> Learn to work with CTRE (Talon FX, CANcoder) and REV (Spark MAX, Spark) motor controllers, sensors, and pneumatics. Understand configuration, PID control, and advanced features.",
-        "<strong>Command-Based Programming:</strong> Master the command-based framework with subsystems, commands, command groups, triggers, and the robot container pattern. Professional architecture for complex robots.",
-        "<strong>Control Theory:</strong> Deep dive into PID control, motion profiling (trapezoidal and exponential), feedforward control, and advanced control techniques. Essential for precise robot movement.",
-        "<strong>Pose Estimation:</strong> Learn odometry basics, swerve odometry, vision-based pose estimation, AprilTag integration, sensor fusion, and tuning techniques for accurate robot localization.",
-        "<strong>External Tools:</strong> Master PathPlanner for visual autonomous path planning, YASS (Yet Another Software Suite) including YAMS for mechanism development, AdvantageScope for data logging and analysis, and AdvantageKit for advanced robot architecture.",
-        "<strong>Advanced Topics:</strong> Explore simulation basics, unit testing strategies, and professional code organization patterns for maintainable and scalable FRC development."
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Learning Path Overview",
-      "content": "Follow this recommended learning path to build your FRC programming skills systematically:"
-    },
-    {
-      "type": "list",
-      "items": [
-        "<strong>Start with Environment Setup:</strong> Begin with WPILib setup and project creation. Learn VS Code configuration, understand the Gradle build system, and set up Driver Station and SmartDashboard.",
-        "<strong>Master Hardware Integration:</strong> Learn to configure and control motors using CTRE and REV hardware. Understand encoders, sensors, PID control, and current limiting.",
-        "<strong>Learn Command-Based Architecture:</strong> Understand subsystems, commands, and the command scheduler. Build well-structured, maintainable robot code.",
-        "<strong>Implement Control Systems:</strong> Master PID control, motion profiling, and feedforward control. Create smooth, precise robot movements.",
-        "<strong>Add Pose Estimation:</strong> Implement odometry and vision-based localization. Enable sophisticated autonomous behaviors.",
-        "<strong>Explore External Tools:</strong> Use PathPlanner for visual path planning, YASS for mechanism development, AdvantageScope for data analysis, and AdvantageKit for advanced architecture.",
-        "<strong>Master Advanced Topics:</strong> Learn simulation for testing, unit testing strategies, and professional code organization patterns."
-      ]
-    },
-    {
-      "type": "text",
-      "title": "FRC Development Tools",
-      "content": "Essential tools for FRC programming:"
-    },
-    {
-      "type": "list",
-      "items": [
-        "<strong>WPILib:</strong> Official FRC programming framework with libraries, tools, and utilities",
-        "<strong>VS Code:</strong> Recommended IDE with WPILib extensions for FRC development",
-        "<strong>Gradle:</strong> Build system used by WPILib projects for dependency management",
-        "<strong>Driver Station:</strong> Software for controlling and monitoring robots during competition",
-        "<strong>SmartDashboard:</strong> Real-time robot data visualization and control interface",
-        "<strong>PathPlanner:</strong> Visual path planning tool for autonomous routines",
-        "<strong>AdvantageScope:</strong> Data logging and analysis tool for robot performance",
-        "<strong>AdvantageKit:</strong> Advanced framework for professional FRC development"
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Best Practices",
-      "content": "Follow these practices for professional FRC development:"
-    },
-    {
-      "type": "list",
-      "items": [
-        "<strong>Use Command-Based Architecture:</strong> Organize code with subsystems and commands for maintainability",
-        "<strong>Version Control:</strong> Use Git to track changes and collaborate with your team",
-        "<strong>Test Thoroughly:</strong> Test code in simulation and on practice robots before competition",
-        "<strong>Document Code:</strong> Write clear comments and documentation for team members",
-        "<strong>Follow WPILib Conventions:</strong> Use standard naming and structure patterns",
-        "<strong>Log Data:</strong> Use AdvantageScope to analyze robot performance and debug issues",
-        "<strong>Plan Autonomous:</strong> Design autonomous routines with PathPlanner before coding",
-        "<strong>Code Reviews:</strong> Have team members review code for quality and correctness"
-      ]
-    },
-    {
-      "type": "text",
-      "title": "Getting Started",
-      "content": "Ready to begin your FRC programming journey? Start with the <strong>WPILib Setup</strong> lesson in the Environment Setup section to learn the fundamentals of FRC development."
+      "content": "The curriculum is divided into tiered modules to guide your learning journey:<br><br><strong>1. Environment Setup:</strong> Installing tools (VS Code, WPILib, Driver Station) and understanding the project structure.<br><strong>2. Basics:</strong> Motor control, reading sensors, and handling joystick inputs.<br><strong>3. Command-Based Programming:</strong> The industry-standard architecture for FRC robots, separating hardware from logic.<br><strong>4. Control Theory:</strong> PID control, feedforward, and motion profiling for smooth, accurate movement.<br><strong>5. Pose Estimation:</strong> Tracking your robot's position on the field using odometry and vision.<br><strong>6. Advanced Topics:</strong> Simulation, unit testing, and path planning."
     },
     {
       "type": "link-grid",
-      "title": "Quick Navigation",
+      "title": "Resources",
       "links": [
         {
-          "label": "WPILib Setup",
-          "id": "wpilib-setup"
+          "label": "Environment Setup",
+          "id": "environment-setup"
         },
         {
-          "label": "Project Creation",
-          "id": "project-creation"
+          "label": "Intro to Motors",
+          "id": "intro-to-motors"
         },
         {
-          "label": "Command-Based Intro",
-          "id": "command-based-intro"
-        },
-        {
-          "label": "PID Control Intro",
-          "id": "pid-control"
+          "label": "Command-Based Guide",
+          "id": "intro-to-command-based"
         }
       ]
     }
   ]
 }
-

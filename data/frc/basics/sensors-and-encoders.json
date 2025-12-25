@@ -1,0 +1,123 @@
+{
+    "title": "Sensors and Encoders",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "Sensors provide feedback about your robot's state. This guide covers essential sensors from REV Robotics and CTRE Electronics."
+        },
+        {
+            "type": "rules-box",
+            "title": "REV Sensors",
+            "subtitle": "Common REV sensors used in FRC:",
+            "items": [
+                "<strong>NEO Built-in Encoder:</strong> Internal encoder on NEO motors (42 counts/rev). Useful for velocity and basic position control.",
+                "<strong>Color Sensor V3:</strong> Detects color (RGB) and proximity. Connects via I2C (Onboard or MXP).",
+                "<strong>2m Distance Sensor:</strong> Time-of-Flight sensor measuring distances up to 2 meters with millimeter resolution.",
+                "<strong>Through Bore Encoder:</strong> Rotary sensor measuring both relative and absolute positions via ABI quadrature output.",
+                "<strong>Touch Sensor:</strong> Digital button input or mechanical limit switch."
+            ]
+        },
+        {
+            "type": "code-tabs",
+            "title": "REV Sensor Examples",
+            "content": "Common REV sensor usage:",
+            "tabs": [
+                {
+                    "label": "NEO Encoder",
+                    "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.RelativeEncoder;\nimport com.revrobotics.spark.config.SparkMaxConfig;\n\npublic class Drivetrain extends SubsystemBase {\n    private SparkMax sparkMax = new SparkMax(1, MotorType.kBrushless);\n    private RelativeEncoder encoder = sparkMax.getEncoder();\n    \n    public void configureEncoder() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Set conversion factor: 0.05 meters per rotation\n        // Adjust based on your wheel diameter and gear ratio\n        config.encoder.positionConversionFactor(0.05);\n        config.encoder.velocityConversionFactor(0.05);\n        sparkMax.configure(config, ...);\n    }\n    \n    public void readEncoder() {\n        // Get position in rotations (or meters if conversion factor set)\n        double pos = encoder.getPosition();\n        // Get velocity in RPM (or m/s if conversion factor set)\n        double vel = encoder.getVelocity();\n    }\n}"
+                },
+                {
+                    "label": "Color Sensor V3",
+                    "code": "package frc.robot.subsystems;\n\nimport com.revrobotics.ColorSensorV3;\nimport edu.wpi.first.wpilibj.I2C;\nimport edu.wpi.first.wpilibj.util.Color;\n\npublic class Intake extends SubsystemBase {\n    // Create color sensor on onboard I2C port\n    // Alternative: I2C.Port.kMXP for MXP port\n    private ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);\n    \n    /**\n     * Get detected color from sensor\n     * @return Color object with RGB values\n     */\n    public Color getDetectedColor() {\n        return colorSensor.getColor();\n    }\n    \n    /**\n     * Get proximity reading\n     * @return Proximity value (0-2047, higher = closer)\n     */\n    public int getProximity() {\n        return colorSensor.getProximity();\n    }\n}"
+                }
+            ]
+        },
+        {
+            "type": "rules-box",
+            "title": "CTRE Sensors",
+            "subtitle": "Common CTRE sensors used in FRC:",
+            "items": [
+                "<strong>CANcoder:</strong> Absolute magnetic encoder. Retains position after power cycles. Essential for Swerve modules.",
+                "<strong>Pigeon 2:</strong> IMU/Gyroscope. Provides Heading (Yaw), Pitch, and Roll. Used for Field-Centric driving.",
+                "<strong>CANrange:</strong> Time-of-Flight distance sensor for obstacle detection and autonomous navigation.",
+                "<strong>SRX Mag Encoder:</strong> Rotary position and velocity sensor for precise motion control."
+            ]
+        },
+        {
+            "type": "code-tabs",
+            "title": "CTRE Sensor Examples",
+            "content": "Common CTRE sensor usage:",
+            "tabs": [
+                {
+                    "label": "CANcoder",
+                    "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.CANcoder;\nimport com.ctre.phoenix6.configs.CANcoderConfiguration;\n\npublic class SwerveModule extends SubsystemBase {\n    // Create CANcoder on CAN ID 10\n    private CANcoder encoder = new CANcoder(10);\n    \n    public SwerveModule() {\n        // Configure magnet offset (calibrate for your module)\n        CANcoderConfiguration config = new CANcoderConfiguration();\n        // Offset in rotations to align zero position\n        config.MagnetSensor.MagnetOffset = 0.25;\n        encoder.getConfigurator().apply(config);\n    }\n    \n    /**\n     * Get absolute position from encoder\n     * @return Position in rotations (0.0 to 1.0)\n     */\n    public double getPosition() {\n        return encoder.getAbsolutePosition().getValueAsDouble();\n    }\n}"
+                },
+                {
+                    "label": "Pigeon 2",
+                    "code": "package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.Pigeon2;\nimport edu.wpi.first.math.geometry.Rotation2d;\n\npublic class Drivetrain extends SubsystemBase {\n    // Create Pigeon 2 on CAN ID 0\n    private Pigeon2 gyro = new Pigeon2(0);\n    \n    /**\n     * Get robot heading (yaw angle)\n     * @return Yaw angle in degrees\n     */\n    public double getYaw() {\n        return gyro.getYaw().getValueAsDouble();\n    }\n    \n    /**\n     * Get robot heading as Rotation2d\n     * @return Rotation2d object\n     */\n    public Rotation2d getRotation2d() {\n        return Rotation2d.fromDegrees(getYaw());\n    }\n    \n    /**\n     * Reset yaw to zero\n     */\n    public void resetYaw() {\n        gyro.setYaw(0);\n    }\n}"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Product Documentation",
+            "links": [
+                {
+                    "label": "REV ION Documentation",
+                    "url": "https://docs.revrobotics.com/docs/ion"
+                },
+                {
+                    "label": "REV Color Sensor V3",
+                    "url": "https://docs.revrobotics.com/ion-control/ionsensors/color-sensor-v3"
+                },
+                {
+                    "label": "REV 2m Distance Sensor",
+                    "url": "https://docs.revrobotics.com/ion-control/ionsensors/2m-distance-sensor"
+                },
+                {
+                    "label": "REV Through Bore Encoder",
+                    "url": "https://docs.revrobotics.com/ion-control/ionsensors/through-bore-encoder"
+                },
+                {
+                    "label": "CTRE Phoenix6 Documentation",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/"
+                },
+                {
+                    "label": "CTRE CANcoder",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/hardware-reference/cancoder/index.html"
+                },
+                {
+                    "label": "CTRE Pigeon 2",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/hardware-reference/pigeon2/index.html"
+                },
+                {
+                    "label": "CTRE CANrange",
+                    "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/hardware-reference/canrange/index.html"
+                }
+            ]
+        },
+        {
+            "type": "link-grid",
+            "title": "Resources",
+            "links": [
+                {
+                    "label": "REV Setup",
+                    "id": "rev-hardware-setup"
+                },
+                {
+                    "label": "CTRE Setup",
+                    "id": "ctre-hardware-setup"
+                },
+                {
+                    "label": "Motor PID",
+                    "id": "motor-pid-control"
+                },
+                {
+                    "label": "Pose Estimation",
+                    "id": "pose-estimation-intro"
+                }
+            ]
+        }
+    ]
+}

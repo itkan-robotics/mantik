@@ -364,11 +364,16 @@ body {
     left: 0;
     right: 0;
     box-shadow: none; /* SWYFT: no shadows */
-    transition: all ease 0.3s; /* SWYFT anchor-transition */
+    transition: transform 0.3s ease; /* SWYFT anchor-transition */
+    transform: translateY(0); /* Default: visible */
+  }
+  
+  .mobile-header:not(.visible) {
+    transform: translateY(-100%);  /* Hide when scrolling down */
   }
   
   .mobile-header.visible {
-    transform: translateY(0);  /* Slide it back into view */
+    transform: translateY(0);  /* Show when scrolling up */
   }
   
   
@@ -634,7 +639,7 @@ body {
   .sidebar-drawer {
     position: fixed;
     top: 0;
-    left: calc(-1 * var(--sidebar-width, 60em));
+    left: calc(-1 * var(--sidebar-width, 15em));
     width: var(--sidebar-width, 15em);
     height: 100vh;
     background-color: var(--color-sidebar-background);
@@ -961,12 +966,6 @@ body {
   
   .tab-content.active {
     display: block;
-    animation: fadeIn 0.5s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
   }
   
   /* Typography */
@@ -1696,9 +1695,9 @@ a:hover {
   }
   
   /* Shift Main Content when checkbox is checked (sidebar visible)*/
-  #\__navigation:checked ~ .page .main {
-    max-width: calc(100% - var(--sidebar-width, 600px));
-    margin-left: var(--sidebar-width, 600px);
+  #__navigation:checked ~ .page .main {
+    max-width: calc(100% - var(--sidebar-width, 15em));
+    margin-left: var(--sidebar-width, 15em);
     transition: margin-left 0.3s ease-in-out, max-width 0.3s ease-in-out;
   }
   
@@ -2109,9 +2108,9 @@ a:hover {
       /* SWYFT: no decorative borders */
   }
   
-  /* Add smooth scrolling to sidebar */
+  /* Sidebar scroll */
   .sidebar-scroll {
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
   }
   
   /* Responsive adjustments for mobile */
@@ -2815,7 +2814,7 @@ a:hover {
 
 /* Page Navigation Buttons */
 .page-navigation {
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: stretch;
     margin-top: 3rem;
@@ -2823,6 +2822,8 @@ a:hover {
     padding-top: 2rem;
     border-top: 1px solid var(--color-background-border);
     gap: 1rem;
+    width: 100%;
+    min-height: 50px; /* Ensure it has height even if empty */
 }
 
 .nav-button {
