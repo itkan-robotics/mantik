@@ -187,9 +187,12 @@ class NavigationManager {
             const lastRenderedSection = navigationContainer.dataset.renderedSection;
             
             // Only clear and re-render if we're switching sections or if container is empty
+            // Force re-render if section changed to ensure sidebar always updates
             if (!containerHasContent || lastRenderedSection !== appState.currentSection) {
                 console.log(`[Debug] Rendering navigation for section ${appState.currentSection} (was: ${lastRenderedSection || 'none'})`);
                 navigationContainer.innerHTML = '';
+                // Clear the dataset to ensure fresh render
+                delete navigationContainer.dataset.renderedSection;
                 await this.renderSectionNavigation(navigationContainer);
                 navigationContainer.dataset.renderedSection = appState.currentSection;
             } else {
@@ -951,6 +954,10 @@ class NavigationManager {
             await this.contentManager.loadSectionContent(sectionId);
             const updatedSection = appState.config.sections[sectionId];
             
+            // Update current section state early to ensure sidebar updates correctly
+            // This must be done before generateNavigation() is called
+            appState.setCurrentSection(sectionId);
+            
             // Update page title for section navigation
             this.updateSectionTitle(sectionId, updatedSection);
             
@@ -967,8 +974,6 @@ class NavigationManager {
             // If section has a sections array (homepage-style), render it directly
             // But still generate navigation for the sidebar (for sections with groups)
             if (updatedSection.sections && Array.isArray(updatedSection.sections)) {
-                // Update current section before generating navigation
-                appState.setCurrentSection(sectionId);
                 // Generate navigation for sidebar (will render groups if they exist)
                 await this.generateNavigation();
                 // Update header navigation to show correct active state
@@ -1058,6 +1063,7 @@ class NavigationManager {
             // Fix: If section has no intro/groups/children, it's likely a standalone page (like homepage)
             if (!updatedSection.intro && !firstItem) {
                 // Generate navigation (will disable sidebar for homepage)
+                // Section state already updated above, so navigation will render correctly
                 await this.generateNavigation();
                 // Update header navigation to show correct active state
                 this.updateHeaderNavigation(sectionId);

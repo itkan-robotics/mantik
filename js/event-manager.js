@@ -40,12 +40,26 @@ class EventManager {
         // Mobile sidebar toggle
         const navToggle = document.getElementById('__navigation');
         if (navToggle) {
-            navToggle.addEventListener('change', (e) => {
+            navToggle.addEventListener('change', async (e) => {
                 console.log(`[Debug] Sidebar toggle changed. Checked: ${e.target.checked}`);
                 if (e.target.checked) {
                     // Sidebar is now visible - ensure it's shown
                     console.log('[Debug] Showing sidebar...');
                     const sidebarDrawer = document.querySelector('.sidebar-drawer');
+                    const sidebarTree = sidebarDrawer?.querySelector('.sidebar-tree');
+                    
+                    // Ensure navigation is generated if content is missing
+                    if (sidebarTree && appState.currentSection !== 'homepage') {
+                        const hasContent = sidebarTree.children.length > 0;
+                        const lastRenderedSection = sidebarTree.dataset.renderedSection;
+                        const needsRegeneration = !hasContent || lastRenderedSection !== appState.currentSection;
+                        
+                        if (needsRegeneration) {
+                            console.log(`[Debug] Sidebar content missing or outdated. Regenerating navigation for section ${appState.currentSection}`);
+                            await this.navigationManager.generateNavigation();
+                        }
+                    }
+                    
                     if (sidebarDrawer) {
                         sidebarDrawer.style.display = '';
                         sidebarDrawer.style.visibility = 'visible';
@@ -54,7 +68,7 @@ class EventManager {
                         // Ensure child elements are also visible
                         const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
                         const sidebarScroll = sidebarDrawer.querySelector('.sidebar-scroll');
-                        const sidebarTree = sidebarDrawer.querySelector('.sidebar-tree');
+                        const sidebarTreeElement = sidebarDrawer.querySelector('.sidebar-tree');
                         
                         if (sidebarContainer) {
                             sidebarContainer.style.visibility = 'visible';
@@ -64,10 +78,10 @@ class EventManager {
                             sidebarScroll.style.visibility = 'visible';
                             sidebarScroll.style.opacity = '1';
                         }
-                        if (sidebarTree) {
-                            sidebarTree.style.visibility = 'visible';
-                            sidebarTree.style.opacity = '1';
-                            console.log(`[Debug] Sidebar tree visible. Has content: ${sidebarTree.innerHTML.length > 0}`);
+                        if (sidebarTreeElement) {
+                            sidebarTreeElement.style.visibility = 'visible';
+                            sidebarTreeElement.style.opacity = '1';
+                            console.log(`[Debug] Sidebar tree visible. Has content: ${sidebarTreeElement.innerHTML.length > 0}, children: ${sidebarTreeElement.children.length}`);
                         }
                     }
                     // Ensure smooth transition
