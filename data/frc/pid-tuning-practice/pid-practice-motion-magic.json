@@ -1,0 +1,149 @@
+{
+    "title": "PID Tuning Practice - Motion Magic®",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Overview",
+            "content": "This lesson demonstrates Motion Magic® tuning using Phoenix Tuner. Motion Magic® is CTRE's motion profiling control mode that provides smooth, trapezoidal motion profiles. You'll learn how to tune kG (gravity feedforward), kP (proportional gain), and Motion Magic® constants (cruise velocity, acceleration, and jerk) to achieve precise, controlled motion."
+        },
+        {
+            "type": "text",
+            "title": "Video Tutorial",
+            "content": "Watch this video for a complete walkthrough of Motion Magic® tuning in Phoenix Tuner:"
+        },
+        {
+            "type": "text",
+            "content": "<div style='width: 100%; max-width: 900px; margin: 20px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;'><iframe style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;' src='https://www.youtube.com/embed/edoeF-Z5IYA' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe></div>"
+        },
+        {
+            "type": "text",
+            "title": "Prerequisites",
+            "content": "Before starting this lesson, ensure the following are configured:<br><br>• Supply and stator current limits are set<br>• Positive direction corresponds to upward movement<br>• Sensor-to-mechanism ratio is correct<br>• Phoenix Tuner installed and connected to your motor controller"
+        },
+        {
+            "type": "steps-box",
+            "title": "Tuning Steps",
+            "items": [
+                {
+                    "text": "Enable the robot in Driver Station, then open Phoenix Tuner and navigate to the Config tab."
+                },
+                {
+                    "text": "Initialize all PID gains to 0 in the Config tab (if needed), then click the Download button on the motor controller to flash the configuration."
+                },
+                {
+                    "text": "Set the control mode to VoltageOut and enable the motor with 0 voltage initially."
+                },
+                {
+                    "text": "Set up plotting in Phoenix Tuner: plot position and velocity, then press Play to start monitoring the data."
+                },
+                {
+                    "text": "Set the gravity type appropriate for your mechanism in Phoenix Tuner."
+                },
+                {
+                    "text": "Find the highest voltage that doesn't make the motor move (this will be your kG value):",
+                    "subitems": [
+                        "Start at 0.1 volts and keep doubling the voltage",
+                        "Watch the position and velocity plots",
+                        "Use zoom in/out to see small variations in movement",
+                        "The highest voltage before any movement occurs is your kG value"
+                    ]
+                },
+                {
+                    "text": "Set kG to the value you found in the previous step."
+                },
+                {
+                    "text": "Set all Motion Magic® constants to 0 (cruise velocity, acceleration, and jerk) and set control mode to PositionVoltage."
+                },
+                {
+                    "text": "Tune kP (proportional gain):",
+                    "subitems": [
+                        "Start with a small value (e.g., 0.1)",
+                        "Keep doubling kP (0.1 → 0.2 → 0.4 → 0.8, etc.)",
+                        "Watch the position graph - it should become more rectangular/square as kP increases",
+                        "Continue until the graph is mostly square (sharp transitions, flat hold)",
+                        "Be careful not to break anything - stop if motion becomes unstable or dangerous"
+                    ]
+                },
+                {
+                    "text": "(Optional) Tune kD (derivative gain):",
+                    "subitems": [
+                        "For more complex mechanisms, you may want to tune kD to reduce oscillation.",
+                        "Start with a small value (e.g., 0.01)",
+                        "Keep doubling kD (0.01 → 0.02 → 0.04, etc.)",
+                        "Watch the position graph - it should become more rectangular/square as kD increases, but not too much or it will cause jittering",
+                        "Continue until the graph is mostly square (sharp transitions, flat hold)",
+                        "Be careful not to break anything - stop if motion becomes unstable or dangerous",
+                        "If the mechanism is oscillating, you may need to reduce kD"
+                    ]
+                },
+                {
+                    "text": "Set cruise velocity:",
+                    "subitems": [
+                        "Set the duty cycle to the maximum amount you want the mechanism to travel",
+                        "Quickly enable and disable the mechanism to get it to move as fast as possible",
+                        "Observe the maximum velocity achieved during this motion - it should be the flat part of the velocity graph",
+                        "Set that maximum velocity as your cruise velocity in Motion Magic® settings"
+                    ]
+                },
+                {
+                    "text": "Configure acceleration and jerk based on mechanism constraints:",
+                    "subitems": [
+                        "Set acceleration (required) - this determines how quickly the mechanism accelerates to cruise velocity",
+                        "Consider how fast you want the mechanism to accelerate based on mechanical limits",
+                        "Set jerk (optional) - this smooths the acceleration profile",
+                        "Lower jerk values create smoother motion, higher values allow faster acceleration changes"
+                    ]
+                },
+                {
+                    "text": "Test the motion profile. The position graph should be more rectangular than with PID alone - Motion Magic® creates smoother, trapezoidal motion profiles."
+                },
+                {
+                    "text": "Continue adjusting kP, cruise velocity, acceleration, and jerk until the motion is satisfactory. The goal is smooth, controlled motion with minimal overshoot and clear rectangular transitions in the position graph."
+                }
+            ]
+        },
+        {
+            "type": "rules-box",
+            "title": "Motion Magic® Tuning Summary",
+            "subtitle": "Complete workflow:",
+            "items": [
+                "Enable robot, open Phoenix Tuner Config tab",
+                "Set all gains to 0 and flash config",
+                "Use VoltageOut mode, plot position and velocity",
+                "Set gravity type and find kG (highest voltage with no movement)",
+                "Set Motion Magic® constants to 0 initially",
+                "Tune kP by doubling until position graph is rectangular",
+                "Set cruise velocity from observed max velocity at desired duty cycle",
+                "Configure acceleration (required) and jerk (optional) based on mechanism constraints",
+                "Test and refine until motion is satisfactory"
+            ]
+        },
+        {
+            "type": "text",
+            "title": "Important Notes",
+            "content": "Motion Magic® provides better motion profiles than basic PID control by:<br><br>• <strong>Smoother motion:</strong> Trapezoidal profiles eliminate sudden jerks<br>• <strong>Predictable acceleration:</strong> Controlled ramp-up and ramp-down<br>• <strong>Better performance:</strong> More efficient than PID-only control<br><br>All tuning in this lesson is performed in Phoenix Tuner. The process involves finding the correct kG value to counteract gravity, tuning kP for responsiveness, and configuring Motion Magic® constants for smooth motion profiles."
+        },
+        {
+            "type": "link-grid",
+            "title": "Resources",
+            "links": [
+                {
+                    "label": "PID Control",
+                    "id": "frc-pid-control"
+                },
+                {
+                    "label": "PID Tuning Practice - Setup",
+                    "id": "pid-tuning-practice-setup"
+                },
+                {
+                    "label": "PID Tuning Practice - Elevator",
+                    "id": "pid-tuning-practice-elevator"
+                },
+                {
+                    "label": "PID Tuning Practice - Arm",
+                    "id": "pid-tuning-practice-arm"
+                }
+            ]
+        }
+    ]
+}

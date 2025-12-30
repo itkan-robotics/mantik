@@ -259,35 +259,42 @@
       "items": [
         {
           "id": "pid-tuning-practice-setup",
-          "label": "PID Tuning Practice - Setup",
+          "label": "Simulation - Setup",
           "file": "data/frc/pid-tuning-practice/pid-practice-setup.json",
           "difficulty": "intermediate",
           "duration": "30 min"
         },
         {
           "id": "pid-tuning-practice-elevator",
-          "label": "PID Tuning Practice - Elevator",
+          "label": "Simulation - Elevator",
           "file": "data/frc/pid-tuning-practice/pid-practice-elevator.json",
           "difficulty": "intermediate",
           "duration": "30 min"
         },
         {
           "id": "pid-tuning-practice-arm",
-          "label": "PID Tuning Practice - Arm",
+          "label": "Simulation - Arm",
           "file": "data/frc/pid-tuning-practice/pid-practice-arm.json",
           "difficulty": "intermediate",
           "duration": "30 min"
         },
         {
           "id": "pid-tuning-practice-shooter",
-          "label": "PID Tuning Practice - Shooter",
+          "label": "Simulation - Shooter",
           "file": "data/frc/pid-tuning-practice/pid-practice-shooter.json",
           "difficulty": "intermediate",
           "duration": "30 min"
         },
         {
+          "id": "pid-tuning-practice-motion-magic",
+          "label": "Practical - Motion Magic®",
+          "file": "data/frc/pid-tuning-practice/pid-practice-motion-magic.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
           "id": "pid-tuning-practice-exponential",
-          "label": "PID Tuning Practice - Exponential Motion Profiling",
+          "label": "Simulation - Exponential Motion Profiling",
           "file": "data/frc/pid-tuning-practice/pid-practice-exponential.json",
           "difficulty": "intermediate",
           "duration": "45 min"

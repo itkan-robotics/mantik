@@ -22,7 +22,7 @@
       "subtitle": "Built-in controller features:",
       "items": [
         "<strong>REV (SPARK MAX):</strong> Uses <code>MAXMotion</code> (Trapezoidal).",
-        "<strong>CTRE (Talon FX):</strong> Uses <code>Motion Magic</code> (Trapezoidal/S-Curve)."
+        "<strong>CTRE (Talon FX):</strong> Uses <code>Motion Magic®</code> (Trapezoidal/S-Curve)."
       ]
     },
     {
@@ -44,7 +44,7 @@
           "code": "public void configureMotionProfile() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Configure motion profile constraints for Slot 0\n    // Max velocity in RPM (adjust based on your mechanism)\n    config.closedLoop.maxMotion\n        .maxVelocity(3000, ClosedLoopSlot.kSlot0)\n        // Max acceleration in RPM/s\n        .maxAcceleration(2000, ClosedLoopSlot.kSlot0);\n    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}"
         },
         {
-          "label": "Talon FX (Motion Magic)",
+          "label": "Talon FX (Motion Magic®)",
           "code": "public void configureMotionProfile() {\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    // Max velocity in rotations/sec\n    mm.MotionMagicCruiseVelocity = 10;\n    // Max acceleration in rotations/sec²\n    mm.MotionMagicAcceleration = 20;\n    // Optional: Jerk limit for smoothing (rotations/sec³)\n    mm.MotionMagicJerk = 100;\n    motor.getConfigurator().apply(mm);\n}"
         }
       ]
@@ -64,7 +64,7 @@
         },
         {
           "label": "Talon FX",
-          "code": "private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n\npublic void setPosition(double target) {\n    // Use Motion Magic position control\n    motor.setControl(m_request.withPosition(target));\n}"
+          "code": "private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n\npublic void setPosition(double target) {\n    // Use Motion Magic® position control\n    motor.setControl(m_request.withPosition(target));\n}"
         }
       ]
     },
@@ -104,7 +104,7 @@
         },
         {
           "label": "Talon FX",
-          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n    \n    public Elevator() {\n        configureMotionProfile();\n    }\n    \n    public void configureMotionProfile() {\n        // Configure Motion Magic (trapezoidal profile)\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicCruiseVelocity = 10;  // Max velocity in rotations/sec\n        mm.MotionMagicAcceleration = 20;    // Max acceleration in rotations/sec²\n        mm.MotionMagicJerk = 100;           // Jerk limit for smoothing\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use Motion Magic position control\n        motor.setControl(m_request.withPosition(target));\n    }\n}"
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n    \n    public Elevator() {\n        configureMotionProfile();\n    }\n    \n    public void configureMotionProfile() {\n        // Configure Motion Magic® (trapezoidal profile)\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicCruiseVelocity = 10;  // Max velocity in rotations/sec\n        mm.MotionMagicAcceleration = 20;    // Max acceleration in rotations/sec²\n        mm.MotionMagicJerk = 100;           // Jerk limit for smoothing\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use Motion Magic® position control\n        motor.setControl(m_request.withPosition(target));\n    }\n}"
         }
       ]
     },
@@ -121,7 +121,7 @@
           "id": "frc-pid-control"
         },
         {
-          "label": "CTRE Motion Magic Documentation",
+          "label": "CTRE Motion Magic® Documentation",
           "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"
         }
       ]

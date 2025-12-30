@@ -7,31 +7,36 @@
       "label": "Home",
       "file": "data/config/homepage.json",
       "default": true,
-      "icon": "🏠"
+      "icon": "🏠",
+      "sidebarEnabled": false
     },
     "java-training": {
       "id": "java-training",
       "label": "Java Training",
       "file": "data/config/java-training-config.json",
-      "icon": "☕"
+      "icon": "☕",
+      "sidebarEnabled": true
     },
     "ftc-specific": {
       "id": "ftc-specific",
       "label": "FTC Training",
       "file": "data/config/ftc-specific-config.json",
-      "icon": "🤖"
+      "icon": "🤖",
+      "sidebarEnabled": true
     },
     "frc-specific": {
       "id": "frc-specific",
       "label": "FRC Training",
       "file": "data/config/frc-specific-config.json",
-      "icon": "🏁"
+      "icon": "🏁",
+      "sidebarEnabled": true
     },
     "competitive-training": {
       "id": "competitive-training",
       "label": "Competitive Training",
       "file": "data/config/competitive-training-config.json",
-      "icon": "🏆"
+      "icon": "🏆",
+      "sidebarEnabled": true
     }
   },
   "metadata": {

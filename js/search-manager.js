@@ -213,11 +213,28 @@ class SearchManager {
         const container = document.createElement('div');
         container.className = 'search-results';
         
+        // Calculate available viewport space
+        const searchContainer = this.getSearchContainer();
+        let maxHeight = isMobileSearch ? '60vh' : '400px';
+        
+        if (searchContainer) {
+            const containerRect = searchContainer.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            const spaceBelow = viewportHeight - containerRect.bottom;
+            
+            // Use available space below, but leave some margin
+            const availableSpace = Math.max(spaceBelow - 20, 100); // 20px margin from bottom
+            maxHeight = `${Math.min(availableSpace, isMobileSearch ? viewportHeight * 0.6 : 400)}px`;
+        }
+        
         const baseStyles = {
             position: 'absolute',
             top: '100%',
             left: '0',
             right: '0',
+            width: '100%',
+            maxWidth: 'calc(100vw - 2rem)', // Prevent overflow with viewport margin
             backgroundColor: 'var(--color-sidebar-background)',
             border: '2px solid var(--color-background-border)',
             borderRadius: '0.75rem',
@@ -227,7 +244,12 @@ class SearchManager {
             padding: '1rem',
             textAlign: 'center',
             color: 'var(--color-sidebar-link-text)',
-            maxHeight: isMobileSearch ? '60vh' : '200px'
+            maxHeight: maxHeight,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            boxSizing: 'border-box',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word'
         };
         
         Object.assign(container.style, baseStyles);
@@ -249,18 +271,11 @@ class SearchManager {
         try {
             this.searchResults = [];
             
-            // Use new index system if available
+            // Use lunr.js index system if available
             if (this.useIndex && this.searchIndex) {
-                // Try exact search first
+                // lunr.js handles fuzzy matching automatically
                 const indexResults = this.searchIndex.search(query, 50);
-                
-                if (indexResults.length === 0) {
-                    // Try fuzzy search if no exact matches
-                    const fuzzyResults = this.searchIndex.fuzzySearch(query, 30, 2);
-                    this.processIndexResults(fuzzyResults, query);
-                } else {
-                    this.processIndexResults(indexResults, query);
-                }
+                this.processIndexResults(indexResults, query);
             } else {
                 // Fallback to old search method
                 await this.searchAllTabs(searchQuery);
@@ -278,73 +293,129 @@ class SearchManager {
     }
 
     /**
-     * Process results from search index
+     * Process results from search index (lunr.js format)
      */
     processIndexResults(indexResults, query) {
+        // Get the current section - only include results from the selected section
+        const currentSectionId = appState.currentSection;
+        
         indexResults.forEach(result => {
             const doc = this.searchIndex.getDocument(result.docId);
             if (!doc) return;
             
-            // Get the best match for this document
-            const bestMatch = result.matches
-                .sort((a, b) => b.termScore - a.termScore)[0];
+            // Filter by current section if one is selected
+            if (currentSectionId && doc.sectionId !== currentSectionId) {
+                return; // Skip results from other sections
+            }
             
-            if (!bestMatch) return;
+            // For lunr.js results, we create a result based on the document
+            // The score from lunr already reflects relevance
+            const docData = doc.content;
+            if (!docData) return;
             
-            // Get content snippet based on match type
+            // Determine the best match type by checking what actually contains the query
+            // Only mark as "title" if the title actually contains the query
+            const queryLower = query.toLowerCase();
             let text = '';
             let snippet = '';
+            let matchType = null;
             
-            if (bestMatch.type === 'title') {
+            // Check if title actually contains the query
+            const titleLower = doc.title ? doc.title.toLowerCase() : '';
+            if (titleLower.includes(queryLower)) {
                 text = doc.title;
                 snippet = doc.title;
+                matchType = 'title';
             } else {
-                // Get section content for snippet
-                const sections = doc.content.sections || doc.content.content || [];
-                if (sections[bestMatch.sectionIndex]) {
-                    const section = sections[bestMatch.sectionIndex];
-                    
-                    if (bestMatch.type === 'section-title' && section.title) {
-                        text = section.title;
-                        snippet = section.title;
-                    } else if (bestMatch.type === 'content' && section.content) {
-                        text = this.stripHTML(section.content);
-                        snippet = this.createSnippet(text, query, 80);
-                    } else if (bestMatch.type === 'code' && section.code) {
-                        text = section.code;
-                        snippet = this.createSnippet(text, query, 60);
-                    } else if (bestMatch.type === 'list-item' && section.items) {
-                        const item = section.items[bestMatch.itemIndex];
-                        if (item) {
-                            text = typeof item === 'string' ? item : JSON.stringify(item);
-                            snippet = this.createSnippet(text, query, 60);
+                // Check section titles, content, code, etc.
+                const sections = docData.sections || docData.content || [];
+                
+                if (Array.isArray(sections)) {
+                    for (const section of sections) {
+                        // Check section title
+                        if (section.title) {
+                            const sectionTitleLower = this.stripHTML(section.title).toLowerCase();
+                            if (sectionTitleLower.includes(queryLower)) {
+                                text = this.stripHTML(section.title);
+                                snippet = text;
+                                matchType = 'section-title';
+                                break;
+                            }
                         }
-                    } else if (bestMatch.type === 'code' && section.tabs) {
-                        const tab = section.tabs[bestMatch.itemIndex];
-                        if (tab && tab.code) {
-                            text = tab.code;
-                            snippet = this.createSnippet(text, query, 60);
+                        
+                        // Check section content
+                        if (!matchType && section.content) {
+                            const contentText = this.stripHTML(section.content);
+                            if (contentText.toLowerCase().includes(queryLower)) {
+                                text = contentText;
+                                snippet = this.createSnippet(contentText, query, 80);
+                                matchType = 'content';
+                                break;
+                            }
                         }
+                        
+                        // Code sections are ignored in search - skip checking code
+                        
+                        // Check list items
+                        if (!matchType && section.items && Array.isArray(section.items)) {
+                            for (const item of section.items) {
+                                if (typeof item === 'string') {
+                                    const itemText = this.stripHTML(item);
+                                    if (itemText.toLowerCase().includes(queryLower)) {
+                                        text = itemText;
+                                        snippet = this.createSnippet(itemText, query, 60);
+                                        matchType = 'list-item';
+                                        break;
+                                    }
+                                }
+                            }
+                            if (matchType) break;
+                        }
+                    }
+                }
+                
+                // If still no match found, lunr found something but we can't locate it exactly
+                // Show as content match with a snippet from the first section's content
+                if (!matchType) {
+                    const sections = docData.sections || docData.content || [];
+                    if (Array.isArray(sections) && sections.length > 0) {
+                        // Try to find any content that might contain the query
+                        for (const section of sections) {
+                            if (section.content) {
+                                const contentText = this.stripHTML(section.content);
+                                text = contentText;
+                                snippet = this.createSnippet(contentText, query, 80);
+                                matchType = 'content';
+                                break;
+                            }
+                        }
+                        // If no content found, don't show this result
+                        if (!matchType) {
+                            return; // Skip this result if we can't find where the match is
+                        }
+                    } else {
+                        // No sections at all, skip this result
+                        return;
                     }
                 }
             }
             
             if (text) {
                 this.searchResults.push({
-                    type: bestMatch.type,
+                    type: matchType,
                     text: snippet || text,
                     fullText: text,
                     section: doc.sectionLabel || 'Unknown',
                     group: doc.groupLabel || 'Unknown',
                     tabId: doc.id,
-                    score: result.score,
-                    priority: this.getPriorityFromType(bestMatch.type),
+                    score: result.score || 0,
+                    priority: this.getPriorityFromType(matchType),
                     metadata: doc
                 });
             }
         });
         
-        // Sort by score/priority
+        // Sort by score/priority (lunr.js already provides good scoring)
         this.searchResults.sort((a, b) => {
             if (a.priority !== b.priority) {
                 return a.priority - b.priority;
@@ -358,7 +429,7 @@ class SearchManager {
         // Deduplicate
         const seen = new Set();
         this.searchResults = this.searchResults.filter(result => {
-            const key = `${result.tabId}|${result.type}|${result.text.substring(0, 50)}`;
+            const key = `${result.tabId}|${result.type}`;
             if (seen.has(key)) return false;
             seen.add(key);
             return true;
@@ -408,8 +479,8 @@ class SearchManager {
         const suggestionsDiv = this.createSearchResultsContainer(isMobileSearch);
         suggestionsDiv.className = 'search-suggestions';
         suggestionsDiv.style.textAlign = 'left';
-        suggestionsDiv.style.maxHeight = isMobileSearch ? '40vh' : '300px';
-        suggestionsDiv.style.overflowY = 'auto';
+        // maxHeight is already calculated in createSearchResultsContainer based on viewport
+        // overflowY is already set in createSearchResultsContainer
         
         this.suggestions.forEach((suggestion, index) => {
             const item = document.createElement('div');
@@ -453,18 +524,39 @@ class SearchManager {
     }
 
     async searchAllTabs(query) {
-        // Search through all loaded tabs first
-        if (appState.allTabs) {
-            for (const tab of appState.allTabs) {
-                await this.searchTab(tab, query);
+        // Get the current section - only search within the selected section
+        const currentSectionId = appState.currentSection;
+        
+        if (!currentSectionId) {
+            // If no section is selected, search all sections (fallback)
+            if (appState.allTabs) {
+                for (const tab of appState.allTabs) {
+                    await this.searchTab(tab, query);
+                }
             }
+            
+            const sections = appState.config.sections;
+            if (sections) {
+                for (const sectionId in sections) {
+                    await this.searchSection(sectionId, sections[sectionId], query);
+                }
+            }
+            return;
         }
         
-        // Search through all sections
-        const sections = appState.config.sections;
-        if (sections) {
-            for (const sectionId in sections) {
-                await this.searchSection(sectionId, sections[sectionId], query);
+        // Search only within the current section
+        const currentSection = appState.config.sections[currentSectionId];
+        if (currentSection) {
+            await this.searchSection(currentSectionId, currentSection, query);
+        }
+        
+        // Also search through loaded tabs that belong to the current section
+        if (appState.allTabs) {
+            for (const tab of appState.allTabs) {
+                // Only search tabs that belong to the current section
+                if (tab.sectionId === currentSectionId) {
+                    await this.searchTab(tab, query);
+                }
             }
         }
     }
@@ -931,7 +1023,13 @@ class SearchManager {
     highlightQuery(text, query) {
         if (!query) return text;
         const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-        return text.replace(regex, '<mark style="background-color: var(--color-accent); color: var(--color-background); padding: 0.1rem 0.2rem; border-radius: 0.2rem;">$1</mark>');
+        // Detect theme and use appropriate highlight color
+        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark' || 
+                          (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        // Use bright yellow for light mode, amber/orange for dark mode
+        const bgColor = isDarkMode ? '#FFA500' : '#FFEB3B'; // Orange for dark, yellow for light
+        const textColor = isDarkMode ? '#000000' : '#000000'; // Black text works on both
+        return text.replace(regex, `<mark style="background-color: ${bgColor}; color: ${textColor}; padding: 0.1rem 0.2rem; border-radius: 0.2rem; font-weight: 500;">$1</mark>`);
     }
 
     getSearchContainer() {

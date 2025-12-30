@@ -48,15 +48,19 @@ class EventManager {
                     const sidebarDrawer = document.querySelector('.sidebar-drawer');
                     const sidebarTree = sidebarDrawer?.querySelector('.sidebar-tree');
                     
-                    // Ensure navigation is generated if content is missing
-                    if (sidebarTree && appState.currentSection !== 'homepage') {
-                        const hasContent = sidebarTree.children.length > 0;
-                        const lastRenderedSection = sidebarTree.dataset.renderedSection;
-                        const needsRegeneration = !hasContent || lastRenderedSection !== appState.currentSection;
-                        
-                        if (needsRegeneration) {
-                            console.log(`[Debug] Sidebar content missing or outdated. Regenerating navigation for section ${appState.currentSection}`);
-                            await this.navigationManager.generateNavigation();
+                    // Ensure navigation is generated if content is missing (only if sidebar is enabled)
+                    if (sidebarTree) {
+                        const section = appState.config.sections[appState.currentSection];
+                        const sidebarEnabled = section && section.sidebarEnabled !== false;
+                        if (sidebarEnabled) {
+                            const hasContent = sidebarTree.children.length > 0;
+                            const lastRenderedSection = sidebarTree.dataset.renderedSection;
+                            const needsRegeneration = !hasContent || lastRenderedSection !== appState.currentSection;
+                            
+                            if (needsRegeneration) {
+                                console.log(`[Debug] Sidebar content missing or outdated. Regenerating navigation for section ${appState.currentSection}`);
+                                await this.navigationManager.generateNavigation();
+                            }
                         }
                     }
                     
@@ -84,9 +88,7 @@ class EventManager {
                             console.log(`[Debug] Sidebar tree visible. Has content: ${sidebarTreeElement.innerHTML.length > 0}, children: ${sidebarTreeElement.children.length}`);
                         }
                     }
-                    // Ensure smooth transition
-                    this.navigationManager.ensureSmoothSidebarTransition();
-                    // Adjust layout immediately for smooth animation
+                    // Adjust layout immediately (no animation)
                     this.navigationManager.adjustLayoutForSidebar();
                     
                     // Ensure current tab is highlighted and scrolled to
@@ -114,10 +116,8 @@ class EventManager {
                 if (navToggle.checked) {
                     // Check if click is inside sidebar
                     if (!sidebarDrawer.contains(e.target)) {
-                        // Ensure smooth transition before closing
-                        this.navigationManager.ensureSmoothSidebarTransition();
                         navToggle.checked = false;
-                        // Reset layout immediately to ensure smooth transition
+                        // Reset layout immediately (no animation)
                         this.navigationManager.resetLayoutForHiddenSidebar();
                     }
                 }
@@ -126,10 +126,8 @@ class EventManager {
             mainContent.addEventListener('touchstart', (e) => {
                 if (navToggle.checked) {
                     if (!sidebarDrawer.contains(e.target)) {
-                        // Ensure smooth transition before closing
-                        this.navigationManager.ensureSmoothSidebarTransition();
                         navToggle.checked = false;
-                        // Reset layout immediately to ensure smooth transition
+                        // Reset layout immediately (no animation)
                         this.navigationManager.resetLayoutForHiddenSidebar();
                     }
                 }

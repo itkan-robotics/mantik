@@ -1,11 +1,11 @@
 /**
  * Mantik - Search Index
- * Pre-builds and manages search index for fast lookups
+ * Uses lunr.js for full-text search indexing
  */
 
 class SearchIndex {
     constructor() {
-        this.index = new Map(); // term → array of document matches
+        this.index = null; // lunr index instance
         this.documents = new Map(); // documentId → document metadata
         this.isIndexed = false;
         this.indexingProgress = 0;
@@ -13,13 +13,19 @@ class SearchIndex {
     }
 
     /**
-     * Build search index from all loaded content
+     * Build search index from all loaded content using lunr.js
      */
     async buildIndex(contentManager, configManager) {
         if (this.isIndexed) return;
         
+        // Check if lunr is available
+        if (typeof lunr === 'undefined') {
+            console.error('lunr.js is not loaded');
+            this.isIndexed = false;
+            return;
+        }
+        
         this.isIndexed = false;
-        this.index.clear();
         this.documents.clear();
         
         try {
@@ -27,17 +33,60 @@ class SearchIndex {
             const mainConfig = await configManager.loadMainConfig();
             const sections = mainConfig.sections || {};
             
-            // Count total documents for progress tracking
-            this.totalDocuments = this.countDocuments(sections);
-            this.indexingProgress = 0;
-            
-            // Index all sections
+            // Load full section configs first (they contain groups, children, etc.)
+            const loadedSections = {};
             for (const sectionId in sections) {
-                await this.indexSection(sectionId, sections[sectionId], contentManager, configManager);
+                try {
+                    // Load the full section config (this loads groups, children, etc.)
+                    const fullSectionConfig = await configManager.loadSectionConfig(sectionId);
+                    loadedSections[sectionId] = fullSectionConfig;
+                } catch (error) {
+                    console.warn(`Could not load full config for section ${sectionId}, using basic config:`, error);
+                    loadedSections[sectionId] = sections[sectionId];
+                }
             }
             
+            // Count total documents for progress tracking (using loaded sections)
+            this.totalDocuments = this.countDocuments(loadedSections);
+            this.indexingProgress = 0;
+            
+            // Build documents array for lunr
+            const documents = [];
+            
+            // Index all sections (using fully loaded configs)
+            for (const sectionId in loadedSections) {
+                const sectionDocs = await this.indexSection(sectionId, loadedSections[sectionId], contentManager, configManager);
+                documents.push(...sectionDocs);
+            }
+            
+            // Build lunr index
+            this.index = lunr(function() {
+                // Define fields with boost values (higher = more important)
+                // Note: code sections are excluded from search
+                this.ref('id');
+                this.field('title', { boost: 10 });
+                this.field('sectionTitle', { boost: 8 });
+                this.field('codeLabel', { boost: 5 });
+                this.field('listItem', { boost: 4 });
+                this.field('content', { boost: 3 });
+                // Code field removed - code sections are ignored in search
+                
+                // Add documents to index
+                documents.forEach(doc => {
+                    this.add(doc);
+                });
+            });
+            
             this.isIndexed = true;
-            console.log(`Search index built: ${this.index.size} terms, ${this.documents.size} documents`);
+            console.log(`Search index built with lunr.js: ${documents.length} documents indexed`);
+            
+            // Log some statistics
+            const docsWithContent = documents.filter(doc => 
+                (doc.content && doc.content.trim().length > 0) ||
+                (doc.code && doc.code.trim().length > 0) ||
+                (doc.sectionTitle && doc.sectionTitle.trim().length > 0)
+            ).length;
+            console.log(`Documents with searchable content: ${docsWithContent} of ${documents.length}`);
         } catch (error) {
             console.error('Error building search index:', error);
             this.isIndexed = false;
@@ -70,56 +119,96 @@ class SearchIndex {
     }
 
     async indexSection(sectionId, section, contentManager, configManager) {
+        const documents = [];
+        
         // Index standalone content
         if (section.file && !section.groups && !section.intro && !section.children) {
-            await this.indexDocument(sectionId, section, sectionId, section);
+            const doc = await this.indexDocument(sectionId, section, sectionId, section, null, configManager);
+            if (doc) documents.push(doc);
         }
         
         // Index intro content
         if (section.intro) {
-            await this.indexDocument(section.intro.id, section.intro, sectionId, section);
+            const doc = await this.indexDocument(section.intro.id, section.intro, sectionId, section, null, configManager);
+            if (doc) documents.push(doc);
         }
         
         // Index groups
         if (section.groups) {
             for (const group of section.groups) {
-                await this.indexGroup(group, sectionId, section);
+                const groupDocs = await this.indexGroup(group, sectionId, section, contentManager, configManager);
+                documents.push(...groupDocs);
             }
         }
         
         // Index children
         if (section.children) {
             for (const child of section.children) {
-                await this.indexGroup(child, sectionId, section);
+                const childDocs = await this.indexGroup(child, sectionId, section, contentManager, configManager);
+                documents.push(...childDocs);
             }
         }
+        
+        return documents;
     }
 
-    async indexGroup(group, sectionId, section) {
+    async indexGroup(group, sectionId, section, contentManager, configManager) {
+        const documents = [];
+        
         if (group.items) {
             for (const item of group.items) {
-                await this.indexDocument(item.id, item, sectionId, section, group);
+                const doc = await this.indexDocument(item.id, item, sectionId, section, group, configManager);
+                if (doc) documents.push(doc);
             }
         }
         
         if (group.children) {
             for (const child of group.children) {
-                await this.indexGroup(child, sectionId, section);
+                const childDocs = await this.indexGroup(child, sectionId, section, contentManager, configManager);
+                documents.push(...childDocs);
             }
         }
+        
+        return documents;
     }
 
-    async indexDocument(docId, docConfig, sectionId, sectionConfig, group = null) {
+    async indexDocument(docId, docConfig, sectionId, sectionConfig, group = null, configManager = null) {
         try {
-            // Load document content if not already loaded
-            let docData = appState.getTabData(docId);
-            if (!docData && docConfig.file) {
-                // Try to load it
-                const configManager = new ConfigManager();
-                docData = await configManager.loadContentFile(docConfig.file);
+            // Always load document content from file - don't rely on appState
+            // This ensures we index all pages, not just ones that have been visited
+            let docData = null;
+            
+            if (docConfig.file) {
+                // Use provided configManager - it should have the correct basePath
+                if (configManager) {
+                    try {
+                        docData = await configManager.loadContentFile(docConfig.file);
+                    } catch (loadError) {
+                        console.warn(`Could not load content file for ${docId}: ${docConfig.file}`, loadError);
+                        // Try appState as fallback
+                        docData = appState.getTabData(docId);
+                    }
+                } else {
+                    // Fallback: try appState first, then try loading
+                    docData = appState.getTabData(docId);
+                    if (!docData) {
+                        const cm = new ConfigManager();
+                        try {
+                            docData = await cm.loadContentFile(docConfig.file);
+                        } catch (loadError) {
+                            console.warn(`Could not load content file for ${docId}: ${docConfig.file}`, loadError);
+                        }
+                    }
+                }
+            } else {
+                // No file specified, try appState
+                docData = appState.getTabData(docId);
             }
             
-            if (!docData) return;
+            if (!docData) {
+                console.warn(`No data found for document ${docId} (file: ${docConfig.file || 'none'})`);
+                return null;
+            }
             
             // Store document metadata
             const docMetadata = {
@@ -135,181 +224,137 @@ class SearchIndex {
             
             this.documents.set(docId, docMetadata);
             
-            // Index document content
-            this.indexDocumentContent(docId, docData, docMetadata);
+            // Build lunr document
+            const lunrDoc = this.buildLunrDocument(docId, docData, docMetadata);
             
             this.indexingProgress++;
+            return lunrDoc;
         } catch (error) {
             console.error(`Error indexing document ${docId}:`, error);
+            return null;
         }
     }
 
-    indexDocumentContent(docId, docData, metadata) {
-        // Index title (highest weight)
-        if (docData.title) {
-            this.addTerm(docId, docData.title, 'title', 10, metadata);
-        }
+    buildLunrDocument(docId, docData, metadata) {
+        // Extract text content from document
+        // Note: code sections are excluded from search
+        const title = docData.title || '';
+        const sectionTitles = [];
+        const codeLabels = [];
+        const listItems = [];
+        const contentTexts = [];
+        // codeTexts removed - code sections are ignored
         
-        // Index sections
+        // Process sections
         const sections = docData.sections || docData.content || [];
         if (Array.isArray(sections)) {
-            sections.forEach((section, sectionIndex) => {
-                // Index section title
+            sections.forEach((section) => {
+                // Section titles
                 if (section.title) {
-                    this.addTerm(docId, section.title, 'section-title', 8, metadata, sectionIndex);
+                    sectionTitles.push(this.stripHTML(section.title));
                 }
                 
-                // Index section content
+                // Section content
                 if (section.content) {
-                    this.addTerm(docId, section.content, 'content', 3, metadata, sectionIndex);
+                    const content = this.stripHTML(section.content);
+                    if (content && content.trim().length > 0) {
+                        contentTexts.push(content);
+                    }
                 }
                 
-                // Index code
-                if (section.code) {
-                    this.addTerm(docId, section.code, 'code', 2, metadata, sectionIndex);
-                }
+                // Code content - SKIPPED (not indexed for search)
+                // if (section.code) {
+                //     codeTexts.push(section.code);
+                // }
                 
-                // Index code tabs
+                // Code tabs - only index labels, not code content
                 if (section.tabs && Array.isArray(section.tabs)) {
-                    section.tabs.forEach((tab, tabIndex) => {
-                        if (tab.code) {
-                            this.addTerm(docId, tab.code, 'code', 2, metadata, sectionIndex, tabIndex);
-                        }
+                    section.tabs.forEach((tab) => {
                         if (tab.label) {
-                            this.addTerm(docId, tab.label, 'code-label', 5, metadata, sectionIndex, tabIndex);
+                            codeLabels.push(tab.label);
                         }
+                        // Code content - SKIPPED (not indexed for search)
+                        // if (tab.code) {
+                        //     codeTexts.push(tab.code);
+                        // }
                     });
                 }
                 
-                // Index list items
+                // List items
                 if (section.items && Array.isArray(section.items)) {
-                    section.items.forEach((item, itemIndex) => {
+                    section.items.forEach((item) => {
                         if (typeof item === 'string') {
-                            this.addTerm(docId, item, 'list-item', 4, metadata, sectionIndex, itemIndex);
+                            const itemText = this.stripHTML(item);
+                            if (itemText && itemText.trim().length > 0) {
+                                listItems.push(itemText);
+                            }
                         }
                     });
                 }
             });
         }
+        
+        // Build lunr document (without code field)
+        const lunrDoc = {
+            id: docId,
+            title: title,
+            sectionTitle: sectionTitles.join(' '),
+            codeLabel: codeLabels.join(' '),
+            listItem: listItems.join(' '),
+            content: contentTexts.join(' ')
+            // code field removed - code sections are ignored
+        };
+        
+        // Debug logging for documents with no content
+        const hasContent = lunrDoc.content.length > 0 || 
+                          lunrDoc.listItem.length > 0 || lunrDoc.sectionTitle.length > 0;
+        if (!hasContent && title) {
+            console.warn(`Document ${docId} (${title}) has no searchable content`);
+        }
+        
+        return lunrDoc;
     }
 
-    addTerm(docId, text, type, weight, metadata, sectionIndex = null, itemIndex = null) {
-        if (!text || typeof text !== 'string') return;
-        
-        // Tokenize text (simple word splitting)
-        const tokens = this.tokenize(text);
-        
-        tokens.forEach((token, position) => {
-            if (token.length < 2) return; // Skip very short tokens
-            
-            const term = token.toLowerCase();
-            
-            if (!this.index.has(term)) {
-                this.index.set(term, []);
-            }
-            
-            // Check if this document/type combination already exists for this term
-            const termMatches = this.index.get(term);
-            let existingMatch = termMatches.find(m => 
-                m.docId === docId && 
-                m.type === type &&
-                m.sectionIndex === sectionIndex &&
-                m.itemIndex === itemIndex
-            );
-            
-            if (existingMatch) {
-                // Add position to existing match
-                existingMatch.positions.push(position);
-                existingMatch.count++;
-            } else {
-                // Create new match
-                termMatches.push({
-                    docId,
-                    type,
-                    weight,
-                    metadata,
-                    positions: [position],
-                    count: 1,
-                    sectionIndex,
-                    itemIndex
-                });
-            }
-        });
-    }
-
-    tokenize(text) {
-        // Remove HTML tags
-        const cleanText = text.replace(/<[^>]*>/g, ' ');
-        // Split on whitespace and punctuation, keep words
-        return cleanText
-            .toLowerCase()
-            .replace(/[^\w\s]/g, ' ')
-            .split(/\s+/)
-            .filter(word => word.length > 0);
+    stripHTML(html) {
+        if (!html || typeof html !== 'string') return '';
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
     }
 
     /**
-     * Search the index
+     * Search the index using lunr.js
      */
     search(query, maxResults = 50) {
-        if (!this.isIndexed || !query || query.trim().length === 0) {
+        if (!this.isIndexed || !this.index || !query || query.trim().length === 0) {
             return [];
         }
         
-        const queryTerms = this.tokenize(query);
-        if (queryTerms.length === 0) return [];
-        
-        // Score documents
-        const docScores = new Map(); // docId → { score, matches: [] }
-        
-        queryTerms.forEach(term => {
-            const matches = this.index.get(term) || [];
+        try {
+            // Perform search with lunr
+            const results = this.index.search(query);
             
-            matches.forEach(match => {
-                if (!docScores.has(match.docId)) {
-                    docScores.set(match.docId, {
-                        docId: match.docId,
-                        score: 0,
-                        matches: [],
-                        metadata: match.metadata
-                    });
-                }
-                
-                const docScore = docScores.get(match.docId);
-                
-                // Calculate score: weight * match count * inverse document frequency
-                const idf = this.calculateIDF(term);
-                const termScore = match.weight * match.count * idf;
-                
-                docScore.score += termScore;
-                docScore.matches.push({
-                    type: match.type,
-                    weight: match.weight,
-                    positions: match.positions,
-                    sectionIndex: match.sectionIndex,
-                    itemIndex: match.itemIndex,
-                    termScore
-                });
-            });
-        });
-        
-        // Convert to array and sort by score
-        const results = Array.from(docScores.values())
-            .sort((a, b) => b.score - a.score)
-            .slice(0, maxResults);
-        
-        return results;
-    }
-
-    calculateIDF(term) {
-        const matches = this.index.get(term) || [];
-        const docCount = new Set(matches.map(m => m.docId)).size;
-        
-        if (docCount === 0) return 1;
-        
-        // IDF = log(total documents / documents containing term)
-        // Higher IDF = rarer term = more important
-        return Math.log(this.documents.size / docCount);
+            // Convert lunr results to our format
+            // lunr.js returns results with 'ref' (document ID) and 'score' properties
+            const formattedResults = results
+                .slice(0, maxResults)
+                .map(result => {
+                    const doc = this.documents.get(result.ref);
+                    if (!doc) return null;
+                    
+                    return {
+                        docId: result.ref,
+                        score: result.score || 0,
+                        metadata: doc
+                    };
+                })
+                .filter(result => result !== null);
+            
+            return formattedResults;
+        } catch (error) {
+            console.error('Search error:', error);
+            return [];
+        }
     }
 
     /**
@@ -331,112 +376,13 @@ class SearchIndex {
         const suggestions = new Set();
         
         // Get suggestions from document titles
-        this.documents.forEach((doc, docId) => {
-            if (doc.title.toLowerCase().includes(queryLower)) {
+        this.documents.forEach((doc) => {
+            if (doc.title && doc.title.toLowerCase().includes(queryLower)) {
                 suggestions.add(doc.title);
             }
         });
         
-        // Get suggestions from indexed terms
-        this.index.forEach((matches, term) => {
-            if (term.startsWith(queryLower) && term.length > queryLower.length) {
-                // Find the most relevant document for this term
-                const topMatch = matches
-                    .sort((a, b) => b.weight - a.weight)[0];
-                if (topMatch) {
-                    const doc = this.documents.get(topMatch.docId);
-                    if (doc && doc.title) {
-                        suggestions.add(doc.title);
-                    }
-                }
-            }
-        });
-        
         return Array.from(suggestions).slice(0, maxSuggestions);
-    }
-
-    /**
-     * Fuzzy search (simple Levenshtein-based)
-     */
-    fuzzySearch(query, maxResults = 50, maxDistance = 2) {
-        if (!this.isIndexed || !query || query.trim().length === 0) {
-            return [];
-        }
-        
-        const queryLower = query.toLowerCase();
-        const queryTerms = this.tokenize(query);
-        const docScores = new Map();
-        
-        // Try exact matches first
-        const exactResults = this.search(query, maxResults);
-        if (exactResults.length > 0) {
-            return exactResults;
-        }
-        
-        // Try fuzzy matches
-        this.index.forEach((matches, term) => {
-            const distance = this.levenshteinDistance(queryLower, term);
-            if (distance <= maxDistance && distance < term.length) {
-                matches.forEach(match => {
-                    if (!docScores.has(match.docId)) {
-                        docScores.set(match.docId, {
-                            docId: match.docId,
-                            score: 0,
-                            matches: [],
-                            metadata: match.metadata
-                        });
-                    }
-                    
-                    const docScore = docScores.get(match.docId);
-                    // Lower score for fuzzy matches (inverse of distance)
-                    const fuzzyScore = match.weight * (1 / (distance + 1)) * 0.5;
-                    docScore.score += fuzzyScore;
-                    docScore.matches.push({
-                        type: match.type,
-                        weight: match.weight,
-                        positions: match.positions,
-                        sectionIndex: match.sectionIndex,
-                        itemIndex: match.itemIndex,
-                        termScore: fuzzyScore,
-                        fuzzy: true
-                    });
-                });
-            }
-        });
-        
-        return Array.from(docScores.values())
-            .sort((a, b) => b.score - a.score)
-            .slice(0, maxResults);
-    }
-
-    levenshteinDistance(str1, str2) {
-        const matrix = [];
-        const len1 = str1.length;
-        const len2 = str2.length;
-        
-        for (let i = 0; i <= len2; i++) {
-            matrix[i] = [i];
-        }
-        
-        for (let j = 0; j <= len1; j++) {
-            matrix[0][j] = j;
-        }
-        
-        for (let i = 1; i <= len2; i++) {
-            for (let j = 1; j <= len1; j++) {
-                if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-                    matrix[i][j] = matrix[i - 1][j - 1];
-                } else {
-                    matrix[i][j] = Math.min(
-                        matrix[i - 1][j - 1] + 1,
-                        matrix[i][j - 1] + 1,
-                        matrix[i - 1][j] + 1
-                    );
-                }
-            }
-        }
-        
-        return matrix[len2][len1];
     }
 
     /**
@@ -452,10 +398,3 @@ class SearchIndex {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = SearchIndex;
 }
-
-
-
-
-
-
-

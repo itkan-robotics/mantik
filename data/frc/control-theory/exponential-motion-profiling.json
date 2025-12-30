@@ -22,7 +22,7 @@
       "subtitle": "Built-in controller features:",
       "items": [
         "<strong>SPARK MAX:</strong> Use WPILib's <code>ExponentialProfile</code> class with PID control.",
-        "<strong>CTRE (Talon FX):</strong> Uses <code>Motion Magic Expo</code> (built-in exponential profile)."
+        "<strong>CTRE (Talon FX):</strong> Uses <code>Motion Magic® Expo</code> (built-in exponential profile)."
       ]
     },
     {
@@ -33,12 +33,12 @@
     {
       "type": "text",
       "title": "Step 2: Configure Exponential Profile (Talon FX)",
-      "content": "For Talon FX, configure the exponential profile constants in the Motion Magic configuration. These values work with the PID gains to create smooth motion."
+      "content": "For Talon FX, configure the exponential profile constants in the Motion Magic® configuration. These values work with the PID gains to create smooth motion."
     },
     {
       "type": "code",
       "content": "Configure exponential profile for Talon FX:",
-      "code": "public void configureExponentialProfile() {\n    // Configure Motion Magic Exponential profile\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n    mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n    motor.getConfigurator().apply(mm);\n}"
+      "code": "public void configureExponentialProfile() {\n    // Configure Motion Magic® Exponential profile\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n    mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n    motor.getConfigurator().apply(mm);\n}"
     },
     {
       "type": "text",
@@ -111,7 +111,7 @@
         },
         {
           "label": "Talon FX (MM Expo)",
-          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicExpoVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    public Elevator() {\n        configureExponentialProfile();\n    }\n    \n    public void configureExponentialProfile() {\n        // Configure Motion Magic Exponential profile\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n        mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use exponential motion profile\n        motor.setControl(new MotionMagicExpoVoltage(target));\n    }\n}"
+          "code": "package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicExpoVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    public Elevator() {\n        configureExponentialProfile();\n    }\n    \n    public void configureExponentialProfile() {\n        // Configure Motion Magic® Exponential profile\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicExpo_kV = 0.12; // Velocity feedforward\n        mm.MotionMagicExpo_kA = 0.01; // Acceleration feedforward\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use exponential motion profile\n        motor.setControl(new MotionMagicExpoVoltage(target));\n    }\n}"
         }
       ]
     },
@@ -128,7 +128,7 @@
           "id": "frc-pid-control"
         },
         {
-          "label": "CTRE Motion Magic Documentation",
+          "label": "CTRE Motion Magic® Documentation",
           "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"
         },
         {

@@ -163,8 +163,18 @@ class NavigationManager {
         const sidebarDrawer = document.querySelector('.sidebar-drawer');
         const navToggleLabels = document.querySelectorAll('label[for="__navigation"]');
         
-        if (appState.currentSection === 'homepage') {
-            // Disable sidebar on homepage
+        // Get current section config
+        const section = appState.config.sections[appState.currentSection];
+        if (!section) {
+            console.error(`Section ${appState.currentSection} not found in config`);
+            return;
+        }
+        
+        // Check if sidebar is enabled for this section (defaults to true if not specified)
+        const sidebarEnabled = section.sidebarEnabled !== false;
+        
+        if (!sidebarEnabled) {
+            // Disable sidebar for sections where it's disabled (like homepage)
             navigationContainer.innerHTML = '';
             if (navCheckbox) {
                 navCheckbox.checked = false;
@@ -172,17 +182,23 @@ class NavigationManager {
             }
             if (sidebarDrawer) {
                 sidebarDrawer.style.display = 'none';
+                sidebarDrawer.style.visibility = 'hidden';
+                sidebarDrawer.style.opacity = '0';
             }
             navToggleLabels.forEach(label => {
                 label.style.display = 'none';
             });
+            // Also hide the mobile header toggle button
+            const mobileHeaderToggle = document.querySelector('.nav-overlay-icon');
+            if (mobileHeaderToggle) {
+                mobileHeaderToggle.style.display = 'none';
+            }
             // Reset layout for hidden sidebar
             this.resetLayoutForHiddenSidebar();
-            // Update title for homepage
-            this.updateSectionTitle('homepage', { title: 'Home' });
+            // Update title for section
+            this.updateSectionTitle(appState.currentSection, section);
         } else {
             // Check if navigation is already rendered for this section
-            const section = appState.config.sections[appState.currentSection];
             const containerHasContent = navigationContainer.children.length > 0;
             const lastRenderedSection = navigationContainer.dataset.renderedSection;
             
@@ -199,7 +215,7 @@ class NavigationManager {
                 console.log(`[Debug] Skipping navigation render - already rendered for section ${appState.currentSection} with ${navigationContainer.children.length} items`);
             }
             
-            // Enable sidebar for other sections
+            // Enable sidebar for sections where it's enabled
             if (navCheckbox) {
                 navCheckbox.disabled = false;
                 // Ensure sidebar starts hidden (not checked) and stays hidden until user opens it
@@ -229,8 +245,8 @@ class NavigationManager {
             sidebarDrawer.style.setProperty('--sidebar-width', currentWidth);
         }
 
-        // Adjust layout after navigation is generated (only if not homepage and sidebar is checked)
-        if (appState.currentSection !== 'homepage') {
+        // Adjust layout after navigation is generated (only if sidebar is enabled and checked)
+        if (sidebarEnabled) {
             setTimeout(() => {
                 // Only adjust layout if sidebar is actually checked/open
                 if (navCheckbox && navCheckbox.checked) {
@@ -440,6 +456,15 @@ class NavigationManager {
             expandIcon.innerHTML = '▼';
         }
         
+        // Scroll to the clicked group so its title appears at the top
+        // Wait a bit for DOM to update after expand/collapse animation
+        const parentTab = expandIcon?.closest('.parent-tab');
+        if (parentTab) {
+            setTimeout(() => {
+                this.scrollToElement(parentTab);
+            }, 100);
+        }
+        
         // Adjust layout after toggling with a small delay to ensure DOM updates are complete
         setTimeout(() => {
             this.adjustLayoutForSidebar();
@@ -477,10 +502,11 @@ class NavigationManager {
         const originalLeft = sidebarDrawer.style.left;
         const originalPosition = sidebarDrawer.style.position;
         
-        // Make sidebar visible first - remove all hiding styles
+        // Make sidebar visible first - remove all hiding styles (no animation)
         sidebarDrawer.style.display = '';
         sidebarDrawer.style.visibility = 'visible';
         sidebarDrawer.style.opacity = '1';
+        sidebarDrawer.style.transition = 'none'; // Ensure no animation
         
         // Also ensure child elements are visible
         const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
@@ -550,38 +576,42 @@ class NavigationManager {
             sidebarDrawer.style.position = originalPosition || 'fixed';
         }
 
-        // Apply the optimal width
-        sidebarDrawer.style.width = `${optimalWidth}px`;
-        sidebarDrawer.querySelector('.sidebar-container').style.width = `${optimalWidth}px`;
-        // Set the CSS variable for sidebar width
-        sidebarDrawer.style.setProperty('--sidebar-width', optimalWidth ? `${optimalWidth}px` : '15em');
+        // Determine the width to use: stored width if exists, otherwise maximum width
+        const maxSidebarWidth = 600; // Maximum width as defined above
+        let finalWidth = optimalWidth;
         
-        // If sidebar is visible and we have a stored width, use it for immediate opening
-        if (isSidebarVisible && sidebarDrawer.dataset.storedWidth) {
-            const storedWidth = parseInt(sidebarDrawer.dataset.storedWidth);
-            sidebarDrawer.style.width = `${storedWidth}px`;
-            sidebarDrawer.querySelector('.sidebar-container').style.width = `${storedWidth}px`;
-            // Set the CSS variable for sidebar width
-            sidebarDrawer.style.setProperty('--sidebar-width', storedWidth ? `${storedWidth}px` : '15em');
-        } else if (isSidebarVisible && !sidebarDrawer.dataset.storedWidth) {
+        if (isSidebarVisible) {
+            // Check for stored width in localStorage or dataset
             const localStorageWidth = localStorage.getItem('sidebarWidth');
-            let width = optimalWidth;
-            if (localStorageWidth) {
-                width = parseInt(localStorageWidth);
+            const datasetWidth = sidebarDrawer.dataset.storedWidth;
+            
+            if (datasetWidth) {
+                // Use stored width from dataset
+                finalWidth = parseInt(datasetWidth);
+            } else if (localStorageWidth) {
+                // Use stored width from localStorage
+                finalWidth = parseInt(localStorageWidth);
+                sidebarDrawer.dataset.storedWidth = finalWidth;
+            } else {
+                // No stored width exists - use maximum width initially
+                finalWidth = maxSidebarWidth;
+                sidebarDrawer.dataset.storedWidth = maxSidebarWidth;
+                localStorage.setItem('sidebarWidth', maxSidebarWidth.toString());
             }
-            sidebarDrawer.style.width = `${width}px`;
-            sidebarDrawer.querySelector('.sidebar-container').style.width = `${width}px`;
-            // Set the CSS variable for sidebar width
-            sidebarDrawer.style.setProperty('--sidebar-width', width ? `${width}px` : '15em');
-            sidebarDrawer.dataset.storedWidth = width;
         } else {
-            // Set the CSS variable for sidebar width
-            sidebarDrawer.style.setProperty('--sidebar-width', optimalWidth ? `${optimalWidth}px` : '15em');
+            // Sidebar not visible, use optimal width for calculations
+            finalWidth = optimalWidth;
         }
 
+        // Apply the final width
+        sidebarDrawer.style.width = `${finalWidth}px`;
+        sidebarDrawer.querySelector('.sidebar-container').style.width = `${finalWidth}px`;
+        // Set the CSS variable for sidebar width
+        sidebarDrawer.style.setProperty('--sidebar-width', finalWidth ? `${finalWidth}px` : '15em');
+
         // Adjust main content area with sidebar spacing
-        console.log(`[Debug] Adjusting main content. Sidebar width: ${optimalWidth}px`);
-        const sidebarOffset = optimalWidth + 0; // Reduced buffer for better spacing
+        console.log(`[Debug] Adjusting main content. Sidebar width: ${finalWidth}px`);
+        const sidebarOffset = finalWidth + 0; // Reduced buffer for better spacing
         mainContent.style.marginLeft = `${sidebarOffset}px`;
         mainContent.style.maxWidth = `calc(100% - ${sidebarOffset}px)`;
         
@@ -702,19 +732,13 @@ class NavigationManager {
             return;
         }
         
-        // Disable transitions before hiding
-        const originalTransition = sidebarDrawer.style.transition;
-        sidebarDrawer.style.transition = 'none';
-        if (mainContent.style.transition) {
-            mainContent.style.transition = 'none';
-        }
-        
-        // Completely hide the sidebar when unchecked (no animation, no display)
+        // Completely hide the sidebar when unchecked (no animation, instant)
         if (!navCheckbox || !navCheckbox.checked) {
             console.log('[Debug] Hiding sidebar completely');
             sidebarDrawer.style.display = 'none';
             sidebarDrawer.style.visibility = 'hidden';
             sidebarDrawer.style.opacity = '0';
+            sidebarDrawer.style.transition = 'none'; // Ensure no animation
             
             // Also hide child elements to ensure nothing is visible
             const sidebarContainer = sidebarDrawer.querySelector('.sidebar-container');
@@ -736,19 +760,13 @@ class NavigationManager {
             sidebarContainer.style.width = '15em';
         }
         
-        // Remove inline styles from main content
+        // Remove inline styles from main content (no animation)
         mainContent.style.removeProperty('margin-left');
         mainContent.style.removeProperty('max-width');
+        mainContent.style.transition = 'none'; // Ensure no animation
         
         // Clear stored width
         delete sidebarDrawer.dataset.currentWidth;
-        
-        // Re-enable transitions after a brief delay (only if sidebar should be visible)
-        setTimeout(() => {
-            if (navCheckbox && navCheckbox.checked) {
-                sidebarDrawer.style.transition = originalTransition || '';
-            }
-        }, 50);
     }
 
     // Method to ensure smooth sidebar opening
@@ -1132,32 +1150,79 @@ class NavigationManager {
     }
 
     /**
-     * Scrolls the sidebar to the current tab when the sidebar is opened
+     * Scrolls the sidebar so a specific element appears at the top
+     */
+    scrollToElement(targetElement) {
+        if (!targetElement) return;
+        
+        const sidebarScroll = document.querySelector('.sidebar-scroll');
+        if (!sidebarScroll) return;
+
+        // Use requestAnimationFrame to ensure DOM is fully updated
+        requestAnimationFrame(() => {
+            // Get the current scroll position
+            const currentScrollTop = sidebarScroll.scrollTop;
+            
+            // Get bounding rectangles - these are relative to the viewport
+            const scrollRect = sidebarScroll.getBoundingClientRect();
+            const targetRect = targetElement.getBoundingClientRect();
+            
+            // Calculate how far the target is from the top of the visible scroll area
+            // targetRect.top is the element's top edge relative to viewport
+            // scrollRect.top is the scroll container's top edge relative to viewport
+            // The difference is how far the element is from the top of the visible scroll area
+            const distanceFromTop = targetRect.top - scrollRect.top;
+            
+            // The target element's absolute position in the scrollable content is:
+            // current scroll position + distance from top of visible area
+            const targetScrollTop = currentScrollTop + distanceFromTop;
+            
+            // Ensure we don't scroll past the limits
+            const maxScroll = sidebarScroll.scrollHeight - sidebarScroll.clientHeight;
+            // Round to avoid sub-pixel issues
+            const finalScrollTop = Math.max(0, Math.min(Math.round(targetScrollTop), maxScroll));
+            
+            sidebarScroll.scrollTo({
+                top: finalScrollTop,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    /**
+     * Scrolls the sidebar so the current group's title appears at the top
      */
     scrollToCurrentTab() {
         const currentTabElement = document.querySelector('.current-page');
         if (!currentTabElement) return;
 
-        const sidebarScroll = document.querySelector('.sidebar-scroll');
-        if (!sidebarScroll) return;
+        // Find the parent group (parent-tab) that contains the current item
+        let parentGroup = null;
+        
+        // If current item is a child-tab, find its parent group
+        if (currentTabElement.classList.contains('child-tab')) {
+            // The structure is: parent-tab > children-nav > child-tab
+            // So we need to go up to children-nav, then find the previous sibling parent-tab
+            let parent = currentTabElement.parentElement;
+            while (parent && !parent.classList.contains('sidebar-tree')) {
+                if (parent.classList.contains('children-nav')) {
+                    // Found the children-nav, now look for the previous sibling parent-tab
+                    const parentLi = parent.previousElementSibling;
+                    if (parentLi && parentLi.classList.contains('parent-tab')) {
+                        parentGroup = parentLi;
+                        break;
+                    }
+                }
+                parent = parent.parentElement;
+            }
+        } else if (currentTabElement.classList.contains('parent-tab')) {
+            // Current item is already a parent group
+            parentGroup = currentTabElement;
+        }
 
-        // Calculate the position to scroll to
-        const sidebarRect = sidebarScroll.getBoundingClientRect();
-        const tabRect = currentTabElement.getBoundingClientRect();
-        
-        // Calculate the scroll position to center the current tab
-        const scrollTop = sidebarScroll.scrollTop;
-        const tabTop = tabRect.top - sidebarRect.top;
-        const sidebarHeight = sidebarRect.height;
-        const tabHeight = tabRect.height;
-        
-        // Center the tab in the sidebar
-        const targetScrollTop = scrollTop + tabTop - (sidebarHeight / 2) + (tabHeight / 2);
-        
-        // Scroll to the target position
-        sidebarScroll.scrollTo({
-            top: targetScrollTop
-        });
+        // If we found a parent group, scroll to it; otherwise scroll to the current item
+        const targetElement = parentGroup || currentTabElement;
+        this.scrollToElement(targetElement);
     }
 
     /**

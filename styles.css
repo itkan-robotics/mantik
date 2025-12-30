@@ -408,7 +408,7 @@ body {
     text-decoration: none;
     padding: 0.75rem 1rem;
     border-radius: 0; /* SWYFT uses no border radius */
-    font-size: 14px; /* SWYFT menu-lv1-size */
+    font-size: 16px; /* SWYFT menu-lv1-size */
     font-weight: 700; /* SWYFT menu-lv1-weight */
     letter-spacing: 0.05em; /* SWYFT menu-lv1-letter-spacing */
     text-transform: uppercase; /* SWYFT menu-lv1-text-transform */
@@ -467,7 +467,8 @@ body {
     position: absolute;
     top: 100%;
     right: 0;
-    width: 400px;
+    width: 100%;
+    max-width: min(400px, calc(100vw - 2rem)); /* Prevent overflow */
     max-height: 500px;
     background-color: var(--color-background-primary);
     border: 1px solid var(--color-background-border);
@@ -475,7 +476,9 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     overflow-y: auto;
+    overflow-x: hidden;
     margin-top: 0.5rem;
+    box-sizing: border-box;
   }
   
   .search-results-list {
@@ -643,7 +646,7 @@ body {
     width: var(--sidebar-width, 15em);
     height: 100vh;
     background-color: var(--color-sidebar-background);
-    transition: left 0.3s ease;
+    transition: none; /* No animation - instant */
     z-index: 2;
     overflow: hidden;
     box-shadow: none; /* SWYFT: no shadows */
@@ -651,6 +654,18 @@ body {
     border-right: 1px solid var(--color-background-border);
     min-width: 15em; /* Ensure minimum width */
     max-width: 600px; /* Maximum width for very wide content */
+  }
+  
+  /* Completely hide sidebar when checkbox is disabled (homepage) */
+  #__navigation:disabled ~ .page .sidebar-drawer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+  
+  /* Hide sidebar toggle when checkbox is disabled (homepage) */
+  #__navigation:disabled ~ .page .nav-overlay-icon {
+    display: none !important;
   }
   
   /* Sidebar resize handle */
@@ -1646,7 +1661,7 @@ a:hover {
     height: 0;
     background-color: rgba(0, 0, 0, 0.5);
     opacity: 0;
-    transition: opacity 0.3s ease, width 0s 0.3s, height 0s 0.3s;
+    transition: none; /* No animation - instant */
     z-index: 29;  /* Below sidebar, above content */
   }
   
@@ -1656,7 +1671,7 @@ a:hover {
       width: 100vw;
       height: 100vh;
       opacity: 1;
-      transition: opacity 0.3s ease 0s, width 0s 0s, height 0s 0s;
+      transition: none; /* No animation - instant */
       pointer-events: auto;
       z-index: 29;
     }
@@ -1667,7 +1682,7 @@ a:hover {
       width: 15em;
       height: 100vh;
       z-index: 30;
-      transition: left 0.3s ease-in-out;
+      transition: none; /* No animation - instant */
     }
     #__navigation:checked ~ .page .sidebar-drawer {
       left: 0;
@@ -1698,12 +1713,19 @@ a:hover {
   #__navigation:checked ~ .page .main {
     max-width: calc(100% - var(--sidebar-width, 15em));
     margin-left: var(--sidebar-width, 15em);
-    transition: margin-left 0.3s ease-in-out, max-width 0.3s ease-in-out;
+    transition: none; /* No animation - instant */
   }
   
-  /* Add transition to main content for smooth sidebar animation */
+  /* Prevent homepage from resizing when sidebar appears */
+  #__navigation:disabled ~ .page .main {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    transition: none !important;
+  }
+  
+  /* No transition on main content */
   .main {
-    transition: margin-left 0.3s ease-in-out, max-width 0.3s ease-in-out;
+    transition: none; /* No animation - instant */
   }
   
   /* Responsive design */
@@ -2414,9 +2436,11 @@ a:hover {
       transform: none;
       width: 90%;
       min-width: 0;
-      max-width: 400px;
+      max-width: min(400px, calc(100vw - 2rem)); /* Prevent overflow */
       margin: 0 auto;
       border-radius: 0.75rem;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
   } 
   

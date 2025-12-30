@@ -16,15 +16,15 @@ class AppState {
         this.sidebarOpen = false;
         this.searchQuery = '';
         this.lastActivity = Date.now();
-        // Ensure sidebar is fully closed on first load
-        document.addEventListener('DOMContentLoaded', () => {
-            const sidebarCheckbox = document.getElementById('__navigation');
-            const sidebarDrawer = document.querySelector('.sidebar-drawer');
-            if (sidebarCheckbox) sidebarCheckbox.checked = false;
-            if (sidebarDrawer) sidebarDrawer.style.setProperty('--sidebar-width', '15em');
-        });
-        // Initialize persistence
+        // Initialize persistence (this will restore sidebar state from localStorage if available)
         this.initializePersistence();
+        // Set default sidebar state after restoring (if no saved state exists, it stays closed)
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarDrawer = document.querySelector('.sidebar-drawer');
+            if (sidebarDrawer) sidebarDrawer.style.setProperty('--sidebar-width', '15em');
+            // Apply the restored sidebar state (or default to closed)
+            this.restoreSidebarState();
+        });
     }
 
     /**
@@ -73,9 +73,21 @@ class AppState {
             }, 1000); // Debounce scroll saves
         });
         
-        // Save state when sidebar state changes
+        // Set up sidebar state change listener
+        // Try immediately, and also on DOMContentLoaded in case checkbox isn't ready yet
+        this.setupSidebarListener();
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupSidebarListener();
+        });
+    }
+
+    /**
+     * Set up sidebar state change listener
+     */
+    setupSidebarListener() {
         const sidebarCheckbox = document.getElementById('__navigation');
-        if (sidebarCheckbox) {
+        if (sidebarCheckbox && !sidebarCheckbox.dataset.listenerAttached) {
+            sidebarCheckbox.dataset.listenerAttached = 'true';
             sidebarCheckbox.addEventListener('change', () => {
                 this.sidebarOpen = sidebarCheckbox.checked;
                 this.saveState();
@@ -155,8 +167,13 @@ class AppState {
             if (state.scrollPosition !== undefined) {
                 this.scrollPosition = state.scrollPosition;
             }
+            // Restore sidebar state if it was previously saved
+            // If undefined, keep default (false = closed)
             if (state.sidebarOpen !== undefined) {
                 this.sidebarOpen = state.sidebarOpen;
+            } else {
+                // No saved state, default to closed
+                this.sidebarOpen = false;
             }
             if (state.searchQuery) {
                 this.searchQuery = state.searchQuery;
@@ -195,14 +212,24 @@ class AppState {
 
     /**
      * Restore sidebar state
+     * Applies the saved sidebar state (or default closed state) to the checkbox
      */
     restoreSidebarState() {
         const sidebarCheckbox = document.getElementById('__navigation');
+        if (!sidebarCheckbox) {
+            // Checkbox not ready yet, try again after a short delay
+            setTimeout(() => this.restoreSidebarState(), 50);
+            return;
+        }
+        
         console.log(`[Debug] restoreSidebarState called. Saved state: ${this.sidebarOpen}`);
-        if (sidebarCheckbox && sidebarCheckbox.checked !== this.sidebarOpen) {
+        
+        // Apply the saved state (or default false if no saved state)
+        // Only change if different to avoid unnecessary events
+        if (sidebarCheckbox.checked !== this.sidebarOpen) {
             console.log(`[Debug] Restoring sidebar state to: ${this.sidebarOpen}`);
             sidebarCheckbox.checked = this.sidebarOpen;
-            // Trigger change event
+            // Trigger change event to ensure UI updates properly
             sidebarCheckbox.dispatchEvent(new Event('change'));
         }
     }

@@ -515,8 +515,9 @@ class ContentManager {
      */
     createNavigationButtons(currentTabId) {
         console.log(`[Debug] createNavigationButtons called for ${currentTabId}`);
-        // Don't show navigation for homepage
-        if (appState.currentSection === 'homepage') {
+        // Don't show navigation buttons if sidebar is disabled for this section
+        const section = appState.config.sections[appState.currentSection];
+        if (section && section.sidebarEnabled === false) {
             return null;
         }
         
