@@ -803,6 +803,17 @@ class NavigationManager {
                 await this.handleSectionNavigation(tabId);
                 return;
             }
+            
+            // Check if this tab belongs to an under-construction section
+            const parentSectionId = this.findParentSectionIdForTab(tabId, appState.config.sections);
+            if (parentSectionId) {
+                const parentSection = appState.config.sections[parentSectionId];
+                if (parentSection && parentSection.underConstruction) {
+                    // Redirect to the under construction page for this section
+                    await this.handleSectionNavigation(parentSectionId);
+                    return;
+                }
+            }
             // Clear current page classes
             document.querySelectorAll('.toctree-l1, .toctree-l2').forEach(li => {
                 li.classList.remove('current-page');
@@ -951,6 +962,12 @@ class NavigationManager {
 
         const section = appState.config.sections[sectionId];
         if (!section || !section.file) return;
+        
+        // Check if section is under construction
+        if (section.underConstruction) {
+            await this.handleUnderConstructionSection(sectionId, section);
+            return;
+        }
         
         // Update URL for section navigation
         this.updateUrl(sectionId);
@@ -1344,6 +1361,54 @@ class NavigationManager {
         };
         
         return sectionNames[sectionId] || sectionId;
+    }
+
+    /**
+     * Handles navigation to sections that are under construction
+     */
+    async handleUnderConstructionSection(sectionId, section) {
+        // Update URL for section navigation
+        this.updateUrl(sectionId);
+        
+        // Update current section state
+        appState.setCurrentSection(sectionId);
+        
+        // Update page title
+        const sectionName = this.getSectionDisplayName(sectionId);
+        document.title = `${sectionName} (Under Construction) - Mantik`;
+        
+        // Load and render under construction content
+        try {
+            const underConstructionData = await this.contentManager.configManager.loadContentFile('data/config/under-construction.json');
+            
+            // Create a temporary tab data entry for the under construction page
+            const underConstructionTabData = {
+                id: `${sectionId}-under-construction`,
+                title: `${sectionName} - Under Construction`,
+                sectionId: sectionId,
+                sections: underConstructionData.sections,
+                loaded: true
+            };
+            
+            // Store the tab data
+            appState.addTabData(underConstructionTabData.id, underConstructionTabData);
+            appState.setCurrentTab(underConstructionTabData.id);
+            
+            // Render the under construction content
+            this.contentManager.renderContent(underConstructionTabData.id);
+            
+            // Generate navigation (will disable sidebar due to sidebarEnabled: false)
+            await this.generateNavigation();
+            
+            // Update header navigation
+            this.updateHeaderNavigation(sectionId);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0 });
+        } catch (error) {
+            console.error(`Failed to load under construction page:`, error);
+            this.showError('Failed to load page. Please try again.');
+        }
     }
 }
 

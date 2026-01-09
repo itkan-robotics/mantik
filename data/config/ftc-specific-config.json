@@ -115,7 +115,6 @@
       "id": "onbot-java-parent",
       "label": "OnBot Java Development",
       "description": "Learn FTC programming using OnBot Java development environment",
-      "icon": "💻",
       "children": [
         {
           "id": "onbot-java-environment-setup",
@@ -396,7 +395,6 @@
       "id": "android-studio-parent",
       "label": "Android Studio Development",
       "description": "Advanced FTC programming using Android Studio IDE",
-      "icon": "📱",
       "children": [
         {
           "id": "android-studio-environment-setup",

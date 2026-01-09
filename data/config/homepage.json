@@ -20,26 +20,24 @@
         {
           "label": "Java Training",
           "id": "java-training",
-          "icon": "☕",
           "description": "Master Java programming fundamentals"
         },
         {
           "label": "FTC Training",
           "id": "ftc-specific",
-          "icon": "🤖",
-          "description": "FIRST Tech Challenge programming"
+          "description": "FIRST Tech Challenge programming",
+          "underConstruction": true
         },
         {
           "label": "FRC Training",
           "id": "frc-specific",
-          "icon": "🏁",
           "description": "FIRST Robotics Competition programming"
         },
         {
           "label": "Competitive Training",
           "id": "competitive-training",
-          "icon": "🏆",
-          "description": "Competitive programming strategies"
+          "description": "Competitive programming strategies",
+          "underConstruction": true
         }
       ]
     },

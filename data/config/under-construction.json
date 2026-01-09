@@ -1,0 +1,47 @@
+{
+  "id": "under-construction",
+  "title": "Under Construction",
+  "description": "This section is currently being developed",
+  "sections": [
+    {
+      "type": "text",
+      "title": "",
+      "content": "ㅤㅤㅤㅤ"
+    },
+    {
+      "type": "rules-box",
+      "title": "Section Under Construction",
+      "subtitle": "This training module is currently being developed",
+      "items": [
+        "Our team is actively working on this content",
+        "Check back soon for updates",
+        "In the meantime, explore our other available training sections"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "What to Expect",
+      "content": "This section will contain comprehensive training materials once completed. We are committed to providing high-quality educational content that meets our standards before release."
+    },
+    {
+      "type": "link-grid",
+      "title": "Available Training Sections:",
+      "links": [
+        {
+          "label": "Java Training",
+          "id": "java-training",
+          "description": "Master Java programming fundamentals"
+        },
+        {
+          "label": "FRC Training",
+          "id": "frc-specific",
+          "description": "FIRST Robotics Competition programming"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-08"
+  }
+}

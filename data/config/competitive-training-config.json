@@ -158,7 +158,6 @@
       "id": "comp-foundation",
       "label": "Foundation Concepts",
       "description": "Essential competitive programming fundamentals",
-      "icon": "📚",
       "items": [
         {
           "id": "comp-intro",
@@ -194,7 +193,6 @@
       "id": "comp-data-structures",
       "label": "Data Structures",
       "description": "Essential data structures for competitive programming",
-      "icon": "🏗️",
       "items": [
         {
           "id": "comp-arrays-strings",
@@ -251,7 +249,6 @@
       "id": "comp-algorithms",
       "label": "Algorithms",
       "description": "Essential algorithms and techniques",
-      "icon": "⚡",
       "items": [
         {
           "id": "comp-sorting",
@@ -322,7 +319,6 @@
       "id": "comp-advanced",
       "label": "Advanced Topics",
       "description": "Advanced competitive programming concepts",
-      "icon": "🎯",
       "items": [
         {
           "id": "comp-advanced-dp",
@@ -351,7 +347,6 @@
       "id": "comp-strategies",
       "label": "Competition Strategies",
       "description": "Strategies and techniques for competitive programming",
-      "icon": "🏆",
       "items": [
         {
           "id": "comp-patterns",

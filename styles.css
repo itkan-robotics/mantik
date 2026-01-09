@@ -598,6 +598,44 @@ body {
     /* SWYFT: no transforms, just background change */
   }
   
+  /* Link grid with descriptions */
+  .link-grid-button {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .link-grid-description {
+    font-size: 0.75rem;
+    color: var(--color-foreground-secondary);
+    font-weight: 400;
+    display: block;
+    margin-top: 0.25rem;
+  }
+  
+  /* Under construction badge styles */
+  .link-grid-button.under-construction {
+    position: relative;
+    opacity: 0.8;
+  }
+  
+  .under-construction-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: var(--color-brand-primary);
+    color: var(--color-background-primary);
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .link-grid-button.under-construction:hover {
+    opacity: 1;
+  }
+  
   
   .nav-overlay-icon {
     cursor: pointer;
@@ -631,11 +669,9 @@ body {
   .theme-icon {
     font-size: 1.25rem;
     color: var(--color-foreground-primary);
-  }
-  
-  .theme-icon {
-    font-size: 1.25rem;
-    color: var(--color-foreground-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   /* Sidebar */
@@ -2746,8 +2782,10 @@ a:hover {
   }
   .help-icon {
       font-size: 1rem;
-      font-weight: bold;
       margin-right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
   }
   
   /* Undo overlay/modal redesign, keep previous modal/card style */

@@ -47,7 +47,6 @@
       "id": "frc-environment-setup",
       "label": "Environment Setup",
       "description": "Setting up your FRC development environment and vendor libraries",
-      "icon": "⚙️",
       "items": [
         {
           "id": "environment-setup",
@@ -90,7 +89,6 @@
       "id": "frc-basics",
       "label": "Basics",
       "description": "Fundamental FRC programming concepts - motors, controllers, sensors, and your first mechanism",
-      "icon": "🔰",
       "items": [
         {
           "id": "intro-to-motors",
@@ -140,7 +138,6 @@
       "id": "frc-command-based",
       "label": "Command-Based Programming",
       "description": "Complete guide to WPILib command-based programming architecture",
-      "icon": "🎮",
       "items": [
         {
           "id": "intro-to-command-based",
@@ -197,7 +194,6 @@
       "id": "frc-advanced-motor-config",
       "label": "Advanced Motor Control",
       "description": "Advanced configuration, current limiting, and on-controller PID",
-      "icon": "🔀",
       "items": [
         {
           "id": "motor-controller-configuration",
@@ -219,7 +215,6 @@
       "id": "frc-control-theory",
       "label": "Control Theory",
       "description": "PID control, motion profiling, and feedforward",
-      "icon": "📊",
       "items": [
         {
           "id": "frc-pid-control",
@@ -255,7 +250,6 @@
       "id": "frc-pid-tuning-practice",
       "label": "PID Tuning Practice",
       "description": "Hands-on practice tuning PID controllers for different mechanisms",
-      "icon": "🎯",
       "items": [
         {
           "id": "pid-tuning-practice-setup",
@@ -305,7 +299,6 @@
       "id": "frc-examples",
       "label": "Mechanism Examples",
       "description": "Applying concepts to build complete mechanisms",
-      "icon": "💡",
       "items": [
         {
           "id": "elevator-example",
@@ -327,7 +320,6 @@
       "id": "frc-pose-estimation",
       "label": "Pose Estimation",
       "description": "Odometry, vision, and sensor fusion",
-      "icon": "📍",
       "items": [
         {
           "id": "pose-estimation-intro",
@@ -370,7 +362,6 @@
       "id": "frc-external-tools",
       "label": "External Tools",
       "description": "PathPlanner, AdvantageKit, AdvantageScope, YASS",
-      "icon": "🛠️",
       "items": [
         {
           "id": "pathplanner",
@@ -406,7 +397,6 @@
       "id": "frc-advanced-topics",
       "label": "Advanced Topics",
       "description": "Simulation and Unit Testing",
-      "icon": "🚀",
       "items": [
         {
           "id": "simulation-basics",

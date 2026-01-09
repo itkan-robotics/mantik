@@ -1896,6 +1896,23 @@ class ContentManager {
                 linkButton.textContent = link.label || link.title;
             }
             
+            // Add under construction badge if applicable
+            if (link.underConstruction) {
+                linkButton.classList.add('under-construction');
+                const badge = document.createElement('span');
+                badge.className = 'under-construction-badge';
+                badge.textContent = 'Coming Soon';
+                linkButton.appendChild(badge);
+            }
+            
+            // Add description if provided
+            if (link.description) {
+                const descSpan = document.createElement('span');
+                descSpan.className = 'link-grid-description';
+                descSpan.textContent = link.description;
+                linkButton.appendChild(descSpan);
+            }
+            
             grid.appendChild(linkButton);
         });
         

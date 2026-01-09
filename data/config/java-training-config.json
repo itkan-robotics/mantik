@@ -107,7 +107,6 @@
       "id": "java-basics",
       "label": "Java Basics",
       "description": "Fundamental Java programming concepts and syntax",
-      "icon": "📝",
       "items": [
         {
           "id": "java-intro",
@@ -150,7 +149,6 @@
       "id": "java-programming-logic",
       "label": "Programming Logic",
       "description": "Control flow and decision-making in Java",
-      "icon": "🧠",
       "items": [
         {
           "id": "java-conditionals",
@@ -186,7 +184,6 @@
       "id": "java-loops",
       "label": "Loops and Iteration",
       "description": "Repetitive execution and iteration patterns",
-      "icon": "🔄",
       "items": [
         {
           "id": "java-while-loops",
@@ -222,7 +219,6 @@
       "id": "java-oop",
       "label": "Object-Oriented Programming",
       "description": "Classes, objects, and OOP principles",
-      "icon": "🏗️",
       "items": [
         {
           "id": "java-classes",
@@ -258,7 +254,6 @@
       "id": "version-control",
       "label": "Version Control with Git & GitHub",
       "description": "Git and GitHub for FTC team collaboration",
-      "icon": "📚",
       "items": [
         {
           "id": "intro-version-control",
