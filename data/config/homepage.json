@@ -11,7 +11,7 @@
     {
       "type": "text",
       "title": "Choose Your Learning Path",
-      "content": "Welcome to Mantik! This comprehensive training platform is designed to help you master programming concepts for robotics competitions. Select the training path that best fits your needs and experience level."
+      "content": "Welcome to Mantik <a href='https://youtu.be/BioAlyEcxxk' target='_blank'>(pronounced \"mun-tick\" or \"mun-tiq\")</a>! This comprehensive training platform is designed to help you master programming concepts for robotics competitions. Select the training path that best fits your needs and experience level."
     },
     {
       "type": "link-grid",
