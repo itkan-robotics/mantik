@@ -364,6 +364,13 @@
       "description": "PathPlanner, AdvantageKit, AdvantageScope, YASS",
       "items": [
         {
+          "id": "limelight",
+          "label": "Limelight",
+          "file": "data/frc/external-tools/limelight.json",
+          "difficulty": "intermediate",
+          "duration": "30 min"
+        },
+        {
           "id": "pathplanner",
           "label": "PathPlanner",
           "file": "data/frc/external-tools/pathplanner.json",

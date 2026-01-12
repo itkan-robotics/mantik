@@ -2266,7 +2266,7 @@ a:hover {
   
   /* Answer button and section styles */
   .answer-toggle-btn {
-      background: linear-gradient(135deg, var(--color-brand-primary), var(--color-accent));
+      background: var(--color-accent);
       color: var(--color-background-primary);
       border: none;
       padding: 0.75rem 1.5rem;
@@ -2282,7 +2282,7 @@ a:hover {
   .answer-toggle-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      background: linear-gradient(135deg, var(--color-accent), var(--color-brand-primary));
+      background: var(--color-accent);
   }
   
   .answer-toggle-btn:active {
@@ -2291,11 +2291,11 @@ a:hover {
   }
   
   .answer-toggle-btn.active {
-      background: linear-gradient(135deg, var(--color-error), var(--color-accent));
+      background: var(--color-accent);
   }
   
   .answer-toggle-btn.active:hover {
-      background: linear-gradient(135deg, var(--color-accent), var(--color-error));
+      background: var(--color-accent);
   }
   
   .answer-section {

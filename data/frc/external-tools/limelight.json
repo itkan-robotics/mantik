@@ -1,0 +1,86 @@
+{
+    "title": "Limelight",
+    "sections": [
+        {
+            "type": "text",
+            "title": "Hardware Manager Setup",
+            "content": "For a more in-depth explanation of the Limelight Hardware Manager and a simple auto-align, see this video: <a href='https://www.youtube.com/watch?v=p0Ux8Mk1ycQ' target='_blank'>Limelight and Auto Align Explanation</a><br><br>To begin configuring the vision system, open the <strong>Limelight Hardware Manager</strong>. Locate your specific Limelight module (e.g., left or right camera) and double-click to access the feed. Ensure the pipeline type is configured to <strong>AprilTags</strong>."
+        },
+        {
+            "type": "text",
+            "content": "You will need to use <strong>Full 3D Targeting</strong> to determine the absolute pose of the robot on the field. Before configuring the 3D localization, it is crucial to understand the raw data values provided by the camera."
+        },
+        {
+            "type": "table",
+            "title": "Targeting Variables (NetworkTables)",
+            "headers": [
+                "Variable",
+                "Definition",
+                "Behavior"
+            ],
+            "rows": [
+                [
+                    "tx",
+                    "Horizontal Offset",
+                    "Angle in degrees from the crosshair to the target. Positive (+) when target is to the LEFT."
+                ],
+                [
+                    "ty",
+                    "Vertical Offset",
+                    "Angle in degrees from the crosshair to the target. Positive (+) when target is BELOW the crosshair."
+                ],
+                [
+                    "ta",
+                    "Target Area",
+                    "Percentage (0-100) of the image the target occupies. Larger values indicate the target is closer."
+                ],
+                [
+                    "tl",
+                    "Latency",
+                    "Time in milliseconds from capturing the image to sending it to the robot. Usually ~6ms."
+                ]
+            ]
+        },
+        {
+            "type": "rules-box",
+            "title": "Coordinate System Warning",
+            "content": "The Limelight coordinate system is inverted compared to standard Cartesian graphs. <br><br><ul><li><strong>TX:</strong> Usually, right is positive. In Limelight, <strong>Left is Positive</strong>.</li><li><strong>TY:</strong> Usually, up is positive. In Limelight, <strong>Down (Below) is Positive</strong>.</li></ul>"
+        },
+        {
+            "type": "text",
+            "title": "3D Localization (MegaTag)",
+            "content": "<code>Robot Pose in Target Space</code> shows where the robot is relative to the AprilTag, but this can be difficult to visualize. By switching the view to <code>Robot Pose in Field Space</code>, you can see exactly where the robot thinks it is on the field."
+        },
+        {
+            "type": "emphasis-box",
+            "title": "Camera Offset Configuration",
+            "content": "For accurate field localization, you must configure the camera's physical position relative to the <strong>center of the robot</strong> (at floor level). You must measure and input:<br>1. Meters Forward/Backward<br>2. Meters Left/Right<br>3. Meters Up<br>4. Pitch/Yaw/Roll angles"
+        },
+        {
+            "type": "text",
+            "title": "Why Localization Matters",
+            "content": "AprilTag localization is critical for correcting <strong>Odometry Drift</strong>. When the robot accelerates quickly or wheels slip, the physical encoders may lose track of the actual position. Vision processing allows the robot to reset its estimated position to the actual field coordinates."
+        },
+        {
+            "type": "exercise-box",
+            "title": "Configuration Check",
+            "description": "Test your understanding of the Limelight data values.",
+            "tasks": [
+                "If the AprilTag appears to the left of the center crosshair, is tx positive or negative?",
+                "If the robot moves closer to the tag, what happens to the ta value?",
+                "Why is vision localization preferred over pure wheel odometry?"
+            ],
+            "answers": [
+                {
+                    "task": "Positive. Limelight logic is inverted: Left is Positive, Right is Negative."
+                },
+                {
+                    "task": "The ta (Target Area) increases because the tag takes up a larger percentage of the screen."
+                },
+                {
+                    "task": "Wheel odometry accumulates error over time (drift) due to wheel slip and fast acceleration. Vision provides an absolute field reference to correct this error."
+                }
+            ]
+        }
+    ]
+}
