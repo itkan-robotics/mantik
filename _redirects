@@ -1,3 +1,18 @@
-# Redirect all routes to index.html for SPA routing
-# Exclude static assets (files with extensions)
-/*    /index.html   200 
+# Netlify redirects for Mantik SPA
+# Note: Most redirects are defined in netlify.toml
+# This file provides fallback for SPA routing
+
+# Section routes (handled in netlify.toml but duplicated here for reliability)
+/java/*    /index.html   200
+/frc/*     /index.html   200
+/ftc/*     /index.html   200
+/comp/*    /index.html   200
+
+# Main section routes
+/java      /index.html   200
+/frc       /index.html   200
+/ftc       /index.html   200
+/comp      /index.html   200
+
+# SPA catch-all fallback (must be last)
+/*         /index.html   200

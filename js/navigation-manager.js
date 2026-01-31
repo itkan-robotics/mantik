@@ -383,13 +383,30 @@ class NavigationManager {
         // This is a placeholder for future tier-based navigation
     }
 
+    /**
+     * Builds a crawlable URL path for a tab
+     * Uses path-based URLs that match sitemap.xml for SEO
+     */
+    buildCrawlableUrl(tabId) {
+        const currentSection = appState.currentSection;
+        const sectionPath = this.sectionUrlMap[currentSection];
+        
+        if (sectionPath && tabId) {
+            return `/${sectionPath}/${tabId}`;
+        } else if (sectionPath) {
+            return `/${sectionPath}`;
+        }
+        return `#${tabId}`; // Fallback to hash
+    }
+
     // Helper methods to reduce code duplication
     createNavigationItem(label, tabId, className = 'toctree-l1') {
         const li = document.createElement('li');
         li.className = className;
         const a = document.createElement('a');
         a.className = 'reference';
-        a.href = `#${tabId}`;
+        // SEO: Use path-based URLs for crawlability
+        a.href = this.buildCrawlableUrl(tabId);
         a.textContent = label;
         a.onclick = (e) => {
             e.preventDefault();
@@ -431,7 +448,8 @@ class NavigationManager {
             li.className = itemClassName;
             const a = document.createElement('a');
             a.className = 'reference child-reference';
-            a.href = `#${item.id}`;
+            // SEO: Use path-based URLs for crawlability
+            a.href = this.buildCrawlableUrl(item.id);
             a.textContent = item.label;
             a.onclick = (e) => {
                 e.preventDefault();

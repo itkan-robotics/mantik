@@ -103,29 +103,23 @@
             text-transform: uppercase;
         }
     </style>
-    <script>
-        // Store the original path before redirecting
-        // This allows the SPA to restore the correct route
-        const originalPath = window.location.pathname;
-        const originalSearch = window.location.search;
-        const originalHash = window.location.hash;
-        
-        // Only redirect if we're actually on a 404 page (not already on index.html or root)
-        if (originalPath !== '/' && originalPath !== '/index.html' && !originalPath.startsWith('/index.html')) {
-            // Store the original path in sessionStorage so the SPA can use it
-            sessionStorage.setItem('redirectPath', originalPath + originalSearch + originalHash);
-            // Redirect to root - the SPA will check sessionStorage and restore the route
-            window.location.replace('/');
-        }
-    </script>
+    <!-- 
+        SEO Note: No auto-redirect here to avoid soft 404 issues with Googlebot.
+        The netlify.toml handles SPA routing with 200 status codes for known paths.
+        This 404 page is only shown for truly non-existent resources.
+    -->
 </head>
 <body>
     <div class="container">
         <div class="logo">Mantik</div>
         <h1>Page Not Found</h1>
         <p>The page you're looking for doesn't exist. It may have been moved or the URL might be incorrect.</p>
-        <p>Redirecting...</p>
-        <a href="/">Return to Home</a>
+        <nav>
+            <a href="/">Return to Home</a>
+            <a href="/java">Java Training</a>
+            <a href="/ftc">FTC Programming</a>
+            <a href="/frc">FRC Programming</a>
+        </nav>
     </div>
 </body>
 </html> 

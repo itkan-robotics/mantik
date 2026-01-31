@@ -1,0 +1,32 @@
+# robots.txt for Mantik - FIRST Programming Made Easy
+# https://mantik.netlify.app
+
+# Allow all crawlers to index the site
+User-agent: *
+Allow: /
+
+# Allow Googlebot specifically with all features
+User-agent: Googlebot
+Allow: /
+
+# Sitemap location
+Sitemap: https://mantik.netlify.app/sitemap.xml
+
+# Disallow low-value paths
+Disallow: /data/config/
+Disallow: /_wpilibTemplates/
+Disallow: /_curatedWpilibExamples/
+
+# Allow data content for crawling (JSON content files)
+Allow: /data/java/
+Allow: /data/ftc/
+Allow: /data/frc/
+Allow: /data/comp/
+
+# Allow static assets
+Allow: /media/
+Allow: /js/
+Allow: /styles.css
+
+# Crawl delay for polite crawling (optional, most modern crawlers ignore this)
+# Crawl-delay: 1

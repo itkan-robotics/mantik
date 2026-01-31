@@ -16,6 +16,9 @@ class Application {
         this.eventManager = new EventManager(this.navigationManager, this.themeManager, this.searchManager);
         this.sidebarResizeManager = new SidebarResizeManager();
         
+        // Initialize SEO manager for dynamic metadata
+        this.seoManager = typeof SEOManager !== 'undefined' ? new SEOManager() : null;
+        
         // Initialize router after navigation manager is created
         // Remove router initialization and usage
     }
@@ -75,6 +78,20 @@ class Application {
         } catch (error) {
             console.error('Error building search index:', error);
             // Continue without index - fallback to old search
+        }
+    }
+
+    /**
+     * Updates SEO metadata for the current page
+     */
+    updateSEOMetadata(sectionId, tabId) {
+        if (!this.seoManager) return;
+        
+        try {
+            const data = tabId ? appState.getTabData(tabId) : appState.getTabData(sectionId);
+            this.seoManager.updateMetadata(data, sectionId, tabId);
+        } catch (error) {
+            console.warn('Failed to update SEO metadata:', error);
         }
     }
 
@@ -253,20 +270,7 @@ function showLoadingOverlay() {
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'loading-overlay';
-        overlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255,255,255,0.95);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #333;
-        `;
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--color-background-primary,#fff);z-index:9999;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--color-foreground-primary,#333);';
         overlay.innerHTML = '<span>Loading...</span>';
         document.body.appendChild(overlay);
     }
@@ -275,12 +279,14 @@ function showLoadingOverlay() {
 function hideLoadingOverlay() {
     const overlay = document.getElementById('loading-overlay');
     if (overlay) {
-        overlay.remove();
+        // Fade out for smoother transition (reduces CLS perception)
+        overlay.style.transition = 'opacity 0.2s ease-out';
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 200);
     }
 }
 
-// Show loading overlay immediately
-showLoadingOverlay();
+// Loading overlay is now inlined in HTML for faster display
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {

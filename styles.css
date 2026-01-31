@@ -3037,4 +3037,288 @@ a:hover {
         text-align: left;
     }
 }
+
+/* ==================== Core Web Vitals Optimizations ==================== */
+
+/* 
+ * CLS (Cumulative Layout Shift) Prevention
+ * These rules reserve space and prevent unexpected layout changes
+ */
+
+/* Font loading optimization - prevent FOUT flash */
+html {
+    font-display: swap;
+    /* Prevent layout jumps from scrollbar appearance */
+    scrollbar-gutter: stable;
+}
+
+/* Reserve explicit space for header to prevent CLS */
+.mobile-header {
+    height: var(--header-height);
+    min-height: var(--header-height);
+    max-height: var(--header-height);
+    contain: strict;
+    content-visibility: visible;
+}
+
+/* Note: padding-top for header is already applied to .main */
+
+/* Reserve space for sidebar to prevent CLS */
+.sidebar-drawer {
+    contain: layout style;
+    /* Explicit width prevents CLS during sidebar animation */
+    width: var(--sidebar-width, 300px);
+}
+
+/* Main content area - prevent CLS from content loading */
+.main {
+    contain: layout;
+    /* Minimum height prevents footer from jumping */
+    min-height: calc(100vh - var(--header-height) - 100px);
+}
+
+/* Content area containment */
+.content {
+    contain: layout style;
+}
+
+/* Tab container - reserve minimum height for content loading */
+#tab-container {
+    min-height: 200px;
+    contain: layout;
+}
+
+/*
+ * INP (Interaction to Next Paint) Optimization
+ * Reduce paint and layout complexity for faster interactions
+ */
+
+/* Code blocks - isolate rendering */
+.code-block,
+.exercise-box,
+.rules-box {
+    contain: content;
+    /* GPU acceleration for smoother interactions */
+    transform: translateZ(0);
+}
+
+/* Optimize scroll containers */
+.sidebar-scroll,
+.article-container {
+    overflow-anchor: auto;
+    /* Use passive scrolling for better performance */
+    overscroll-behavior: contain;
+}
+
+/* Search results - isolate for fast updates */
+.search-results {
+    contain: strict;
+    content-visibility: auto;
+}
+
+/*
+ * LCP (Largest Contentful Paint) Optimization
+ */
+
+/* Ensure hero/main content paints quickly */
+article[role="main"] {
+    contain: layout;
+}
+
+/* Prevent layout shift from images */
+img {
+    max-width: 100%;
+    height: auto;
+    /* Modern aspect-ratio for known dimensions */
+    aspect-ratio: attr(width) / attr(height);
+}
+
+/* SVG icons - explicit dimensions prevent CLS */
+.theme-icon,
+.help-icon,
+.copy-icon {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Loading overlay - prevent flash and CLS */
+#loading-overlay {
+    contain: strict;
+    /* Ensure it covers everything during load */
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+/* Font Awesome icon placeholders - prevent CLS when icons load */
+.fa-solid, .fa-regular, .fa-brands, .fab, .fas, .far {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+}
+
+/* Keyboard shortcuts modal - prevent CLS when shown */
+.keyboard-shortcuts-overlay {
+    contain: strict;
+}
+
+.keyboard-shortcuts-modal {
+    contain: content;
+}
+
+/* ==================== Breadcrumb Navigation ==================== */
+
+.breadcrumb-nav {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 0;
+    font-size: var(--font-size--small);
+}
+
+.breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: '›';
+    margin-left: 0.5rem;
+    color: var(--color-foreground-muted);
+    font-weight: 400;
+}
+
+.breadcrumb-item a {
+    color: var(--color-foreground-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 0.25rem 0;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+}
+
+.breadcrumb-item.breadcrumb-current span {
+    color: var(--color-foreground-primary);
+    font-weight: 500;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .breadcrumb-item a {
+    color: var(--color-foreground-secondary);
+}
+
+[data-theme="dark"] .breadcrumb-item a:hover {
+    color: var(--color-brand-primary);
+}
+
+[data-theme="dark"] .breadcrumb-item.breadcrumb-current span {
+    color: var(--color-foreground-primary);
+}
+
+/* Mobile responsive breadcrumb */
+@media (max-width: 48em) {
+    .breadcrumb-nav {
+        padding: 0.5rem 0;
+        margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-list {
+        font-size: var(--font-size--small--2);
+    }
+    
+    .breadcrumb-item:not(:last-child)::after {
+        margin-left: 0.25rem;
+    }
+}
+
+/* ==================== Noscript Content Styles ==================== */
+
+/* Style for noscript SEO content */
+.seo-content {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: var(--font-stack);
+    line-height: 1.6;
+    color: var(--color-foreground-primary);
+}
+
+.seo-content h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--color-brand-primary);
+}
+
+.seo-content h2 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--color-foreground-primary);
+}
+
+.seo-content p {
+    margin-bottom: 1rem;
+}
+
+.seo-content ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.seo-content li {
+    margin-bottom: 0.5rem;
+}
+
+.seo-content strong {
+    color: var(--color-brand-primary);
+}
+
+/* Hide noscript content when JavaScript is enabled */
+noscript .seo-content {
+    display: block;
+}
+
+/* ==================== Print Styles ==================== */
+
+@media print {
+    .mobile-header,
+    .sidebar-drawer,
+    .sidebar-overlay,
+    .page-navigation,
+    .search-container-header,
+    .theme-toggle-container,
+    .help-toggle-container {
+        display: none !important;
+    }
+    
+    .main {
+        margin-left: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    .content {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    .code-block {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
    

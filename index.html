@@ -7,6 +7,23 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+    <meta name="google-site-verification" content="ETN7XF-En_qRybmYUpnQmd8Emp5qYo2nkpsYSaBfWxs" />
+    
+    <!-- Preload Critical Resources for Better LCP -->
+    <link rel="preload" href="/styles.css" as="style">
+    <link rel="preload" href="/media/FRCCodeLabDark.svg" as="image" type="image/svg+xml">
+    
+    <!-- Preconnect for External Resources (must come before font requests) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    
+    <!-- DNS Prefetch as fallback -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     
     <!-- Primary Meta Tags -->
     <title>Mantik - FIRST Programming Made Easy | Java, FTC, FRC Robotics & Competitive Coding</title>
@@ -17,9 +34,10 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
     
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://mantik.netlify.app">
+    <!-- Canonical URL - Updated dynamically by SEO Manager -->
+    <link rel="canonical" href="https://mantik.netlify.app/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -107,11 +125,16 @@
       ]
     }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Critical CSS loaded synchronously -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts with display=swap for better CLS (non-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
+    
+    <!-- Font Awesome loaded asynchronously to prevent render blocking -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
 
     <!-- Favicons for Website (Dark = Light Mode & Vice Versa) -->
     <link rel="icon" href="./media/FRCCodeLabDark.svg" type="image/svg+xml">
@@ -197,11 +220,12 @@
             </div>
             <div class="header-center">
                 <nav class="header-navigation">
-                    <a href="#homepage" class="header-nav-link" onclick="openTab(event, 'homepage')">Home</a>
-                    <a href="#java-training" class="header-nav-link" onclick="openTab(event, 'java-training')">Java</a>
-                    <a href="#ftc-specific" class="header-nav-link" onclick="openTab(event, 'ftc-specific')">FTC</a>
-                    <a href="#frc-specific" class="header-nav-link" onclick="openTab(event, 'frc-specific')">FRC</a>
-                    <a href="#competitive-training" class="header-nav-link" onclick="openTab(event, 'competitive-training')">Competitive</a>
+                    <!-- SEO: Use path-based URLs matching sitemap.xml for crawlability -->
+                    <a href="/" class="header-nav-link" onclick="openTab(event, 'homepage')">Home</a>
+                    <a href="/java" class="header-nav-link" onclick="openTab(event, 'java-training')">Java</a>
+                    <a href="/ftc" class="header-nav-link" onclick="openTab(event, 'ftc-specific')">FTC</a>
+                    <a href="/frc" class="header-nav-link" onclick="openTab(event, 'frc-specific')">FRC</a>
+                    <a href="/comp" class="header-nav-link" onclick="openTab(event, 'competitive-training')">Competitive</a>
                 </nav>
             </div>
             <div class="header-right">
@@ -243,11 +267,12 @@
                             <div class="mobile-sidebar-search-container">
                                 <input type="text" class="mobile-sidebar-search-input" placeholder="Search..." id="mobile-sidebar-search" autocomplete="off" autocorrect="off">
                             </div>
-                            <a href="#homepage" class="header-nav-link" onclick="openTab(event, 'homepage')">Home</a>
-                            <a href="#java-training" class="header-nav-link" onclick="openTab(event, 'java-training')">Java Training</a>
-                            <a href="#ftc-specific" class="header-nav-link" onclick="openTab(event, 'ftc-specific')">FTC Training</a>
-                            <a href="#frc-specific" class="header-nav-link" onclick="openTab(event, 'frc-specific')">FRC Training</a>
-                            <a href="#competitive-training" class="header-nav-link" onclick="openTab(event, 'competitive-training')">Competitive</a>
+                            <!-- SEO: Use path-based URLs matching sitemap.xml for crawlability -->
+                            <a href="/" class="header-nav-link" onclick="openTab(event, 'homepage')">Home</a>
+                            <a href="/java" class="header-nav-link" onclick="openTab(event, 'java-training')">Java Training</a>
+                            <a href="/ftc" class="header-nav-link" onclick="openTab(event, 'ftc-specific')">FTC Training</a>
+                            <a href="/frc" class="header-nav-link" onclick="openTab(event, 'frc-specific')">FRC Training</a>
+                            <a href="/comp" class="header-nav-link" onclick="openTab(event, 'competitive-training')">Competitive</a>
                         </div>
                         
                         <div class="sidebar-tree">
@@ -270,6 +295,70 @@
                     <article role="main" id="furo-main-content">
                         <div id="tab-container">
                             <!-- Tab content will be dynamically loaded here -->
+                            
+                            <!-- Static content for SEO crawlers (hidden when JS loads) -->
+                            <noscript>
+                                <div class="seo-content">
+                                    <h1>Mantik - FIRST Programming Made Easy</h1>
+                                    <p>Free interactive learning platform for FIRST Robotics students. Learn programming fundamentals with our comprehensive curriculum.</p>
+                                    
+                                    <h2>Learning Paths</h2>
+                                    <nav aria-label="Main curriculum sections">
+                                        <ul>
+                                            <li><a href="/java"><strong>Java Training</strong></a> - Learn Java programming from basics to advanced OOP concepts, including variables, loops, methods, classes, and version control with Git.
+                                                <ul>
+                                                    <li><a href="/java/java-intro">Introduction to Java</a></li>
+                                                    <li><a href="/java/java-variables">Variables and Data Types</a></li>
+                                                    <li><a href="/java/java-conditionals">Conditionals and Logic</a></li>
+                                                    <li><a href="/java/java-for-loops">Loops and Iteration</a></li>
+                                                    <li><a href="/java/java-classes">Classes and Objects</a></li>
+                                                    <li><a href="/java/intro-version-control">Version Control with Git</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="/ftc"><strong>FTC Programming</strong></a> - Complete FTC (FIRST Tech Challenge) programming guide covering OnBot Java, Android Studio, motor control, sensors, and autonomous programming.
+                                                <ul>
+                                                    <li><a href="/ftc/ftc-sdk-basics">FTC SDK Basics</a></li>
+                                                    <li><a href="/ftc/opmode-structure">OpMode Structure</a></li>
+                                                    <li><a href="/ftc/dc-motors">DC Motor Control</a></li>
+                                                    <li><a href="/ftc/sensors-overview">Sensors Overview</a></li>
+                                                    <li><a href="/ftc/teleop-programming">TeleOp Programming</a></li>
+                                                    <li><a href="/ftc/basic-autonomous-programming">Autonomous Programming</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="/frc"><strong>FRC Programming</strong></a> - Comprehensive FRC programming curriculum with WPILib, command-based programming, PID control, path planning, and pose estimation.
+                                                <ul>
+                                                    <li><a href="/frc/environment-setup">Environment Setup</a></li>
+                                                    <li><a href="/frc/intro-to-motors">Introduction to Motors</a></li>
+                                                    <li><a href="/frc/intro-to-command-based">Command-Based Programming</a></li>
+                                                    <li><a href="/frc/subsystems">Subsystems</a></li>
+                                                    <li><a href="/frc/frc-pid-control">PID Control</a></li>
+                                                    <li><a href="/frc/pathplanner">Path Planning</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="/comp"><strong>Competitive Programming</strong></a> - Master algorithms and data structures for coding competitions and technical interviews.
+                                                <ul>
+                                                    <li><a href="/comp/comp-intro">Introduction to Competitive Programming</a></li>
+                                                    <li><a href="/comp/comp-big-o">Big O Notation</a></li>
+                                                    <li><a href="/comp/comp-arrays-strings">Arrays and Strings</a></li>
+                                                    <li><a href="/comp/comp-dynamic-programming">Dynamic Programming</a></li>
+                                                    <li><a href="/comp/comp-graphs">Graph Algorithms</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                    
+                                    <h2>Why Choose Mantik?</h2>
+                                    <ul>
+                                        <li>Free and open-source educational content</li>
+                                        <li>Structured curriculum for robotics teams</li>
+                                        <li>Interactive exercises with code examples</li>
+                                        <li>Progressive learning from beginner to advanced</li>
+                                        <li>Mobile-friendly and accessible design</li>
+                                    </ul>
+                                    
+                                    <p>Enable JavaScript for the full interactive experience.</p>
+                                </div>
+                            </noscript>
                         </div>
                     </article>
                 </div>
@@ -278,7 +367,7 @@
                     <div class="bottom-of-page">
                         <div class="left-details">
                             <div class="copyright">
-                                Copyright © 2025 Mantik
+                                Copyright © 2026 Mantik
                             </div>
                         </div>
                     </div>
@@ -287,19 +376,34 @@
         </div>
     </div>
 
-    <!-- Load JavaScript modules in dependency order -->
-    <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
-    <script src="/js/app-state.js"></script>
-    <script src="/js/config-manager.js"></script>
-    <script src="/js/content-manager.js"></script>
-    <script src="/js/navigation-manager.js"></script>
-    <script src="/js/theme-manager.js"></script>
-    <script src="/js/search-index.js"></script>
-    <script src="/js/search-manager.js"></script>
-    <script src="/js/sidebar-resize-manager.js"></script>
-    <script src="/js/event-manager.js"></script>
-    <script src="/js/application.js"></script>
-    <script src="/js/global-functions.js"></script>
-    <script src="/js/main.js"></script>
+    <!-- Inline critical JS for immediate loading overlay (prevents CLS) -->
+    <script>
+    // Show loading overlay immediately to prevent CLS
+    (function() {
+        var overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--color-background-primary,#fff);z-index:9999;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--color-foreground-primary,#333);';
+        overlay.innerHTML = '<span>Loading...</span>';
+        document.body.appendChild(overlay);
+    })();
+    </script>
+    
+    <!-- Load JavaScript modules - all deferred for better INP -->
+    <script src="/js/app-state.js" defer></script>
+    <script src="/js/config-manager.js" defer></script>
+    <script src="/js/seo-manager.js" defer></script>
+    <script src="/js/content-manager.js" defer></script>
+    <script src="/js/navigation-manager.js" defer></script>
+    <script src="/js/theme-manager.js" defer></script>
+    <script src="/js/sidebar-resize-manager.js" defer></script>
+    <script src="/js/event-manager.js" defer></script>
+    <script src="/js/application.js" defer></script>
+    <script src="/js/global-functions.js" defer></script>
+    <script src="/js/main.js" defer></script>
+    
+    <!-- Search library loaded last with defer -->
+    <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js" defer></script>
+    <script src="/js/search-index.js" defer></script>
+    <script src="/js/search-manager.js" defer></script>
 </body>
 </html> 

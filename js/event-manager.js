@@ -149,29 +149,53 @@ class EventManager {
             }, 250);
         });
 
-        // Keyboard navigation
+        // Consolidated keyboard event handler for better INP
+        // Single listener handles all keyboard shortcuts to reduce event processing overhead
         document.addEventListener('keydown', (e) => {
-            // Don't handle shortcuts when user is typing in input fields, textareas, or contenteditable elements
             const target = e.target;
             const isInputField = target.tagName === 'INPUT' || 
                                 target.tagName === 'TEXTAREA' || 
                                 target.isContentEditable ||
                                 target.closest('input, textarea, [contenteditable="true"]');
             
-            if (isInputField) {
-                return; // Let the input handle the key
+            const hasCtrl = e.ctrlKey || e.metaKey;
+            
+            // Ctrl+K: Focus search (works even in input fields)
+            if (hasCtrl && e.key === 'k') {
+                e.preventDefault();
+                this.focusSearch();
+                return;
             }
-
-            // Section-based navigation with Ctrl+Arrow or Ctrl+<, Ctrl+>
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === '>' || e.key === '<')) {
+            
+            // Skip other shortcuts when in input fields
+            if (isInputField) return;
+            
+            // Ctrl+Arrow or Ctrl+</>: Section navigation
+            if (hasCtrl && (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === '>' || e.key === '<')) {
                 e.preventDefault();
                 this.navigateSectionTabs(e.key === 'ArrowRight' || e.key === '>' ? 'next' : 'prev');
                 return;
             }
-        });
+            
+            // Ctrl+Shift+C: Toggle all code blocks
+            if (hasCtrl && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                this.toggleAllCodeBlocks();
+                return;
+            }
+            
+            // Ctrl+/ or ?: Show keyboard shortcuts
+            if ((hasCtrl && e.key === '/') || (e.key === '?' && !hasCtrl && !e.shiftKey && !e.altKey)) {
+                e.preventDefault();
+                this.showKeyboardShortcuts();
+                return;
+            }
+        }, { passive: false });
 
-        // Copy to clipboard functionality
+        // Consolidated click handler for better INP
+        // Single delegated listener handles multiple click actions
         document.addEventListener('click', (e) => {
+            // Copy button clicked
             if (e.target.classList.contains('copy-btn')) {
                 const codeBlock = e.target.closest('.code-block');
                 if (codeBlock) {
@@ -180,11 +204,10 @@ class EventManager {
                         this.copyToClipboard(code.textContent);
                     }
                 }
+                return;
             }
-        });
-
-        // Answer toggle functionality
-        document.addEventListener('click', (e) => {
+            
+            // Answer toggle button clicked
             if (e.target.classList.contains('answer-toggle-btn')) {
                 const answerSection = e.target.nextElementSibling;
                 if (answerSection && answerSection.classList.contains('answer-section')) {
@@ -192,66 +215,7 @@ class EventManager {
                     answerSection.classList.toggle('visible');
                     e.target.classList.toggle('active');
                 }
-            }
-        });
-
-        // Focus search on Ctrl+K
-        document.addEventListener('keydown', (e) => {
-            // Don't handle if user is typing in input fields (except when they want to focus search)
-            const target = e.target;
-            const isInputField = target.tagName === 'INPUT' || 
-                                target.tagName === 'TEXTAREA' || 
-                                target.isContentEditable;
-            
-            // Allow Ctrl+K even in search input to refocus it
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                this.focusSearch();
-            }
-        });
-
-        // Toggle all code blocks on Ctrl+Shift+C
-        document.addEventListener('keydown', (e) => {
-            // Don't handle when user is typing in input fields
-            const target = e.target;
-            const isInputField = target.tagName === 'INPUT' || 
-                                target.tagName === 'TEXTAREA' || 
-                                target.isContentEditable ||
-                                target.closest('input, textarea, [contenteditable="true"]');
-            
-            if (!isInputField && (e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
-                e.preventDefault();
-                this.toggleAllCodeBlocks();
-            }
-        });
-
-        // Show keyboard shortcuts on ? key
-        document.addEventListener('keydown', (e) => {
-            // Don't handle when user is typing in input fields
-            const target = e.target;
-            const isInputField = target.tagName === 'INPUT' || 
-                                target.tagName === 'TEXTAREA' || 
-                                target.isContentEditable ||
-                                target.closest('input, textarea, [contenteditable="true"]');
-            
-            if (!isInputField && e.key === '?' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
-                e.preventDefault();
-                this.showKeyboardShortcuts();
-            }
-        });
-
-        // Show keyboard shortcuts on Ctrl+/ key
-        document.addEventListener('keydown', (e) => {
-            // Don't handle when user is typing in input fields
-            const target = e.target;
-            const isInputField = target.tagName === 'INPUT' || 
-                                target.tagName === 'TEXTAREA' || 
-                                target.isContentEditable ||
-                                target.closest('input, textarea, [contenteditable="true"]');
-            
-            if (!isInputField && (e.ctrlKey || e.metaKey) && e.key === '/') {
-                e.preventDefault();
-                this.showKeyboardShortcuts();
+                return;
             }
         });
     }

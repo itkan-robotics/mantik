@@ -277,6 +277,97 @@ class ContentManager {
         }
     }
 
+    /**
+     * Creates breadcrumb navigation for the current page
+     * @param {Object} data - Page data
+     * @param {string} tabId - Current tab ID
+     * @returns {HTMLElement|null} - Breadcrumb element or null
+     */
+    createBreadcrumb(data, tabId) {
+        const sectionId = appState.currentSection;
+        
+        // Don't show breadcrumb on homepage
+        if (sectionId === 'homepage' || tabId === 'homepage') {
+            return null;
+        }
+        
+        const breadcrumb = document.createElement('nav');
+        breadcrumb.className = 'breadcrumb-nav';
+        breadcrumb.setAttribute('aria-label', 'Breadcrumb');
+        
+        const ol = document.createElement('ol');
+        ol.className = 'breadcrumb-list';
+        ol.setAttribute('itemscope', '');
+        ol.setAttribute('itemtype', 'https://schema.org/BreadcrumbList');
+        
+        // Home link
+        const homeLi = this.createBreadcrumbItem('Home', 'homepage', 1);
+        ol.appendChild(homeLi);
+        
+        // Section link
+        const sectionName = this.getSectionDisplayName(sectionId);
+        const sectionLi = this.createBreadcrumbItem(sectionName, sectionId, 2);
+        ol.appendChild(sectionLi);
+        
+        // Current page (if it's a specific lesson, not section homepage)
+        if (tabId && tabId !== sectionId && data && data.title) {
+            const currentLi = this.createBreadcrumbItem(data.title, null, 3, true);
+            ol.appendChild(currentLi);
+        }
+        
+        breadcrumb.appendChild(ol);
+        return breadcrumb;
+    }
+
+    /**
+     * Creates a single breadcrumb item
+     * @param {string} text - Display text
+     * @param {string|null} tabId - Tab ID to navigate to (null for current page)
+     * @param {number} position - Position in breadcrumb list
+     * @param {boolean} isCurrent - Whether this is the current page
+     * @returns {HTMLElement} - Breadcrumb list item
+     */
+    createBreadcrumbItem(text, tabId, position, isCurrent = false) {
+        const li = document.createElement('li');
+        li.className = 'breadcrumb-item' + (isCurrent ? ' breadcrumb-current' : '');
+        li.setAttribute('itemprop', 'itemListElement');
+        li.setAttribute('itemscope', '');
+        li.setAttribute('itemtype', 'https://schema.org/ListItem');
+        
+        if (isCurrent) {
+            // Current page - just text, no link
+            const span = document.createElement('span');
+            span.setAttribute('itemprop', 'name');
+            span.textContent = text;
+            li.appendChild(span);
+        } else {
+            // Linkable item
+            const a = document.createElement('a');
+            a.setAttribute('itemprop', 'item');
+            a.href = tabId === 'homepage' ? '/' : `#${tabId}`;
+            a.onclick = (e) => {
+                e.preventDefault();
+                if (window.app && window.app.navigationManager) {
+                    window.app.navigationManager.navigateToTab(tabId);
+                }
+            };
+            
+            const span = document.createElement('span');
+            span.setAttribute('itemprop', 'name');
+            span.textContent = text;
+            a.appendChild(span);
+            li.appendChild(a);
+        }
+        
+        // Add position metadata
+        const meta = document.createElement('meta');
+        meta.setAttribute('itemprop', 'position');
+        meta.content = position.toString();
+        li.appendChild(meta);
+        
+        return li;
+    }
+
     renderContent(tabId) {
         const data = appState.getTabData(tabId);
         if (!data) {
@@ -287,6 +378,15 @@ class ContentManager {
         // Update page title based on current content
         this.updatePageTitle(data);
         
+        // Update SEO metadata if SEO manager is available
+        if (window.app && window.app.seoManager) {
+            try {
+                window.app.seoManager.updateMetadata(data, appState.currentSection, tabId);
+            } catch (error) {
+                console.warn('Failed to update SEO metadata:', error);
+            }
+        }
+        
         const container = document.getElementById('tab-container');
         container.innerHTML = '';
         
@@ -296,6 +396,12 @@ class ContentManager {
         
         const section = document.createElement('section');
         section.id = `content-${tabId}`;
+        
+        // Add breadcrumb navigation for better information architecture
+        const breadcrumb = this.createBreadcrumb(data, tabId);
+        if (breadcrumb) {
+            section.appendChild(breadcrumb);
+        }
         
         const title = document.createElement('h1');
         title.innerHTML = `${data.title}<a class="headerlink" href="#content-${tabId}" title="Link to this heading">¶</a>`;
