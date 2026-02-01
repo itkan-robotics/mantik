@@ -192,6 +192,29 @@ class EventManager {
             }
         }, { passive: false });
 
+        // Ensure mouse wheel scrolls the page when the target isn't a scrollable element
+        document.addEventListener('wheel', (e) => {
+            const el = e.target;
+            let scrollable = el;
+            while (scrollable && scrollable !== document.body) {
+                const style = window.getComputedStyle(scrollable);
+                const overflowY = style.overflowY;
+                const canScroll = (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+                    scrollable.scrollHeight > scrollable.clientHeight;
+                if (canScroll) {
+                    const goingDown = e.deltaY > 0;
+                    const atBottom = scrollable.scrollTop >= scrollable.scrollHeight - scrollable.clientHeight - 1;
+                    const atTop = scrollable.scrollTop <= 1;
+                    const canScrollInDirection = (goingDown && !atBottom) || (!goingDown && !atTop);
+                    if (canScrollInDirection) return; // Let the scrollable element handle it
+                }
+                scrollable = scrollable.parentElement;
+            }
+            // No scrollable ancestor that can absorb the wheel: scroll the window
+            window.scrollBy(0, e.deltaY);
+            e.preventDefault();
+        }, { passive: false });
+
         // Consolidated click handler for better INP
         // Single delegated listener handles multiple click actions
         document.addEventListener('click', (e) => {
