@@ -1,6 +1,11 @@
 # Netlify redirects for Mantik
 # Section roots -> SPA. Lesson paths (/java/lesson-id etc.) are NOT listed here
 # so Netlify can serve static HTML (java/lesson-id/index.html) when present.
+
+# Sitemap and robots - must come before catch-all so they're served as static files
+/sitemap.xml  /sitemap.xml  200
+/robots.txt   /robots.txt   200
+
 /java      /index.html   200
 /frc       /index.html   200
 /ftc       /index.html   200
