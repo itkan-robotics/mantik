@@ -1,18 +1,10 @@
-# Netlify redirects for Mantik SPA
-# Note: Most redirects are defined in netlify.toml
-# This file provides fallback for SPA routing
-
-# Section routes (handled in netlify.toml but duplicated here for reliability)
-/java/*    /index.html   200
-/frc/*     /index.html   200
-/ftc/*     /index.html   200
-/comp/*    /index.html   200
-
-# Main section routes
+# Netlify redirects for Mantik
+# Section roots -> SPA. Lesson paths (/java/lesson-id etc.) are NOT listed here
+# so Netlify can serve static HTML (java/lesson-id/index.html) when present.
 /java      /index.html   200
 /frc       /index.html   200
 /ftc       /index.html   200
 /comp      /index.html   200
 
-# SPA catch-all fallback (must be last)
+# SPA catch-all (must be last)
 /*         /index.html   200

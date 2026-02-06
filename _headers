@@ -1,16 +1,13 @@
 # Netlify custom headers for Mantik
-# SEO and performance optimization
+# SEO and performance optimization (netlify.toml [[headers]] also applies)
 
-# Default headers for all pages
+# Default: security + no cache for HTML
 /*
-  # Security headers
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
-  
-  # SEO and caching for HTML pages
   Cache-Control: public, max-age=0, must-revalidate
   
 # Static assets with long cache (versioned via content hash)

@@ -205,14 +205,14 @@ class NavigationManager {
             // Only clear and re-render if we're switching sections or if container is empty
             // Force re-render if section changed to ensure sidebar always updates
             if (!containerHasContent || lastRenderedSection !== appState.currentSection) {
-                console.log(`[Debug] Rendering navigation for section ${appState.currentSection} (was: ${lastRenderedSection || 'none'})`);
+                debugLog(`[Debug] Rendering navigation for section ${appState.currentSection} (was: ${lastRenderedSection || 'none'})`);
                 navigationContainer.innerHTML = '';
                 // Clear the dataset to ensure fresh render
                 delete navigationContainer.dataset.renderedSection;
                 await this.renderSectionNavigation(navigationContainer);
                 navigationContainer.dataset.renderedSection = appState.currentSection;
             } else {
-                console.log(`[Debug] Skipping navigation render - already rendered for section ${appState.currentSection} with ${navigationContainer.children.length} items`);
+                debugLog(`[Debug] Skipping navigation render - already rendered for section ${appState.currentSection} with ${navigationContainer.children.length} items`);
             }
             
             // Enable sidebar for sections where it's enabled
@@ -268,6 +268,89 @@ class NavigationManager {
         container.appendChild(navigationItem);
     }
 
+    /**
+     * Normalize section config to a uniform nav tree (navNode[]).
+     * Each node is either { type: 'item', id, label, file? } or { type: 'group', id, label, children: navNode[] }.
+     */
+    normalizeSectionToNavTree(section) {
+        if (!section) return [];
+
+        if (section.intro) {
+            return [{ type: 'item', id: section.intro.id, label: section.intro.label || section.intro.title, file: section.intro.file }];
+        }
+
+        const source = section.groups || section.children;
+        if (!Array.isArray(source) || source.length === 0) {
+            if (section.tiers && Array.isArray(section.tiers)) {
+                return this.normalizeTiersToNavTree(section.tiers);
+            }
+            return [];
+        }
+
+        return source.map(node => this.configGroupToNavNode(node));
+    }
+
+    configGroupToNavNode(group) {
+        const children = [];
+        if (Array.isArray(group.items)) {
+            group.items.forEach(item => {
+                if (item.id != null) {
+                    children.push({ type: 'item', id: item.id, label: item.label || item.title, file: item.file });
+                }
+            });
+        }
+        if (Array.isArray(group.children)) {
+            group.children.forEach(child => {
+                children.push(this.configGroupToNavNode(child));
+            });
+        }
+        if (Array.isArray(group.groups)) {
+            group.groups.forEach(g => {
+                children.push(this.configGroupToNavNode(g));
+            });
+        }
+        return { type: 'group', id: group.id, label: group.label || group.title, children };
+    }
+
+    normalizeTiersToNavTree(tiers) {
+        const nodes = [];
+        tiers.forEach(tier => {
+            if (Array.isArray(tier.lessons)) {
+                tier.lessons.forEach(lessonPath => {
+                    const id = lessonPath.replace(/^.*\/([^/]+)\.json$/, '$1');
+                    nodes.push({ type: 'item', id, label: id, file: lessonPath });
+                });
+            }
+        });
+        return nodes;
+    }
+
+    /**
+     * Single recursive render: walk nav tree and build sidebar DOM.
+     * @param {HTMLUListElement} container - <ul> to append <li> nodes to
+     * @param {Array} nodes - navNode[] from normalizeSectionToNavTree
+     * @param {number} depth - nesting depth (0 = top) for CSS classes
+     */
+    renderNavTree(container, nodes, depth = 0) {
+        if (!nodes || nodes.length === 0) return;
+        const level = depth + 1;
+        const parentClass = `toctree-l${level} parent-tab`;
+        const itemClass = depth === 0 ? 'toctree-l1' : `toctree-l${level} child-tab`;
+
+        nodes.forEach(node => {
+            if (node.type === 'item') {
+                const li = this.createNavigationItem(node.label, node.id, itemClass);
+                container.appendChild(li);
+            } else if (node.type === 'group') {
+                const groupLi = this.createParentNavigationItem({ id: node.id, label: node.label }, parentClass);
+                const childUl = this.createChildrenContainer(node.id);
+                this.renderNavTree(childUl, node.children || [], depth + 1);
+                groupLi.appendChild(childUl);
+                container.appendChild(groupLi);
+            }
+        });
+    }
+
     async renderSectionNavigation(container) {
         const section = appState.config.sections[appState.currentSection];
         if (!section) {
@@ -275,112 +358,30 @@ class NavigationManager {
             return;
         }
 
-        // Check if section already has groups loaded (avoid re-loading if already loaded)
         const hasGroupsAlready = section.groups && Array.isArray(section.groups) && section.groups.length > 0;
-        
-        // Only load section content if groups are not already present
         if (!hasGroupsAlready) {
             await this.contentManager.loadSectionContent(appState.currentSection);
         }
 
         const updatedSection = appState.config.sections[appState.currentSection];
-        console.log(`[Debug] renderSectionNavigation for ${appState.currentSection}:`, {
-            hasGroups: !!updatedSection.groups,
-            hasChildren: !!updatedSection.children,
-            hasTiers: !!updatedSection.tiers,
-            hasIntro: !!updatedSection.intro,
-            hasSections: !!(updatedSection.sections && Array.isArray(updatedSection.sections)),
-            groupsCount: updatedSection.groups ? updatedSection.groups.length : 0,
-            groupsType: updatedSection.groups ? typeof updatedSection.groups : 'none',
-            groupsIsArray: updatedSection.groups ? Array.isArray(updatedSection.groups) : false,
-            container: container ? container.tagName : 'null'
-        });
+        const navTree = this.normalizeSectionToNavTree(updatedSection);
 
-        // Support new nested parent/child structure
-        if (updatedSection.groups) {
-            // Check if groups have children (nested structure)
-            const hasNestedStructure = updatedSection.groups.some(group => group.children);
-            console.log(`[Debug] Rendering groups. Has nested structure: ${hasNestedStructure}, Groups count: ${updatedSection.groups.length}`);
-            if (hasNestedStructure) {
-                this.renderParentGroupsNavigation(container, updatedSection.groups);
-            } else {
-                this.renderGroupsNavigation(container, updatedSection.groups);
-            }
-            console.log(`[Debug] After rendering groups. Container children count: ${container.children.length}`);
-        } else if (updatedSection.children) {
-            this.renderParentGroupsNavigation(container, updatedSection.children);
-        } else if (updatedSection.tiers) {
-            this.renderTiersNavigation(container, updatedSection.tiers);
-        } else if (updatedSection.intro) {
-            this.renderIntroNavigation(container, updatedSection.intro);
-        } else {
+        if (navTree.length === 0) {
             console.warn(`[Debug] No navigation structure found for section ${appState.currentSection}`);
+            return;
         }
-    }
 
-    renderParentGroupsNavigation(container, parents) {
-        parents.forEach(parent => {
-            const parentLi = this.createParentNavigationItem(parent);
-            const childrenUl = this.createChildrenContainer(parent.id);
+        const caption = document.createElement('p');
+        caption.className = 'caption';
+        caption.setAttribute('role', 'heading');
+        caption.innerHTML = '<span class="caption-text">Contents:</span>';
 
-            // Render each group (child) under this parent
-            if (parent.children) {
-                // Support for deeper nesting - render children as groups
-                this.renderGroupsNavigation(childrenUl, parent.children);
-            } else if (parent.groups) {
-                this.renderGroupsNavigation(childrenUl, parent.groups);
-            } else if (parent.items) {
-                // Render items directly if present
-                this.renderItemsList(childrenUl, parent.items);
-            }
+        const ul = document.createElement('ul');
+        ul.id = 'sidebar-navigation';
 
-            parentLi.appendChild(childrenUl);
-            container.appendChild(parentLi);
-        });
-    }
-
-    renderGroupsNavigation(container, groups) {
-        if (!Array.isArray(groups)) return;
-        
-        groups.forEach(group => {
-            const groupLi = this.createParentNavigationItem(group);
-            const itemsUl = this.createChildrenContainer(group.id);
-
-            // Handle direct items in group
-            if (Array.isArray(group.items)) {
-                this.renderItemsList(itemsUl, group.items);
-            }
-
-            // Handle nested children structure (like FTC config)
-            if (Array.isArray(group.children)) {
-                group.children.forEach(child => {
-                    // Create child group header
-                    const childGroupLi = this.createParentNavigationItem(child, 'toctree-l2 parent-tab');
-                    
-                    const childItemsUl = this.createChildrenContainer(child.id);
-
-                    if (Array.isArray(child.items)) {
-                        this.renderItemsList(childItemsUl, child.items, 'toctree-l3 child-tab');
-                    }
-
-                    childGroupLi.appendChild(childItemsUl);
-                    itemsUl.appendChild(childGroupLi);
-                });
-            }
-
-            groupLi.appendChild(itemsUl);
-            container.appendChild(groupLi);
-        });
-    }
-
-    renderIntroNavigation(container, intro) {
-        const navigationItem = this.createNavigationItem(intro.label, intro.id, 'toctree-l1 current-page');
-        container.appendChild(navigationItem);
-    }
-
-    renderTiersNavigation(container, tiers) {
-        // Handle tiers navigation if needed
-        // This is a placeholder for future tier-based navigation
+        container.appendChild(caption);
+        container.appendChild(ul);
+        this.renderNavTree(ul, navTree);
     }
 
     /**
@@ -442,24 +443,6 @@ class NavigationManager {
         return ul;
     }
 
-    renderItemsList(container, items, itemClassName = 'toctree-l2 child-tab') {
-        items.forEach(item => {
-            const li = document.createElement('li');
-            li.className = itemClassName;
-            const a = document.createElement('a');
-            a.className = 'reference child-reference';
-            // SEO: Use path-based URLs for crawlability
-            a.href = this.buildCrawlableUrl(item.id);
-            a.textContent = item.label;
-            a.onclick = (e) => {
-                e.preventDefault();
-                this.navigateToTab(item.id);
-            };
-            li.appendChild(a);
-            container.appendChild(li);
-        });
-    }
-
     toggleGroup(groupId) {
         const childrenNav = document.getElementById(`children-${groupId}`);
         const expandIcon = document.querySelector(`.expand-icon-${groupId}`);
@@ -500,11 +483,11 @@ class NavigationManager {
         }
         // Check if sidebar is currently visible (checkbox is checked)
         const isSidebarVisible = navCheckbox && navCheckbox.checked;
-        console.log(`[Debug] adjustLayoutForSidebar called. Visible: ${isSidebarVisible}`);
+        debugLog(`[Debug] adjustLayoutForSidebar called. Visible: ${isSidebarVisible}`);
 
         // If sidebar is hidden, completely hide it and return early
         if (!isSidebarVisible) {
-            console.log(`[Debug] Sidebar hidden. Hiding completely.`);
+            debugLog(`[Debug] Sidebar hidden. Hiding completely.`);
             sidebarDrawer.style.display = 'none';
             sidebarDrawer.style.visibility = 'hidden';
             sidebarDrawer.style.opacity = '0';
@@ -515,7 +498,7 @@ class NavigationManager {
         }
         
         // Sidebar should be visible - ensure it's shown
-        console.log(`[Debug] Sidebar should be visible. Showing sidebar.`);
+        debugLog(`[Debug] Sidebar should be visible. Showing sidebar.`);
         // Store original values before making changes
         const originalLeft = sidebarDrawer.style.left;
         const originalPosition = sidebarDrawer.style.position;
@@ -539,7 +522,7 @@ class NavigationManager {
         }
         const sidebarTree = sidebarDrawer.querySelector('.sidebar-tree');
         if (sidebarTree) {
-            console.log(`[Debug] Sidebar tree found. Children count: ${sidebarTree.children.length}`);
+            debugLog(`[Debug] Sidebar tree found. Children count: ${sidebarTree.children.length}`);
             sidebarTree.style.visibility = '';
             sidebarTree.style.opacity = '';
         } else {
@@ -549,7 +532,7 @@ class NavigationManager {
         let optimalWidth = 240; // Default min width
 
         try {
-            console.log('[Debug] Measuring sidebar content width...');
+            debugLog('[Debug] Measuring sidebar content width...');
             sidebarDrawer.style.left = '0';
             sidebarDrawer.style.position = 'absolute'; // Temporarily change to absolute to measure
 
@@ -628,7 +611,7 @@ class NavigationManager {
         sidebarDrawer.style.setProperty('--sidebar-width', finalWidth ? `${finalWidth}px` : '15em');
 
         // Adjust main content area with sidebar spacing
-        console.log(`[Debug] Adjusting main content. Sidebar width: ${finalWidth}px`);
+        debugLog(`[Debug] Adjusting main content. Sidebar width: ${finalWidth}px`);
         const sidebarOffset = finalWidth + 0; // Reduced buffer for better spacing
         mainContent.style.marginLeft = `${sidebarOffset}px`;
         mainContent.style.maxWidth = `calc(100% - ${sidebarOffset}px)`;
@@ -650,7 +633,7 @@ class NavigationManager {
         if (sidebarTree) {
             sidebarTree.style.visibility = 'visible';
             sidebarTree.style.opacity = '1';
-            console.log(`[Debug] Sidebar tree visible. Content length: ${sidebarTree.innerHTML.length}`);
+            debugLog(`[Debug] Sidebar tree visible. Content length: ${sidebarTree.innerHTML.length}`);
         }
 
         // Store the current sidebar width for responsive adjustments
@@ -752,7 +735,7 @@ class NavigationManager {
         
         // Completely hide the sidebar when unchecked (no animation, instant)
         if (!navCheckbox || !navCheckbox.checked) {
-            console.log('[Debug] Hiding sidebar completely');
+            debugLog('[Debug] Hiding sidebar completely');
             sidebarDrawer.style.display = 'none';
             sidebarDrawer.style.visibility = 'hidden';
             sidebarDrawer.style.opacity = '0';
@@ -803,7 +786,7 @@ class NavigationManager {
             return;
         }
         try {
-            console.log(`[Debug] navigateToTab called for: ${tabId}`);
+            debugLog(`[Debug] navigateToTab called for: ${tabId}`);
             // Store the last opened tab ID
             localStorage.setItem('lastOpenedTab', tabId);
             

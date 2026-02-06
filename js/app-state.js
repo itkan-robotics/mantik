@@ -3,6 +3,14 @@
  * Handles all application state and provides centralized state management
  */
 
+(function() {
+    window.debugLog = function() {
+        if (localStorage.getItem('mantik_debug') === 'true') {
+            console.log.apply(console, arguments);
+        }
+    };
+})();
+
 class AppState {
     constructor() {
         this.config = null;
@@ -128,7 +136,7 @@ class AppState {
         };
 
         try {
-            console.log(`[Debug] Saving state. Sidebar open: ${this.sidebarOpen}`);
+            debugLog(`[Debug] Saving state. Sidebar open: ${this.sidebarOpen}`);
             localStorage.setItem('mantik_state', JSON.stringify(state));
         } catch (error) {
             // Handle localStorage errors silently
@@ -222,12 +230,12 @@ class AppState {
             return;
         }
         
-        console.log(`[Debug] restoreSidebarState called. Saved state: ${this.sidebarOpen}`);
+        debugLog(`[Debug] restoreSidebarState called. Saved state: ${this.sidebarOpen}`);
         
         // Apply the saved state (or default false if no saved state)
         // Only change if different to avoid unnecessary events
         if (sidebarCheckbox.checked !== this.sidebarOpen) {
-            console.log(`[Debug] Restoring sidebar state to: ${this.sidebarOpen}`);
+            debugLog(`[Debug] Restoring sidebar state to: ${this.sidebarOpen}`);
             sidebarCheckbox.checked = this.sidebarOpen;
             // Trigger change event to ensure UI updates properly
             sidebarCheckbox.dispatchEvent(new Event('change'));
@@ -239,13 +247,12 @@ class AppState {
      */
     restoreSearchQuery() {
         if (this.searchQuery && window.searchManager) {
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.value = this.searchQuery;
-                // Trigger search if there's a query
-                if (this.searchQuery.trim()) {
-                    window.searchManager.performSearch(this.searchQuery);
-                }
+            const headerSearch = document.getElementById('header-search');
+            const mobileSearch = document.getElementById('mobile-sidebar-search');
+            if (headerSearch) headerSearch.value = this.searchQuery;
+            if (mobileSearch) mobileSearch.value = this.searchQuery;
+            if (this.searchQuery.trim()) {
+                window.searchManager.performSearch(this.searchQuery);
             }
         }
     }

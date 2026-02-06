@@ -341,10 +341,13 @@ class ContentManager {
             span.textContent = text;
             li.appendChild(span);
         } else {
-            // Linkable item
+            // Linkable item - use path-based URLs for crawlability (matches sitemap)
+            const sectionPathMap = { 'homepage': '', 'java-training': 'java', 'ftc-specific': 'ftc', 'frc-specific': 'frc', 'competitive-training': 'comp' };
+            const path = sectionPathMap[tabId];
+            const href = tabId === 'homepage' ? '/' : (path ? `/${path}` : `#${tabId}`);
             const a = document.createElement('a');
             a.setAttribute('itemprop', 'item');
-            a.href = tabId === 'homepage' ? '/' : `#${tabId}`;
+            a.href = href;
             a.onclick = (e) => {
                 e.preventDefault();
                 if (window.app && window.app.navigationManager) {
@@ -423,7 +426,7 @@ class ContentManager {
         // Add navigation buttons at the bottom
         // For section homepages (tabId === sectionId), show a "Start Learning" button if available
         const navButtons = this.createNavigationButtons(tabId);
-        console.log(`[Debug] renderContent: tabId=${tabId}, currentSection=${appState.currentSection}, navButtons=${!!navButtons}`);
+        debugLog(`[Debug] renderContent: tabId=${tabId}, currentSection=${appState.currentSection}, navButtons=${!!navButtons}`);
         if (navButtons) {
             section.appendChild(navButtons);
         } else if (tabId === appState.currentSection && tabId !== 'homepage') {
@@ -439,13 +442,13 @@ class ContentManager {
                     }
                 }
             }
-            console.log(`[Debug] renderContent: Checking for Start Learning button. sectionConfig exists: ${!!sectionConfig}, hasGroups: ${!!(sectionConfig?.groups)}, hasChildren: ${!!(sectionConfig?.children)}, hasItems: ${!!(sectionConfig?.items)}`);
+            debugLog(`[Debug] renderContent: Checking for Start Learning button. sectionConfig exists: ${!!sectionConfig}, hasGroups: ${!!(sectionConfig?.groups)}, hasChildren: ${!!(sectionConfig?.children)}, hasItems: ${!!(sectionConfig?.items)}`);
             if (sectionConfig && (sectionConfig.groups || sectionConfig.children || sectionConfig.items)) {
                 const startButton = this.createStartLearningButton(tabId);
-                console.log(`[Debug] renderContent: Start Learning button created: ${!!startButton}`);
+                debugLog(`[Debug] renderContent: Start Learning button created: ${!!startButton}`);
                 if (startButton) {
                     section.appendChild(startButton);
-                    console.log(`[Debug] renderContent: Start Learning button appended to section`);
+                    debugLog(`[Debug] renderContent: Start Learning button appended to section`);
                 }
             } else {
                 console.warn(`[Debug] renderContent: Not adding Start Learning button - sectionConfig missing or no groups/children/items`);
@@ -460,7 +463,7 @@ class ContentManager {
      * Gets the ordered list of tabs for the current section based strictly on configuration
      */
     getSectionTabOrder(sectionId) {
-        console.log(`[Debug] getSectionTabOrder called for ${sectionId}`);
+        debugLog(`[Debug] getSectionTabOrder called for ${sectionId}`);
         // Try to get config from ConfigManager or appState
         let config = this.configManager ? this.configManager.getSectionConfig(sectionId) : null;
         
@@ -560,9 +563,9 @@ class ContentManager {
             });
         }
         
-        console.log(`[Debug] tabOrder length for ${sectionId}: ${tabOrder.length}`);
+        debugLog(`[Debug] tabOrder length for ${sectionId}: ${tabOrder.length}`);
         if (tabOrder.length > 0) {
-            console.log(`[Debug] First few tabs: ${tabOrder.slice(0, 3).map(t => t.id).join(', ')}`);
+            debugLog(`[Debug] First few tabs: ${tabOrder.slice(0, 3).map(t => t.id).join(', ')}`);
         }
         return tabOrder;
     }
@@ -573,7 +576,7 @@ class ContentManager {
     getPreviousNextTabs(currentTabId) {
         const sectionId = appState.currentSection;
         
-        console.log(`[Debug] getPreviousNextTabs called for ${currentTabId} in section ${sectionId}`);
+        debugLog(`[Debug] getPreviousNextTabs called for ${currentTabId} in section ${sectionId}`);
 
         // Don't show navigation for homepage or if section is not found
         if (!sectionId || sectionId === 'homepage') {
@@ -588,7 +591,7 @@ class ContentManager {
         }
         
         const currentIndex = tabOrder.findIndex(tab => tab.id === currentTabId);
-        console.log(`[Debug] Current tab index: ${currentIndex}`);
+        debugLog(`[Debug] Current tab index: ${currentIndex}`);
 
         if (currentIndex === -1) {
             console.warn(`[Debug] Current tab ${currentTabId} not found in tab order`);
@@ -598,7 +601,7 @@ class ContentManager {
         const previousIndex = currentIndex > 0 ? currentIndex - 1 : null;
         const nextIndex = currentIndex < tabOrder.length - 1 ? currentIndex + 1 : null;
         
-        console.log(`[Debug] Previous index: ${previousIndex}, Next index: ${nextIndex}`);
+        debugLog(`[Debug] Previous index: ${previousIndex}, Next index: ${nextIndex}`);
 
         // Helper to get full tab info (including title from loaded content if available)
         const getFullTabInfo = (tab) => {
@@ -620,7 +623,7 @@ class ContentManager {
      * Creates navigation buttons for previous/next tabs
      */
     createNavigationButtons(currentTabId) {
-        console.log(`[Debug] createNavigationButtons called for ${currentTabId}`);
+        debugLog(`[Debug] createNavigationButtons called for ${currentTabId}`);
         // Don't show navigation buttons if sidebar is disabled for this section
         const section = appState.config.sections[appState.currentSection];
         if (section && section.sidebarEnabled === false) {
@@ -636,11 +639,11 @@ class ContentManager {
         
         // Debug logging for navigation
         const tabOrder = this.getSectionTabOrder(sectionId);
-        console.log(`[Debug] Navigation Debug: Section=${sectionId}, Tab=${currentTabId}, OrderLength=${tabOrder.length}`);
+        debugLog(`[Debug] Navigation Debug: Section=${sectionId}, Tab=${currentTabId}, OrderLength=${tabOrder.length}`);
         
         const { previous, next } = this.getPreviousNextTabs(currentTabId);
         
-        console.log(`[Debug] Navigation Debug: Previous=${previous?.id}, Next=${next?.id}`);
+        debugLog(`[Debug] Navigation Debug: Previous=${previous?.id}, Next=${next?.id}`);
         
         // Don't show navigation if there's no previous or next tab
         if (!previous && !next) {
@@ -730,7 +733,7 @@ class ContentManager {
             return null;
         }
         
-        console.log(`[Debug] getFirstTabIdForSection: Using config with groups: ${!!config.groups}`);
+        debugLog(`[Debug] getFirstTabIdForSection: Using config with groups: ${!!config.groups}`);
         return this._findFirstTabInConfig(config);
     }
 
@@ -738,13 +741,13 @@ class ContentManager {
      * Helper method to find first tab ID in a config object
      */
     _findFirstTabInConfig(config) {
-        console.log(`[Debug] _findFirstTabInConfig called. Config has groups: ${!!config.groups}, groups is array: ${Array.isArray(config.groups)}`);
+        debugLog(`[Debug] _findFirstTabInConfig called. Config has groups: ${!!config.groups}, groups is array: ${Array.isArray(config.groups)}`);
         // Helper function to find first valid item recursively
         const findFirstItem = (items) => {
             if (!Array.isArray(items)) return null;
             for (const item of items) {
                 if (item.file) {
-                    console.log(`[Debug] Found first item with file: ${item.id}`);
+                    debugLog(`[Debug] Found first item with file: ${item.id}`);
                     return item; // Found a leaf item
                 }
                 if (item.items && Array.isArray(item.items)) {
@@ -765,7 +768,7 @@ class ContentManager {
 
         let firstItem = null;
         if (config.groups && Array.isArray(config.groups)) {
-            console.log(`[Debug] Searching in ${config.groups.length} groups`);
+            debugLog(`[Debug] Searching in ${config.groups.length} groups`);
             firstItem = findFirstItem(config.groups);
         }
         if (!firstItem && config.children && Array.isArray(config.children)) {
@@ -775,7 +778,7 @@ class ContentManager {
             firstItem = findFirstItem(config.items);
         }
         
-        console.log(`[Debug] _findFirstTabInConfig result: ${firstItem ? firstItem.id : 'null'}`);
+        debugLog(`[Debug] _findFirstTabInConfig result: ${firstItem ? firstItem.id : 'null'}`);
         return firstItem ? firstItem.id : null;
     }
 
@@ -784,7 +787,7 @@ class ContentManager {
      */
     createStartLearningButton(sectionId) {
         const firstTabId = this.getFirstTabIdForSection(sectionId);
-        console.log(`[Debug] createStartLearningButton for ${sectionId}: firstTabId=${firstTabId}`);
+        debugLog(`[Debug] createStartLearningButton for ${sectionId}: firstTabId=${firstTabId}`);
         if (!firstTabId) {
             console.warn(`[Debug] No first tab found for section ${sectionId}`);
             return null;
@@ -793,7 +796,7 @@ class ContentManager {
         // Get the first tab's label
         const firstTab = appState.getTabData(firstTabId);
         const buttonLabel = firstTab?.title || firstTab?.label || 'Start Learning';
-        console.log(`[Debug] Creating Start Learning button with label: ${buttonLabel}`);
+        debugLog(`[Debug] Creating Start Learning button with label: ${buttonLabel}`);
 
         const navContainer = document.createElement('div');
         navContainer.className = 'page-navigation';

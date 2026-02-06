@@ -78,7 +78,7 @@ class SearchIndex {
             });
             
             this.isIndexed = true;
-            console.log(`Search index built with lunr.js: ${documents.length} documents indexed`);
+            debugLog(`Search index built with lunr.js: ${documents.length} documents indexed`);
             
             // Log some statistics
             const docsWithContent = documents.filter(doc => 
@@ -86,7 +86,7 @@ class SearchIndex {
                 (doc.code && doc.code.trim().length > 0) ||
                 (doc.sectionTitle && doc.sectionTitle.trim().length > 0)
             ).length;
-            console.log(`Documents with searchable content: ${docsWithContent} of ${documents.length}`);
+            debugLog(`Documents with searchable content: ${docsWithContent} of ${documents.length}`);
         } catch (error) {
             console.error('Error building search index:', error);
             this.isIndexed = false;

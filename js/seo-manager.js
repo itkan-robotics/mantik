@@ -71,8 +71,9 @@ class SEOManager {
         // Update canonical URL
         this.updateCanonicalUrl(canonicalUrl);
 
-        // Update Open Graph tags
-        this.updateOpenGraphTags(pageTitle, pageDescription, canonicalUrl);
+        // Update Open Graph tags (article for lesson pages, website for sections)
+        const ogType = tabId && data && data.title ? 'article' : 'website';
+        this.updateOpenGraphTags(pageTitle, pageDescription, canonicalUrl, ogType);
 
         // Update Twitter Card tags
         this.updateTwitterTags(pageTitle, pageDescription);
@@ -219,16 +220,18 @@ class SEOManager {
 
     /**
      * Updates Open Graph tags for social sharing
+     * @param {string} [type] - 'article' for lesson pages, 'website' for sections/home
      */
-    updateOpenGraphTags(title, description, url) {
+    updateOpenGraphTags(title, description, url, type = 'website') {
         this.updateOGTag('og:title', title);
         this.updateOGTag('og:description', description);
         this.updateOGTag('og:url', url);
-        this.updateOGTag('og:type', 'website');
+        this.updateOGTag('og:type', type);
         this.updateOGTag('og:site_name', this.siteName);
         this.updateOGTag('og:image', this.defaultImage);
         this.updateOGTag('og:image:width', '1200');
         this.updateOGTag('og:image:height', '630');
+        this.updateOGTag('og:image:alt', 'Mantik - FIRST Programming Documentation');
         this.updateOGTag('og:locale', 'en_US');
     }
 

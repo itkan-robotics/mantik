@@ -1,4 +1,33 @@
 /* SWYFT Robotics - Official Design System */
+/*
+ * Table of contents (approximate line numbers):
+ *   Variables & themes    :root, light/dark (~3-165)
+ *   Reset & base          (~174-211)
+ *   Tables                (~214-282)
+ *   Utilities             (~311-323)
+ *   Page layout           (~324-398)
+ *   Header & search       (~399-564)
+ *   Link grid             (~560-653)
+ *   Theme toggle          (~654-676)
+ *   Sidebar               (~677-847)
+ *   Sidebar nav & tree    (~848-972)
+ *   Main content          (~973-1021)
+ *   Typography            (~1022-1103)
+ *   Links & code          (~1104-1345)
+ *   Code tabs             (~1346-1478)
+ *   Lists & content boxes (~1479-1661)
+ *   Footer                (~1662-1685)
+ *   Overlay & responsive  (~1686-2074)
+ *   Parent/child nav      (~2075-2266)
+ *   Answer styles         (~2267-2444)
+ *   Notifications         (~2445-2482)
+ *   Keyboard shortcuts    (~2483-2790)
+ *   Notification popup    (~2791-2876)
+ *   Page nav buttons      (~2877-3040)
+ *   Core Web Vitals       (~3041-3172)
+ *   Breadcrumb            (~3173-3248)
+ *   Noscript & print      (~3249-end)
+ */
 
 /* CSS Variables - Light Theme (Matching SWYFT Robotics Website) */
 :root {
@@ -19,9 +48,9 @@
     --body-line-height: 22px;
     --body-letter-spacing: 0.02em;
     
-    --sidebar-caption-font-size: var(--font-size--small--2);
-    --sidebar-item-font-size: var(--font-size--small);
-    --code-font-size: var(--font-size--small);
+    --sidebar-caption-font-size: var(--font-size--normal);
+    --sidebar-item-font-size: var(--font-size--normal);
+    --code-font-size: var(--font-size--normal);
     --header-height: 4rem;
     --sidebar-item-line-height: 1.2rem;
     --sidebar-item-spacing-vertical: 0.75rem;
@@ -85,11 +114,11 @@
     --radius-xl: 1rem;
   }
   
-  /* Light Theme */
+  /* When system prefers dark but app theme is light or unset, keep light variables */
   @media (prefers-color-scheme: dark) {
     html:not([data-theme="dark"])[data-theme="light"],
       html:not([data-theme="dark"]):not([data-theme]) {
-      /* Palestinian Flag Color Theme */
+      /* Palestinian Flag Color Theme (light) */
     --color-background-primary: #FFFFFF; /* White - Palestinian flag */
     --color-background-secondary: #F5F5F5; /* Light grey */
     --color-background-hover: #E8F5E9;   /* Light green hover */
@@ -114,7 +143,7 @@
       --color-sidebar-link-text--top-level: var(--color-brand-primary);
       --color-sidebar-item-background--hover: linear-gradient(90deg, var(--color-background-hover) 0%, var(--color-background-hover) var(--sidebar-item-spacing-horizontal), var(--color-background-hover) 100%);
       
-      /* Update header colors for dark theme */
+      /* Update header colors (derived from primary vars) */
       --color-header-background: var(--color-background-primary);
       --color-header-border: var(--color-background-border);
       --color-header-text: var(--color-foreground-primary);
@@ -330,24 +359,6 @@ body {
   }
   
   /* Mobile header */
-  /* .mobile-header {
-    background-color: var(--color-header-background);
-    border-bottom: 1px solid var(--color-header-border);
-    color: var(--color-header-text);
-    display: flex;
-    height: var(--header-height);
-    width: 100%;
-    z-index: 100;
-    align-items: center;
-    justify-content: space-between;
-    position: fixed;
-    top: 0;
-    transform: translateY(-100%);
-    transition: transform 0.3s ease-in-out;
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(8px);
-    background-color: rgba(255, 255, 255, 0.95);
-  } */
   .mobile-header {
     background-color: var(--color-background-primary); /* SWYFT: solid background */
     backdrop-filter: none; /* SWYFT: no blur effects */
@@ -438,6 +449,7 @@ body {
   
   .search-input-header {
     width: 240px;
+    min-width: 120px;
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-background-border); /* SWYFT: simple border */
     border-radius: 0; /* SWYFT: no border radius */
@@ -445,7 +457,7 @@ body {
     color: var(--color-foreground-primary);
     font-size: 14px; /* Increased font size */
     letter-spacing: 0.02em; /* SWYFT body letter spacing */
-    transition: all ease 0.3s; /* SWYFT anchor-transition */
+    transition: border-color 0.2s ease, background-color 0.2s ease;
     box-sizing: border-box;
     box-shadow: none; /* SWYFT: no shadows */
     font-family: var(--font-stack);
@@ -652,8 +664,13 @@ body {
   }
   
   /* Theme toggle */
-  .theme-toggle-container {
+  .theme-toggle-container,
+  .help-toggle-container {
     display: flex;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
   }
   
   .theme-toggle {
@@ -664,6 +681,8 @@ body {
     padding: 0;
     align-items: center;
     justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
   }
   
   .theme-icon {
@@ -672,6 +691,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 1em;
+    height: 1em;
   }
   
   /* Sidebar */
@@ -741,13 +762,6 @@ body {
   .sidebar-resize-handle.resizing::before {
     opacity: 1;
   }
-  
-  /* Hide resize handle on mobile */
-  /* @media (max-width: 63em) {
-    .sidebar-resize-handle {
-      display: none;
-    }
-  } */
   
   /* Dark theme adjustments for resize handle */
   [data-theme="dark"] .sidebar-resize-handle::before {
@@ -980,13 +994,6 @@ body {
     max-width: 100%;
   }
   
-  /* .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0 3em;
-    width: 46em;
-  } */
   .content {
     display: flex;
     flex-direction: column;
@@ -2788,9 +2795,6 @@ a:hover {
       justify-content: center;
   }
   
-  /* Undo overlay/modal redesign, keep previous modal/card style */
-  /* ...keep previous overlay/modal styles here... */
-  
   /* Keyboard shortcut key: no border, background is lightest/darkest color */
   .shortcut-key {
       background: var(--color-background-primary);
@@ -3045,10 +3049,8 @@ a:hover {
  * These rules reserve space and prevent unexpected layout changes
  */
 
-/* Font loading optimization - prevent FOUT flash */
+/* Prevent layout jumps from scrollbar appearance (CLS) */
 html {
-    font-display: swap;
-    /* Prevent layout jumps from scrollbar appearance */
     scrollbar-gutter: stable;
 }
 
@@ -3082,10 +3084,11 @@ html {
     contain: layout style;
 }
 
-/* Tab container - reserve minimum height for content loading */
+/* Tab container - reserve minimum height to reduce CLS when content injects */
 #tab-container {
-    min-height: 200px;
+    min-height: 280px;
     contain: layout;
+    overflow-anchor: auto;
 }
 
 /*
@@ -3125,12 +3128,11 @@ article[role="main"] {
     contain: layout;
 }
 
-/* Prevent layout shift from images */
+/* Prevent layout shift: use width/height on <img> in content; height:auto keeps ratio */
 img {
     max-width: 100%;
     height: auto;
-    /* Modern aspect-ratio for known dimensions */
-    aspect-ratio: attr(width) / attr(height);
+    vertical-align: middle;
 }
 
 /* SVG icons - explicit dimensions prevent CLS */
@@ -3144,13 +3146,26 @@ img {
     justify-content: center;
 }
 
-/* Loading overlay - prevent flash and CLS */
-#loading-overlay {
+/* Loading overlay - in HTML for first-paint LCP; stable dimensions prevent CLS */
+#loading-overlay,
+.loading-overlay {
     contain: strict;
-    /* Ensure it covers everything during load */
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 100vw;
+    min-height: 100vh;
     z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background-primary, #fff);
+    color: var(--color-foreground-primary, #333);
+    font-size: 1.5rem;
+    font-family: var(--font-stack);
+    will-change: opacity;
 }
 
 /* Font Awesome icon placeholders - prevent CLS when icons load */

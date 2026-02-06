@@ -72,6 +72,17 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Global utility functions for debugging and development
 window.MantikUtils = {
     /**
+     * Enable or get debug logging. When true, debugLog() calls print to console.
+     * Set via: MantikUtils.debug = true; or localStorage.setItem('mantik_debug', 'true'); then reload.
+     */
+    get debug() {
+        return localStorage.getItem('mantik_debug') === 'true';
+    },
+    set debug(value) {
+        localStorage.setItem('mantik_debug', value ? 'true' : 'false');
+    },
+
+    /**
      * Clear all saved application state
      */
     clearSavedState() {
@@ -354,7 +365,7 @@ function checkDevMode() {
         const currentState = localStorage.getItem('mantik_dev_mode') === 'true';
         localStorage.setItem('mantik_dev_mode', !currentState);
         checkDevMode();
-        console.log(`Developer mode ${!currentState ? 'enabled' : 'disabled'}`);
+        debugLog(`Developer mode ${!currentState ? 'enabled' : 'disabled'}`);
         return !currentState;
     };
 }
@@ -408,5 +419,5 @@ function openAllPageLinks() {
         }
     });
     
-    console.log(`Opened ${openedCount} links.`);
+    debugLog(`Opened ${openedCount} links.`);
 }

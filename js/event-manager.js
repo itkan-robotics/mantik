@@ -13,38 +13,14 @@ class EventManager {
     }
 
     setupEvents() {
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                this.themeManager.toggleTheme();
-            });
-        }
-
-        // Search functionality
-        const searchInput = document.getElementById('search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.searchManager.performSearch(e.target.value);
-            });
-        }
-
-        // Header search functionality
-        const headerSearchInput = document.getElementById('search-input-header');
-        if (headerSearchInput) {
-            headerSearchInput.addEventListener('input', (e) => {
-                this.searchManager.performSearch(e.target.value);
-            });
-        }
-
         // Mobile sidebar toggle
         const navToggle = document.getElementById('__navigation');
         if (navToggle) {
             navToggle.addEventListener('change', async (e) => {
-                console.log(`[Debug] Sidebar toggle changed. Checked: ${e.target.checked}`);
+                debugLog(`[Debug] Sidebar toggle changed. Checked: ${e.target.checked}`);
                 if (e.target.checked) {
                     // Sidebar is now visible - ensure it's shown
-                    console.log('[Debug] Showing sidebar...');
+                    debugLog('[Debug] Showing sidebar...');
                     const sidebarDrawer = document.querySelector('.sidebar-drawer');
                     const sidebarTree = sidebarDrawer?.querySelector('.sidebar-tree');
                     
@@ -58,7 +34,7 @@ class EventManager {
                             const needsRegeneration = !hasContent || lastRenderedSection !== appState.currentSection;
                             
                             if (needsRegeneration) {
-                                console.log(`[Debug] Sidebar content missing or outdated. Regenerating navigation for section ${appState.currentSection}`);
+                                debugLog(`[Debug] Sidebar content missing or outdated. Regenerating navigation for section ${appState.currentSection}`);
                                 await this.navigationManager.generateNavigation();
                             }
                         }
@@ -85,7 +61,7 @@ class EventManager {
                         if (sidebarTreeElement) {
                             sidebarTreeElement.style.visibility = 'visible';
                             sidebarTreeElement.style.opacity = '1';
-                            console.log(`[Debug] Sidebar tree visible. Has content: ${sidebarTreeElement.innerHTML.length > 0}, children: ${sidebarTreeElement.children.length}`);
+                            debugLog(`[Debug] Sidebar tree visible. Has content: ${sidebarTreeElement.innerHTML.length > 0}, children: ${sidebarTreeElement.children.length}`);
                         }
                     }
                     // Adjust layout immediately (no animation)
@@ -101,7 +77,7 @@ class EventManager {
                     }, 100);
                 } else {
                     // Sidebar is now hidden - reset layout without animation
-                    console.log('[Debug] Hiding sidebar...');
+                    debugLog('[Debug] Hiding sidebar...');
                     this.navigationManager.resetLayoutForHiddenSidebar();
                 }
             });

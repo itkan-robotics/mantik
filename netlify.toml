@@ -2,9 +2,8 @@
 # Optimized for SEO, Core Web Vitals, and SPA routing
 
 [build]
-  # No build command needed for static site
-  command = ""
-  # Publish the root directory
+  # Generate static HTML per lesson (SEO), sitemap.xml, and copy into publish root (cross-platform)
+  command = "node scripts/build-seo-pages.js"
   publish = "."
 
 [build.environment]
@@ -15,7 +14,19 @@
 # These redirects handle client-side routing for the SPA while maintaining
 # proper SEO-friendly URLs for each curriculum section
 
-# Force HTTPS and non-www (canonical domain)
+# Canonical domain: HTTPS + non-www (strict canonicalization)
+[[redirects]]
+  from = "http://www.mantik.netlify.app/*"
+  to = "https://mantik.netlify.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.mantik.netlify.app/*"
+  to = "https://mantik.netlify.app/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "http://mantik.netlify.app/*"
   to = "https://mantik.netlify.app/:splat"
@@ -44,50 +55,43 @@
   to = "/comp"
   status = 301
 
-# Section-specific routes - serve index.html for known curriculum paths
-# This allows search engines to see distinct URLs for each section
+# Lesson paths with trailing slash -> canonical without trailing (avoids duplicate indexing)
+[[redirects]]
+  from = "/java/*/"
+  to = "/java/:splat"
+  status = 301
+[[redirects]]
+  from = "/frc/*/"
+  to = "/frc/:splat"
+  status = 301
+[[redirects]]
+  from = "/ftc/*/"
+  to = "/ftc/:splat"
+  status = 301
+[[redirects]]
+  from = "/comp/*/"
+  to = "/comp/:splat"
+  status = 301
 
-# Java training section routes
+# Section roots only -> SPA (index.html). Lesson paths (/java/lesson-id) are NOT
+# redirected so Netlify serves static HTML from java/lesson-id/index.html when present.
 [[redirects]]
   from = "/java"
   to = "/index.html"
   status = 200
 
 [[redirects]]
-  from = "/java/*"
-  to = "/index.html"
-  status = 200
-
-# FRC training section routes  
-[[redirects]]
   from = "/frc"
   to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/frc/*"
-  to = "/index.html"
-  status = 200
-
-# FTC training section routes
 [[redirects]]
   from = "/ftc"
   to = "/index.html"
   status = 200
 
 [[redirects]]
-  from = "/ftc/*"
-  to = "/index.html"
-  status = 200
-
-# Competitive programming section routes
-[[redirects]]
   from = "/comp"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/comp/*"
   to = "/index.html"
   status = 200
 
@@ -129,12 +133,8 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-    # Preload critical resources for better LCP
-    Link = '''
-      </styles.css>; rel=preload; as=style,
-      </js/app-state.js>; rel=modulepreload,
-      </media/FRCCodeLabDark.svg>; rel=preload; as=image; type=image/svg+xml
-    '''
+    # Preload critical resources for better LCP (root-relative URLs)
+    Link = "</styles.css>; rel=preload; as=style, </js/app-state.js>; rel=modulepreload, </media/FRCCodeLabDark.svg>; rel=preload; as=image; type=image/svg+xml"
 
 # CSS files - moderate cache with must-revalidate
 [[headers]]

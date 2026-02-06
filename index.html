@@ -11,7 +11,7 @@
     
     <!-- Preload Critical Resources for Better LCP -->
     <link rel="preload" href="/styles.css" as="style">
-    <link rel="preload" href="/media/FRCCodeLabDark.svg" as="image" type="image/svg+xml">
+    <link rel="preload" href="/media/FRCCodeLabDark.svg" as="image" type="image/svg+xml" fetchpriority="high">
     
     <!-- Preconnect for External Resources (must come before font requests) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,12 +36,12 @@
     <meta name="revisit-after" content="7 days">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
     
-    <!-- Canonical URL - Updated dynamically by SEO Manager -->
+    <!-- Canonical URL (HTTPS, non-www) - Updated dynamically by SEO Manager -->
     <link rel="canonical" href="https://mantik.netlify.app/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://mantik.netlify.app">
+    <meta property="og:url" content="https://mantik.netlify.app/">
     <meta property="og:title" content="Mantik - FIRST Programming Made Easy | Java, FTC, FRC Robotics & Competitive Coding">
     <meta property="og:description" content="Comprehensive programming documentation and interactive learning platform for FIRST Robotics students. Learn Java fundamentals, FTC programming, FRC development with WPILib, and competitive coding.">
     <meta property="og:image" content="https://mantik.netlify.app/media/FRCCodeLab.png">
@@ -53,7 +53,7 @@
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://mantik.netlify.app">
+    <meta name="twitter:url" content="https://mantik.netlify.app/">
     <meta name="twitter:title" content="Mantik - FIRST Programming Made Easy | Java, FTC, FRC Robotics & Competitive Coding">
     <meta name="twitter:description" content="Comprehensive programming documentation and interactive learning platform for FIRST Robotics students. Learn Java fundamentals, FTC programming, FRC development with WPILib, and competitive coding.">
     <meta name="twitter:image" content="https://mantik.netlify.app/media/FRCCodeLab.png">
@@ -125,6 +125,20 @@
       ]
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Mantik Learning Paths",
+      "description": "Structured programming curricula for FIRST Robotics students",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Java Training", "url": "https://mantik.netlify.app/java" },
+        { "@type": "ListItem", "position": 2, "name": "FTC Programming", "url": "https://mantik.netlify.app/ftc" },
+        { "@type": "ListItem", "position": 3, "name": "FRC Programming", "url": "https://mantik.netlify.app/frc" },
+        { "@type": "ListItem", "position": 4, "name": "Competitive Programming", "url": "https://mantik.netlify.app/comp" }
+      ]
+    }
+    </script>
     <!-- Critical CSS loaded synchronously -->
     <link rel="stylesheet" href="styles.css">
     
@@ -142,6 +156,10 @@
     <link rel="icon" href="./media/FRCCodeLab.png" type="image/png" sizes="any">
 </head>
 <body>
+    <!-- Loading overlay in HTML for first-paint LCP; minimal inline style so it shows before CSS -->
+    <div id="loading-overlay" class="loading-overlay" aria-live="polite" aria-busy="true" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fff;color:#333;font-size:1.5rem;">
+        <span>Loading...</span>
+    </div>
     <input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
     <label class="overlay sidebar-overlay" for="__navigation">
         <div class="visually-hidden">Hide navigation sidebar</div>
@@ -289,7 +307,7 @@
             <div class="sidebar-resize-handle"></div>
         </aside>
 
-        <div class="main">
+        <main class="main">
             <div class="content">
                 <div class="article-container">
                     <article role="main" id="furo-main-content">
@@ -373,21 +391,9 @@
                     </div>
                 </footer>
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- Inline critical JS for immediate loading overlay (prevents CLS) -->
-    <script>
-    // Show loading overlay immediately to prevent CLS
-    (function() {
-        var overlay = document.createElement('div');
-        overlay.id = 'loading-overlay';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:var(--color-background-primary,#fff);z-index:9999;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--color-foreground-primary,#333);';
-        overlay.innerHTML = '<span>Loading...</span>';
-        document.body.appendChild(overlay);
-    })();
-    </script>
-    
     <!-- Load JavaScript modules - all deferred for better INP -->
     <script src="/js/app-state.js" defer></script>
     <script src="/js/config-manager.js" defer></script>

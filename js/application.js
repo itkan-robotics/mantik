@@ -37,8 +37,15 @@ class Application {
             // Generate initial navigation
             await this.navigationManager.generateNavigation();
             
-            // Build search index in background (non-blocking)
-            this.buildSearchIndex();
+            // Defer search index build until idle to improve INP (Interaction to Next Paint)
+            const scheduleSearchBuild = () => {
+                if (typeof requestIdleCallback !== 'undefined') {
+                    requestIdleCallback(() => this.buildSearchIndex(), { timeout: 3000 });
+                } else {
+                    setTimeout(() => this.buildSearchIndex(), 0);
+                }
+            };
+            scheduleSearchBuild();
             
             // Initialize sidebar resize functionality
             this.sidebarResizeManager.initialize();
@@ -71,10 +78,10 @@ class Application {
 
     async buildSearchIndex() {
         try {
-            console.log('Building search index...');
+            debugLog('Building search index...');
             await this.searchIndex.buildIndex(this.contentManager, this.configManager);
             this.searchManager.setSearchIndex(this.searchIndex);
-            console.log('Search index built successfully');
+            debugLog('Search index built successfully');
         } catch (error) {
             console.error('Error building search index:', error);
             // Continue without index - fallback to old search
@@ -278,12 +285,12 @@ function showLoadingOverlay() {
 
 function hideLoadingOverlay() {
     const overlay = document.getElementById('loading-overlay');
-    if (overlay) {
-        // Fade out for smoother transition (reduces CLS perception)
-        overlay.style.transition = 'opacity 0.2s ease-out';
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.remove(), 200);
-    }
+    if (!overlay) return;
+    overlay.style.transition = 'opacity 0.15s ease-out';
+    overlay.style.opacity = '0';
+    overlay.setAttribute('aria-busy', 'false');
+    const removeAfterFade = () => overlay.remove();
+    setTimeout(() => (typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame(removeAfterFade) : removeAfterFade()), 160);
 }
 
 // Loading overlay is now inlined in HTML for faster display
