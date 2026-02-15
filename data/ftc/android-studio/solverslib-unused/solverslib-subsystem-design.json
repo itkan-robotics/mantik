@@ -57,7 +57,7 @@
       "answers": [
         {
           "task": "Design a subsystem for an elevator/lift mechanism",
-          "content": "// Define the ElevatorSubsystem class\npublic class ElevatorSubsystem extends SubsystemBase {\n    private final DcMotor elevatorMotor;\n    private final TouchSensor limitSwitch;\n    \n    public ElevatorSubsystem(HardwareMap hardwareMap) {\n        elevatorMotor = hardwareMap.get(DcMotor.class, \"elevatorMotor\");\n        limitSwitch = hardwareMap.get(TouchSensor.class, \"limitSwitch\");\n        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);\n    }\n    // Add methods for moving, stopping, and state tracking below\n}"
+          "content": "// Define the ElevatorSubsystem class\npublic class ElevatorSubsystem extends SubsystemBase {\n    private final DcMotor elevatorMotor;\n    private final int minPosition = 0;\n    private final int maxPosition = 5000;\n    \n    public ElevatorSubsystem(HardwareMap hardwareMap) {\n        elevatorMotor = hardwareMap.get(DcMotor.class, \"elevatorMotor\");\n        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);\n    }\n    // Add methods for moving, stopping, and state tracking below\n}"
         },
         {
           "task": "Include methods for moving up, down, and stopping",

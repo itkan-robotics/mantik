@@ -1,0 +1,26 @@
+{
+  "title": "Environment Setup Overview",
+  "sections": [
+    {
+      "type": "text",
+      "title": "What is Environment Setup?",
+      "content": "Environment Setup covers the foundations you need before writing robot code. You will learn how the FTC SDK works, how OpModes are structured, and how to use telemetry for debugging. This section also explains the Control Hub and Expansion Hub hardware."
+    },
+    {
+      "type": "text",
+      "title": "Suggested Order",
+      "content": "New teams should complete these topics in order. FTC SDK Basics introduces the core concepts; OpMode Structure and Linear vs Iterative OpModes show how to organize your code; Telemetry Logging teaches debugging; and Control Hub & Expansion Hub covers the hardware platform."
+    },
+    {
+      "type": "link-grid",
+      "title": "Topics",
+      "links": [
+        {"label": "FTC SDK Basics", "id": "ftc-sdk-basics", "description": "SDK structure, OpMode framework, HardwareMap"},
+        {"label": "OpMode Structure", "id": "opmode-structure", "description": "OpMode types, annotations, lifecycle"},
+        {"label": "Linear vs Iterative OpModes", "id": "linear-vs-iterative-opmodes", "description": "When to use each approach"},
+        {"label": "Telemetry Logging", "id": "telemetry-logging", "description": "Display data on Driver Station"},
+        {"label": "Control Hub & Expansion Hub", "id": "control-hub-expansion-hub", "description": "Hardware overview and configuration"}
+      ]
+    }
+  ]
+}

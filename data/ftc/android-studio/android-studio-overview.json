@@ -1,0 +1,66 @@
+{
+  "title": "Android Studio Overview",
+  "sections": [
+    {
+      "type": "text",
+      "title": "What is Android Studio for FTC?",
+      "content": "Android Studio is the professional development environment for FTC robots. You write code in a full IDE on your computer, use version control, and benefit from advanced tooling. This path is for teams ready for more sophisticated control systems, odometry, path planning, and computer vision."
+    },
+    {
+      "type": "text",
+      "title": "Learning Path",
+      "content": "The Android Studio curriculum is organized into topic areas. Complete Environment Setup first, then move through Advanced Movement Control, Odometry, and Path Planning. Debugging & Best Practices applies across all topics."
+    },
+    {
+      "type": "link-grid",
+      "title": "Environment Setup",
+      "links": [
+        {"label": "Android Studio Environment Setup", "id": "android-studio-environment"},
+        {"label": "Code Version Control", "id": "code-version-control"}
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Advanced Movement Control",
+      "links": [
+        {"label": "Advanced Movement Control", "id": "advanced-movement-control"},
+        {"label": "External Libraries in FTC", "id": "external-libraries"},
+        {"label": "PID Control", "id": "pid-control"},
+        {"label": "Robot PID Control", "id": "robot-pid-control"},
+        {"label": "Motion Profiling", "id": "motion-profiling"}
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Odometry",
+      "links": [
+        {"label": "Introduction to Odometry", "id": "intro-to-odometry"},
+        {"label": "Dead Wheel Encoders", "id": "dead-wheel-encoders"},
+        {"label": "Three-Wheel Odometry", "id": "three-wheel-odometry"},
+        {"label": "Gobilda Pinpoint", "id": "gobilda-pinpoint"}
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Path Planning",
+      "links": [
+        {"label": "Poses, Paths, and Theory", "id": "poses-paths-theory"},
+        {"label": "PedroPathing vs. Road Runner", "id": "path-planning-comparison"},
+        {"label": "Custom Path Following Algorithms", "id": "custom-path-following"}
+      ]
+    },
+    {
+      "type": "link-grid",
+      "title": "Debugging & Best Practices",
+      "links": [
+        {"label": "Advanced Debugging", "id": "advanced-debugging"},
+        {"label": "Performance Optimization", "id": "performance-optimization"},
+        {"label": "Software Development Best Practices", "id": "software-development-best-practices"},
+        {"label": "Code Review", "id": "code-review"},
+        {"label": "Unit Testing", "id": "unit-testing"},
+        {"label": "Debugging Strategies", "id": "debugging-strategies"},
+        {"label": "FTCDashboard Comprehensive Guide", "id": "ftc-dashboard-comprehensive"}
+      ]
+    }
+  ]
+}

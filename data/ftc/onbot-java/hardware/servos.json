@@ -1,0 +1,45 @@
+{
+  "title": "Servos in FTC",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Servos provide precise, limited-range movement for arms, claws, and similar mechanisms. Standard servos move to a position and hold it. Continuous rotation servos spin like motors."
+    },
+    {
+      "type": "table",
+      "title": "Standard vs Continuous Rotation",
+      "headers": ["Feature", "Standard Servo", "Continuous Rotation (CRServo)"],
+      "rows": [
+        ["Control", "<code>setPosition(0.0 to 1.0)</code> — position", "<code>setPosition(0.0)</code> reverse, <code>0.5</code> stop, <code>1.0</code> forward"],
+        ["Use Cases", "Arms, claws, precise angles", "Intake rollers, spinners"],
+        ["Config", "Servo", "CRServo"]
+      ]
+    },
+    {
+      "type": "code",
+      "title": "Basic Servo Use",
+      "content": "Position values 0.0–1.0 represent the servo's range. Check manufacturer specs for actual angular range.",
+      "code": "private Servo clawServo;\n\n@Override\npublic void runOpMode() {\n    clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n    clawServo.setPosition(0.5); // Initial position\n    \n    waitForStart();\n    while (opModeIsActive()) {\n        if (gamepad1.a) clawServo.setPosition(0.0);\n        else if (gamepad1.b) clawServo.setPosition(1.0);\n        telemetry.addData(\"Position\", clawServo.getPosition());\n        telemetry.update();\n    }\n}"
+    },
+    {
+      "type": "text",
+      "title": "Multiple Servos and Gradual Movement",
+      "content": "Initialize each servo with a unique hardware map name. For smooth motion, change position in small increments over time. Keep positions within 0.0–1.0 to avoid damage."
+    },
+    {
+      "type": "code",
+      "title": "Gradual Movement Example",
+      "content": "Move servo to target in steps.",
+      "code": "double current = clawServo.getPosition();\ndouble target = 1.0;\ndouble step = 0.02;\n\nwhile (Math.abs(current - target) > 0.01 && opModeIsActive()) {\n    current += (current < target ? step : -step);\n    current = Math.max(0.0, Math.min(1.0, current));\n    clawServo.setPosition(current);\n    sleep(20);\n}"
+    },
+    {
+      "type": "link-grid",
+      "title": "Further Reading",
+      "content": [
+        {"label": "FTC Docs: Controlling a Servo", "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/controlling_a_servo/Controlling-a-Servo-%28OnBot-Java%29.html"},
+        {"label": "gm0: Servo Usage Tips", "url": "https://gm0.org/en/latest/docs/power-and-electronics/servo-guide/usage-tips.html"}
+      ]
+    }
+  ]
+}

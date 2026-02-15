@@ -19,8 +19,7 @@
       "id": "ftc-specific",
       "label": "FTC Training",
       "file": "data/config/ftc-specific-config.json",
-      "sidebarEnabled": false,
-      "underConstruction": true
+      "sidebarEnabled": true
     },
     "frc-specific": {
       "id": "frc-specific",

@@ -21,7 +21,7 @@
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc</loc>
-    <lastmod>2026-02-06</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -194,320 +194,266 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://mantik.netlify.app/ftc/onbot-java-overview</loc>
+    <lastmod>2026-02-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mantik.netlify.app/ftc/environment-setup-overview</loc>
+    <lastmod>2026-02-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://mantik.netlify.app/ftc/ftc-sdk-basics</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/opmode-structure</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/linear-vs-iterative-opmodes</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/telemetry-logging</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/control-hub-expansion-hub</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mantik.netlify.app/ftc/robot-hardware-overview</loc>
-    <lastmod>2025-12-28</lastmod>
+    <loc>https://mantik.netlify.app/ftc/motors</loc>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mantik.netlify.app/ftc/dc-motors</loc>
-    <lastmod>2025-12-28</lastmod>
+    <loc>https://mantik.netlify.app/ftc/servos</loc>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mantik.netlify.app/ftc/basic-motor-control</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/drivebase-types</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/motor-encoders</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/motor-types</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/intro-to-servos</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/continuous-vs-noncontinuous</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/advanced-servo-control</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/sensors-overview</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/touch-sensors</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/distance-sensors</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/color-sensors</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/imu</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mantik.netlify.app/ftc/sensor-practice-exercises</loc>
-    <lastmod>2025-12-28</lastmod>
+    <loc>https://mantik.netlify.app/ftc/sensors</loc>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/teleop-programming</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/gamepad-controls</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mantik.netlify.app/ftc/subsystem-organization</loc>
-    <lastmod>2025-12-28</lastmod>
+    <loc>https://mantik.netlify.app/ftc/drivebase-types</loc>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/telemetry-feedback</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/teleop-exercises</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/basic-autonomous-programming</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/time-based-movement</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/encoder-based-movement</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/basic-debugging-techniques</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/state-machines</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/code-organization</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/troubleshooting-common-issues</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mantik.netlify.app/ftc/android-studio-overview</loc>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/android-studio-environment</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/code-version-control</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/advanced-movement-control</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/external-libraries</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/pid-control</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/robot-pid-control</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/motion-profiling</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/intro-to-odometry</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/dead-wheel-encoders</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/three-wheel-odometry</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/gobilda-pinpoint</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/poses-paths-theory</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/path-planning-comparison</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/custom-path-following</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/advanced-debugging</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/performance-optimization</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/software-development-best-practices</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/code-review</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/unit-testing</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/debugging-strategies</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mantik.netlify.app/ftc/ftc-dashboard-comprehensive</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

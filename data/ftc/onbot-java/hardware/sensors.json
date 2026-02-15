@@ -1,0 +1,55 @@
+{
+  "title": "Sensors in FTC",
+  "sections": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "content": "Sensors let the robot perceive its environment. Configure each sensor in the robot's hardware configuration, then map it in code. Common types: distance (obstacle detection, alignment), color (line following, object detection), and IMU (orientation, turning)."
+    },
+    {
+      "type": "text",
+      "title": "Distance Sensors",
+      "content": "Distance sensors measure how far objects are. Use for obstacle avoidance, alignment, and detecting game elements."
+    },
+    {
+      "type": "code",
+      "title": "Distance Sensor",
+      "content": "Read distance in centimeters. Handle NaN for out-of-range readings.",
+      "code": "private DistanceSensor distanceSensor;\n\ndistanceSensor = hardwareMap.get(DistanceSensor.class, \"distance_sensor\");\ndouble distance = distanceSensor.getDistance(DistanceUnit.CM);\n\nif (!Double.isNaN(distance) && distance < 10) {\n    leftDrive.setPower(0);\n    rightDrive.setPower(0);\n}"
+    },
+    {
+      "type": "text",
+      "title": "Color Sensors",
+      "content": "Color sensors return red, green, blue, and alpha values. Use for line following, game element detection, and object differentiation. Ambient light affects readings."
+    },
+    {
+      "type": "code",
+      "title": "Color Sensor",
+      "content": "Read RGB values and detect conditions.",
+      "code": "private ColorSensor colorSensor;\n\ncolorSensor = hardwareMap.get(ColorSensor.class, \"color_sensor\");\ncolorSensor.enableLed(true);\n\nint red = colorSensor.red();\nint green = colorSensor.green();\nint blue = colorSensor.blue();\n\nif (red > 100 && red > blue) {\n    telemetry.addData(\"Object\", \"Red detected\");\n}"
+    },
+    {
+      "type": "text",
+      "title": "IMU (Inertial Measurement Unit)",
+      "content": "The IMU measures orientation (heading, pitch, roll). REV hubs include a built-in IMU; external BNO055 modules connect via I2C. Use for turning to angles, field-centric drive, and navigation."
+    },
+    {
+      "type": "code",
+      "title": "IMU Initialization and Heading",
+      "content": "Both built-in and external BNO055 use the same initialization. Use a different I2C port than 0 for external IMUs.",
+      "code": "private BNO055IMU imu;\n\nimu = hardwareMap.get(BNO055IMU.class, \"imu\");\nBNO055IMU.Parameters params = new BNO055IMU.Parameters();\nparams.angleUnit = BNO055IMU.AngleUnit.DEGREES;\nimu.initialize(params);\n\nfloat heading = imu.getAngularOrientation().firstAngle;"
+    },
+    {
+      "type": "emphasis-box",
+      "title": "Troubleshooting",
+      "content": "Distance: NaN usually means out of range. Color: test in your environment; use thresholds. IMU: calibrate before matches; handle drift."
+    },
+    {
+      "type": "link-grid",
+      "title": "Further Reading",
+      "content": [
+        {"label": "FTC Docs: Using Sensors", "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/using_sensors/Using-Sensors-%28OnBot-Java%29.html"}
+      ]
+    }
+  ]
+}

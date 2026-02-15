@@ -31,7 +31,14 @@ class Application {
             // Load main configuration
             await this.configManager.loadMainConfig();
             
-            // Load homepage content
+            // Parse URL and set currentSection before initial navigation render
+            // This ensures sidebar shows correct structure when visiting /ftc, /java, etc. directly
+            const { sectionId } = this.navigationManager.parseCurrentUrl();
+            if (sectionId && sectionId !== 'homepage') {
+                appState.setCurrentSection(sectionId);
+            }
+            
+            // Load homepage content (required for root path)
             await this.contentManager.loadSectionContent('homepage');
             
             // Generate initial navigation

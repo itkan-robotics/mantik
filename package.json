@@ -4,8 +4,8 @@
   },
   "scripts": {
     "build": "echo 'No build process needed for static site'",
-    "start": "npx serve .",
-    "dev": "npx serve .",
+    "start": "web-dev-server --node-resolve --open --app-index index.html",
+    "dev": "web-dev-server --node-resolve --open --watch --app-index index.html",
     "netlify-dev": "netlify dev",
     "serve": "web-dev-server --node-resolve --open --watch --app-index index.html"
   }

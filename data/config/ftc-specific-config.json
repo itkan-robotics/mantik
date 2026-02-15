@@ -100,8 +100,8 @@
           "id": "ftc-sdk-basics"
         },
         {
-          "label": "Robot Hardware Overview",
-          "id": "robot-hardware-overview"
+"label": "DC Motors and Motor Control",
+        "id": "motors"
         },
         {
           "label": "Android Studio Environment",
@@ -115,12 +115,34 @@
       "id": "onbot-java-parent",
       "label": "OnBot Java Development",
       "description": "Learn FTC programming using OnBot Java development environment",
+      "landingTabId": "onbot-java-overview",
       "children": [
+        {
+          "id": "onbot-java-overview-group",
+          "label": "OnBot Java Overview",
+          "description": "Overview of OnBot Java topics and learning path",
+          "items": [
+            {
+              "id": "onbot-java-overview",
+              "label": "OnBot Java Overview",
+              "file": "data/ftc/onbot-java/onbot-java-overview.json",
+              "difficulty": "beginner",
+              "duration": "5 min"
+            }
+          ]
+        },
         {
           "id": "onbot-java-environment-setup",
           "label": "Environment Setup",
           "description": "Setting up your FTC development environment",
           "items": [
+            {
+              "id": "environment-setup-overview",
+              "label": "Environment Setup Overview",
+              "file": "data/ftc/onbot-java/environment-setup/environment-setup-overview.json",
+              "difficulty": "beginner",
+              "duration": "5 min"
+            },
             {
               "id": "ftc-sdk-basics",
               "label": "FTC SDK Basics",
@@ -159,128 +181,30 @@
           ]
         },
         {
-          "id": "onbot-java-motors",
-          "label": "Motor Control",
-          "description": "Understanding and controlling DC motors",
+          "id": "onbot-java-robot-hardware",
+          "label": "Robot Hardware",
+          "description": "Motors, servos, and sensors for FTC robots",
           "items": [
             {
-              "id": "robot-hardware-overview",
-              "label": "Robot Hardware Overview",
-              "file": "data/ftc/onbot-java/motors/robot-hardware-overview.json",
+              "id": "motors",
+              "label": "DC Motors and Motor Control",
+              "file": "data/ftc/onbot-java/hardware/motors.json",
               "difficulty": "beginner",
-              "duration": "15 min"
-            },
-            {
-              "id": "dc-motors",
-              "label": "DC Motors",
-              "file": "data/ftc/onbot-java/motors/dc-motors.json",
-              "difficulty": "beginner",
-              "duration": "20 min"
-            },
-            {
-              "id": "basic-motor-control",
-              "label": "Basic Motor Control",
-              "file": "data/ftc/onbot-java/motors/basic-motor-control.json",
-              "difficulty": "beginner",
-              "duration": "25 min"
-            },
-            {
-              "id": "drivebase-types",
-              "label": "Drivebase Types",
-              "file": "data/ftc/onbot-java/motors/drivebase-types.json",
-              "difficulty": "intermediate",
-              "duration": "35 min"
-            },
-            {
-              "id": "motor-encoders",
-              "label": "Motor Encoders",
-              "file": "data/ftc/onbot-java/motors/motor-encoders.json",
-              "difficulty": "intermediate",
               "duration": "30 min"
             },
             {
-              "id": "motor-types",
-              "label": "Motor Types",
-              "file": "data/ftc/onbot-java/motors/motor-types.json",
-              "difficulty": "beginner",
-              "duration": "20 min"
-            }
-          ]
-        },
-        {
-          "id": "onbot-java-servos",
-          "label": "Servo Control",
-          "description": "Working with servo motors for precise positioning",
-          "items": [
-            {
-              "id": "intro-to-servos",
-              "label": "Introduction to Servos",
-              "file": "data/ftc/onbot-java/servos/intro-to-servos.json",
+              "id": "servos",
+              "label": "Servos",
+              "file": "data/ftc/onbot-java/hardware/servos.json",
               "difficulty": "beginner",
               "duration": "20 min"
             },
             {
-              "id": "continuous-vs-noncontinuous",
-              "label": "Continuous vs Non-Continuous Servos",
-              "file": "data/ftc/onbot-java/servos/continuous-vs-noncontinuous.json",
+              "id": "sensors",
+              "label": "Sensors",
+              "file": "data/ftc/onbot-java/hardware/sensors.json",
               "difficulty": "beginner",
-              "duration": "25 min"
-            },
-            {
-              "id": "advanced-servo-control",
-              "label": "Advanced Servo Control",
-              "file": "data/ftc/onbot-java/servos/advanced-servo-control.json",
-              "difficulty": "intermediate",
-              "duration": "35 min"
-            }
-          ]
-        },
-        {
-          "id": "onbot-java-sensors",
-          "label": "Sensors",
-          "description": "Using various sensors for robot feedback",
-          "items": [
-            {
-              "id": "sensors-overview",
-              "label": "Sensors Overview",
-              "file": "data/ftc/onbot-java/sensors/sensors.json",
-              "difficulty": "beginner",
-              "duration": "15 min"
-            },
-            {
-              "id": "touch-sensors",
-              "label": "Touch Sensors",
-              "file": "data/ftc/onbot-java/sensors/touch-sensors.json",
-              "difficulty": "beginner",
-              "duration": "20 min"
-            },
-            {
-              "id": "distance-sensors",
-              "label": "Distance Sensors",
-              "file": "data/ftc/onbot-java/sensors/distance-sensors.json",
-              "difficulty": "intermediate",
-              "duration": "25 min"
-            },
-            {
-              "id": "color-sensors",
-              "label": "Color Sensors",
-              "file": "data/ftc/onbot-java/sensors/color-sensors.json",
-              "difficulty": "intermediate",
               "duration": "30 min"
-            },
-            {
-              "id": "imu",
-              "label": "IMU (Inertial Measurement Unit)",
-              "file": "data/ftc/onbot-java/sensors/imu.json",
-              "difficulty": "intermediate",
-              "duration": "35 min"
-            },
-            {
-              "id": "sensor-practice-exercises",
-              "label": "Sensor Practice Exercises",
-              "file": "data/ftc/onbot-java/sensors/sensor-practice-exercises.json",
-              "difficulty": "intermediate",
-              "duration": "60 min"
             }
           ]
         },
@@ -304,11 +228,11 @@
               "duration": "25 min"
             },
             {
-              "id": "subsystem-organization",
-              "label": "Subsystem Organization & Modular Code",
-              "file": "data/ftc/onbot-java/teleop-programming/subsystem-organization.json",
-              "difficulty": "intermediate",
-              "duration": "30 min"
+              "id": "drivebase-types",
+              "label": "Drivebase Types",
+              "file": "data/ftc/onbot-java/teleop-programming/drivebase-types.json",
+              "difficulty": "beginner",
+              "duration": "20 min"
             },
             {
               "id": "telemetry-feedback",
@@ -395,7 +319,22 @@
       "id": "android-studio-parent",
       "label": "Android Studio Development",
       "description": "Advanced FTC programming using Android Studio IDE",
+      "landingTabId": "android-studio-overview",
       "children": [
+        {
+          "id": "android-studio-overview-group",
+          "label": "Android Studio Overview",
+          "description": "Overview of Android Studio topics and learning path",
+          "items": [
+            {
+              "id": "android-studio-overview",
+              "label": "Android Studio Overview",
+              "file": "data/ftc/android-studio/android-studio-overview.json",
+              "difficulty": "intermediate",
+              "duration": "5 min"
+            }
+          ]
+        },
         {
           "id": "android-studio-environment-setup",
           "label": "Environment Setup",
@@ -584,7 +523,7 @@
   "metadata": {
     "version": "2.1.0",
     "lastUpdated": "2025-01-27",
-    "totalLessons": 48,
+    "totalLessons": 40,
     "difficultyLevels": {
       "beginner": 15,
       "intermediate": 17,

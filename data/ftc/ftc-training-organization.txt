@@ -6,27 +6,14 @@
 │   │   ├── linear-vs-iterative-opmodes.json
 │   │   ├── telemetry-logging.json
 │   │   └── control-hub-expansion-hub.json
-│   ├── motors/
-│   │   ├── robot-hardware-overview.json
-│   │   ├── dc-motors.json
-│   │   ├── basic-motor-control.json
-|   |   ├── drivebase-types.json
-│   │   ├── motor-encoders.json
-│   │   ├── motor-types.json
-│   ├── servos/
-|   |   ├── intro-to-servos.json
-│   │   ├── continuous-vs-noncontinuous.json
-│   │   ├── servo-positions.json
-│   |── sensors/
-│   │   ├── intro-to-sensors.json
-│   │   ├── touch-sensors.json
-│   │   ├── distance-sensors.json
-│   │   ├── color-sensors.json
-│   │   └── imu.json
+│   ├── hardware/
+│   │   ├── motors.json
+│   │   ├── servos.json
+│   │   └── sensors.json
 │   ├── teleop-programming/
-│   │   ├── basic-robot-control.json
 │   │   ├── teleop-programming.json
-│   │   └── gamepad-controls.json
+│   │   ├── gamepad-controls.json
+│   │   └── drivebase-types.json
 │   ├── autonomous-programming/
 │   │   ├── basic-autonomous-programming.json
 │   │   ├── time-based-movement.json

@@ -309,7 +309,7 @@ class NavigationManager {
                 children.push(this.configGroupToNavNode(g));
             });
         }
-        return { type: 'group', id: group.id, label: group.label || group.title, children };
+        return { type: 'group', id: group.id, label: group.label || group.title, children, landingTabId: group.landingTabId };
     }
 
     normalizeTiersToNavTree(tiers) {
@@ -342,7 +342,7 @@ class NavigationManager {
                 const li = this.createNavigationItem(node.label, node.id, itemClass);
                 container.appendChild(li);
             } else if (node.type === 'group') {
-                const groupLi = this.createParentNavigationItem({ id: node.id, label: node.label }, parentClass);
+                const groupLi = this.createParentNavigationItem({ id: node.id, label: node.label, landingTabId: node.landingTabId }, parentClass);
                 const childUl = this.createChildrenContainer(node.id);
                 this.renderNavTree(childUl, node.children || [], depth + 1);
                 groupLi.appendChild(childUl);
@@ -423,13 +423,16 @@ class NavigationManager {
         
         const a = document.createElement('a');
         a.className = 'reference parent-folder-reference';
-        a.href = '#';
+        a.href = parent.landingTabId ? this.buildCrawlableUrl(parent.landingTabId) : '#';
         a.innerHTML = `
             <span class="expand-icon expand-icon-${parent.id}">▼</span>
             ${parent.label}
         `;
         a.onclick = (e) => {
             e.preventDefault();
+            if (parent.landingTabId) {
+                this.navigateToTab(parent.landingTabId);
+            }
             this.toggleGroup(parent.id);
         };
         li.appendChild(a);
@@ -856,13 +859,11 @@ class NavigationManager {
 
             // If still not found, try to load the section that might contain this tab
             if (!targetTab) {
-                // Try to find which section this tab belongs to
                 for (const sectionId in appState.config.sections) {
                     const section = appState.config.sections[sectionId];
                     if (section.groups) {
                         for (const group of section.groups) {
-                            if (group.items && group.items.some(item => item.id === tabId)) {
-                                // Load this section and try again
+                            if (this.findTabInGroup(tabId, group)) {
                                 await this.contentManager.loadSectionContent(sectionId);
                                 targetTab = appState.allTabs.find(tab => tab.id === tabId);
                                 if (targetTab) break;
@@ -1305,24 +1306,41 @@ class NavigationManager {
         }, 5000);
     }
 
+    /**
+     * Check if a tabId exists within a group (handles nested children like FTC structure)
+     */
+    findTabInGroup(tabId, group) {
+        if (!group) return false;
+        if (group.items && group.items.some(item => item.id === tabId)) return true;
+        if (group.children && Array.isArray(group.children)) {
+            for (const child of group.children) {
+                if (this.findTabInGroup(tabId, child)) return true;
+            }
+        }
+        if (group.groups && Array.isArray(group.groups)) {
+            for (const subGroup of group.groups) {
+                if (this.findTabInGroup(tabId, subGroup)) return true;
+            }
+        }
+        return false;
+    }
+
     // Recursively search config for the parent section of a tabId
     findParentSectionIdForTab(tabId, sections) {
         for (const sectionKey in sections) {
             const section = sections[sectionKey];
             if (section.groups && Array.isArray(section.groups)) {
                 for (const group of section.groups) {
-                    if (group.items && group.items.some(item => item.id === tabId)) {
+                    if (this.findTabInGroup(tabId, group)) {
                         return sectionKey;
                     }
                 }
             }
             if (section.children && Array.isArray(section.children)) {
                 for (const child of section.children) {
-                    // Check items directly under this child
                     if (child.items && child.items.some(item => item.id === tabId)) {
                         return sectionKey;
                     }
-                    // Recurse into deeper children
                     const found = this.findParentSectionIdForTab(tabId, { [child.id]: child });
                     if (found) return sectionKey;
                 }

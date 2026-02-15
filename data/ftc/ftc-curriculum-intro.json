@@ -98,8 +98,8 @@
           "id": "ftc-sdk-basics"
         },
         {
-          "label": "Robot Hardware Overview",
-          "id": "robot-hardware-overview"
+          "label": "DC Motors and Motor Control",
+          "id": "motors"
         },
         {
           "label": "Android Studio Environment",
