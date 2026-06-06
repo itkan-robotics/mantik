@@ -1,0 +1,47 @@
+---
+title: Installing and Setting Up Git
+lessonId: install-git
+section: java
+group: version-control
+groupLabel: "Version Control with Git & GitHub"
+groupOrder: 5
+order: 2
+difficulty: beginner
+duration: 30 min
+description: ""
+---
+
+### Getting Git on Your System
+
+Before you can start using version control, you need to install Git on your computer. This lesson will guide you through the installation process for Windows, Mac, and Linux systems.
+
+### Key Concepts
+
+Git installation varies by operating system, with different installation methods for Windows, Mac, and Linux. Initial configuration requires setting up your user identity so Git knows who is making changes. GitHub Desktop provides a graphical alternative for those who prefer a visual interface over command line tools. Command line Git offers more advanced features and is the standard for professional development. Proper setup ensures smooth collaboration and prevents authentication issues later.
+
+### Installation Steps
+
+- Check if Git is already installed (`git --version`)
+- Download Git from the official website for your OS
+- Install with default settings for beginners
+- Verify installation with `git --version` command
+- Install GitHub Desktop for GUI alternative
+
+### Initial Git Configuration
+
+After installing Git, you need to configure your identity. Use these commands to set up your username and email:
+
+
+
+```java
+git config <code>--global</code> user.name "Your Name"
+git config <code>--global</code> user.email "your.email@example.com"
+<code>git config --list</code>
+```
+
+### Git Configuration Explained
+
+Git configuration is essential because it tells Git who you are when you make commits. The user.name and user.email settings are used to identify the author of each commit in the project history. The `--global` flag applies these settings to all your Git repositories on this computer. You can also set repository-specific configurations using the same commands without the `--global` flag. The `git config --list` command shows all your current Git settings, helping you verify that everything is configured correctly.
+
+<LinkGrid links={[{"label":"Git Installation Guide","url":"https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"},{"label":"GitHub Desktop Download","url":"https://desktop.github.com/"},{"label":"GitHub Education Student Pack","url":"https://education.github.com/pack"},{"label":"Git Configuration Documentation","url":"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"},{"label":"FTC Android Studio Setup","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio/index.html"}]} title="Further Reading Resources" section="java" />
+

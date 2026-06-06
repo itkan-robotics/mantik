@@ -1,0 +1,1239 @@
+---
+title: Unit Testing for FTC Development
+lessonId: unit-testing
+section: ftc
+group: android-studio-as-debugging-best-practices
+groupLabel: AS Debugging Best Practices
+groupOrder: 13
+order: 5
+difficulty: advanced
+duration: 120 min
+description: ""
+---
+
+### Introduction to Unit Testing in FTC
+
+Unit testing is a critical practice for ensuring your FTC robot code works correctly and reliably. By writing tests for individual components and methods, you can catch bugs early, verify functionality, and make your code more maintainable. This lesson covers how to implement unit testing in Android Studio for FTC projects.
+
+<RulesBox title="Why Unit Testing Matters for FTC">
+
+- Catch bugs before they reach the robot hardware
+- Verify complex algorithms work correctly
+- Ensure code changes don't break existing functionality
+- Document expected behavior of your code
+- Speed up development by catching issues early
+
+</RulesBox>
+
+### Setting Up Testing Framework
+
+Android Studio uses JUnit for unit testing. You'll need to set up your project to include test dependencies and create test classes that can run independently of the robot hardware.
+
+### Project Testing Configuration - Dependencies
+
+First, ensure your project has the proper testing dependencies configured in your build.gradle file. These dependencies provide the testing framework and mocking capabilities:
+
+
+
+```java
+// In your app/build.gradle file, ensure you have:
+dependencies {
+    // Existing FTC dependencies...
+    
+    // Testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:4.5.1'
+    testImplementation 'org.mockito:mockito-inline:4.5.1'
+    
+    // For Android-specific testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+}
+```
+
+### Understanding Testing Dependencies
+
+The testing dependencies provide essential tools for unit testing. JUnit provides the testing framework, while Mockito allows you to create mock objects that simulate hardware components. This is crucial for testing robot code without requiring actual hardware.
+
+### Project Testing Configuration - Test Options
+
+Configure test options in your build.gradle file to ensure proper test execution. These options enable Android resources in tests and provide default values for Android framework calls:
+
+
+
+```java
+// In your app/build.gradle file, add test options:
+android {
+    // Existing configuration...
+    
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
+}
+```
+
+### Test Configuration Explanation
+
+The test options configure how your tests run. 'includeAndroidResources' allows tests to access Android resources, while 'returnDefaultValues' provides default return values for Android framework methods that aren't available in unit tests.
+
+### Creating Your First Test
+
+Let's start with a simple test for a utility class that performs calculations. This demonstrates the basic structure of unit tests and shows how to test mathematical operations that are common in FTC programming.
+
+### Basic Utility Class - Encoder Conversions
+
+First, create a simple utility class to test. This class handles common FTC calculations like encoder conversions. These methods are essential for converting between encoder ticks and real-world distances:
+
+
+
+```java
+// File: RobotUtils.java
+public class RobotUtils {
+    /**
+     * Converts encoder ticks to distance in inches
+     * @param ticks Number of encoder ticks
+     * @param ticksPerRevolution Ticks per revolution of the motor
+     * @param wheelDiameter Wheel diameter in inches
+     * @return Distance in inches
+     */
+    public static double ticksToInches(int ticks, int ticksPerRevolution, double wheelDiameter) {
+        if (ticksPerRevolution <= 0 || wheelDiameter <= 0) {
+            throw new IllegalArgumentException("Ticks per revolution and wheel diameter must be positive");
+        }
+        
+        double circumference = Math.PI * wheelDiameter;
+        return (ticks * circumference) / ticksPerRevolution;
+    }
+    
+    /**
+     * Converts distance in inches to encoder ticks
+     * @param inches Distance in inches
+     * @param ticksPerRevolution Ticks per revolution of the motor
+     * @param wheelDiameter Wheel diameter in inches
+     * @return Number of encoder ticks
+     */
+    public static int inchesToTicks(double inches, int ticksPerRevolution, double wheelDiameter) {
+        if (ticksPerRevolution <= 0 || wheelDiameter <= 0) {
+            throw new IllegalArgumentException("Ticks per revolution and wheel diameter must be positive");
+        }
+        
+        double circumference = Math.PI * wheelDiameter;
+        return (int) Math.round((inches * ticksPerRevolution) / circumference);
+    }
+```
+
+### Basic Utility Class - Power Calculations
+
+Add power calculation methods to the utility class. These methods help determine appropriate motor power for different movements. Power calculations are crucial for smooth robot motion:
+
+
+
+```java
+    /**
+     * Calculates the power needed for a given distance and time
+     * @param distance Distance to travel in inches
+     * @param time Time to travel in seconds
+     * @param maxPower Maximum power available (0.0 to 1.0)
+     * @return Calculated power (0.0 to maxPower)
+     */
+    public static double calculatePowerForDistance(double distance, double time, double maxPower) {
+        if (distance < 0 || time <= 0 || maxPower <= 0 || maxPower > 1.0) {
+            throw new IllegalArgumentException("Invalid parameters for power calculation");
+        }
+        
+        // Simple linear calculation (in reality, you'd use more complex physics)
+        double requiredPower = distance / (time * 12.0); // Assuming 12 inches per second at full power
+        return Math.min(requiredPower, maxPower);
+    }
+}
+```
+
+### Understanding Power Calculations
+
+Power calculations determine how much motor power is needed to achieve a desired movement. This method uses a simplified linear model, but in practice, you might use more complex physics calculations that account for robot mass, friction, and acceleration.
+
+### Writing Tests for Encoder Conversions
+
+Now let's write tests for the encoder conversion methods. These tests verify that the mathematical calculations work correctly and handle edge cases properly.
+
+### Test Class Setup and Ticks to Inches Tests
+
+Create the test class for RobotUtils. Start with tests for the ticksToInches method:
+
+
+
+```java
+// File: RobotUtilsTest.java (in test directory)
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class RobotUtilsTest {
+    
+    @Test
+    public void testTicksToInches() {
+        // Test case 1: Basic conversion
+        double result = RobotUtils.ticksToInches(1000, 1440, 4.0);
+        double expected = (1000 * Math.PI * 4.0) / 1440;
+        assertEquals("Basic ticks to inches conversion", expected, result, 0.001);
+        
+        // Test case 2: Zero ticks
+        result = RobotUtils.ticksToInches(0, 1440, 4.0);
+        assertEquals("Zero ticks should return zero inches", 0.0, result, 0.001);
+        
+        // Test case 3: Large number of ticks
+        result = RobotUtils.ticksToInches(10000, 1440, 4.0);
+        expected = (10000 * Math.PI * 4.0) / 1440;
+        assertEquals("Large number of ticks", expected, result, 0.001);
+    }
+```
+
+### Understanding Basic Conversion Tests
+
+The basic conversion test verifies that the mathematical formula works correctly. It tests normal cases, edge cases (zero ticks), and large values to ensure the calculation remains accurate across different input ranges.
+
+### Inches to Ticks Tests
+
+Add tests for the inchesToTicks method. These tests verify the reverse conversion and rounding behavior:
+
+
+
+```java
+    @Test
+    public void testInchesToTicks() {
+        // Test case 1: Basic conversion
+        int result = RobotUtils.inchesToTicks(10.0, 1440, 4.0);
+        int expected = (int) Math.round((10.0 * 1440) / (Math.PI * 4.0));
+        assertEquals("Basic inches to ticks conversion", expected, result);
+        
+        // Test case 2: Zero inches
+        result = RobotUtils.inchesToTicks(0.0, 1440, 4.0);
+        assertEquals("Zero inches should return zero ticks", 0, result);
+        
+        // Test case 3: Rounding behavior
+        result = RobotUtils.inchesToTicks(5.5, 1440, 4.0);
+        expected = (int) Math.round((5.5 * 1440) / (Math.PI * 4.0));
+        assertEquals("Rounding behavior test", expected, result);
+    }
+```
+
+### Understanding Reverse Conversion Tests
+
+The inches to ticks tests verify the reverse conversion works correctly. They test the rounding behavior since the result must be an integer, and ensure that zero distance returns zero ticks.
+
+### Power Calculation Tests
+
+Add tests for the power calculation method. These tests verify power calculations and limits:
+
+
+
+```java
+    @Test
+    public void testCalculatePowerForDistance() {
+        // Test case 1: Normal calculation
+        double result = RobotUtils.calculatePowerForDistance(24.0, 2.0, 1.0);
+        double expected = 24.0 / (2.0 * 12.0); // 1.0
+        assertEquals("Normal power calculation", expected, result, 0.001);
+        
+        // Test case 2: Power limited by maxPower
+        result = RobotUtils.calculatePowerForDistance(48.0, 2.0, 0.5);
+        expected = 0.5; // Limited by maxPower
+        assertEquals("Power limited by maxPower", expected, result, 0.001);
+        
+        // Test case 3: Zero distance
+        result = RobotUtils.calculatePowerForDistance(0.0, 2.0, 1.0);
+        assertEquals("Zero distance should return zero power", 0.0, result, 0.001);
+    }
+```
+
+### Understanding Power Calculation Tests
+
+The power calculation tests verify that the method correctly calculates required power and respects the maximum power limit. They test normal cases, power limiting behavior, and edge cases like zero distance.
+
+### Error Handling Tests
+
+Add tests to verify that the methods properly handle invalid input parameters:
+
+
+
+```java
+    @Test(expected = IllegalArgumentException.class)
+    public void testTicksToInchesInvalidParameters() {
+        RobotUtils.ticksToInches(1000, 0, 4.0); // Invalid ticks per revolution
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInchesToTicksInvalidParameters() {
+        RobotUtils.inchesToTicks(10.0, 1440, -4.0); // Invalid wheel diameter
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculatePowerInvalidParameters() {
+        RobotUtils.calculatePowerForDistance(10.0, 0.0, 1.0); // Invalid time
+    }
+}
+```
+
+### Understanding Error Handling Tests
+
+Error handling tests use the @Test(expected = ...) annotation to verify that methods throw appropriate exceptions when given invalid parameters. This ensures your code fails gracefully with meaningful error messages.
+
+### Testing Robot Components with Mocking
+
+Since you can't always test with real hardware, mocking allows you to simulate hardware components and test your control logic independently. Mocking is essential for testing robot controllers without requiring actual hardware.
+
+### Robot Controller Class - Basic Structure
+
+Create a testable robot controller class. This class will handle basic robot operations and can be tested with mocked hardware:
+
+
+
+```java
+// File: RobotController.java
+public class RobotController {
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
+    private ColorSensor colorSensor;
+    
+    public RobotController(DcMotor leftMotor, DcMotor rightMotor, ColorSensor colorSensor) {
+        this.leftMotor = leftMotor;
+        this.rightMotor = rightMotor;
+        this.colorSensor = colorSensor;
+    }
+    
+    public void driveForward(double power) {
+        if (power < -1.0 || power > 1.0) {
+            throw new IllegalArgumentException("Power must be between -1.0 and 1.0");
+        }
+        
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+    }
+```
+
+### Understanding Robot Controller Design
+
+The robot controller class encapsulates hardware interactions, making it easier to test. By accepting hardware components as constructor parameters, we can inject mock objects during testing instead of requiring real hardware.
+
+### Robot Controller Class - Additional Methods
+
+Add more methods to the robot controller for turning, stopping, and sensor operations:
+
+
+
+```java
+    public void turn(double leftPower, double rightPower) {
+        if (Math.abs(leftPower) > 1.0 || Math.abs(rightPower) > 1.0) {
+            throw new IllegalArgumentException("Power values must be between -1.0 and 1.0");
+        }
+        
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
+    }
+    
+    public boolean isRedBallDetected() {
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
+        
+        // Simple red detection logic
+        return red > green && red > blue && red > 100;
+    }
+    
+    public void stop() {
+        leftMotor.setPower(0.0);
+        rightMotor.setPower(0.0);
+    }
+    
+    public double getLeftMotorPower() {
+        return leftMotor.getPower();
+    }
+    
+    public double getRightMotorPower() {
+        return rightMotor.getPower();
+    }
+}
+```
+
+### Understanding Robot Controller Methods
+
+The additional methods provide a complete interface for robot control. The turn method allows differential drive, the color detection method processes sensor data, and the getter methods allow testing to verify motor states.
+
+### Setting Up Mocked Hardware Tests
+
+Now let's create tests for the RobotController using Mockito. These tests will verify that the controller properly interacts with the hardware components.
+
+### Test Setup and Drive Forward Tests
+
+Create tests for the RobotController using Mockito. Start with the test setup and drive forward tests:
+
+
+
+```java
+// File: RobotControllerTest.java
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class RobotControllerTest {
+    
+    @Mock
+    private DcMotor leftMotor;
+    
+    @Mock
+    private DcMotor rightMotor;
+    
+    @Mock
+    private ColorSensor colorSensor;
+    
+    private RobotController robotController;
+    
+    @Before
+    public void setUp() {
+        robotController = new RobotController(leftMotor, rightMotor, colorSensor);
+    }
+    
+    @Test
+    public void testDriveForward() {
+        // Test driving forward with positive power
+        robotController.driveForward(0.5);
+        
+        verify(leftMotor).setPower(0.5);
+        verify(rightMotor).setPower(0.5);
+    }
+    
+    @Test
+    public void testDriveForwardNegativePower() {
+        // Test driving backward
+        robotController.driveForward(-0.3);
+        
+        verify(leftMotor).setPower(-0.3);
+        verify(rightMotor).setPower(-0.3);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testDriveForwardInvalidPower() {
+        robotController.driveForward(1.5); // Power > 1.0
+    }
+```
+
+### Understanding Mockito Test Setup
+
+The @RunWith(MockitoJUnitRunner.class) annotation tells JUnit to use Mockito for test execution. The @Mock annotations create mock objects that simulate hardware components, and the @Before method sets up the test environment before each test.
+
+### Turn and Stop Tests
+
+Add tests for turning and stopping operations:
+
+
+
+```java
+    @Test
+    public void testTurn() {
+        // Test turning left
+        robotController.turn(-0.4, 0.4);
+        
+        verify(leftMotor).setPower(-0.4);
+        verify(rightMotor).setPower(0.4);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testTurnInvalidPower() {
+        robotController.turn(1.2, 0.5); // Left power > 1.0
+    }
+    
+    @Test
+    public void testStop() {
+        robotController.stop();
+        
+        verify(leftMotor).setPower(0.0);
+        verify(rightMotor).setPower(0.0);
+    }
+```
+
+### Understanding Turn and Stop Tests
+
+The turn test verifies that the robot controller correctly sets different powers for left and right motors to achieve turning. The stop test ensures both motors are set to zero power when stopping.
+
+### Color Sensor Tests
+
+Add tests for the color sensor detection logic:
+
+
+
+```java
+    @Test
+    public void testIsRedBallDetected() {
+        // Test case 1: Red ball detected
+        when(colorSensor.red()).thenReturn(200);
+        when(colorSensor.green()).thenReturn(50);
+        when(colorSensor.blue()).thenReturn(30);
+        
+        assertTrue("Should detect red ball", robotController.isRedBallDetected());
+        
+        // Test case 2: No red ball (blue dominant)
+        when(colorSensor.red()).thenReturn(50);
+        when(colorSensor.green()).thenReturn(60);
+        when(colorSensor.blue()).thenReturn(200);
+        
+        assertFalse("Should not detect red ball when blue is dominant", robotController.isRedBallDetected());
+        
+        // Test case 3: Red too low
+        when(colorSensor.red()).thenReturn(80);
+        when(colorSensor.green()).thenReturn(30);
+        when(colorSensor.blue()).thenReturn(20);
+        
+        assertFalse("Should not detect red ball when red value is too low", robotController.isRedBallDetected());
+    }
+```
+
+### Understanding Color Sensor Tests
+
+The color sensor tests use Mockito's when().thenReturn() to simulate different sensor readings. This allows testing the color detection logic with various scenarios without needing a real color sensor.
+
+### Motor Power Retrieval Tests
+
+Add tests for getting motor power values:
+
+
+
+```java
+    @Test
+    public void testGetMotorPowers() {
+        when(leftMotor.getPower()).thenReturn(0.7);
+        when(rightMotor.getPower()).thenReturn(0.3);
+        
+        assertEquals("Left motor power should match", 0.7, robotController.getLeftMotorPower(), 0.001);
+        assertEquals("Right motor power should match", 0.3, robotController.getRightMotorPower(), 0.001);
+    }
+}
+```
+
+### Understanding Motor Power Tests
+
+The motor power retrieval tests verify that the controller correctly returns the current motor power values. These tests ensure that the getter methods properly delegate to the underlying motor objects.
+
+### Testing Autonomous Sequences
+
+Autonomous sequences are complex and critical for competition success. Testing them thoroughly ensures they work reliably under various conditions. We'll create a testable autonomous sequence class and verify its behavior.
+
+### Autonomous Sequence Class
+
+Create a testable autonomous sequence class. This class manages the state of an autonomous routine:
+
+
+
+```java
+// File: AutonomousSequence.java
+public class AutonomousSequence {
+    private RobotController robotController;
+    private double startTime;
+    private boolean isComplete = false;
+    
+    public AutonomousSequence(RobotController robotController) {
+        this.robotController = robotController;
+    }
+    
+    public void start(double currentTime) {
+        this.startTime = currentTime;
+        this.isComplete = false;
+    }
+    
+    public void update(double currentTime) {
+        if (isComplete) return;
+        
+        double elapsedTime = currentTime - startTime;
+        
+        // Simple autonomous sequence: drive forward for 2 seconds, then stop
+        if (elapsedTime < 2.0) {
+            robotController.driveForward(0.5);
+        } else {
+            robotController.stop();
+            isComplete = true;
+        }
+    }
+    
+    public boolean isComplete() {
+        return isComplete;
+    }
+    
+    public double getElapsedTime(double currentTime) {
+        return currentTime - startTime;
+    }
+}
+```
+
+### Understanding Autonomous Sequence Design
+
+The autonomous sequence class encapsulates the timing and state management of an autonomous routine. It uses dependency injection to accept a robot controller, making it testable with mocked components.
+
+### Testing Autonomous Sequence Behavior
+
+Now let's test the autonomous sequence to ensure it behaves correctly at different time points and properly manages its state.
+
+### Autonomous Sequence Test Setup and Start Tests
+
+Create tests for the autonomous sequence. Start with setup and sequence start tests:
+
+
+
+```java
+// File: AutonomousSequenceTest.java
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class AutonomousSequenceTest {
+    
+    @Mock
+    private RobotController robotController;
+    
+    private AutonomousSequence autonomousSequence;
+    
+    @Before
+    public void setUp() {
+        autonomousSequence = new AutonomousSequence(robotController);
+    }
+    
+    @Test
+    public void testSequenceStart() {
+        autonomousSequence.start(0.0);
+        
+        assertFalse("Sequence should not be complete at start", autonomousSequence.isComplete());
+        assertEquals("Elapsed time should be 0 at start", 0.0, autonomousSequence.getElapsedTime(0.0), 0.001);
+    }
+```
+
+### Understanding Sequence Start Tests
+
+The sequence start test verifies that the autonomous sequence initializes correctly. It checks that the sequence is not complete at the start and that elapsed time calculation works properly.
+
+### Driving Phase Tests
+
+Add tests for the driving phase of the autonomous sequence:
+
+
+
+```java
+    @Test
+    public void testSequenceDrivingPhase() {
+        autonomousSequence.start(0.0);
+        
+        // Test during driving phase (first 2 seconds)
+        autonomousSequence.update(1.0);
+        
+        verify(robotController).driveForward(0.5);
+        assertFalse("Sequence should not be complete during driving phase", autonomousSequence.isComplete());
+        
+        // Test at 1.5 seconds
+        autonomousSequence.update(1.5);
+        
+        verify(robotController, times(2)).driveForward(0.5);
+        assertFalse("Sequence should not be complete at 1.5 seconds", autonomousSequence.isComplete());
+    }
+```
+
+### Understanding Driving Phase Tests
+
+The driving phase tests verify that the sequence correctly drives forward during the first 2 seconds. The times(2) verification ensures that driveForward was called exactly twice during the test.
+
+### Completion Tests
+
+Add tests for sequence completion and post-completion behavior:
+
+
+
+```java
+    @Test
+    public void testSequenceCompletion() {
+        autonomousSequence.start(0.0);
+        
+        // Test at exactly 2.0 seconds
+        autonomousSequence.update(2.0);
+        
+        verify(robotController).driveForward(0.5);
+        verify(robotController).stop();
+        assertTrue("Sequence should be complete at 2.0 seconds", autonomousSequence.isComplete());
+        
+        // Test that further updates don't change behavior
+        autonomousSequence.update(3.0);
+        
+        // Should not call driveForward again since sequence is complete
+        verify(robotController, times(1)).driveForward(0.5);
+        verify(robotController, times(1)).stop();
+    }
+    
+    @Test
+    public void testSequenceAfterCompletion() {
+        autonomousSequence.start(0.0);
+        
+        // Complete the sequence
+        autonomousSequence.update(2.0);
+        assertTrue("Sequence should be complete", autonomousSequence.isComplete());
+        
+        // Try to update again
+        autonomousSequence.update(5.0);
+        
+        // Should not call any robot controller methods
+        verify(robotController, times(1)).driveForward(0.5);
+        verify(robotController, times(1)).stop();
+        verifyNoMoreInteractions(robotController);
+    }
+    
+    @Test
+    public void testElapsedTimeCalculation() {
+        autonomousSequence.start(10.0);
+        
+        assertEquals("Elapsed time calculation", 0.0, autonomousSequence.getElapsedTime(10.0), 0.001);
+        assertEquals("Elapsed time calculation", 1.5, autonomousSequence.getElapsedTime(11.5), 0.001);
+        assertEquals("Elapsed time calculation", 3.0, autonomousSequence.getElapsedTime(13.0), 0.001);
+    }
+}
+```
+
+### Understanding Completion Tests
+
+The completion tests verify that the sequence properly stops and marks itself as complete after 2 seconds. They also ensure that once complete, the sequence doesn't continue calling robot controller methods.
+
+### Integration Testing
+
+Integration tests verify that multiple components work together correctly. These tests are more complex but catch issues that unit tests might miss. They test the interaction between different parts of your robot system.
+
+### Integration Test Setup and Complete Sequence Test
+
+Create an integration test that tests multiple components working together:
+
+
+
+```java
+// File: RobotIntegrationTest.java
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class RobotIntegrationTest {
+    
+    @Mock
+    private DcMotor leftMotor;
+    
+    @Mock
+    private DcMotor rightMotor;
+    
+    @Mock
+    private ColorSensor colorSensor;
+    
+    private RobotController robotController;
+    private AutonomousSequence autonomousSequence;
+    
+    @Before
+    public void setUp() {
+        robotController = new RobotController(leftMotor, rightMotor, colorSensor);
+        autonomousSequence = new AutonomousSequence(robotController);
+    }
+    
+    @Test
+    public void testCompleteAutonomousSequence() {
+        // Set up color sensor to detect red ball
+        when(colorSensor.red()).thenReturn(200);
+        when(colorSensor.green()).thenReturn(50);
+        when(colorSensor.blue()).thenReturn(30);
+        
+        // Start autonomous sequence
+        autonomousSequence.start(0.0);
+        
+        // Simulate sequence execution
+        for (double time = 0.1; time <= 2.5; time += 0.1) {
+            autonomousSequence.update(time);
+        }
+        
+        // Verify the complete sequence executed correctly
+        assertTrue("Autonomous sequence should be complete", autonomousSequence.isComplete());
+        
+        // Verify motor interactions
+        verify(leftMotor, atLeastOnce()).setPower(0.5);
+        verify(rightMotor, atLeastOnce()).setPower(0.5);
+        verify(leftMotor, atLeastOnce()).setPower(0.0);
+        verify(rightMotor, atLeastOnce()).setPower(0.0);
+        
+        // Verify color sensor was used
+        verify(colorSensor, atLeastOnce()).red();
+        verify(colorSensor, atLeastOnce()).green();
+        verify(colorSensor, atLeastOnce()).blue();
+    }
+```
+
+### Understanding Integration Test Setup
+
+The integration test sets up a complete system with mocked hardware components. It tests the interaction between the autonomous sequence and the robot controller, ensuring they work together correctly.
+
+### Integration Test with Real Calculations
+
+Add an integration test that combines utility functions with robot controller operations:
+
+
+
+```java
+    @Test
+    public void testRobotControllerWithRealCalculations() {
+        // Test that utility functions work with robot controller
+        double distance = 24.0; // 24 inches
+        int ticksPerRev = 1440;
+        double wheelDiameter = 4.0;
+        
+        // Calculate expected ticks
+        int expectedTicks = RobotUtils.inchesToTicks(distance, ticksPerRev, wheelDiameter);
+        
+        // Verify calculation is reasonable
+        assertTrue("Ticks should be positive", expectedTicks > 0);
+        assertTrue("Ticks should be reasonable for 24 inches", expectedTicks < 10000);
+        
+        // Test power calculation
+        double time = 3.0; // 3 seconds
+        double maxPower = 1.0;
+        double calculatedPower = RobotUtils.calculatePowerForDistance(distance, time, maxPower);
+        
+        assertTrue("Power should be positive", calculatedPower > 0);
+        assertTrue("Power should not exceed maxPower", calculatedPower <= maxPower);
+        
+        // Use calculated power with robot controller
+        robotController.driveForward(calculatedPower);
+        
+        verify(leftMotor).setPower(calculatedPower);
+        verify(rightMotor).setPower(calculatedPower);
+    }
+}
+```
+
+### Understanding Integration with Real Calculations
+
+This integration test combines utility functions with robot controller operations, testing that calculated values are reasonable and that the robot controller correctly uses them.
+
+### Complete Unit Testing Example
+
+Here's the complete unit testing example with all components combined:
+
+
+
+```java
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+// RobotUtils.java
+public class RobotUtils {
+    public static double ticksToInches(int ticks, int ticksPerRevolution, double wheelDiameter) {
+        if (ticksPerRevolution <= 0 || wheelDiameter <= 0) {
+            throw new IllegalArgumentException("Ticks per revolution and wheel diameter must be positive");
+        }
+        
+        double circumference = Math.PI * wheelDiameter;
+        return (ticks * circumference) / ticksPerRevolution;
+    }
+    
+    public static int inchesToTicks(double inches, int ticksPerRevolution, double wheelDiameter) {
+        if (ticksPerRevolution <= 0 || wheelDiameter <= 0) {
+            throw new IllegalArgumentException("Ticks per revolution and wheel diameter must be positive");
+        }
+        
+        double circumference = Math.PI * wheelDiameter;
+        return (int) Math.round((inches * ticksPerRevolution) / circumference);
+    }
+    
+    public static double calculatePowerForDistance(double distance, double time, double maxPower) {
+        if (distance < 0 || time <= 0 || maxPower <= 0 || maxPower > 1.0) {
+            throw new IllegalArgumentException("Invalid parameters for power calculation");
+        }
+        
+        double requiredPower = distance / (time * 12.0);
+        return Math.min(requiredPower, maxPower);
+    }
+}
+
+// RobotController.java
+public class RobotController {
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
+    private ColorSensor colorSensor;
+    
+    public RobotController(DcMotor leftMotor, DcMotor rightMotor, ColorSensor colorSensor) {
+        this.leftMotor = leftMotor;
+        this.rightMotor = rightMotor;
+        this.colorSensor = colorSensor;
+    }
+    
+    public void driveForward(double power) {
+        if (power < -1.0 || power > 1.0) {
+            throw new IllegalArgumentException("Power must be between -1.0 and 1.0");
+        }
+        
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+    }
+    
+    public void turn(double leftPower, double rightPower) {
+        if (Math.abs(leftPower) > 1.0 || Math.abs(rightPower) > 1.0) {
+            throw new IllegalArgumentException("Power values must be between -1.0 and 1.0");
+        }
+        
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
+    }
+    
+    public boolean isRedBallDetected() {
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
+        
+        return red > green && red > blue && red > 100;
+    }
+    
+    public void stop() {
+        leftMotor.setPower(0.0);
+        rightMotor.setPower(0.0);
+    }
+    
+    public double getLeftMotorPower() {
+        return leftMotor.getPower();
+    }
+    
+    public double getRightMotorPower() {
+        return rightMotor.getPower();
+    }
+}
+
+// AutonomousSequence.java
+public class AutonomousSequence {
+    private RobotController robotController;
+    private double startTime;
+    private boolean isComplete = false;
+    
+    public AutonomousSequence(RobotController robotController) {
+        this.robotController = robotController;
+    }
+    
+    public void start(double currentTime) {
+        this.startTime = currentTime;
+        this.isComplete = false;
+    }
+    
+    public void update(double currentTime) {
+        if (isComplete) return;
+        
+        double elapsedTime = currentTime - startTime;
+        
+        if (elapsedTime < 2.0) {
+            robotController.driveForward(0.5);
+        } else {
+            robotController.stop();
+            isComplete = true;
+        }
+    }
+    
+    public boolean isComplete() {
+        return isComplete;
+    }
+    
+    public double getElapsedTime(double currentTime) {
+        return currentTime - startTime;
+    }
+}
+
+// ComprehensiveRobotTest.java
+@RunWith(MockitoJUnitRunner.class)
+public class ComprehensiveRobotTest {
+    
+    @Mock
+    private DcMotor leftMotor, rightMotor;
+    
+    @Mock
+    private ColorSensor colorSensor;
+    
+    private RobotController robotController;
+    private AutonomousSequence autonomousSequence;
+    
+    @Before
+    public void setUp() {
+        robotController = new RobotController(leftMotor, rightMotor, colorSensor);
+        autonomousSequence = new AutonomousSequence(robotController);
+    }
+    
+    @Test
+    public void testTicksToInches() {
+        double result = RobotUtils.ticksToInches(1000, 1440, 4.0);
+        double expected = (1000 * Math.PI * 4.0) / 1440;
+        assertEquals("Basic ticks to inches conversion", expected, result, 0.001);
+    }
+    
+    @Test
+    public void testInchesToTicks() {
+        int result = RobotUtils.inchesToTicks(10.0, 1440, 4.0);
+        int expected = (int) Math.round((10.0 * 1440) / (Math.PI * 4.0));
+        assertEquals("Basic inches to ticks conversion", expected, result);
+    }
+    
+    @Test
+    public void testDriveForward() {
+        robotController.driveForward(0.5);
+        verify(leftMotor).setPower(0.5);
+        verify(rightMotor).setPower(0.5);
+    }
+    
+    @Test
+    public void testTurn() {
+        robotController.turn(-0.4, 0.4);
+        verify(leftMotor).setPower(-0.4);
+        verify(rightMotor).setPower(0.4);
+    }
+    
+    @Test
+    public void testIsRedBallDetected() {
+        when(colorSensor.red()).thenReturn(200);
+        when(colorSensor.green()).thenReturn(50);
+        when(colorSensor.blue()).thenReturn(30);
+        
+        assertTrue("Should detect red ball", robotController.isRedBallDetected());
+    }
+    
+    @Test
+    public void testAutonomousSequence() {
+        autonomousSequence.start(0.0);
+        
+        autonomousSequence.update(1.0);
+        verify(robotController).driveForward(0.5);
+        assertFalse("Sequence should not be complete", autonomousSequence.isComplete());
+        
+        autonomousSequence.update(2.0);
+        verify(robotController).stop();
+        assertTrue("Sequence should be complete", autonomousSequence.isComplete());
+    }
+    
+    @Test
+    public void testIntegrationWithRealCalculations() {
+        double distance = 24.0;
+        int ticksPerRev = 1440;
+        double wheelDiameter = 4.0;
+        
+        int expectedTicks = RobotUtils.inchesToTicks(distance, ticksPerRev, wheelDiameter);
+        assertTrue("Ticks should be positive", expectedTicks > 0);
+        
+        double time = 3.0;
+        double maxPower = 1.0;
+        double calculatedPower = RobotUtils.calculatePowerForDistance(distance, time, maxPower);
+        
+        assertTrue("Power should be positive", calculatedPower > 0);
+        assertTrue("Power should not exceed maxPower", calculatedPower <= maxPower);
+        
+        robotController.driveForward(calculatedPower);
+        verify(leftMotor).setPower(calculatedPower);
+        verify(rightMotor).setPower(calculatedPower);
+    }
+}
+```
+
+### Test Organization and Best Practices
+
+Organizing your tests properly and following best practices makes them more maintainable and effective. Good test organization helps you find and fix issues quickly.
+
+<RulesBox title="Unit Testing Best Practices">
+
+- Test one thing at a time - each test should verify one specific behavior
+- Use descriptive test names that explain what is being tested
+- Follow the Arrange-Act-Assert pattern: set up, execute, verify
+- Test both normal cases and edge cases (boundary conditions)
+- Test error conditions and exception handling
+- Keep tests independent - they should not depend on each other
+- Use meaningful test data that represents real scenarios
+
+</RulesBox>
+
+### Comprehensive Test Organization
+
+Let's create a comprehensive test class that demonstrates proper test organization with clear naming conventions and thorough coverage.
+
+### Comprehensive Test Class - Setup and Drive Tests
+
+Organize your tests with clear structure and naming. This example shows how to group related tests together:
+
+
+
+```java
+// File: ComprehensiveRobotTest.java
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class ComprehensiveRobotTest {
+    
+    @Mock
+    private DcMotor leftMotor, rightMotor;
+    
+    @Mock
+    private ColorSensor colorSensor;
+    
+    private RobotController robotController;
+    
+    @Before
+    public void setUp() {
+        robotController = new RobotController(leftMotor, rightMotor, colorSensor);
+    }
+    
+    // Group related tests together with descriptive names
+    
+    @Test
+    public void driveForward_WithPositivePower_ShouldSetBothMotorsToSamePower() {
+        // Arrange
+        double power = 0.7;
+        
+        // Act
+        robotController.driveForward(power);
+        
+        // Assert
+        verify(leftMotor).setPower(power);
+        verify(rightMotor).setPower(power);
+    }
+    
+    @Test
+    public void driveForward_WithNegativePower_ShouldDriveBackward() {
+        // Arrange
+        double power = -0.5;
+        
+        // Act
+        robotController.driveForward(power);
+        
+        // Assert
+        verify(leftMotor).setPower(power);
+        verify(rightMotor).setPower(power);
+    }
+```
+
+### Comprehensive Test Class - Error Handling Tests
+
+Add tests for error conditions and boundary cases:
+
+
+
+```java
+    @Test(expected = IllegalArgumentException.class)
+    public void driveForward_WithPowerGreaterThanOne_ShouldThrowException() {
+        // Arrange
+        double invalidPower = 1.5;
+        
+        // Act & Assert
+        robotController.driveForward(invalidPower);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void driveForward_WithPowerLessThanNegativeOne_ShouldThrowException() {
+        // Arrange
+        double invalidPower = -1.2;
+        
+        // Act & Assert
+        robotController.driveForward(invalidPower);
+    }
+    
+    @Test
+    public void turn_WithDifferentLeftAndRightPowers_ShouldSetMotorsCorrectly() {
+        // Arrange
+        double leftPower = -0.3;
+        double rightPower = 0.3;
+        
+        // Act
+        robotController.turn(leftPower, rightPower);
+        
+        // Assert
+        verify(leftMotor).setPower(leftPower);
+        verify(rightMotor).setPower(rightPower);
+    }
+```
+
+### Comprehensive Test Class - Sensor Tests
+
+Add tests for sensor operations and color detection:
+
+
+
+```java
+    @Test
+    public void isRedBallDetected_WithRedDominantColors_ShouldReturnTrue() {
+        // Arrange
+        when(colorSensor.red()).thenReturn(200);
+        when(colorSensor.green()).thenReturn(50);
+        when(colorSensor.blue()).thenReturn(30);
+        
+        // Act
+        boolean result = robotController.isRedBallDetected();
+        
+        // Assert
+        assertTrue("Should detect red ball when red is dominant", result);
+    }
+    
+    @Test
+    public void isRedBallDetected_WithBlueDominantColors_ShouldReturnFalse() {
+        // Arrange
+        when(colorSensor.red()).thenReturn(50);
+        when(colorSensor.green()).thenReturn(60);
+        when(colorSensor.blue()).thenReturn(200);
+        
+        // Act
+        boolean result = robotController.isRedBallDetected();
+        
+        // Assert
+        assertFalse("Should not detect red ball when blue is dominant", result);
+    }
+    
+    @Test
+    public void stop_ShouldSetBothMotorsToZero() {
+        // Arrange - no setup needed
+        
+        // Act
+        robotController.stop();
+        
+        // Assert
+        verify(leftMotor).setPower(0.0);
+        verify(rightMotor).setPower(0.0);
+    }
+}
+```
+
+<ExerciseBox title="Practice: Advanced Debugging" description="Try these debugging exercises to reinforce your understanding:" answers={[{"task":"Create an OpMode with a state machine that controls a robot drivetrain","content":"import com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport android.util.Log;\n\n@TeleOp(name = \"DebuggingExercise\")\npublic class DebuggingExerciseOpMode extends OpMode {\n    private static final String TAG = \"DebugExercise\";\n    \n    // State machine for robot control\n    private enum RobotState { IDLE, FORWARD, TURNING, COMPLETE }\n    private RobotState currentState = RobotState.IDLE;\n    \n    // Hardware components\n    private DcMotor leftMotor, rightMotor;\n    \n    // State tracking variables\n    private int loopCount = 0;\n    private double startTime = 0.0;\n    \n    @Override\n    public void init() {\n        // Initialize hardware\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n        \n        // Add debug logging\n        Log.d(TAG, \"Hardware initialized\");\n        Log.d(TAG, \"Left motor: \" + leftMotor.getDeviceName());\n        Log.d(TAG, \"Right motor: \" + rightMotor.getDeviceName());\n    }\n    \n    @Override\n    public void loop() {\n        // State machine logic\n        switch (currentState) {\n            case IDLE:\n                handleIdleState();\n                break;\n            case FORWARD:\n                handleForwardState();\n                break;\n            case TURNING:\n                handleTurningState();\n                break;\n            case COMPLETE:\n                handleCompleteState();\n                break;\n        }\n        \n        // Update tracking variables\n        loopCount++;\n        \n        // Add telemetry\n        telemetry.addData(\"State\", currentState);\n        telemetry.addData(\"Loop Count\", loopCount);\n        telemetry.addData(\"Runtime\", \"%.2f\", getRuntime());\n    }\n    \n    private void handleIdleState() {\n        // TODO: Implement idle state logic\n    }\n    \n    private void handleForwardState() {\n        // TODO: Implement forward state logic\n    }\n    \n    private void handleTurningState() {\n        // TODO: Implement turning state logic\n    }\n    \n    private void handleCompleteState() {\n        // TODO: Implement complete state logic\n    }\n}"},{"task":"Intentionally introduce a bug (e.g., wrong state transition condition)","content":"private void handleIdleState() {\n    // BUG: Wrong condition - should be loopCount > 50, not 5\n    if (loopCount > 5) {  // This bug makes the robot start too early\n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        Log.d(TAG, \"Transitioning to FORWARD state\");\n        \n        // Start driving forward\n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n    }\n}\n\nprivate void handleForwardState() {\n    // BUG: Wrong condition - should be getRuntime() - startTime > 3.0\n    if (getRuntime() - startTime > 1.0) {  // This bug makes the robot turn too early\n        currentState = RobotState.TURNING;\n        Log.d(TAG, \"Transitioning to TURNING state\");\n        \n        // Start turning\n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n    }\n}\n\nprivate void handleTurningState() {\n    // BUG: Wrong condition - should be getRuntime() - startTime > 5.0\n    if (getRuntime() - startTime > 2.0) {  // This bug makes the robot stop too early\n        currentState = RobotState.COMPLETE;\n        Log.d(TAG, \"Transitioning to COMPLETE state\");\n        \n        // Stop motors\n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n    }\n}\n\nprivate void handleCompleteState() {\n    Log.d(TAG, \"Robot sequence complete\");\n    // Keep the robot stopped\n    leftMotor.setPower(0);\n    rightMotor.setPower(0);\n}"},{"task":"Set up conditional breakpoints to catch the bug","content":"// Set these conditional breakpoints in your debugger:\n// 1. In handleIdleState() at line: if (loopCount > 5)\n//    Condition: loopCount > 5\n//    This will break when the buggy condition is met\n\n// 2. In handleForwardState() at line: if (getRuntime() - startTime > 1.0)\n//    Condition: getRuntime() - startTime > 1.0\n//    This will break when the robot transitions too early\n\n// 3. In handleTurningState() at line: if (getRuntime() - startTime > 2.0)\n//    Condition: getRuntime() - startTime > 2.0\n//    This will break when the robot completes too early\n\n// 4. In handleCompleteState() at the first line\n//    Condition: true\n//    This will always break when reaching the complete state\n\n// Watch these variables during debugging:\n// - currentState\n// - loopCount\n// - startTime\n// - getRuntime()\n// - leftMotor.getPower()\n// - rightMotor.getPower()"},{"task":"Use watch expressions to monitor state variables","content":"// Add these watch expressions in your debugger:\n// 1. currentState - Monitor the current robot state\n// 2. loopCount - Track how many loops have executed\n// 3. startTime - See when the sequence started\n// 4. getRuntime() - Monitor the total runtime\n// 5. getRuntime() - startTime - Calculate elapsed time since sequence start\n// 6. leftMotor.getPower() - Monitor left motor power\n// 7. rightMotor.getPower() - Monitor right motor power\n\n// Expected behavior vs actual behavior:\n// Expected: Robot waits 50 loops before starting\n// Actual: Robot starts after only 5 loops (BUG)\n// \n// Expected: Robot drives forward for 3 seconds\n// Actual: Robot drives forward for only 1 second (BUG)\n// \n// Expected: Robot turns for 2 seconds\n// Actual: Robot turns for only 1 second (BUG)"},{"task":"Implement structured logging to track the bug","content":"// Add this logging configuration at the top of your class:\nprivate static final boolean DEBUG_MODE = true;\nprivate static final boolean VERBOSE_LOGGING = true;\n\n// Add these logging methods:\nprivate void logInfo(String message) {\n    Log.i(TAG, message);\n    telemetry.addData(\"INFO\", message);\n}\n\nprivate void logDebug(String message) {\n    if (DEBUG_MODE) {\n        Log.d(TAG, message);\n        telemetry.addData(\"DEBUG\", message);\n    }\n}\n\nprivate void logVerbose(String message) {\n    if (VERBOSE_LOGGING) {\n        Log.v(TAG, message);\n    }\n}\n\n// Update your state handlers with logging:\nprivate void handleIdleState() {\n    logDebug(\"Idle state - Loop count: \" + loopCount);\n    \n    if (loopCount > 5) {  // BUG: Should be 50\n        logInfo(\"BUG: Transitioning to FORWARD too early!\");\n        logDebug(\"Expected: loopCount > 50, Actual: loopCount = \" + loopCount);\n        \n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        \n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n        \n        logInfo(\"Started driving forward\");\n    }\n}\n\nprivate void handleForwardState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 1.0) {  // BUG: Should be 3.0\n        logInfo(\"BUG: Transitioning to TURNING too early!\");\n        logDebug(\"Expected: elapsedTime > 3.0, Actual: elapsedTime = \" + elapsedTime);\n        \n        currentState = RobotState.TURNING;\n        \n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n        \n        logInfo(\"Started turning\");\n    }\n}\n\nprivate void handleTurningState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 2.0) {  // BUG: Should be 5.0\n        logInfo(\"BUG: Completing sequence too early!\");\n        logDebug(\"Expected: elapsedTime > 5.0, Actual: elapsedTime = \" + elapsedTime);\n        \n        currentState = RobotState.COMPLETE;\n        \n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n        \n        logInfo(\"Sequence complete\");\n    }\n}\n\nprivate void handleCompleteState() {\n    logInfo(\"Robot stopped - Sequence finished\");\n    leftMotor.setPower(0);\n    rightMotor.setPower(0);\n}"},{"task":"Use remote debugging to verify the fix works on hardware","content":"// First, fix the bugs in your code:\nprivate void handleIdleState() {\n    logDebug(\"Idle state - Loop count: \" + loopCount);\n    \n    if (loopCount > 50) {  // FIXED: Changed from 5 to 50\n        logInfo(\"Transitioning to FORWARD state\");\n        \n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        \n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n        \n        logInfo(\"Started driving forward\");\n    }\n}\n\nprivate void handleForwardState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 3.0) {  // FIXED: Changed from 1.0 to 3.0\n        logInfo(\"Transitioning to TURNING state\");\n        \n        currentState = RobotState.TURNING;\n        \n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n        \n        logInfo(\"Started turning\");\n    }\n}\n\nprivate void handleTurningState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 5.0) {  // FIXED: Changed from 2.0 to 5.0\n        logInfo(\"Transitioning to COMPLETE state\");\n        \n        currentState = RobotState.COMPLETE;\n        \n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n        \n        logInfo(\"Sequence complete\");\n    }\n}\n\n// Remote debugging setup:\n// 1. Connect to Control Hub via ADB:\n//    adb connect 192.168.43.1:5555\n// \n// 2. Verify connection:\n//    adb devices\n// \n// 3. Set breakpoints on the fixed conditions\n// \n// 4. Run the OpMode and verify:\n//    - Robot waits 50 loops before starting\n//    - Robot drives forward for 3 seconds\n//    - Robot turns for 2 seconds\n//    - Robot stops and completes sequence\n// \n// 5. Check logs to confirm no more bug messages\n// \n// 6. Verify motor behavior matches expected timing"},{"task":"Combine all tasks into one complete debugging exercise","content":"import com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport android.util.Log;\n\n@TeleOp(name = \"CompleteDebuggingExercise\")\npublic class CompleteDebuggingExercise extends OpMode {\n    private static final String TAG = \"CompleteDebug\";\n    private static final boolean DEBUG_MODE = true;\n    private static final boolean VERBOSE_LOGGING = true;\n    \n    // State machine\n    private enum RobotState { IDLE, FORWARD, TURNING, COMPLETE }\n    private RobotState currentState = RobotState.IDLE;\n    \n    // Hardware\n    private DcMotor leftMotor, rightMotor;\n    \n    // State tracking\n    private int loopCount = 0;\n    private double startTime = 0.0;\n    \n    // Logging methods\n    private void logInfo(String message) {\n        Log.i(TAG, message);\n        telemetry.addData(\"INFO\", message);\n    }\n    \n    private void logDebug(String message) {\n        if (DEBUG_MODE) {\n            Log.d(TAG, message);\n            telemetry.addData(\"DEBUG\", message);\n        }\n    }\n    \n    private void logVerbose(String message) {\n        if (VERBOSE_LOGGING) {\n            Log.v(TAG, message);\n        }\n    }\n    \n    @Override\n    public void init() {\n        // Initialize hardware\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n        \n        logInfo(\"Hardware initialized successfully\");\n        logDebug(\"Left motor: \" + leftMotor.getDeviceName());\n        logDebug(\"Right motor: \" + rightMotor.getDeviceName());\n    }\n    \n    @Override\n    public void loop() {\n        // State machine with debugging\n        switch (currentState) {\n            case IDLE:\n                handleIdleState();\n                break;\n            case FORWARD:\n                handleForwardState();\n                break;\n            case TURNING:\n                handleTurningState();\n                break;\n            case COMPLETE:\n                handleCompleteState();\n                break;\n        }\n        \n        loopCount++;\n        \n        // Telemetry for debugging\n        telemetry.addData(\"State\", currentState);\n        telemetry.addData(\"Loop Count\", loopCount);\n        telemetry.addData(\"Runtime\", \"%.2f\", getRuntime());\n        telemetry.addData(\"Left Power\", leftMotor.getPower());\n        telemetry.addData(\"Right Power\", rightMotor.getPower());\n    }\n    \n    private void handleIdleState() {\n        logDebug(\"Idle state - Loop count: \" + loopCount);\n        \n        if (loopCount > 50) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to FORWARD state\");\n            \n            currentState = RobotState.FORWARD;\n            startTime = getRuntime();\n            \n            leftMotor.setPower(0.5);\n            rightMotor.setPower(0.5);\n            \n            logInfo(\"Started driving forward\");\n        }\n    }\n    \n    private void handleForwardState() {\n        double elapsedTime = getRuntime() - startTime;\n        logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n        \n        if (elapsedTime > 3.0) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to TURNING state\");\n            \n            currentState = RobotState.TURNING;\n            \n            leftMotor.setPower(0.3);\n            rightMotor.setPower(-0.3);\n            \n            logInfo(\"Started turning\");\n        }\n    }\n    \n    private void handleTurningState() {\n        double elapsedTime = getRuntime() - startTime;\n        logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n        \n        if (elapsedTime > 5.0) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to COMPLETE state\");\n            \n            currentState = RobotState.COMPLETE;\n            \n            leftMotor.setPower(0);\n            rightMotor.setPower(0);\n            \n            logInfo(\"Sequence complete\");\n        }\n    }\n    \n    private void handleCompleteState() {\n        logInfo(\"Robot stopped - Sequence finished\");\n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n    }\n}"}]}>
+
+- Create an OpMode with a state machine that controls a robot drivetrain
+- Intentionally introduce a bug (e.g., wrong state transition condition)
+- Set up conditional breakpoints to catch the bug
+- Use watch expressions to monitor state variables
+- Implement structured logging to track the bug
+- Use remote debugging to verify the fix works on hardware
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"<a href=\"https://developer.android.com/studio/test\" target=\"_blank\">Android Studio Testing Guide</a>","url":"<a href=\"https://developer.android.com/studio/test\" target=\"_blank\">Android Studio Testing Guide</a>"},{"label":"<a href=\"https://junit.org/junit4/\" target=\"_blank\">JUnit 4 Documentation</a>","url":"<a href=\"https://junit.org/junit4/\" target=\"_blank\">JUnit 4 Documentation</a>"},{"label":"<a href=\"https://site.mockito.org/\" target=\"_blank\">Mockito Documentation</a>","url":"<a href=\"https://site.mockito.org/\" target=\"_blank\">Mockito Documentation</a>"},{"label":"<a href=\"https://developer.android.com/training/testing/junit-rules\" target=\"_blank\">Android Testing Rules</a>","url":"<a href=\"https://developer.android.com/training/testing/junit-rules\" target=\"_blank\">Android Testing Rules</a>"}]} title="Additional Resources" section="ftc" />
+

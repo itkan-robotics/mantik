@@ -1,0 +1,117 @@
+---
+---
+
+<div id="keyboard-shortcuts-overlay" class="keyboard-shortcuts-overlay" data-keyboard-overlay aria-hidden="true" hidden>
+  <div class="keyboard-shortcuts-modal">
+    <div class="keyboard-shortcuts-header">
+      <h2>Keyboard Shortcuts</h2>
+      <button class="keyboard-shortcuts-close" type="button" data-keyboard-close aria-label="Close keyboard shortcuts">
+        ×
+      </button>
+    </div>
+    <div class="keyboard-shortcuts-content">
+      <div class="shortcut-group">
+        <h3>Navigation</h3>
+        <div class="shortcut-item">
+          <span class="shortcut-key">Ctrl + ←</span>
+          <span class="shortcut-description">Previous lesson</span>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-key">Ctrl + →</span>
+          <span class="shortcut-description">Next lesson</span>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-key">Ctrl + &lt;</span>
+          <span class="shortcut-description">Previous lesson (alternative)</span>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-key">Ctrl + &gt;</span>
+          <span class="shortcut-description">Next lesson (alternative)</span>
+        </div>
+      </div>
+      <div class="shortcut-group">
+        <h3>Search</h3>
+        <div class="shortcut-item">
+          <span class="shortcut-key">Ctrl + K</span>
+          <span class="shortcut-description">Focus search</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setKeyboardOverlayOpen(open: boolean) {
+    const overlay = document.querySelector('[data-keyboard-overlay]') as HTMLElement | null;
+    if (!overlay) return;
+    overlay.classList.toggle('visible', open);
+    overlay.toggleAttribute('hidden', !open);
+    overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if ('inert' in overlay) {
+      (overlay as HTMLElement & { inert: boolean }).inert = false;
+    }
+  }
+
+  function toggleOverlay(show?: boolean) {
+    const overlay = document.querySelector('[data-keyboard-overlay]');
+    if (!overlay) return;
+    const isVisible = overlay.classList.contains('visible');
+    setKeyboardOverlayOpen(show ?? !isVisible);
+  }
+
+  function initKeyboardShortcuts() {
+    document.querySelectorAll('[data-keyboard-help]').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+      btn.addEventListener('click', () => toggleOverlay(true));
+    });
+
+    document.querySelectorAll('[data-keyboard-close]').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+      btn.addEventListener('click', () => toggleOverlay(false));
+    });
+
+    const overlay = document.querySelector('[data-keyboard-overlay]');
+    if (overlay && !overlay.getAttribute('data-initialized')) {
+      overlay.setAttribute('data-initialized', 'true');
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) toggleOverlay(false);
+      });
+    }
+
+    if (document.body.getAttribute('data-keyboard-init')) return;
+    document.body.setAttribute('data-keyboard-init', 'true');
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const search = document.querySelector<HTMLInputElement>('#header-search, #mobile-sidebar-search');
+        const query = search?.value ?? '';
+        // @ts-expect-error exposed by Search.astro
+        if (typeof window.mantikOpenSearch === 'function') {
+          // @ts-expect-error exposed by Search.astro
+          window.mantikOpenSearch(query);
+        } else {
+          search?.focus();
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        toggleOverlay(true);
+      }
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          toggleOverlay(true);
+        }
+      }
+      if (e.key === 'Escape') toggleOverlay(false);
+    });
+  }
+
+  initKeyboardShortcuts();
+  document.addEventListener('astro:page-load', initKeyboardShortcuts);
+  setKeyboardOverlayOpen(false);
+</script>

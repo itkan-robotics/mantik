@@ -1,0 +1,507 @@
+---
+title: Odometry
+lessonId: odometry
+section: frc
+group: frc-pose-estimation
+groupLabel: Pose Estimation
+groupOrder: 8
+order: 2
+difficulty: intermediate
+duration: 95 min
+description: ""
+---
+
+### Introduction to Odometry
+
+Odometry is a method of pose estimation that uses wheel encoders and a gyroscope to track robot movement over time. By measuring how far each wheel has rotated and the robot's heading, odometry calculates the robot's position through dead reckoning - integrating movement changes to determine current position.
+
+
+
+Odometry provides continuous, fast updates (typically every 20ms robot loop) and doesn't require external references like cameras or field features. However, odometry accumulates error over time (drift) due to wheel slippage, encoder inaccuracy, and measurement errors. Despite this limitation, odometry is the foundation of most FRC pose estimation systems.
+
+
+
+***This lesson covers odometry for both differential drive and swerve drive robots. The code examples below show the general structure and flow - your team's drivetrain template will have the complete, hardware-specific implementation.***
+
+
+
+Learn more: [WPILib: Odometry Documentation](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html)
+
+### Odometry Principles
+
+Odometry works through dead reckoning - calculating position by integrating movement changes:
+
+
+
+**Dead Reckoning:** Starting from a known position, odometry tracks how the robot moves and updates position accordingly. Each movement (forward, backward, turning) changes the robot's pose, and these changes are accumulated to determine current position.
+
+
+
+**Integrating Wheel Movements:** Encoders measure how far each wheel has rotated. By knowing wheel diameter and encoder counts per revolution, odometry converts encoder readings into distance traveled.
+
+
+
+**Calculating Position Changes:** From wheel encoder readings and gyro heading, odometry calculates how the robot's X, Y, and heading have changed since the last update. These changes are added to the previous pose to get the new pose.
+
+### Required Sensors
+
+Odometry requires specific sensors to track robot movement:
+
+
+
+**Wheel Encoders:**
+
+- Measure rotation of drive wheels
+
+- Can be built into motors (Talon FX, SPARK MAX) or external encoders
+
+- Provide distance traveled by each wheel
+
+- Must be calibrated (encoder counts per revolution, wheel diameter)
+
+
+
+**Gyroscope (for Heading):**
+
+- Measures robot rotation and heading
+
+- Can be a dedicated gyro (Pigeon 2, NavX, ADXRS450)
+
+- Provides absolute heading (not just change)
+
+- Essential for accurate odometry, especially during turns
+
+### Differential Drive Odometry
+
+Differential drive odometry uses two wheel encoders (left and right) plus a gyroscope to track robot pose.
+
+
+
+**How It Works:**
+
+- Left and right wheel encoders provide distance measurements
+
+- The difference between left and right distances determines rotation
+
+- The average of left and right distances determines forward movement
+
+- Heading comes from the gyroscope (most accurate)
+
+- Position is calculated from wheel distances and heading
+
+
+
+**WPILib Support:** WPILib provides the `DifferentialDriveOdometry` class that handles all the complex kinematics calculations for you.
+
+### Reading Encoder Positions
+
+```java
+// Read encoder positions (how many rotations)
+double leftRevolutions = m_leftEncoder.getPosition();
+double rightRevolutions = m_rightEncoder.getPosition();
+```
+
+### Converting Rotations to Distance
+
+```java
+// Convert rotations to distance in meters
+// Distance = rotations × circumference
+// Circumference = 2π × radius
+private static final double kWheelRadiusMeters = 0.05; // Your wheel radius
+
+double leftDistance = leftRevolutions * 2.0 * Math.PI * kWheelRadiusMeters;
+double rightDistance = rightRevolutions * 2.0 * Math.PI * kWheelRadiusMeters;
+```
+
+### Getting Heading from Gyroscope
+
+```java
+// Get current heading from gyro
+Rotation2d heading = Rotation2d.fromDegrees(m_gyro.getAngle());
+```
+
+### Updating Odometry
+
+```java
+// Update odometry with new measurements
+m_odometry.update(heading, leftDistance, rightDistance);
+```
+
+### Initializing Differential Drive Odometry
+
+```java
+public DifferentialDrivetrain() {
+    // 1. Calibrate gyro (takes a few seconds)
+    m_gyro.calibrate();
+    
+    // 2. Reset encoders to zero (establish starting point)
+    m_leftEncoder.setPosition(0.0);
+    m_rightEncoder.setPosition(0.0);
+    
+    // 3. Create odometry object with:
+    //    - Current heading from gyro
+    //    - Current distances (both 0 at start)
+    //    - Starting pose (typically 0, 0, 0 degrees)
+    m_odometry = new DifferentialDriveOdometry(
+        Rotation2d.fromDegrees(m_gyro.getAngle()),
+        0.0,  // Left distance
+        0.0,  // Right distance
+        new Pose2d()  // Starting pose (0, 0, 0 degrees)
+    );
+}
+```
+
+### Retrieving and Resetting Pose
+
+```java
+// GET POSE: Retrieve current robot position
+public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+}
+
+// RESET: Set odometry to a known pose (e.g., at start of autonomous)
+public void resetOdometry(Pose2d pose) {
+    // Get current encoder positions and heading
+    double leftRevolutions = m_leftEncoder.getPosition();
+    double rightRevolutions = m_rightEncoder.getPosition();
+    double leftDistance = leftRevolutions * 2.0 * Math.PI * kWheelRadiusMeters;
+    double rightDistance = rightRevolutions * 2.0 * Math.PI * kWheelRadiusMeters;
+    Rotation2d heading = Rotation2d.fromDegrees(m_gyro.getAngle());
+    
+    // Reset odometry to the specified pose
+    m_odometry.resetPosition(heading, leftDistance, rightDistance, pose);
+}
+```
+
+### Swerve Drive Odometry
+
+Swerve odometry is similar to differential drive odometry but accounts for the unique movement characteristics of swerve drivetrains. Swerve robots can move in any direction (holonomic movement) and rotate independently, requiring odometry that tracks individual module positions and angles.
+
+
+
+**How It Works:**
+
+- Each swerve module has a drive encoder (distance) and angle encoder (steering direction)
+
+- All four module states are combined to calculate overall robot movement
+
+- Gyroscope provides heading for accuracy
+
+- More measurement points = higher accuracy than differential drive
+
+
+
+**WPILib Support:** WPILib provides the `SwerveDriveOdometry` class that handles all the complex kinematics calculations for you.
+
+
+
+Learn more: [WPILib: Swerve Drive Odometry](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html)
+
+### Getting Module Positions
+
+```java
+// Get current position from each module
+// Each module reports: (distance traveled, steering angle)
+for (int i = 0; i < 4; i++) {
+    m_modulePositions[i] = m_modules[i].getPosition();
+}
+```
+
+### Setting Up Kinematics
+
+```java
+// Robot dimensions (meters) - measure your actual robot
+private static final double kTrackWidth = 0.5;   // Left-right spacing
+private static final double kWheelBase = 0.5;    // Front-rear spacing
+
+// Define module positions relative to robot center
+// These are the X, Y coordinates of each module
+Translation2d frontLeft = new Translation2d(kWheelBase / 2, kTrackWidth / 2);
+Translation2d frontRight = new Translation2d(kWheelBase / 2, -kTrackWidth / 2);
+Translation2d rearLeft = new Translation2d(-kWheelBase / 2, kTrackWidth / 2);
+Translation2d rearRight = new Translation2d(-kWheelBase / 2, -kTrackWidth / 2);
+
+// Create kinematics object with module positions
+m_kinematics = new SwerveDriveKinematics(
+    frontLeft, frontRight, rearLeft, rearRight
+);
+```
+
+### Updating Swerve Odometry
+
+```java
+// Get current heading from gyro
+Rotation2d heading = Rotation2d.fromDegrees(m_gyro.getAngle());
+
+// Update odometry with new measurements
+m_odometry.update(heading, m_modulePositions);
+```
+
+### Initializing Swerve Odometry
+
+```java
+public SwerveDrivetrain() {
+    // 1. Calibrate gyro (if needed for your gyro type)
+    m_gyro.calibrate();
+    
+    // 2. Set up kinematics (module positions)
+    // ... (see "Setting Up Kinematics" above)
+    
+    // 3. Get initial positions from all modules
+    for (int i = 0; i < 4; i++) {
+        m_modulePositions[i] = m_modules[i].getPosition();
+    }
+    
+    // 4. Create odometry object with:
+    //    - Kinematics (module layout)
+    //    - Current heading from gyro
+    //    - Current module positions
+    //    - Starting pose (typically 0, 0, 0 degrees)
+    m_odometry = new SwerveDriveOdometry(
+        m_kinematics,
+        Rotation2d.fromDegrees(m_gyro.getAngle()),
+        m_modulePositions,
+        new Pose2d()  // Starting pose
+    );
+}
+```
+
+### Swerve Module Position
+
+For swerve odometry, each module needs to report its `SwerveModulePosition` which contains:
+
+
+
+**Module Position Components:**
+
+- **Distance:** How far the module's drive wheel has traveled (meters)
+
+- **Angle:** The module's current steering angle (Rotation2d)
+
+
+
+**Reading from Modules:** Each swerve module typically has a drive motor with encoder (for distance) and a CANcoder or similar sensor (for steering angle). Combine these readings to create a `SwerveModulePosition`.
+
+
+
+**Implementation Note:** Your swerve drivetrain template will have a `SwerveModule` class that handles reading from encoders and creating `SwerveModulePosition` objects. The template handles all the hardware-specific details - you just need to understand that each module reports distance and angle.
+
+### Reading Drive Distance
+
+```java
+// Read drive encoder to get distance traveled
+// (Your drivetrain template handles conversion to meters)
+double distanceMeters = m_driveMotor.getPosition();  // Already converted to meters
+```
+
+### Reading Steering Angle
+
+```java
+// Read angle encoder to get steering direction
+// (Absolute encoder gives current angle, not relative)
+Rotation2d angle = Rotation2d.fromRotations(m_angleEncoder.getPosition());
+```
+
+### Creating SwerveModulePosition
+
+```java
+// Return both as SwerveModulePosition
+public SwerveModulePosition getPosition() {
+    double distanceMeters = m_driveMotor.getPosition();
+    Rotation2d angle = Rotation2d.fromRotations(m_angleEncoder.getPosition());
+    
+    return new SwerveModulePosition(distanceMeters, angle);
+}
+```
+
+### Odometry Limitations
+
+Understanding odometry limitations is crucial for effective use:
+
+
+
+**Drift:** Odometry accumulates error over time. Small measurement errors compound, causing the pose estimate to drift from actual position. Drift increases with distance traveled and time. Typical drift: 1-5% of distance traveled.
+
+
+
+**Wheel Slippage:** When wheels slip (during acceleration, on slippery surfaces, during collisions), encoder readings don't match actual movement. Slippage causes immediate pose errors that persist until corrected.
+
+
+
+**Accuracy Degradation Over Time:** Without correction, odometry accuracy decreases over time. After long autonomous routines or extended operation, pose may be significantly off. This is why sensor fusion with vision is recommended for high-accuracy applications.
+
+
+
+**Mitigation Strategies:**
+
+- Use vision-based pose estimation to periodically correct drift
+
+- Implement sensor fusion (see [Vision-Based Pose Estimation](#vision-pose-estimation-complete) lesson)
+
+- Design mechanisms to minimize wheel slippage
+
+- Calibrate wheel diameter and encoder settings accurately
+
+### Swerve-Specific Considerations
+
+Swerve odometry has unique considerations compared to differential drive:
+
+
+
+**Module Offsets:** Module positions must be accurately measured relative to robot center. Incorrect offsets cause odometry errors. Measure track width and wheelbase carefully (in meters).
+
+
+
+**Module Angle Accuracy:** Swerve odometry requires accurate module angle measurements. Absolute encoders (like CANcoder) are strongly recommended for each module. Module angle errors directly affect odometry accuracy.
+
+
+
+**Center of Rotation:** Swerve robots can rotate around any point (not just center). Odometry assumes rotation around robot center, which is accurate for most cases.
+
+
+
+**Accuracy Advantages:** Swerve odometry is typically more accurate than differential drive because it uses four measurement points instead of two. However, it requires proper calibration of all four modules.
+
+### Complete Swerve Odometry Flow
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class SwerveDrivetrain extends SubsystemBase {
+    // Hardware
+    private final Gyro m_gyro;
+    private final SwerveModule m_frontLeft;
+    private final SwerveModule m_frontRight;
+    private final SwerveModule m_rearLeft;
+    private final SwerveModule m_rearRight;
+    
+    // Odometry components
+    private final SwerveDriveKinematics m_kinematics;
+    private final SwerveDriveOdometry m_odometry;
+    private final SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[4];
+    
+    public SwerveDrivetrain() {
+        // 1. Initialize hardware (your template handles this)
+        // Initialize modules and gyro...
+        
+        // 2. Set up kinematics (module positions)
+        // Create kinematics with module positions...
+        
+        // 3. Get initial module positions
+        updateModulePositions();
+        
+        // 4. Initialize odometry
+        m_odometry = new SwerveDriveOdometry(
+            m_kinematics,
+            Rotation2d.fromDegrees(m_gyro.getAngle()),
+            m_modulePositions,
+            new Pose2d()
+        );
+    }
+    
+    // PERIODIC: Called every robot loop (20ms)
+    @Override
+    public void periodic() {
+        // 1. Get current positions from all modules
+        updateModulePositions();
+        
+        // 2. Update odometry with new measurements
+        m_odometry.update(
+            Rotation2d.fromDegrees(m_gyro.getAngle()),
+            m_modulePositions
+        );
+        
+        // 3. (Optional) Display pose on SmartDashboard
+        Pose2d pose = m_odometry.getPoseMeters();
+        SmartDashboard.putNumber("Robot X", pose.getX());
+        SmartDashboard.putNumber("Robot Y", pose.getY());
+        SmartDashboard.putNumber("Robot Heading", pose.getRotation().getDegrees());
+    }
+    
+    // HELPER: Update module positions array
+    private void updateModulePositions() {
+        m_modulePositions[0] = m_frontLeft.getPosition();
+        m_modulePositions[1] = m_frontRight.getPosition();
+        m_modulePositions[2] = m_rearLeft.getPosition();
+        m_modulePositions[3] = m_rearRight.getPosition();
+    }
+    
+    // GET POSE: Called by autonomous/teleop code
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+    }
+    
+    // RESET: Called at start of autonomous or after vision correction
+    public void resetOdometry(Pose2d pose) {
+        updateModulePositions();
+        m_odometry.resetPosition(
+            Rotation2d.fromDegrees(m_gyro.getAngle()),
+            m_modulePositions,
+            pose
+        );
+    }
+}
+
+// KEY CONCEPTS:
+// 1. Constructor: Initialize once at startup
+// 2. Periodic: Update every loop (20ms) - this is critical!
+// 3. getPose: Use this to get current position
+// 4. resetOdometry: Use this to set a known position
+```
+
+### Best Practices for Accurate Odometry
+
+Following these practices ensures the most accurate odometry possible:
+
+
+
+**Sensor Calibration:**
+
+- Accurately measure and configure wheel diameter
+
+- Accurately measure and configure track width / wheelbase
+
+- Calibrate gyroscope properly
+
+- For swerve: Calibrate all module angle offsets
+
+
+
+**Update Frequency:**
+
+- Call `updateOdometry()` in every `periodic()` call (20ms)
+
+- Don't skip odometry updates - this is critical for accuracy
+
+- Your drivetrain template handles efficient sensor reading
+
+
+
+**Drift Mitigation:**
+
+- Combine with vision for periodic corrections
+
+- Reset odometry at start of autonomous
+
+- Monitor odometry accuracy during testing
+
+
+
+**Mechanical Considerations:**
+
+- Minimize wheel slippage (proper wheel material, avoid aggressive acceleration)
+
+- Ensure encoders are securely mounted
+
+- Check for mechanical play in drivetrain
+
+<LinkGrid links={[{"label":"Pose Estimation Introduction","id":"pose-estimation-intro"},{"label":"Vision-Based Pose Estimation","id":"vision-pose-estimation-fusion"},{"label":"WPILib Kinematics and Odometry","url":"https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"},{"label":"Sensors and Encoders","id":"sensors-and-encoders"}]} title="Resources" section="frc" />
+

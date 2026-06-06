@@ -1,0 +1,112 @@
+---
+title: Encoder-Based Movement (OnBot Java)
+lessonId: encoder-based-movement
+section: ftc
+group: onbot-java-autonomous-programming
+groupLabel: Autonomous Programming
+groupOrder: 6
+order: 3
+difficulty: intermediate
+duration: 50 min
+description: ""
+---
+
+### What are Motor Encoders?
+
+Motor encoders are sensors built into motors that measure rotation. In FTC, encoders allow you to move your robot a precise distance by counting the number of rotations or partial rotations of the wheels. This makes autonomous movement much more accurate than time-based methods. For more information on encoders, see [Motor Encoders](../motors/motor-encoders.json).
+
+### Using Encoders in FTC SDK
+
+To use encoders in OnBot Java, you need to reset the encoders, set a target position, and run the motors to that position. The FTC SDK provides methods like `setMode()`, `setTargetPosition()`, and `setPower()` for this purpose.
+
+### Encoder-Based Movement Example
+
+This example shows how to drive forward a set distance using encoders. Each step is explained in the comments.
+
+
+
+```java
+@Autonomous(name="EncoderMove")
+public class EncoderMove extends LinearOpMode {
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
+
+    @Override
+    public void runOpMode() {
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+
+        // Reset encoders
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set target position (e.g., 1000 encoder counts)
+        leftDrive.setTargetPosition(1000);
+        rightDrive.setTargetPosition(1000);
+
+        // Set to RUN_TO_POSITION mode
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Start moving
+        leftDrive.setPower(0.5);
+        rightDrive.setPower(0.5);
+
+        // Wait until motors reach target
+        while (opModeIsActive() && (leftDrive.isBusy() || rightDrive.isBusy())) {
+            telemetry.addData("Left Position", leftDrive.getCurrentPosition());
+            telemetry.addData("Right Position", rightDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+}
+```
+
+### Writing Modular Encoder Movement Methods
+
+To keep your code organized, write helper methods for common encoder-based movements. For example, create a `driveForward(int counts, double power)` method that handles all the encoder logic. This makes your code easier to read and reuse.
+
+### Modular Encoder Movement Method Example
+
+This snippet shows how to write a helper method for driving forward a set distance using encoders.
+
+
+
+```java
+public void driveForward(int counts, double power) {
+    leftDrive.setTargetPosition(leftDrive.getCurrentPosition() + counts);
+    rightDrive.setTargetPosition(rightDrive.getCurrentPosition() + counts);
+    leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    leftDrive.setPower(power);
+    rightDrive.setPower(power);
+    while (opModeIsActive() && (leftDrive.isBusy() || rightDrive.isBusy())) {
+        telemetry.addData("Left Position", leftDrive.getCurrentPosition());
+        telemetry.addData("Right Position", rightDrive.getCurrentPosition());
+        telemetry.update();
+    }
+    leftDrive.setPower(0);
+    rightDrive.setPower(0);
+}
+```
+
+### Troubleshooting Encoder Issues
+
+- If your robot doesn't move as expected, check that your motors are properly mapped and encoders are connected.
+- Make sure to reset encoders before starting a new movement.
+- If the robot moves the wrong distance, verify your counts-per-revolution and gear ratio calculations.
+- Use telemetry to monitor encoder values during testing.
+
+<ExerciseBox title="Practice Exercise: Encoder-Based Turn" description="Write a helper method that turns the robot in place using encoders. Test it by turning 90 degrees. Use telemetry to display encoder values during the turn." answers={[{"task":"Write a method to set opposite target positions for left and right motors.","content":"// Helper method to turn in place using encoders\npublic void turnInPlace(int counts, double power) {\n    leftDrive.setTargetPosition(leftDrive.getCurrentPosition() + counts);\n    rightDrive.setTargetPosition(rightDrive.getCurrentPosition() - counts);\n    // The left motor moves forward, the right motor moves backward\n}"},{"task":"Use RUN_TO_POSITION mode and set appropriate power.","content":"// Set both motors to RUN_TO_POSITION and set power\nleftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);\nrightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);\nleftDrive.setPower(power);\nrightDrive.setPower(power);"},{"task":"Monitor encoder values with telemetry.","content":"// Monitor encoder values during the turn\nwhile (opModeIsActive() && (leftDrive.isBusy() || rightDrive.isBusy())) {\n    telemetry.addData(\"Left Position\", leftDrive.getCurrentPosition());\n    telemetry.addData(\"Right Position\", rightDrive.getCurrentPosition());\n    telemetry.update();\n}"},{"task":"Stop motors after the turn is complete.","content":"// Stop both motors\nleftDrive.setPower(0);\nrightDrive.setPower(0);"},{"task":"Combine all tasks into one working OpMode.","content":"import com.qualcomm.robotcore.eventloop.opmode.Autonomous;\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@Autonomous(name = \"EncoderTurnAuto\")\npublic class EncoderTurnAuto extends LinearOpMode {\n    private DcMotor leftDrive, rightDrive;\n    @Override\n    public void runOpMode() {\n        leftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\n        // Reset encoders\n        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        telemetry.addData(\"Status\", \"Initialized\");\n        telemetry.update();\n        waitForStart();\n        // Set target positions for a 90-degree turn (adjust counts for your robot)\n        int turnCounts = 500;\n        leftDrive.setTargetPosition(turnCounts);\n        rightDrive.setTargetPosition(-turnCounts);\n        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);\n        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);\n        leftDrive.setPower(0.5);\n        rightDrive.setPower(0.5);\n        // Monitor encoder values\n        while (opModeIsActive() && (leftDrive.isBusy() || rightDrive.isBusy())) {\n            telemetry.addData(\"Left Position\", leftDrive.getCurrentPosition());\n            telemetry.addData(\"Right Position\", rightDrive.getCurrentPosition());\n            telemetry.update();\n        }\n        // Stop both motors\n        leftDrive.setPower(0);\n        rightDrive.setPower(0);\n        telemetry.addData(\"Status\", \"Turn Complete\");\n        telemetry.update();\n        // Optionally, keep the OpMode alive until STOP is pressed\n        while (opModeIsActive()) {\n            idle();\n        }\n    }\n}"}]}>
+
+- Write a method to set opposite target positions for left and right motors.
+- Use `RUN_TO_POSITION` mode and set appropriate power.
+- Monitor encoder values with telemetry.
+- Stop motors after the turn is complete.
+
+</ExerciseBox>
+

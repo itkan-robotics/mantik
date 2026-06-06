@@ -1,0 +1,70 @@
+---
+title: Bit Manipulation
+lessonId: comp-bit-manipulation
+section: comp
+group: comp-advanced
+groupLabel: Advanced Topics
+groupOrder: 4
+order: 2
+difficulty: advanced
+duration: 15 min
+description: ""
+---
+
+### Bit Manipulation Overview
+
+Bit manipulation involves using bitwise operators to solve problems efficiently. It's useful for optimization, low-level programming, and certain algorithmic tricks.
+
+### Common Bitwise Operators
+
+- **AND (&):** 1 if both bits are 1
+- **OR (|):** 1 if at least one bit is 1
+- **XOR (^):** 1 if bits are different
+- **NOT (~):** Inverts all bits
+- **Left Shift (&lt;&lt;):** Shifts bits left
+- **Right Shift (&gt;&gt;):** Shifts bits right
+
+### Bit Tricks Examples
+
+```java
+// Check if n is even
+boolean isEven(int n) {
+    return (n & 1) == 0;
+}
+
+// Swap two numbers without temp
+void swap(int a, int b) {
+    a = a ^ b;
+    b = a ^ b;
+    a = a ^ b;
+}
+
+// Count set bits
+int countBits(int n) {
+    int count = 0;
+    while (n != 0) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
+// Get rightmost set bit
+int rightmostSetBit(int n) {
+    return n & -n;
+}
+
+// Check if n is power of two
+boolean isPowerOfTwo(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+```
+
+### Common Applications
+
+- **Optimization:** Fast arithmetic, state compression
+- **Masking:** Enable/disable bits
+- **Subset Generation:** Use bits to represent sets
+- **Gray Code:** Generate binary reflected Gray code
+- **Bit DP:** Dynamic programming with bitmasks
+

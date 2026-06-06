@@ -1,0 +1,189 @@
+---
+title: Arrays
+lessonId: java-arrays
+section: java
+group: java-basics
+groupLabel: Java Basics
+groupOrder: 1
+order: 5
+difficulty: beginner
+duration: 60 min
+description: ""
+---
+
+### What are Arrays?
+
+An array contains a limited amount of numbered spots (indices) for values. The length (or size) of an array is the amount of these spots - how many values you can place in the array. The values in an array are called **elements**. Arrays can store primitive types (int, double, boolean) or objects (String, custom classes).
+
+### Creating Arrays - Basic Types:
+
+```java
+// Arrays of primitive types
+int[] sensorReadings = new int[5];     // Array for 5 integers
+double[] coordinates = new double[6];  // Array for 6 coordinates
+boolean[] motorStatus = new boolean[4]; // Array for 4 boolean values
+
+// Initialize with values
+int[] powerLevels = {25, 50, 75, 100};
+double[] targetPositions = {12.5, 24.0, 36.5};
+
+// Access elements using index (starts at 0)
+sensorReadings[0] = 100;  // First element
+sensorReadings[4] = 95;   // Last element (index 4 for array of size 5)
+
+System.out.println("Array length: " + sensorReadings.length);
+System.out.println("First reading: " + sensorReadings[0]);
+```
+
+### Arrays of Objects
+
+Just like primitive types, arrays can store objects. String arrays are a common example, but you can create arrays of any object type, including custom classes. This is where arrays become really powerful for robotics applications.
+
+### String Arrays Example:
+
+```java
+// Create an array of strings
+String[] teamMembers = new String[4];
+
+// Add names to the array
+teamMembers[0] = "Alice";
+teamMembers[1] = "Bob";
+teamMembers[2] = "Charlie";
+teamMembers[3] = "Diana";
+
+// Or initialize directly
+String[] robotSystems = {"Drive", "Arm", "Intake", "Launcher"};
+
+// Iterate through the array
+System.out.println("Team Members:");
+for (int i = 0; i < teamMembers.length; i++) {
+    System.out.println((i + 1) + ". " + teamMembers[i]);
+}
+
+// Enhanced for loop (for-each)
+System.out.println("\nRobot Systems:");
+for (String system : robotSystems) {
+    System.out.println("- " + system);
+}
+```
+
+### Adding Objects to Arrays
+
+Objects can be added to arrays just like primitive values. You can create objects first and then add them, or create objects directly when assigning to array positions. Let's use a Robot class example.
+
+### Robot Objects in Arrays:
+
+```java
+// Assume we have a Robot class
+public class Robot {
+    private String name;
+    private int teamNumber;
+    private boolean isActive;
+    
+    public Robot(String name, int teamNumber) {
+        this.name = name;
+        this.teamNumber = teamNumber;
+        this.isActive = false;
+    }
+    
+    public String getName() { return this.name; }
+    public int getTeamNumber() { return this.teamNumber; }
+    public boolean isActive() { return this.isActive; }
+    public void activate() { this.isActive = true; }
+    
+    public String toString() {
+        return name + " (Team " + teamNumber + ") - " + (isActive ? "Active" : "Inactive");
+    }
+}
+
+// Create an array for robot objects
+Robot[] competition = new Robot[4];
+
+// Method 1: Create robot first, then add to array
+Robot robot1 = new Robot("SpeedBot", 12345);
+competition[0] = robot1;
+
+// Method 2: Create robot directly in array assignment
+competition[1] = new Robot("PowerBot", 67890);
+competition[2] = new Robot("PrecisionBot", 11111);
+competition[3] = new Robot("AllStarBot", 22222);
+
+// Activate all robots and display
+for (int i = 0; i < competition.length; i++) {
+    competition[i].activate();
+    System.out.println(competition[i]);
+}
+```
+
+### User Input for Object Arrays
+
+You can collect user input to populate arrays with objects. This is useful for creating team rosters, robot configurations, or competition data from user input.
+
+### Building Object Arrays from User Input:
+
+```java
+import java.util.Scanner;
+
+public class RobotTeamBuilder {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("How many robots in your team? ");
+        int teamSize = Integer.valueOf(scanner.nextLine());
+        
+        // Create array based on user input
+        Robot[] robotTeam = new Robot[teamSize];
+        
+        // Collect robot information
+        for (int i = 0; i < robotTeam.length; i++) {
+            System.out.println("\nEntering Robot " + (i + 1) + ":");
+            
+            System.out.print("Robot name: ");
+            String name = scanner.nextLine();
+            
+            if (name.isEmpty()) {
+                System.out.println("Using default name: Robot" + (i + 1));
+                name = "Robot" + (i + 1);
+            }
+            
+            System.out.print("Team number: ");
+            int teamNumber = Integer.valueOf(scanner.nextLine());
+            
+            // Create and add robot to array
+            robotTeam[i] = new Robot(name, teamNumber);
+        }
+        
+        // Display the complete team
+        System.out.println("\n=== Robot Team Roster ===");
+        System.out.println("Total robots: " + robotTeam.length);
+        
+        for (int i = 0; i < robotTeam.length; i++) {
+            System.out.println((i + 1) + ". " + robotTeam[i]);
+        }
+    }
+}
+```
+
+<RulesBox title="Object Array Best Practices:" subtitle="Guidelines for Working with Object Arrays:">
+
+- **Null Checks:** Always check if array elements are null before using them
+- **Bounds Checking:** Validate array indices before access
+- **Initialization:** Remember that object arrays start with null values
+- **Enhanced Loops:** Use for-each loops when you don't need the index
+- **Array Length:** Use .length property (not .length() method) for arrays
+- **Meaningful Names:** Use descriptive names for arrays and their elements
+
+</RulesBox>
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: Complete Object Array System" answers={[{"task":"Create a Competition class and build an array of competitions","content":"public class Competition {\n    private String competitionName;\n    private String location;\n    private int numTeams;\n    private String date;\n    private boolean isActive;\n    \n    public Competition(String name, String location, int numTeams, String date) {\n        this.competitionName = name;\n        this.location = location;\n        this.numTeams = numTeams;\n        this.date = date;\n        this.isActive = false;\n    }\n    \n    // Getters\n    public String getName() { return competitionName; }\n    public String getLocation() { return location; }\n    public int getNumTeams() { return numTeams; }\n    public String getDate() { return date; }\n    public boolean isActive() { return isActive; }\n    \n    // Setters\n    public void setActive(boolean active) { this.isActive = active; }\n    \n    public String toString() {\n        return competitionName + \" in \" + location + \" (\" + date + \") - \" + \n               numTeams + \" teams, \" + (isActive ? \"Active\" : \"Scheduled\");\n    }\n}\n\n// Usage example:\npublic class CompetitionArrayDemo {\n    public static void main(String[] args) {\n        // Create array of competitions\n        Competition[] frcSeason = new Competition[5];\n        \n        // Add competitions to array\n        frcSeason[0] = new Competition(\"District Event 1\", \"Tech High School\", 24, \"2024-01-15\");\n        frcSeason[1] = new Competition(\"District Event 2\", \"Community Center\", 32, \"2024-01-22\");\n        frcSeason[2] = new Competition(\"District Event 3\", \"University Arena\", 48, \"2024-02-12\");\n        frcSeason[3] = new Competition(\"District Championship\", \"Convention Center\", 64, \"2024-02-26\");\n        frcSeason[4] = new Competition(\"World Championship\", \"Houston\", 128, \"2024-04-20\");\n        \n        // Display all competitions\n        System.out.println(\"=== FRC Season Schedule ===\");\n        for (int i = 0; i < frcSeason.length; i++) {\n            System.out.println((i + 1) + \". \" + frcSeason[i]);\n        }\n    }\n}"},{"task":"Implement user input system for adding competitions with multiple parameters","content":"import java.util.Scanner;\n\npublic class CompetitionBuilder {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        System.out.print(\"How many competitions to schedule? \");\n        int numCompetitions = Integer.valueOf(scanner.nextLine());\n        \n        Competition[] competitions = new Competition[numCompetitions];\n        \n        for (int i = 0; i < competitions.length; i++) {\n            System.out.println(\"\\n=== Competition \" + (i + 1) + \" Details ===\");\n            \n            System.out.print(\"Competition name: \");\n            String name = scanner.nextLine();\n            \n            System.out.print(\"Location: \");\n            String location = scanner.nextLine();\n            \n            System.out.print(\"Number of teams: \");\n            int numTeams = Integer.valueOf(scanner.nextLine());\n            \n            System.out.print(\"Date (YYYY-MM-DD): \");\n            String date = scanner.nextLine();\n            \n            competitions[i] = new Competition(name, location, numTeams, date);\n            System.out.println(\"✅ Added: \" + competitions[i].getName());\n        }\n        \n        // Display schedule\n        System.out.println(\"\\n=== Competition Schedule ===\");\n        for (int i = 0; i < competitions.length; i++) {\n            String status = competitions[i].isActive() ? \"🟢\" : \"📅\";\n            System.out.println(status + \" \" + (i + 1) + \". \" + competitions[i]);\n        }\n    }\n}"},{"task":"Create filtering system to find competitions by criteria","content":"public class CompetitionFilter {\n    \n    // Filter by minimum number of teams\n    public static void filterByTeamCount(Competition[] competitions, int minTeams) {\n        System.out.println(\"\\n🏆 Competitions with \" + minTeams + \"+ teams:\");\n        boolean found = false;\n        \n        for (Competition comp : competitions) {\n            if (comp.getNumTeams() >= minTeams) {\n                System.out.println(\"- \" + comp);\n                found = true;\n            }\n        }\n        \n        if (!found) {\n            System.out.println(\"No competitions found with \" + minTeams + \"+ teams.\");\n        }\n    }\n    \n    // Filter by location\n    public static void filterByLocation(Competition[] competitions, String location) {\n        System.out.println(\"\\n📍 Competitions in \" + location + \":\");\n        boolean found = false;\n        \n        for (Competition comp : competitions) {\n            if (comp.getLocation().toLowerCase().contains(location.toLowerCase())) {\n                System.out.println(\"- \" + comp);\n                found = true;\n            }\n        }\n        \n        if (!found) {\n            System.out.println(\"No competitions found in \" + location + \".\");\n        }\n    }\n    \n    // Usage example\n    public static void main(String[] args) {\n        Competition[] season = {\n            new Competition(\"Local Qualifier\", \"Tech High School\", 24, \"2024-01-15\"),\n            new Competition(\"Regional Championship\", \"University Arena\", 48, \"2024-02-12\"),\n            new Competition(\"State Finals\", \"Convention Center\", 64, \"2024-03-05\")\n        };\n        \n        // Apply various filters\n        filterByTeamCount(season, 50);\n        filterByLocation(season, \"Arena\");\n    }\n}"}]}>
+
+- Create a Competition class and build an array of competitions
+- Implement user input system for adding competitions with multiple parameters
+- Create filtering system to find competitions by criteria
+
+```java
+Build a comprehensive FRC competition management system using object arrays:
+```
+
+</ExerciseBox>
+

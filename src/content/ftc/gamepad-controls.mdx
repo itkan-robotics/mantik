@@ -1,0 +1,139 @@
+---
+title: Gamepad Controls in FTC
+lessonId: gamepad-controls
+section: ftc
+group: onbot-java-teleop-programming
+groupLabel: TeleOp Programming
+groupOrder: 5
+order: 2
+difficulty: beginner
+duration: 65 min
+description: ""
+---
+
+### Understanding the Gamepad API
+
+FTC robots are controlled using gamepads. The `gamepad1` and `gamepad2` objects provide access to all the buttons, sticks, triggers, and dpad controls. Knowing how to use these inputs is essential for effective TeleOp programming. 
+
+
+
+For a full list of gamepad fields, see [FTC Docs: Gamepad Input](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28Android-Studio%29.html#gamepad-input).
+
+### Gamepad Input Reference
+
+- **Analog:** left_stick_x, left_stick_y, right_stick_x, right_stick_y, left_trigger, right_trigger
+- **Digital:** a, b, x, y, dpad_up, dpad_down, dpad_left, dpad_right, left_bumper, right_bumper, start, back
+
+### Example: Reading Analog and Digital Inputs
+
+This snippet shows how to read both analog and digital inputs from gamepad1.
+
+
+
+```java
+// Analog inputs
+double drive = -gamepad1.left_stick_y;
+double turn = gamepad1.right_stick_x;
+double lift = gamepad1.right_trigger - gamepad1.left_trigger;
+// Digital inputs
+boolean openClaw = gamepad1.a;
+boolean closeClaw = gamepad1.b;
+boolean slowMode = gamepad1.left_bumper;
+```
+
+### Advanced Gamepad Techniques: Button Toggles and State Machines
+
+Some mechanisms, like claws or arms, need to change state with a single button press, not just while held. This is called a toggle. Edge detection lets you trigger an action only when a button is pressed, not held.
+
+### Example: Button Toggle with Edge Detection (Advanced)
+
+```java
+private boolean lastA = false;
+private boolean clawOpen = false;
+private void controlClaw() {
+    if (gamepad1.a && !lastA) {
+        clawOpen = !clawOpen;
+        clawServo.setPosition(clawOpen ? 1.0 : 0.0);
+    }
+    lastA = gamepad1.a;
+}
+```
+
+### Combining Inputs for Complex Actions
+
+Sometimes you want to require multiple buttons or stick positions for a single action (e.g., safety interlocks, macros). Use logical operators to combine inputs.
+
+### Example: Combined Input for Safety
+
+```java
+if (gamepad1.left_bumper && gamepad1.a) {
+    // Only run this if both are pressed
+    armMotor.setPower(1.0);
+}
+```
+
+### Multi-Driver Support (gamepad1 vs. gamepad2)
+
+FTC allows two drivers, each with their own gamepad. Assign different subsystems to each gamepad for better teamwork.
+
+### Example: Assigning Subsystems to Gamepads
+
+```java
+// gamepad1 drives, gamepad2 operates arm
+double leftPower = -gamepad1.left_stick_y;
+double rightPower = -gamepad1.right_stick_y;
+leftDrive.setPower(leftPower);
+rightDrive.setPower(rightPower);
+if (gamepad2.a) {
+    armMotor.setPower(1.0);
+}
+```
+
+### Implementing Slow/Precision Mode
+
+Precision driving is important for tasks like aligning with game elements. Use a button to reduce drive speed for more control.
+
+### Example: Slow Mode Toggle
+
+```java
+double speed = gamepad1.left_bumper ? 0.3 : 1.0;
+double leftPower = -gamepad1.left_stick_y * speed;
+double rightPower = -gamepad1.right_stick_y * speed;
+leftDrive.setPower(leftPower);
+rightDrive.setPower(rightPower);
+```
+
+### Macros and Automation
+
+Macros automate repetitive tasks, improving driver efficiency. For example, pressing a button to run a sequence of actions.
+
+### Example: Simple Macro
+
+```java
+if (gamepad1.x && !lastX) {
+    // Run a macro: open claw, move arm
+    clawServo.setPosition(1.0);
+    armMotor.setPower(1.0);
+    sleep(500);
+    armMotor.setPower(0.0);
+}
+lastX = gamepad1.x;
+```
+
+### Best Practices for Advanced Controls
+
+Keep your control logic clean and readable. Use clear variable names and comments. Test each advanced feature separately before combining them.
+
+<ExerciseBox title="Practice Exercise: Gamepad Mapping and Advanced Controls" description="Write code to control a drive train with the left stick, a lift with the bumpers, and a claw with buttons A/B. Implement a toggle for the claw using edge detection. Add a slow mode, a macro, and assign subsystems to different gamepads." answers={[{"task":"Map drive motors, a lift motor, and a claw servo.","content":"// In your OpMode class\nDcMotor leftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\nDcMotor rightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\nDcMotor liftMotor = hardwareMap.get(DcMotor.class, \"lift_motor\");\nServo clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n// Make sure these names match your robot configuration!"},{"task":"Read analog and digital inputs from gamepad1.","content":"// Analog inputs\ndouble leftPower = -gamepad1.left_stick_y; // Drive forward/backward\ndouble rightPower = -gamepad1.right_stick_y; // Drive right side\n// Digital inputs\nboolean liftUp = gamepad1.right_bumper;\nboolean liftDown = gamepad1.left_bumper;\nboolean openClaw = gamepad1.a;\nboolean closeClaw = gamepad1.b;"},{"task":"Implement edge detection for the claw toggle.","content":"// Place these at the top of your OpMode class\nboolean lastA = false;\nboolean clawOpen = false;\n\n// In your main loop\nif (gamepad1.a && !lastA) {\n    clawOpen = !clawOpen; // Toggle claw state\n    clawServo.setPosition(clawOpen ? 1.0 : 0.0);\n}\nlastA = gamepad1.a; // Update last state after checking\n// This ensures the toggle only happens once per button press."},{"task":"Add a slow mode for precision driving.","content":"double speed = gamepad1.left_bumper ? 0.3 : 1.0;\ndouble leftPower = -gamepad1.left_stick_y * speed;\ndouble rightPower = -gamepad1.right_stick_y * speed;\nleftDrive.setPower(leftPower);\nrightDrive.setPower(rightPower);"},{"task":"Create a macro that runs a sequence of actions.","content":"if (gamepad1.x && !lastX) {\n    // Run a macro: open claw, move arm\n    clawServo.setPosition(1.0);\n    armMotor.setPower(1.0);\n    sleep(500);\n    armMotor.setPower(0.0);\n}\nlastX = gamepad1.x;"},{"task":"Assign subsystems to different gamepads.","content":"// gamepad1 drives, gamepad2 operates arm\ndouble leftPower = -gamepad1.left_stick_y;\ndouble rightPower = -gamepad1.right_stick_y;\nleftDrive.setPower(leftPower);\nrightDrive.setPower(rightPower);\nif (gamepad2.a) {\n    armMotor.setPower(1.0);\n}"}]}>
+
+- Map drive motors, a lift motor, and a claw servo.
+- Read analog and digital inputs from gamepad1.
+- Implement edge detection for the claw toggle.
+- Add a slow mode for precision driving.
+- Create a macro that runs a sequence of actions.
+- Assign subsystems to different gamepads.
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"gm0: Gamepad Usage","url":"https://gm0.org/en/latest/docs/software/tutorials/gamepad.html#storing-gamepad-state#storing-gamepad-state"},{"label":"Gamepad API","url":"https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/Gamepad.html"},{"label":"FTC Docs: Gamepad Input","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28Android-Studio%29.html#gamepad-input"}]} title="Related Topics and Documentation" section="ftc" />
+

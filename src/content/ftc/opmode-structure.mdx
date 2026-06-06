@@ -1,0 +1,123 @@
+---
+title: OpMode Structure
+lessonId: opmode-structure
+section: ftc
+group: onbot-java-setup
+groupLabel: OnBot Java Setup
+groupOrder: 2
+order: 3
+difficulty: beginner
+duration: 45 min
+description: ""
+---
+
+### What is an OpMode?
+
+An OpMode (Operation Mode) is a Java class that controls your robot during a match. OpModes define the robot's behavior for autonomous or teleop periods and are selected and started from the Driver Station app.
+
+
+
+See: [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28OnBot-Java%29.html)
+
+<RulesBox title="Types of OpModes" subtitle="OpModes can be:">
+
+- `@TeleOp`: For driver-controlled periods (TeleOp)
+- `@Autonomous`: For autonomous periods (Autonomous)
+- LinearOpMode: Runs code sequentially (most common for beginners)
+- Iterative OpMode: Runs code in a loop (advanced)
+
+</RulesBox>
+
+### OpMode Annotations
+
+Annotations tell the SDK how to display your OpMode in the Driver Station.
+
+
+
+- `@TeleOp(name=...)` — TeleOp mode
+
+- `@Autonomous(name=...)` — Autonomous mode
+
+- `@Disabled` — Hide this OpMode
+
+### Sample LinearOpMode
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@TeleOp(name = "MyFIRSTJavaOpMode")
+public class MyFIRSTJavaOpMode extends LinearOpMode {
+    private DcMotor motorTest;
+    private Servo servoTest;
+
+    @Override
+    public void runOpMode() {
+        motorTest = hardwareMap.get(DcMotor.class, "motorTest");
+        servoTest = hardwareMap.get(Servo.class, "servoTest");
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        waitForStart();
+        while (opModeIsActive()) {
+            telemetry.addData("Status", "Running");
+            telemetry.update();
+        }
+    }
+}
+// Source: https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-(OnBot-Java).html
+```
+
+### Hardware Initialization Example
+
+```java
+private void initHardware() {
+    motorTest = hardwareMap.get(DcMotor.class, "motorTest");
+    servoTest = hardwareMap.get(Servo.class, "servoTest");
+}
+// Call this method at the start of runOpMode() for clarity.
+```
+
+### Organizing Your OpModes
+
+- Use clear method names for hardware initialization, input processing, and telemetry.
+
+- Separate hardware mapping from robot logic.
+
+- Use comments to explain each section.
+
+- Keep OpModes focused on a single purpose.
+
+<RulesBox title="Best Practices" subtitle="For clean, reliable OpModes:">
+
+- Initialize hardware in a dedicated method.
+- Use meaningful variable and method names.
+- Add telemetry for debugging.
+- Handle errors gracefully.
+- Test OpModes on the robot.
+
+</RulesBox>
+
+### Further Reading & Resources
+
+- [FTC Docs: Creating an OpMode](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-(OnBot-Java).html)
+
+- [FTC Docs: OnBot Java Reference Info](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/onbot_java_reference/OnBot-Java-Reference-Info.html)
+
+- [FTC OpMode API (Javadoc)](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/eventloop/opmode/OpMode.html)
+
+- [FTC SDK Example OpModes](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/master/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
+
+<LinkGrid links={[{"label":"Linear vs Iterative OpModes","url":"linear-vs-iterative-opmodes"},{"label":"Telemetry Logging","url":"telemetry-logging"},{"label":"Basic Robot Control","url":"basic-robot-control"}]} title="Next Steps" section="ftc" />
+
+<ExerciseBox title="Practice: OpMode Structure" description="Try these to reinforce your understanding:" answers={[{"task":"Create a TeleOp OpMode that drives a motor with the left stick","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@TeleOp(name = \"MotorControl\")\npublic class MotorControl extends LinearOpMode {\n    private DcMotor driveMotor;\n\n    @Override\n    public void runOpMode() {\n        // Initialize hardware\n        driveMotor = hardwareMap.get(DcMotor.class, \"drive_motor\");\n\n        // Wait for start\n        waitForStart();\n\n        while (opModeIsActive()) {\n            // Drive motor with left stick Y-axis\n            double power = -gamepad1.left_stick_y;\n            driveMotor.setPower(power);\n        }\n    }\n}"},{"task":"Add telemetry to show motor power","content":"// Add this inside the while loop\nwhile (opModeIsActive()) {\n    double power = -gamepad1.left_stick_y;\n    driveMotor.setPower(power);\n    \n    // Display motor power on Driver Station\n    telemetry.addData(\"Motor Power\", power);\n    telemetry.addData(\"Status\", \"Running\");\n    telemetry.update();\n}"},{"task":"Use @Autonomous to create a simple autonomous OpMode","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@Autonomous(name = \"SimpleAuto\")\npublic class SimpleAuto extends LinearOpMode {\n    private DcMotor leftMotor, rightMotor;\n\n    @Override\n    public void runOpMode() {\n        // Initialize hardware\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n\n        telemetry.addData(\"Status\", \"Initialized\");\n        telemetry.update();\n\n        waitForStart();\n\n        // Drive forward for 2 seconds\n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n        sleep(2000);\n\n        // Stop\n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n    }\n}"},{"task":"Organize your code into methods for init, loop, and telemetry","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@TeleOp(name = \"OrganizedOpMode\")\npublic class OrganizedOpMode extends LinearOpMode {\n    private DcMotor leftMotor, rightMotor;\n\n    @Override\n    public void runOpMode() {\n        initHardware();\n        showInitTelemetry();\n        waitForStart();\n\n        while (opModeIsActive()) {\n            processInputs();\n            updateTelemetry();\n        }\n    }\n\n    private void initHardware() {\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n    }\n\n    private void showInitTelemetry() {\n        telemetry.addData(\"Status\", \"Hardware Initialized\");\n        telemetry.update();\n    }\n\n    private void processInputs() {\n        double leftPower = -gamepad1.left_stick_y;\n        double rightPower = -gamepad1.right_stick_y;\n        leftMotor.setPower(leftPower);\n        rightMotor.setPower(rightPower);\n    }\n\n    private void updateTelemetry() {\n        telemetry.addData(\"Left Power\", leftMotor.getPower());\n        telemetry.addData(\"Right Power\", rightMotor.getPower());\n        telemetry.update();\n    }\n}"}]}>
+
+- Create a TeleOp OpMode that drives a motor with the left stick.
+- Add telemetry to show motor power.
+- Use `@Autonomous` to create a simple autonomous OpMode.
+- Organize your code into methods for init, loop, and telemetry.
+
+</ExerciseBox>
+

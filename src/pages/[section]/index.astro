@@ -1,0 +1,32 @@
+---
+import LessonLayout from '@/layouts/LessonLayout.astro';
+import { getOverview, getSidebarGroups } from '@/lib/content';
+import { sections } from '@/config/navigation';
+import { render } from 'astro:content';
+import { components } from '@/mdx-components';
+import type { SectionId } from '@/config/navigation';
+
+export async function getStaticPaths() {
+  return sections.map((section) => ({
+    params: { section: section.id },
+  }));
+}
+
+const { section } = Astro.params as { section: SectionId };
+
+const overview = await getOverview(section);
+if (!overview) throw new Error(`Overview not found for section: ${section}`);
+
+const sidebarGroups = await getSidebarGroups(section);
+const { Content } = await render(overview);
+const currentPath = `/${section}`;
+---
+
+<LessonLayout
+  title={overview.data.title}
+  description={overview.data.description}
+  currentPath={currentPath}
+  sidebarGroups={sidebarGroups}
+>
+  <Content components={components} />
+</LessonLayout>

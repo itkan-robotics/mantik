@@ -1,0 +1,90 @@
+---
+title: CTRE Hardware Setup
+lessonId: ctre-hardware-setup
+section: frc
+group: frc-environment-setup
+groupLabel: Environment Setup
+groupOrder: 1
+order: 3
+difficulty: beginner
+duration: 15 min
+description: ""
+---
+
+### Overview
+
+This guide covers setting up CTRE Phoenix 6 for Talon FX, CANcoder, and Pigeon 2.
+
+### Installation
+
+1. **VS Code:** Command Palette → "WPILib: Manage Vendor Libraries" → "Install new (online)".
+
+2. **URL:** `https://maven.ctr-electronics.com/phoenix6/latest/Phoenix6-latest.json`
+
+### Phoenix Tuner X
+
+Download [Phoenix Tuner X](https://github.com/CrossTheRoadElec/Phoenix-Tuner-Release/releases) to configure CAN IDs, update firmware, and license devices. **All devices must have unique CAN IDs.**
+
+### Talon FX Setup
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+
+public class DriveMotor extends SubsystemBase {
+    // Create motor instance with CAN ID 1
+    private final TalonFX m_motor = new TalonFX(1);
+    // Create control request for duty cycle output
+    private final DutyCycleOut m_out = new DutyCycleOut(0);
+    
+    public DriveMotor() {
+        // Configure motor settings
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        // Set brake mode (motor resists motion when stopped)
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        m_motor.getConfigurator().apply(config);
+    }
+    
+    /**
+     * Set motor output percentage
+     * @param percent Motor output (-1.0 to 1.0)
+     */
+    public void set(double percent) {
+        m_motor.setControl(m_out.withOutput(percent));
+    }
+}
+```
+
+### Follower Mode
+
+One motor mirrors another (common in drivetrains).
+
+### Follower Example
+
+```java
+package frc.robot.subsystems;
+
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.Follower;
+
+public class Drivetrain extends SubsystemBase {
+    // Master motor on CAN ID 1
+    private final TalonFX m_master = new TalonFX(1);
+    // Follower motor on CAN ID 2
+    private final TalonFX m_follower = new TalonFX(2);
+
+    public void configure() {
+        // Configure follower to mirror master
+        // Parameters: master CAN ID, opposeMasterDirection (false = same direction)
+        m_follower.setControl(new Follower(1, false));
+    }
+}
+```
+
+<LinkGrid links={[{"label":"Sensors and Encoders","id":"sensors-and-encoders"},{"label":"Motor Configuration","id":"motor-controller-configuration"}]} title="Resources" section="frc" />
+

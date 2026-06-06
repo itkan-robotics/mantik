@@ -1,0 +1,74 @@
+---
+title: goBILDA Pinpoint Odometry
+lessonId: gobilda-pinpoint
+section: ftc
+group: android-studio-odometry
+groupLabel: Odometry
+groupOrder: 11
+order: 4
+difficulty: advanced
+duration: 35 min
+description: ""
+---
+
+### What is goBILDA Pinpoint?
+
+goBILDA Pinpoint is a commercial odometry solution designed for FTC robots. It provides a ready-to-use hardware kit with three encoders and wheels, making it easier to implement accurate odometry without custom fabrication.
+
+### Hardware Overview and Installation
+
+The Pinpoint kit includes three encoder-equipped wheels mounted in a standard three-wheel odometry configuration. Proper installation is crucial for accuracy—follow the manufacturer's instructions for mounting and alignment. 
+
+
+
+For more details, see the [goBILDA Pinpoint Product Page](https://www.gobilda.com/pinpoint-odometry-computer-imu-sensor-fusion-for-2-wheel-odometry/).
+
+### Integrating Pinpoint with Android Studio
+
+To use Pinpoint in your Android Studio project, you can utilize the [GoBildaPinpointDriver](https://javadoc.io/doc/org.firstinspires.ftc/Hardware/latest/com/qualcomm/hardware/gobilda/GoBildaPinpointDriver.html) class provided in the FTC SDK. This class helps you interface with the Pinpoint hardware and retrieve encoder values for odometry calculations.
+
+### Sample Initialization and Usage in Android Studio
+
+This code snippet demonstrates how to initialize and use the GoBildaPinpointDriver in your op mode:
+
+
+
+```java
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+
+GoBildaPinpointDriver pinpoint;
+
+@Override
+public void runOpMode() {
+    pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+    waitForStart();
+    while (opModeIsActive()) {
+        int leftTicks = pinpoint.getLeftEncoder().getCurrentPosition();
+        int rightTicks = pinpoint.getRightEncoder().getCurrentPosition();
+        int centerTicks = pinpoint.getCenterEncoder().getCurrentPosition();
+        telemetry.addData("Left Encoder", leftTicks);
+        telemetry.addData("Right Encoder", rightTicks);
+        telemetry.addData("Center Encoder", centerTicks);
+        telemetry.update();
+    }
+}
+```
+
+### Best Practices and Maintenance
+
+To ensure long-term reliability, regularly check the alignment and cleanliness of the Pinpoint wheels. Inspect for debris or wear, and verify that encoder cables are secure. Periodically recalibrate your odometry constants for best accuracy.
+
+### Comparing Pinpoint to Custom Odometry Solutions
+
+Pinpoint offers a plug-and-play solution with consistent build quality, saving time compared to custom odometry. However, custom solutions may offer more flexibility for unique robot designs. Consider your team's needs, budget, and resources when choosing between Pinpoint and DIY options.
+
+<LinkGrid links={[{"label":"GoBildaPinpointDriver Javadoc","url":"https://javadoc.io/doc/org.firstinspires.ftc/Hardware/latest/com/qualcomm/hardware/gobilda/GoBildaPinpointDriver.html"},{"label":"goBILDA Pinpoint Product Page","url":"https://www.gobilda.com/pinpoint-odometry-computer-imu-sensor-fusion-for-2-wheel-odometry/"},{"label":"goBILDA Example Code","url":"https://github.com/goBILDA-Official/FtcRobotController-Add-Pinpoint/tree/goBILDA-Odometry-Driver/TeamCode/src/main/java/org/firstinspires/ftc/teamcode"}]} title="Further Reading" section="ftc" />
+
+<ExerciseBox title="Practice Exercise" description="Write an op mode that initializes the GoBildaPinpointDriver and displays all three encoder values on telemetry. Then, try moving your robot and observe how the encoder values change.">
+
+- Initialize GoBildaPinpointDriver in your op mode.
+- Display left, right, and center encoder values on telemetry.
+- Move the robot and observe the encoder changes.
+
+</ExerciseBox>
+

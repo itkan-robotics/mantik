@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+import { components } from '@/mdx-components';
+
+const entry = await getEntry('homepage', 'index');
+if (!entry) throw new Error('Homepage content not found');
+
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  title="Mantik - FIRST Programming Made Easy"
+  description={entry.data.description}
+  currentPath="/"
+  showSidebar={false}
+>
+  <div class="lesson-content" data-pagefind-body>
+    <Content components={components} />
+  </div>
+</BaseLayout>

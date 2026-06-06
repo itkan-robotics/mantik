@@ -1,0 +1,42 @@
+---
+interface StepItem {
+  text: string;
+  subitems?: string[];
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  items?: (string | StepItem)[];
+}
+
+const { title, subtitle, items = [] } = Astro.props;
+const hasSlot = Astro.slots.has('default');
+---
+
+<div class="rules-box steps-box">
+  {title && <h3>{title}</h3>}
+  {subtitle && <h4 class="rules-box-subtitle">{subtitle}</h4>}
+
+  {items.length > 0 && (
+    <ol>
+      {items.map((item) => {
+        if (typeof item === 'string') {
+          return <li set:html={item} />;
+        }
+        return (
+          <li>
+            <span set:html={item.text} />
+            {item.subitems && item.subitems.length > 0 && (
+              <ul>
+                {item.subitems.map((sub) => <li set:html={sub} />)}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  )}
+
+  {hasSlot && <div class="steps-box-content"><slot /></div>}
+</div>

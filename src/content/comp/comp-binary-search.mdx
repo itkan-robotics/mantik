@@ -1,0 +1,166 @@
+---
+title: Binary Search
+lessonId: comp-binary-search
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 3
+difficulty: intermediate
+duration: 40 min
+description: ""
+---
+
+### Binary Search Overview
+
+Binary search is a divide-and-conquer algorithm that finds the position of a target value within a sorted array. It has O(log n) time complexity.
+
+### Standard Binary Search
+
+```java
+// Standard binary search for exact match
+public int binarySearch(int[] nums, int target) {
+    int left = 0;
+    int right = nums.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2; // Prevents overflow
+        
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return -1; // Not found
+}
+```
+
+### Binary Search Variations
+
+```java
+// Find first occurrence of target
+public int findFirst(int[] nums, int target) {
+    int left = 0;
+    int right = nums.length - 1;
+    int result = -1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] == target) {
+            result = mid;
+            right = mid - 1; // Continue searching left
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return result;
+}
+
+// Find last occurrence of target
+public int findLast(int[] nums, int target) {
+    int left = 0;
+    int right = nums.length - 1;
+    int result = -1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] == target) {
+            result = mid;
+            left = mid + 1; // Continue searching right
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return result;
+}
+
+// Find insertion position (where target should be inserted)
+public int searchInsert(int[] nums, int target) {
+    int left = 0;
+    int right = nums.length;
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return left;
+}
+```
+
+### Binary Search on Answer Space
+
+```java
+// Find square root of x (integer part)
+public int mySqrt(int x) {
+    if (x <= 1) return x;
+    
+    int left = 1;
+    int right = x;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (mid == x / mid) {
+            return mid;
+        } else if (mid < x / mid) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return right;
+}
+
+// Find peak element in mountain array
+public int findPeakElement(int[] nums) {
+    int left = 0;
+    int right = nums.length - 1;
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] < nums[mid + 1]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return left;
+}
+```
+
+### When to Use Binary Search
+
+- **Sorted Arrays:** Finding elements in sorted arrays
+- **Monotonic Functions:** Finding values where function equals target
+- **Optimization Problems:** Finding minimum/maximum value satisfying conditions
+- **Range Queries:** Finding elements in specific ranges
+- **Time Complexity:** When you need O(log n) instead of O(n)
+
+### Common Mistakes
+
+- **Integer Overflow:** Use left + (right - left) / 2 instead of (left + right) / 2
+- **Infinite Loops:** Ensure left and right are updated correctly
+- **Edge Cases:** Handle empty arrays, single elements, duplicates
+- **Return Value:** Decide whether to return index or value
+

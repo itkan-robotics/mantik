@@ -1,0 +1,71 @@
+---
+---
+
+<script>
+  const STORAGE_KEY = 'mantik-sidebar-open';
+
+  function getNavCheckbox(): HTMLInputElement | null {
+    return document.getElementById('__navigation') as HTMLInputElement | null;
+  }
+
+  function saveSidebarState(open: boolean) {
+    try {
+      localStorage.setItem(STORAGE_KEY, open ? '1' : '0');
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  function closeSidebar() {
+    const cb = getNavCheckbox();
+    if (cb && !cb.disabled && cb.checked) {
+      cb.checked = false;
+      saveSidebarState(false);
+    }
+  }
+
+  function restoreSidebarState() {
+    const cb = getNavCheckbox();
+    if (!cb || cb.disabled) return;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === '1') cb.checked = true;
+      else if (saved === '0') cb.checked = false;
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  function initSidebarBehavior() {
+    const cb = getNavCheckbox();
+    if (!cb || cb.disabled) return;
+
+    if (!cb.getAttribute('data-behavior-init')) {
+      cb.setAttribute('data-behavior-init', 'true');
+      cb.addEventListener('change', () => saveSidebarState(cb.checked));
+    }
+
+    const main = document.querySelector('.main');
+    if (main && !main.getAttribute('data-sidebar-close')) {
+      main.setAttribute('data-sidebar-close', 'true');
+      main.addEventListener('mousedown', (e) => {
+        if (!cb.checked) return;
+        const drawer = document.querySelector('.sidebar-drawer');
+        if (drawer && !drawer.contains(e.target as Node)) closeSidebar();
+      });
+      main.addEventListener('touchstart', (e) => {
+        if (!cb.checked) return;
+        const drawer = document.querySelector('.sidebar-drawer');
+        const target = e.target as Node;
+        if (drawer && !drawer.contains(target)) closeSidebar();
+      });
+    }
+  }
+
+  restoreSidebarState();
+  initSidebarBehavior();
+  document.addEventListener('astro:page-load', () => {
+    restoreSidebarState();
+    initSidebarBehavior();
+  });
+</script>

@@ -1,0 +1,12 @@
+---
+---
+
+<script>
+  function ensureHeaderVisible() {
+    const header = document.querySelector('.mobile-header');
+    if (header) header.classList.add('visible');
+  }
+
+  ensureHeaderVisible();
+  document.addEventListener('astro:page-load', ensureHeaderVisible);
+</script>

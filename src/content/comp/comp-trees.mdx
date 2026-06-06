@@ -1,0 +1,96 @@
+---
+title: "Trees & Binary Trees"
+lessonId: comp-trees
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 3
+difficulty: intermediate
+duration: 20 min
+description: ""
+---
+
+### Tree Data Structure
+
+A tree is a hierarchical data structure with nodes connected by edges. Each node contains data and references to child nodes.
+
+### Binary Tree Node Definition
+
+```java
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode(int val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+    }
+}
+```
+
+### Tree Traversal Methods
+
+- **Inorder (Left-Root-Right):** Visits left subtree, then root, then right subtree
+- **Preorder (Root-Left-Right):** Visits root, then left subtree, then right subtree
+- **Postorder (Left-Right-Root):** Visits left subtree, then right subtree, then root
+- **Level Order:** Visits nodes level by level (BFS)
+
+### Tree Traversal Implementations
+
+```java
+// Inorder Traversal (Recursive)
+void inorder(TreeNode root) {
+    if (root != null) {
+        inorder(root.left);
+        System.out.print(root.val + " ");
+        inorder(root.right);
+    }
+}
+
+// Preorder Traversal (Recursive)
+void preorder(TreeNode root) {
+    if (root != null) {
+        System.out.print(root.val + " ");
+        preorder(root.left);
+        preorder(root.right);
+    }
+}
+
+// Postorder Traversal (Recursive)
+void postorder(TreeNode root) {
+    if (root != null) {
+        postorder(root.left);
+        postorder(root.right);
+        System.out.print(root.val + " ");
+    }
+}
+
+// Level Order Traversal (BFS)
+void levelOrder(TreeNode root) {
+    if (root == null) return;
+    
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.offer(root);
+    
+    while (!queue.isEmpty()) {
+        TreeNode current = queue.poll();
+        System.out.print(current.val + " ");
+        
+        if (current.left != null) queue.offer(current.left);
+        if (current.right != null) queue.offer(current.right);
+    }
+}
+```
+
+### Common Tree Problems
+
+- **Height/Depth:** Find the height of a tree
+- **Balanced Tree:** Check if tree is height-balanced
+- **Symmetric Tree:** Check if tree is symmetric
+- **Path Sum:** Find paths with given sum
+- **Lowest Common Ancestor:** Find LCA of two nodes
+- **Serialize/Deserialize:** Convert tree to/from string
+

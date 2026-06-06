@@ -1,0 +1,121 @@
+---
+interface Answer {
+  task?: string;
+  content?: string;
+  language?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  tasks?: string[];
+  content?: string;
+  code?: string;
+  language?: string;
+  answers?: Answer[];
+}
+
+const { title, subtitle, description, tasks = [], content, code, language = 'java', answers = [] } =
+  Astro.props;
+
+const codeToRender = code ?? (content && !answers.length ? content : '');
+const hasSlot = Astro.slots.has('default');
+const uid = `exercise-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class="exercise-box" id={uid}>
+  {title && <h3>{title}</h3>}
+  {subtitle && <h4>{subtitle}</h4>}
+  {description && <p set:html={description} />}
+
+  {tasks.length > 0 && (
+    <ul>
+      {tasks.map((task) => <li set:html={task} />)}
+    </ul>
+  )}
+
+  {hasSlot && <div class="exercise-box-body"><slot /></div>}
+
+  {codeToRender && (
+    <div class="code-block" data-collapsible-code>
+      <div class="code-header">
+        <span>{title ?? language.toUpperCase()}</span>
+        <button type="button" class="code-toggle-btn" aria-label="Toggle code">−</button>
+      </div>
+      <pre><code class={`language-${language}`}>{codeToRender}</code></pre>
+    </div>
+  )}
+
+  {answers.length > 0 && (
+    <>
+      <button type="button" class="answer-toggle-btn" data-answer-toggle>Show Answers</button>
+      <div class="answer-section hidden" data-answer-section>
+        {answers.map((answer) => (
+          <div class="answer-item">
+            {answer.task && <div class="answer-task-label">{answer.task}</div>}
+            {answer.content && (
+              <div class="code-block" data-collapsible-code>
+                <div class="code-header">
+                  <span>{answer.task ?? (answer.language ?? 'java').toUpperCase()}</span>
+                  <button type="button" class="code-toggle-btn" aria-label="Toggle code">−</button>
+                </div>
+                <pre>
+                  <code class={`language-${answer.language ?? 'java'}`}>{answer.content}</code>
+                </pre>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+</div>
+
+<script>
+  function initExerciseBoxes() {
+    document.querySelectorAll('[data-answer-toggle]').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+
+      const section = btn.parentElement?.querySelector('[data-answer-section]');
+      btn.addEventListener('click', () => {
+        const visible = section?.classList.contains('visible');
+        if (visible) {
+          section?.classList.remove('visible');
+          section?.classList.add('hidden');
+          btn.textContent = 'Show Answers';
+          btn.classList.remove('active');
+        } else {
+          section?.classList.remove('hidden');
+          section?.classList.add('visible');
+          btn.textContent = 'Hide Answers';
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-collapsible-code] .code-toggle-btn').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+
+      btn.addEventListener('click', () => {
+        const block = btn.closest('[data-collapsible-code]');
+        const pre = block?.querySelector('pre');
+        const collapsed = block?.getAttribute('data-collapsed') === 'true';
+        if (collapsed) {
+          pre && (pre.style.display = 'block');
+          btn.textContent = '−';
+          block?.setAttribute('data-collapsed', 'false');
+        } else {
+          pre && (pre.style.display = 'none');
+          btn.textContent = '+';
+          block?.setAttribute('data-collapsed', 'true');
+        }
+      });
+    });
+  }
+
+  initExerciseBoxes();
+  document.addEventListener('astro:page-load', initExerciseBoxes);
+</script>

@@ -1,0 +1,117 @@
+---
+title: PID Tuning Practice - Elevator
+lessonId: pid-tuning-practice-elevator
+section: frc
+group: frc-pid-tuning-practice
+groupLabel: PID Tuning Practice
+groupOrder: 6
+order: 2
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Overview
+
+This lesson demonstrates PID tuning for an elevator mechanism. You'll learn the tuning method derived from SuperNURDS FRC 3255's 2025 build thread, combined with WPILib recommendations. The process involves tuning kG (gravity feedforward) first, then P (proportional gain).
+
+
+
+kG is a type of feedforward, which is open-loop control that doesn't depend on the setpoint. kS is a constant voltage added to counteract friction. Setpoint units depend on your mechanism - in this example, meters are used.
+
+### Video Tutorial
+
+Watch this video for a complete walkthrough of elevator PID tuning:
+
+
+
+### Prerequisites
+
+Before starting this lesson, you should have:
+
+
+
+• Completed the Setup lesson
+
+• Elevator mechanism selected in SmartDashboard
+
+• Live tuning enabled in Elastic
+
+• Position and velocity graphs set up in AdvantageScope
+
+• Teleoperated mode enabled
+
+<StepsBox title="Tuning Steps">
+
+1. Set the setpoint to an unreasonable value (outside the mechanism's normal range). Setpoint units depend on your mechanism - for an elevator, this might be 2-3 meters.
+2. Find the smallest kG value that holds position without moving up:
+   - Start with a low value (e.g., 0.1)
+   - Watch the position graph (blue line) - it should stay flat
+   - If it creeps up, the value is too high
+   - Double the value until it starts moving
+   - Use binary search between the last good value and the first value that moves
+   - Example: 0.4 (good) → 0.8 (too high) → 0.6 (good) → 0.7 (too high) → 0.61 (final)
+3. Verify the kG result:
+   - Position stays stable
+   - Velocity stays stable
+   - Small velocity changes may be due to simulation limitations
+4. Set the setpoint to a valid position.
+5. Start with a low P value (e.g., 0.1).
+6. Double P until the response looks good:
+   - Watch the position graph
+   - Target: rectangular shape (sharp rise, flat hold, sharp fall)
+   - Avoid slow curves or gradual taper
+7. Watch the mechanism's motion.
+8. Continue increasing P until the response is fast and clean.
+9. Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6-51.2 worked well for the simulated elevator, but your actual mechanism may need different values.
+
+</StepsBox>
+
+<RulesBox title="Elevator Tuning Summary" subtitle="The process:">
+
+- Set setpoint to unreasonable value (out of range) - units depend on your mechanism
+- Tune kG using binary search - find smallest value that holds position
+- Tune P by doubling until position graph is rectangular
+- Look for sharp up, sharp across, sharp down in position graph
+- Compare response times - should get faster as P increases
+
+</RulesBox>
+
+### Important Notes
+
+This elevator example was relatively simple and didn't require motion profiling. However, the arm mechanism (covered in the next lesson) is more complex and demonstrates:
+
+
+
+• More finicky tuning requirements
+
+• The need for motion profiling
+
+• Trapezoidal motion profiles
+
+• More realistic tuning scenarios
+
+
+
+It's recommended to watch the arm tuning video as well to see a more complete example of the tuning process, including motion profiling.
+
+### Applying to Physical Hardware
+
+The same principles apply when tuning with physical hardware using Phoenix Tuner or REV Hardware Client:
+
+
+
+• **Phoenix Tuner:** Use the Config tab to adjust values. Look for "rotor position" and "velocity" for graphing.
+
+• **REV Hardware Client:** Similar configuration options are available
+
+• The tuning process is the same: tune kG first, then kP
+
+• Watch for the same rectangular shape in position graphs
+
+
+
+The tools may look different, but the techniques and principles remain the same.
+
+<LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Arm","id":"pid-tuning-practice-arm"},{"label":"Elevator Example","id":"elevator-example"}]} title="Resources" section="frc" />
+

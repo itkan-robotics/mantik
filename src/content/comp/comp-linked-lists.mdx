@@ -1,0 +1,96 @@
+---
+title: Linked Lists
+lessonId: comp-linked-lists
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 2
+difficulty: intermediate
+duration: 25 min
+description: ""
+---
+
+### Linked List Basics
+
+Linked lists are linear data structures where elements are stored in nodes, and each node points to the next node. They're useful for dynamic memory allocation and certain algorithms.
+
+### Linked List Node Definition
+
+```java
+class ListNode {
+    int val;
+    ListNode next;
+    
+    ListNode(int val) {
+        this.val = val;
+        this.next = null;
+    }
+}
+```
+
+### Common Linked List Operations
+
+```java
+// Traversal
+ListNode current = head;
+while (current != null) {
+    // Process current.val
+    current = current.next;
+}
+
+// Insert at beginning
+ListNode newNode = new ListNode(val);
+newNode.next = head;
+head = newNode;
+
+// Insert at end
+if (head == null) {
+    head = new ListNode(val);
+} else {
+    ListNode current = head;
+    while (current.next != null) {
+        current = current.next;
+    }
+    current.next = new ListNode(val);
+}
+
+// Delete node
+ListNode dummy = new ListNode(0);
+dummy.next = head;
+ListNode prev = dummy;
+while (prev.next != null && prev.next.val != target) {
+    prev = prev.next;
+}
+if (prev.next != null) {
+    prev.next = prev.next.next;
+}
+return dummy.next;
+```
+
+### Key Techniques
+
+- **Two Pointers (Fast & Slow):** Detect cycles, find middle
+- **Dummy Node:** Handle edge cases in insertion/deletion
+- **Reverse:** Reverse entire list or portions
+- **Merge:** Merge two sorted lists
+- **Cycle Detection:** Floyd's Cycle Finding Algorithm
+
+### Cycle Detection (Floyd's Algorithm)
+
+```java
+boolean hasCycle(ListNode head) {
+    if (head == null || head.next == null) return false;
+    
+    ListNode slow = head;
+    ListNode fast = head;
+    
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+```
+

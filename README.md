@@ -1,144 +1,132 @@
 # Mantik
 
-Web-based programming and robotics learning platform for FTC/FRC teams. Content is stored as JSON files—to add or edit pages, create or modify JSON in `data/` and wire it into the navigation configs.
+Web-based programming and robotics learning platform for FIRST Robotics teams (Java, FTC, FRC, competitive coding).
+
+Built with **Astro 5 + MDX + TypeScript**, deployed as a static site on Netlify.
 
 ## Quick Start
 
 ```bash
 npm install
-npx http-server -p 8000 -c-1
+npm run dev
 ```
 
-Open http://localhost:8000. Or use Python: `python -m http.server 8000`. Or right-click `index.html` → Open with Live Server (VS Code).
+Open http://localhost:4321
 
-## Adding or Editing a Page
+**Search in dev:** Pagefind indexes are created at build time. Run `npm run build` once (or use `npm run dev:search`), then restart `npm run dev` so `/pagefind/*` assets are available locally.
 
-### 1. Create or edit the content file
+## Build & Preview
 
-Content lives in `data/` under section folders (e.g. `data/java/java-basics/`, `data/frc/command-based/`). Each page is a JSON file:
-
-```json
-{
-  "id": "my-page-id",
-  "title": "Page Title",
-  "sections": [
-    {
-      "type": "text",
-      "title": "Section Title",
-      "content": "HTML content with <strong>formatting</strong>"
-    }
-  ]
-}
+```bash
+npm run build    # Astro build + Pagefind search index
+npm run preview  # Preview production build locally
 ```
 
-### 2. Add the page to navigation
+## Project Structure
 
-Update the section config in `data/config/`. Config files map sections to the sidebar:
+```
+src/
+├── content/          # MDX lessons (java, ftc, frc, comp, homepage)
+├── components/       # Layout + MDX block components
+├── layouts/          # BaseLayout, LessonLayout
+├── pages/            # Astro routes
+└── styles/global.css # SWYFT design system
 
-- **Java**: `java-training-config.json`
-- **FRC**: `frc-specific-config.json`
-- **FTC**: `ftc-specific-config.json`
-- **Competitive**: `competitive-training-config.json`
+public/
+├── admin/            # Decap CMS
+└── media/            # Static assets
 
-Add your page to the right `groups[].items[]`:
-
-```json
-{
-  "id": "my-page-id",
-  "label": "Page Label in Sidebar",
-  "file": "data/section-folder/my-page.json",
-  "difficulty": "beginner",
-  "duration": "20 min"
-}
+legacy/               # Pre-Astro JSON SPA (archived)
+scripts/                # migrate-json-to-mdx.mjs
 ```
 
-`file` is the path from the project root. `difficulty` and `duration` are optional.
+## Adding or Editing Content
 
-### 3. Create the folder if needed
+### Option 1: Decap CMS (visual editor)
 
-If the section folder doesn’t exist, create it under `data/` (e.g. `data/java/java-basics/`).
+1. Deploy the site to Netlify and enable [Netlify Identity + Git Gateway](https://decapcms.org/docs/git-gateway-backend/)
+2. Visit `/admin` on your deployed site
+3. Edit lessons in the visual editor — changes commit to Git as MDX
 
+### Option 2: Edit MDX directly
+
+Lesson files live in `src/content/{section}/`. Each file has frontmatter and a readable MDX body — **no component imports needed**.
+
+See **[docs/content-authoring.md](docs/content-authoring.md)** for the full guide.
+
+```mdx
+---
+title: Branching and Merging
+lessonId: branching-merging
+section: java
+group: version-control
+groupLabel: "Version Control with Git & GitHub"
+groupOrder: 5
+order: 4
+difficulty: intermediate
+duration: 35 min
 ---
 
-## Section Types (Content Blocks)
+### Working with Branches
 
-Use these `type` values in `sections`:
+Plain markdown paragraphs and lists work as expected.
 
-| Type | Purpose |
-|------|---------|
-| `text` | Paragraphs with HTML. Uses `title`, `content`. |
-| `list` | Bullet list. Uses `title` (optional), `items` (array of strings). |
-| `code` | Code block with syntax highlighting. Uses `title`, `content`, `code`. |
-| `code-tabs` | Tabbed code examples. Uses `title`, `tabs` (array of `{label, code}`). |
-| `rules-box` | Highlighted rules. Uses `title`, `subtitle`, `items`, plus optional `goodPractices` and `avoid` arrays. |
-| `steps-box` | Numbered steps. Uses `title`, `items`. |
-| `exercise-box` | Practice with show/hide answers. Uses `title`, `subtitle`, `content` (starter code), `tasks`, `answers` (array of `{task, content}`). |
-| `table` | Data table. Uses `title`, `headers`, `rows`. |
-| `link-grid` | Links to other pages or URLs. Uses `title`, `links` (array of `{label, id}` for internal or `{label, url}` for external). |
-| `emphasis-box` | Styled like `rules-box`. Uses same fields. |
-| `data-types-grid` | Data type comparison cards. |
-| `logical-operators` | Operator reference table. |
-
----
-
-## Adding a New Section
-
-1. **Create config file**  
-   Add `data/config/my-section-config.json` with `title`, optional `sections` (landing content), and `groups`:
-
-   ```json
-   {
-     "id": "my-section",
-     "title": "My Section",
-     "groups": [
-       {
-         "id": "group-id",
-         "label": "Group Label",
-         "items": [
-           {
-             "id": "first-page",
-             "label": "First Page",
-             "file": "data/my-section/first-page.json"
-           }
-         ]
-       }
-     ]
-   }
-   ```
-
-2. **Register in main config**  
-   Edit `data/config/config.json` and add to `sections`:
-
-   ```json
-   "my-section": {
-     "id": "my-section",
-     "label": "My Section",
-     "file": "data/config/my-section-config.json",
-     "sidebarEnabled": true
-   }
-   ```
-
-3. **Create content folder**  
-   Add `data/my-section/` and put your JSON page files there.
-
----
-
-## File Layout
-
-```
-data/
-├── config/           # Section configs (navigation)
-│   ├── config.json   # Main app config (registers sections)
-│   └── *-config.json # Per-section nav and landing content
-├── java/             # Java training pages
-├── frc/              # FRC training pages
-├── ftc/              # FTC training pages
-└── comp/             # Competitive coding pages
+```java
+git branch feature-name
+git checkout -b new-branch
 ```
 
----
+<RulesBox title="Tips">
 
-## References
+- Use feature branches for isolated work
+- Keep `main` competition-ready
 
-- **Styling**: `STYLING_GUIDE.md`
-- **Deployment**: `DEPLOYMENT_CHECKLIST.md`, `NETLIFY_DEPLOYMENT.md`
+</RulesBox>
+
+<ExerciseBox title="Practice">
+
+1. Create a branch
+2. Merge it back to main
+
+</ExerciseBox>
+```
+
+### MDX Block Components
+
+Registered in `src/mdx-components.ts` — use directly in lesson MDX without imports. Prefer markdown + fenced code over legacy prop-only usage.
+
+| Component | Purpose |
+|-----------|---------|
+| `RulesBox` | Highlighted rules, tips, good practices (markdown slot) |
+| `StepsBox` | Numbered steps |
+| `ExerciseBox` | Practice tasks with optional answers |
+| `LinkGrid` | Navigation link cards |
+| `CodeBlock` | Legacy single code wrapper; prefer fenced code |
+| `CodeTabs` / `CodeTab` | Tabbed code (Talon FX / SPARK MAX, etc.); use fenced code inside `CodeTab` slots |
+| `TextBlock` | Legacy HTML strings only when markdown is not enough |
+| `ContentTable` | Data tables |
+| `DataTypesGrid` | Data type comparison cards |
+| `LogicalOperators` | Operator reference |
+
+## Migrating from Legacy JSON
+
+The original JSON content is archived in `legacy/data/`. To re-run migration:
+
+```bash
+npm run migrate
+```
+
+**Warning:** This regenerates all of `src/content/` from JSON and **overwrites hand-edited MDX**. Commit or back up first. See [docs/content-authoring.md](docs/content-authoring.md).
+
+## Deployment
+
+Configured for **Netlify** via `netlify.toml`:
+
+- Build: `npm run build`
+- Publish: `dist/`
+- Sitemap: auto-generated by `@astrojs/sitemap`
+- Search: [Pagefind](https://pagefind.app) (built at deploy time)
+
+## License
+
+Copyright © 2026 Mantik

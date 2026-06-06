@@ -1,0 +1,212 @@
+---
+title: FTC SDK Basics
+lessonId: ftc-sdk-basics
+section: ftc
+group: onbot-java-setup
+groupLabel: OnBot Java Setup
+groupOrder: 2
+order: 2
+difficulty: beginner
+duration: 70 min
+description: ""
+---
+
+### What is the FTC SDK?
+
+The FTC (FIRST Tech Challenge) [Software Development Kit](https://www.geeksforgeeks.org/software-engineering/what-is-software-development-kit-sdk/) (SDK) is the foundation for programming FTC robots in Java. It provides all the libraries, APIs, and tools needed to control robot hardware, manage OpModes, and interact with sensors and gamepads.
+
+
+
+The SDK abstracts away low-level hardware details, letting you focus on robot logic. 
+
+
+
+Learn more: [FTC Docs: SDK Overview](https://ftc-docs.firstinspires.org/en/latest/ftc_sdk/overview/index.html) • [FTC SDK GitHub](https://github.com/FIRST-Tech-Challenge/FtcRobotController)
+
+<RulesBox title="SDK Key Features" subtitle="The FTC SDK provides:">
+
+- Robot hardware control (motors, servos, sensors)
+- OpMode framework for autonomous and teleop code
+- Gamepad input handling
+- Telemetry for debugging and monitoring
+- Support for Control Hub and Expansion Hub
+
+</RulesBox>
+
+### SDK Structure
+
+The SDK is organized into layers that separate hardware access from your robot logic. This makes it easier to write, debug, and maintain your code.
+
+
+
+**Hardware Layer**: Direct communication with motors, servos, and sensors
+
+**Device Layer**: Abstraction for consistent hardware access
+
+**OpMode Layer**: Programming framework for robot modes
+
+**Application Layer**: Your custom code
+
+### Key SDK Classes
+
+The most important classes in the SDK are:
+
+
+
+- **OpMode**: The base class for all robot programs. You extend this to create your own autonomous or teleop code. ([OpMode API](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/eventloop/opmode/OpMode.html))
+
+- **HardwareMap**: Lets you access configured hardware devices by name. ([HardwareMap API](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/HardwareMap.html))
+
+- **DcMotor, Servo, Sensor classes**: Used to control motors, servos, and sensors. ([DcMotor API](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/DcMotor.html), [Servo API](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/Servo.html))
+
+
+
+You will use these classes in almost every FTC program.
+
+### How an OpMode Works
+
+An OpMode is a class that controls your robot during a match. You write your robot's logic inside an OpMode, and the Driver Station app lets you select and run it.
+
+
+
+There are two main types: **LinearOpMode** (runs code sequentially) and **OpMode** (runs code in a loop). Most beginners start with LinearOpMode.
+
+
+
+See: [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28OnBot-Java%29.html)
+
+### Basic TeleOp OpMode
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@TeleOp(name = "BasicTeleOp")
+public class BasicTeleOp extends LinearOpMode {
+    private DcMotor leftDrive, rightDrive;
+    private Servo clawServo;
+
+    @Override
+    public void runOpMode() {
+        // Map hardware
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        clawServo = hardwareMap.get(Servo.class, "claw_servo");
+
+        // Wait for the game to start
+        waitForStart();
+
+        // Run until the end of the match
+        while (opModeIsActive()) {
+            // Drive robot using joysticks
+            double leftPower = -gamepad1.left_stick_y;
+            double rightPower = -gamepad1.right_stick_y;
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+
+            // Open/close claw with buttons
+            if (gamepad1.a) {
+                clawServo.setPosition(1.0); // Open
+            } else if (gamepad1.b) {
+                clawServo.setPosition(0.0); // Close
+            }
+
+            // Show telemetry
+            telemetry.addData("Left Power", leftPower);
+            telemetry.addData("Right Power", rightPower);
+            telemetry.addData("Claw Position", clawServo.getPosition());
+            telemetry.update();
+        }
+    }
+}
+```
+
+### Hardware Mapping Explained
+
+The `hardwareMap` object lets you access motors, servos, and sensors by the names you set in the Robot Controller app.
+
+
+
+For example, if you named a motor 'left_drive' in your configuration, you can access it in code as shown below.
+
+
+
+See [FTC Docs: Configuring Your Hardware](https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html) for more.
+
+### Hardware Mapping Example
+
+```java
+DcMotor left = hardwareMap.get(DcMotor.class, "left_drive");
+Servo claw = hardwareMap.get(Servo.class, "claw_servo");
+```
+
+### Using Telemetry
+
+Telemetry lets you send data to the Driver Station for debugging and monitoring. You can display motor power, sensor values, or any other information you want to see during a match.
+
+
+
+See [gm0: Telemetry](https://gm0.org/en/latest/docs/software/tutorials/using-telemetry.html) for more.
+
+### Telemetry Example
+
+```java
+telemetry.addData("Motor Power", left.getPower());
+telemetry.addData("Servo Position", claw.getPosition());
+telemetry.update();
+```
+
+### Gamepad Input Explained
+
+The SDK provides two gamepad objects, `gamepad1` and `gamepad2`, for reading driver and operator controls. You can read joystick, button, and trigger values to control your robot.
+
+
+
+See [FTC Docs: Gamepad](https://ftc-docs.firstinspires.org/en/latest/control_hard_compon/ds_components/components/components.html#gamepads) for a full list of controls.
+
+### Gamepad Input Example
+
+```java
+double drive = gamepad1.left_stick_y;
+boolean openClaw = gamepad1.a;
+boolean closeClaw = gamepad1.b;
+```
+
+<RulesBox title="Best Practices" subtitle="For robust FTC code:">
+
+- Initialize hardware in runOpMode() or init()
+- Use clear, descriptive names for hardware
+- Add telemetry for debugging
+- Handle exceptions gracefully
+- Comment your code
+- Test code on the robot frequently
+
+</RulesBox>
+
+### Further Reading & Resources
+
+- [gm0.org Software Docs](https://gm0.org/en/latest/docs/software/index.html)
+
+- [FTC SDK GitHub](https://github.com/FIRST-Tech-Challenge/FtcRobotController)
+
+- [FTC Docs](https://ftc-docs.firstinspires.org/)
+
+- [FIRST Technology Resources](https://www.firstinspires.org/resource-library/ftc/technology-information-and-resources)
+
+- [FTC SDK JavaDoc (RobotCore)](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/index.html)
+
+- [FTC SDK JavaDoc (Hardware)](https://javadoc.io/doc/org.firstinspires.ftc/Hardware/latest/index.html)
+
+<LinkGrid links={[{"label":"OpMode Structure","url":"opmode-structure"},{"label":"Basic Robot Control","url":"basic-robot-control"},{"label":"FTCDashboard Comprehensive Guide","url":"ftc-dashboard-comprehensive"}]} title="Next Steps" section="ftc" />
+
+<ExerciseBox title="Practice: SDK Basics" description="Try these to reinforce your understanding:" answers={[{"task":"Create an OpMode that initializes a motor and drives it with constant power","content":"// Initialize motor in runOpMode()\nDcMotor testMotor = hardwareMap.get(DcMotor.class, \"test_motor\");\n\n// Drive motor with constant power\nwhile (opModeIsActive()) {\n    testMotor.setPower(0.5); // 50% power\n}"},{"task":"Display the motor's current power on the Driver Station","content":"// Add telemetry to show motor power\nwhile (opModeIsActive()) {\n    telemetry.addData(\"Motor Power\", testMotor.getPower());\n    telemetry.update();\n    testMotor.setPower(0.5);\n}"},{"task":"Use gamepad buttons to control a servo position","content":"// Initialize servo\nServo testServo = hardwareMap.get(Servo.class, \"test_servo\");\n\n// Control servo with gamepad\nwhile (opModeIsActive()) {\n    if (gamepad1.a) {\n        testServo.setPosition(0.0); // Close position\n    } else if (gamepad1.b) {\n        testServo.setPosition(1.0); // Open position\n    }\n}"},{"task":"Initialize multiple different hardware components using hardwareMap","content":"// Practice with different hardware types\nDcMotor motor1 = hardwareMap.get(DcMotor.class, \"motor1\");\nServo servo1 = hardwareMap.get(Servo.class, \"servo1\");\nColorSensor colorSensor = hardwareMap.get(ColorSensor.class, \"color_sensor\");"},{"task":"Combine all tasks into one working OpMode","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport com.qualcomm.robotcore.hardware.Servo;\nimport com.qualcomm.robotcore.hardware.ColorSensor;\n\n\n@TeleOp(name = \"PracticeOpMode\")\npublic class PracticeOpMode extends LinearOpMode {\n    private DcMotor testMotor;\n    private Servo testServo;\n    private ColorSensor colorSensor;\n\n    @Override\n    public void runOpMode() {\n        // Initialize all hardware components\n        testMotor = hardwareMap.get(DcMotor.class, \"test_motor\");\n        testServo = hardwareMap.get(Servo.class, \"test_servo\");\n        colorSensor = hardwareMap.get(ColorSensor.class, \"color_sensor\");\n\n        // Wait for start\n        waitForStart();\n\n        while (opModeIsActive()) {\n            // Drive motor with left stick\n            double motorPower = -gamepad1.left_stick_y;\n            testMotor.setPower(motorPower);\n\n            // Control servo with buttons\n            if (gamepad1.a) {\n                testServo.setPosition(0.0);\n            } else if (gamepad1.b) {\n                testServo.setPosition(1.0);\n            }\n\n            // Display telemetry\n            telemetry.addData(\"Motor Power\", motorPower);\n            telemetry.addData(\"Servo Position\", testServo.getPosition());\n            telemetry.addData(\"Color Sensor Red\", colorSensor.red());\n            telemetry.update();\n        }\n    }\n}"}]}>
+
+- Write an OpMode that initializes and drives one motor
+- Add telemetry to show motor power
+- Read gamepad input to control a servo
+- Practice using hardwareMap for different components
+
+</ExerciseBox>
+

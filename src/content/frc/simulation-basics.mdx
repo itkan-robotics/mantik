@@ -1,0 +1,230 @@
+---
+title: Simulation Basics for FRC Robots
+lessonId: simulation-basics
+section: frc
+group: frc-advanced-topics
+groupLabel: Advanced Topics
+groupOrder: 10
+order: 1
+difficulty: intermediate
+duration: 45 min
+description: ""
+---
+
+### Introduction to Robot Simulation
+
+Simulation allows you to run your robot code on a computer without a physical robot. This is incredibly powerful for testing logic, debugging, and developing autonomous routines before the robot is built. WPILib provides a robust simulation framework that mimics the behavior of hardware components like motors, sensors, and the driver station.
+
+
+
+Simulation works by creating a virtual environment where hardware inputs (voltage to motors) are processed by physics models, which then update virtual sensor outputs (encoder values, gyro angles). Your code interacts with these simulated sensors just as it would with real ones.
+
+
+
+Learn more: [WPILib: Introduction to Robot Simulation](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html)
+
+### The Simulation Loop
+
+In a WPILib robot, the "simulationPeriodic()" method in your "Robot" or "Subsystem" classes is called every loop cycle (typically 20ms) only when running in simulation. This is where you update your physics models.
+
+
+
+**Flow of Data in Simulation:**
+
+1. **Robot Code:** Sets motor outputs (e.g., "motor.set(0.5)").
+
+2. **Simulation Periodic:** You read these outputs, feed them into a physics model (e.g., "DrivetrainSim"), and advance the model by 20ms.
+
+3. **Model Update:** The model calculates the new state (position, velocity).
+
+4. **Sensor Update:** You update the simulated sensors (e.g., "simEncoder.setPosition(...)") with the new model data.
+
+5. **Robot Code:** Reads the sensors in the next loop, perceiving the motion.
+
+### Basic Drivetrain Simulation Example
+
+```java
+package frc.robot.subsystems;
+
+
+
+import com.revrobotics.spark.SparkMax;
+
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+
+
+import edu.wpi.first.hal.SimDouble;
+
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+
+import edu.wpi.first.math.util.Units;
+
+import edu.wpi.first.wpilibj.AnalogGyro;
+
+import edu.wpi.first.wpilibj.RobotBase;
+
+import edu.wpi.first.wpilibj.RobotController;
+
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+
+
+public class Drivetrain extends SubsystemBase {
+
+    // Real hardware
+
+    private final SparkMax m_leftMotor = new SparkMax(1, MotorType.kBrushless);
+
+    private final SparkMax m_rightMotor = new SparkMax(2, MotorType.kBrushless);
+
+    private final AnalogGyro m_gyro = new AnalogGyro(0);
+
+
+
+    // Simulation classes
+
+    private DifferentialDrivetrainSim m_driveSim;
+
+    private final Field2d m_field = new Field2d();
+
+
+
+    public Drivetrain() {
+
+        SmartDashboard.putData("Field", m_field);
+
+
+
+        if (RobotBase.isSimulation()) {
+
+            // Create the simulation model
+
+            m_driveSim = new DifferentialDrivetrainSim(
+
+                DCMotor.getNEO(1),       // 1 NEO per side
+
+                7.29,                    // Gear ratio
+
+                7.5,                     // MOI
+
+                60.0,                    // Mass (kg)
+
+                Units.inchesToMeters(3), // Wheel radius
+
+                0.71,                    // Track width
+
+                null                     // Measurement noise
+
+            );
+
+        }
+
+    }
+
+
+
+    @Override
+
+    public void simulationPeriodic() {
+
+        // 1. Update simulation inputs from motor outputs
+
+        m_driveSim.setInputs(
+
+            m_leftMotor.get() * RobotController.getBatteryVoltage(),
+
+            m_rightMotor.get() * RobotController.getBatteryVoltage()
+
+        );
+
+
+
+        // 2. Advance the simulation by 20ms
+
+        m_driveSim.update(0.02);
+
+
+
+        // 3. Update simulated sensors
+
+        // (Note: For SparkMax/TalonFX, you might need vendor-specific sim methods)
+
+        // For this example, we assume generic encoder updates or wrapper classes
+
+        int dev = SimDeviceDataJNI.getSimDeviceHandle("SPARK MAX [1]");
+
+        SimDouble position = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Position"));
+
+        position.set(m_driveSim.getLeftPositionMeters());
+
+        
+
+        // Update Gyro
+
+        int gyroHandle = SimDeviceDataJNI.getSimDeviceHandle("AnalogGyro [0]");
+
+        SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(gyroHandle, "Angle"));
+
+        angle.set(-m_driveSim.getHeading().getDegrees()); // Gyro is typically inverted
+
+
+
+        // 4. Update Field2d for visualization
+
+        m_field.setRobotPose(m_driveSim.getPose());
+
+    }
+
+}
+```
+
+### Physics Simulation Classes
+
+WPILib provides several pre-built simulation classes for common mechanisms:
+
+
+
+**DifferentialDrivetrainSim:** Simulates a tank drive robot.
+
+**SingleJointedArmSim:** Simulates a rotating arm (like an intake or shoulder).
+
+**ElevatorSim:** Simulates a linear elevator.
+
+**FlywheelSim:** Simulates a spinning mass (shooter, intake rollers).
+
+**DCMotorSim:** Simulates a simple motor with load.
+
+
+
+These classes handle the complex physics equations (gravity, inertia, friction, voltage-to-torque) so you don't have to.
+
+### Visualizing Simulation with Field2d
+
+The "Field2d" class is essential for visualizing where your robot thinks it is. By updating the "Field2d" object with your robot's odometry (or simulation pose), you can see a virtual robot moving on a virtual field in Glass, Shuffleboard, or AdvantageScope.
+
+
+
+This is critical for testing autonomous paths. If the robot follows the path on the "Field2d" view, your path following logic is likely correct.
+
+<RulesBox title="Simulation Best Practices" subtitle="Get the most out of simulation:">
+
+- Use RobotBase.isSimulation() to initialize sim-specific objects.
+- Update physics models in simulationPeriodic().
+- Use Field2d to visualize robot pose and trajectories.
+- Tune simulation parameters (mass, gearing, MOI) to match the real robot as closely as possible.
+- Test autonomous routines in simulation to verify logic and path following.
+- Use AdvantageScope for advanced 3D visualization and data analysis.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"Unit Testing","id":"frc-unit-testing"},{"label":"AdvantageKit","id":"advantagekit"},{"label":"AdvantageScope","id":"advantagescope"}]} title="Resources" section="frc" />
+

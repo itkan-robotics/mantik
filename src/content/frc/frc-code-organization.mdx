@@ -1,0 +1,298 @@
+---
+title: Code Organization
+lessonId: frc-code-organization
+section: frc
+group: frc-command-based
+groupLabel: Command-Based Programming
+groupOrder: 3
+order: 7
+difficulty: intermediate
+duration: 60 min
+description: ""
+---
+
+### Command-Based Structure
+
+Standard Command-Based projects separate concerns into Subsystems, Commands, and the Robot Container.
+
+
+
+**Subsystems:** Physical hardware (Drivetrain, Arm) and low-level control.
+
+**Commands:** Actions and logic (Drive, Score).
+
+**RobotContainer:** Setup and wiring (bindings, auto chooser). Replaces `Robot.java` logic.
+
+
+
+[WPILib Guide](https://docs.wpilib.org/en/stable/docs/software/commandbased/structuring-command-based-project.html)
+
+### Directory Layout
+
+Standard structure:
+
+### Structure
+
+```java
+src/main/java/frc/robot/
+├── Main.java                // Entry point
+├── Robot.java               // Lifecycle (init, periodic)
+├── RobotContainer.java      // Bindings & Setup
+├── Constants.java           // IDs & Tuning values
+├── subsystems/              // Hardware wrappers
+│   ├── Drivetrain.java
+│   └── Intake.java
+├── commands/                // Actions
+│   ├── autos/               // Auto routines
+│   ├── DriveCommand.java
+│   └── IntakeCommand.java
+└── util/                    // Helpers
+```
+
+### Constants
+
+Use a `Constants` class to avoid magic numbers. Organize with nested classes by subsystem or component.
+
+### Constants Example
+
+```java
+package frc.robot;
+
+public final class Constants {
+    public static final class Drivetrain {
+        // Motor CAN IDs
+        public static final int kLeftMotorID = 1;
+        public static final int kRightMotorID = 2;
+        // Speeds
+        public static final double kMaxSpeed = 0.8;
+    }
+
+    public static final class Intake {
+        public static final int kMotorID = 5;
+        public static final double kIntakeSpeed = 0.6;
+        public static final double kEjectSpeed = -0.4;
+    }
+
+    public static final class Arm {
+        public static final int kMotorID = 7;
+        public static final double kP = 0.1;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kMaxPosition = 90.0;
+    }
+
+    public static final class Controller {
+        public static final int kDriverPort = 0;
+        public static final int kOperatorPort = 1;
+    }
+}
+```
+
+### Subsystems Organization
+
+Each subsystem gets its own file in the `subsystems/` directory. Subsystems should contain only hardware objects and methods to control them.
+
+### Subsystem Structure
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
+public class Intake extends SubsystemBase {
+    private final TalonFX m_motor = new TalonFX(Constants.Intake.kMotorID);
+    
+    public Intake() {
+        // Hardware configuration
+        configureMotor();
+    }
+    
+    private void configureMotor() {
+        // Configuration logic
+    }
+    
+    public void run(double speed) {
+        m_motor.set(speed);
+    }
+    
+    public void stop() {
+        m_motor.set(0);
+    }
+}
+```
+
+<RulesBox title="Subsystem Guidelines" subtitle="Organization rules:">
+
+- **One subsystem per file:** Name matches class name.
+- **Use Constants:** All IDs and configuration values come from Constants.
+- **Simple methods:** Provide control methods, not complex logic.
+- **No commands in subsystems:** Commands belong in the commands package.
+
+</RulesBox>
+
+### Commands Organization
+
+Commands go in the `commands/` directory. Use subdirectories to group related commands, especially autonomous routines.
+
+### Commands Directory Structure
+
+```java
+commands/
+├── autos/                   // Autonomous routines
+│   ├── DriveForwardAuto.java
+│   └── ScoreAndMoveAuto.java
+├── DriveCommand.java        // Teleop commands
+├── IntakeCommand.java
+└── ScoreCommand.java
+```
+
+### Command Structure Example
+
+```java
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Intake;
+import frc.robot.Constants;
+
+public class RunIntakeCommand extends Command {
+    private final Intake m_intake;
+    
+    public RunIntakeCommand(Intake intake) {
+        m_intake = intake;
+        addRequirements(m_intake);
+    }
+    
+    @Override
+    public void initialize() {
+        m_intake.run(Constants.Intake.kIntakeSpeed);
+    }
+    
+    @Override
+    public void end(boolean interrupted) {
+        m_intake.stop();
+    }
+}
+```
+
+<RulesBox title="Command Guidelines" subtitle="Organization rules:">
+
+- **Dependency injection:** Pass subsystems via constructor.
+- **Add requirements:** Always call `addRequirements()` in constructor.
+- **Use Constants:** Hard-coded values belong in Constants.
+- **Group autos:** Put autonomous routines in `commands/autos/`.
+- **Descriptive names:** Command name should clearly describe its action.
+
+</RulesBox>
+
+### RobotContainer Organization
+
+The `RobotContainer` centralizes setup and wiring. It should contain initialization logic only, not runtime behavior.
+
+### RobotContainer Structure
+
+```java
+package frc.robot;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
+import frc.robot.subsystems.*;
+import frc.robot.commands.*;
+import frc.robot.commands.autos.*;
+
+public class RobotContainer {
+    // Subsystems
+    private final Drivetrain m_drivetrain = new Drivetrain();
+    private final Intake m_intake = new Intake();
+    
+    // Controllers
+    private final CommandXboxController m_driver = new CommandXboxController(Constants.Controller.kDriverPort);
+    private final CommandXboxController m_operator = new CommandXboxController(Constants.Controller.kOperatorPort);
+    
+    // Autonomous chooser
+    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+    
+    public RobotContainer() {
+        configureDefaultCommands();
+        configureBindings();
+        configureAutonomous();
+    }
+    
+    private void configureDefaultCommands() {
+        m_drivetrain.setDefaultCommand(Commands.run(
+            () -> m_drivetrain.arcadeDrive(m_driver.getLeftY(), m_driver.getRightX()),
+            m_drivetrain
+        ));
+        
+        m_intake.setDefaultCommand(Commands.run(() -> m_intake.stop(), m_intake));
+    }
+    
+    private void configureBindings() {
+        m_driver.a().whileTrue(Commands.run(() -> m_intake.run(Constants.Intake.kIntakeSpeed), m_intake));
+        m_operator.x().onTrue(new ScoreCommand(m_intake));
+    }
+    
+    private void configureAutonomous() {
+        m_autoChooser.setDefaultOption("Drive Forward", new DriveForwardAuto(m_drivetrain));
+        m_autoChooser.addOption("Score and Move", new ScoreAndMoveAuto(m_drivetrain, m_intake));
+        SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    }
+    
+    public Command getAutonomousCommand() {
+        return m_autoChooser.getSelected();
+    }
+}
+```
+
+<RulesBox title="RobotContainer Guidelines" subtitle="Organization rules:">
+
+- **Group by function:** Separate default commands, bindings, and autonomous into methods.
+- **Use Constants:** Controller ports and other values come from Constants.
+- **No loop logic:** Only initialization and configuration code.
+- **Provide auto command:** Include `getAutonomousCommand()` method.
+- **Final fields:** Subsystems and controllers should be final.
+
+</RulesBox>
+
+### Utility Classes
+
+Helper classes and utilities belong in the `util/` directory. Examples include math utilities, conversion helpers, and custom controllers.
+
+### Utility Example
+
+```java
+package frc.robot.util;
+
+public class MathUtils {
+    public static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+    
+    public static double deadband(double value, double threshold) {
+        if (Math.abs(value) < threshold) {
+            return 0.0;
+        }
+        return value;
+    }
+}
+```
+
+<RulesBox title="General Organization Rules" subtitle="Best practices:">
+
+- **One class per file:** File name matches class name.
+- **Clear separation:** Subsystems = Hardware; Commands = Logic.
+- **Dependency injection:** Pass subsystems to commands via constructor.
+- **No static subsystems:** Avoid static instances; use dependency injection.
+- **Organize constants:** Use nested classes in Constants by subsystem.
+- **Descriptive names:** Use clear, self-documenting names.
+- **Group related code:** Use subdirectories for autos and utilities.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"Command-Based Intro","id":"intro-to-command-based"}]} title="Resources" section="frc" />
+

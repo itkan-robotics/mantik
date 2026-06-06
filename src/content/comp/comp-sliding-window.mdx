@@ -1,0 +1,130 @@
+---
+title: Sliding Window
+lessonId: comp-sliding-window
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 5
+difficulty: intermediate
+duration: 35 min
+description: ""
+---
+
+### Sliding Window Technique
+
+The sliding window technique is used to solve problems involving arrays/strings where we need to find a subarray/substring that satisfies certain conditions.
+
+### Types of Sliding Windows
+
+- **Fixed Size Window:** Window size is constant
+- **Variable Size Window:** Window size changes based on conditions
+- **Dynamic Window:** Window expands and contracts
+
+### Fixed Size Window Example
+
+```java
+// Find maximum sum of subarray of size k
+public int maxSumSubarray(int[] nums, int k) {
+    if (nums.length < k) return 0;
+    
+    // Calculate sum of first window
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) {
+        windowSum += nums[i];
+    }
+    
+    int maxSum = windowSum;
+    
+    // Slide the window
+    for (int i = k; i < nums.length; i++) {
+        windowSum = windowSum - nums[i - k] + nums[i];
+        maxSum = Math.max(maxSum, windowSum);
+    }
+    
+    return maxSum;
+}
+```
+
+### Variable Size Window Example
+
+```java
+// Find smallest subarray with sum >= target
+public int minSubArrayLen(int target, int[] nums) {
+    int left = 0;
+    int sum = 0;
+    int minLength = Integer.MAX_VALUE;
+    
+    for (int right = 0; right < nums.length; right++) {
+        sum += nums[right];
+        
+        while (sum >= target) {
+            minLength = Math.min(minLength, right - left + 1);
+            sum -= nums[left];
+            left++;
+        }
+    }
+    
+    return minLength == Integer.MAX_VALUE ? 0 : minLength;
+}
+
+// Longest substring without repeating characters
+public int lengthOfLongestSubstring(String s) {
+    int left = 0;
+    int maxLength = 0;
+    Set<Character> charSet = new HashSet<>();
+    
+    for (int right = 0; right < s.length(); right++) {
+        char currentChar = s.charAt(right);
+        
+        while (charSet.contains(currentChar)) {
+            charSet.remove(s.charAt(left));
+            left++;
+        }
+        
+        charSet.add(currentChar);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+}
+```
+
+### Dynamic Window with HashMap
+
+```java
+// Longest substring with at most k distinct characters
+public int lengthOfLongestSubstringKDistinct(String s, int k) {
+    if (k == 0) return 0;
+    
+    int left = 0;
+    int maxLength = 0;
+    Map<Character, Integer> charCount = new HashMap<>();
+    
+    for (int right = 0; right < s.length(); right++) {
+        char currentChar = s.charAt(right);
+        charCount.put(currentChar, charCount.getOrDefault(currentChar, 0) + 1);
+        
+        while (charCount.size() > k) {
+            char leftChar = s.charAt(left);
+            charCount.put(leftChar, charCount.get(leftChar) - 1);
+            if (charCount.get(leftChar) == 0) {
+                charCount.remove(leftChar);
+            }
+            left++;
+        }
+        
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+}
+```
+
+### Common Applications
+
+- **Subarray Problems:** Maximum/minimum sum, average
+- **Substring Problems:** Longest/shortest substring with conditions
+- **Frequency Problems:** Substrings with specific character frequencies
+- **Optimization:** Reduce time complexity from O(n²) to O(n)
+

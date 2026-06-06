@@ -1,0 +1,36 @@
+---
+title: Current Limiting
+lessonId: motor-current-limiting
+section: frc
+group: frc-advanced-motor-config
+groupLabel: Advanced Motor Control
+groupOrder: 4
+order: 2
+difficulty: intermediate
+duration: 15 min
+description: ""
+---
+
+### Why Limit Current?
+
+Current limiting protects motors from burning out and prevents the main breaker from tripping. It is the single most important safety configuration.
+
+### Types of Limits
+
+**Stator (Smart) Limit:** Limits current inside the motor. Protects the motor from overheating. Use this for mechanism safety.
+
+**Supply (Secondary) Limit:** Limits current drawn from the battery. Protects the main breaker/battery. Use this to prevent brownouts.
+
+<RulesBox title="Recommended Values" subtitle="Starting points:">
+
+- **Drivetrain:** 40A - 60A
+- **Intake/Roller:** 20A - 30A
+- **Elevator/Arm:** 40A - 50A
+- **NEO 550:** NEVER exceed 20A - 25A.
+
+</RulesBox>
+
+### Code Examples
+
+<CodeTabs tabs={[{"label":"Talon FX","code":"package frc.robot.subsystems;\n\nimport com.ctre.phoenix6.hardware.TalonFX;\nimport com.ctre.phoenix6.configs.TalonFXConfiguration;\n\npublic class Drivetrain extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    \n    // ... (other fields and methods)\n    \n    public void configureCurrentLimits() {\n        TalonFXConfiguration config = new TalonFXConfiguration();\n        \n        // Stator current limit: protects the motor from overheating\n        config.CurrentLimits.StatorCurrentLimitEnable = true;\n        config.CurrentLimits.StatorCurrentLimit = 40.0; // Amps\n        \n        // Supply current limit: protects battery and prevents brownouts\n        config.CurrentLimits.SupplyCurrentLimitEnable = true;\n        config.CurrentLimits.SupplyCurrentLimit = 50.0;      // Limit in amps\n        config.CurrentLimits.SupplyCurrentThreshold = 60.0; // Threshold to trigger\n        config.CurrentLimits.SupplyTimeThreshold = 0.1;     // Time above threshold before limiting\n        \n        motor.getConfigurator().apply(config);\n    }\n    \n    // ... (rest of class)","language":"java"},{"label":"SPARK MAX","code":"package frc.robot.subsystems;\n\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\npublic class Drivetrain extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    \n    // ... (other fields and methods)\n    \n    public void configureCurrentLimits() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        \n        // Smart current limit: protects the motor (stator current)\n        config.smartCurrentLimit(40); // Amps\n        \n        // Secondary current limit: protects battery (supply current)\n        config.secondaryCurrentLimit(60); // Amps\n        \n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    // ... (rest of class)","language":"java"}]} />
+

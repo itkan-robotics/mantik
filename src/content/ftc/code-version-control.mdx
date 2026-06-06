@@ -1,0 +1,156 @@
+---
+title: Version Control with Git in FTC Android Studio Projects
+lessonId: code-version-control
+section: ftc
+group: android-studio-setup
+groupLabel: Android Studio Setup
+groupOrder: 9
+order: 2
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### What is Version Control?
+
+Version control is a system that tracks changes to your code over time. It lets you save your work, collaborate with teammates, and revert to previous versions if something goes wrong.
+
+### Installing Git and GitHub Desktop
+
+Before you can use version control, you need to install Git and optionally GitHub Desktop. Git is the core version control system, while GitHub Desktop provides a user-friendly interface for Git operations.
+
+### Downloading and Installing Git
+
+Git is the foundation of version control. Download it from the official website and follow the installation wizard. 
+
+
+
+**Download Git:** [Git Official Downloads](https://git-scm.com/downloads)
+
+**Installation Guide:** [Git Installation Documentation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+
+
+
+During installation, use the default settings unless your team has specific requirements. After installation, you can verify Git is installed by opening a terminal and typing ``git --version``.
+
+### Installing GitHub Desktop (Optional)
+
+GitHub Desktop provides a graphical interface for Git, making it easier for beginners to use version control. It's especially helpful for teams new to Git. 
+
+
+
+**Download GitHub Desktop:** [GitHub Desktop Official Site](https://desktop.github.com/)
+
+**Getting Started Guide:** [GitHub Desktop Documentation](https://docs.github.com/en/desktop)
+
+
+
+After installing GitHub Desktop, you'll need to sign in with your GitHub account to access your repositories.
+
+### Setting Up Your GitHub Account
+
+To collaborate with your team, you'll need a GitHub account. Create one at [GitHub - Sign Up](https://github.com/join). Once you have an account, you can create repositories, join your team's organization, and start collaborating on code. 
+
+
+
+For FTC teams, it's common to have a team organization on GitHub where all team members can access the robot code repository.
+
+### Why Use Git?
+
+Git is a popular version control system used by developers worldwide. It makes it easy to share code, review changes, and collaborate with your team. For new teams, we recommend creating an organization in GitHub to host all of your team's code, so you can store previous seasons' code, share code with other teams and help new members get started. For more information on creating organizations in GitHub, see [GitHub's documentation on creating organizations](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch).
+
+### Basic Git Workflow
+
+The core Git workflow involves cloning a repository, making changes, staging them, committing, and pushing to a remote server. Here are the main steps:
+
+### Cloning a Repository
+
+Download a copy of a remote repository to your computer.
+
+
+
+```java
+git clone https://github.com/your-team/ftc-robot-code.git
+```
+
+### Adding and Committing Changes
+
+Stage your changes and save them to the repository history.
+
+
+
+```java
+git add .
+git commit -m "Describe your changes"
+```
+
+### Pushing and Pulling
+
+Upload your commits to GitHub and download new changes from teammates.
+
+
+
+```java
+git push
+git pull
+```
+
+### Branching and Merging
+
+Branches let you work on new features or bug fixes without affecting the main code. Merging brings changes from one branch into another. 
+
+
+
+Learn more: [Git Branch Guide](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository)
+
+### Creating and Switching Branches
+
+Create a new branch and switch to it.
+
+
+
+```java
+git branch new-feature
+git checkout new-feature
+```
+
+### Merging Branches
+
+Combine changes from one branch into another.
+
+
+
+```java
+git checkout main
+git merge new-feature
+```
+
+### Resolving Merge Conflicts
+
+Sometimes, two people change the same part of a file. Git will ask you to resolve the conflict. Open the file, look for conflict markers, and decide which changes to keep. 
+
+
+
+Learn more: [Git Merge Guide](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request)
+
+### Best Practices for FTC Teams
+
+- Commit often with clear messages.
+
+- Use branches for new features.
+
+- Pull before you push to avoid conflicts.
+
+- Never commit sensitive information.
+
+- Review code before merging.
+
+<ExerciseBox title="Practice Exercise" description="Try the basic Git workflow on your FTC project.">
+
+- Clone your team's repository.
+- Create a new branch and make a small change.
+- Commit and push your change.
+- Open a pull request on GitHub.
+
+</ExerciseBox>
+

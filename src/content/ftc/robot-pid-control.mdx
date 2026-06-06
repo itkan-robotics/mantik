@@ -1,0 +1,83 @@
+---
+title: Robot PID Control Applications (Android Studio)
+lessonId: robot-pid-control
+section: ftc
+group: android-studio-advanced-movement-control
+groupLabel: Advanced Movement Control
+groupOrder: 10
+order: 4
+difficulty: advanced
+duration: 45 min
+description: ""
+---
+
+### Multi-Axis PID Control
+
+Many FTC mechanisms require controlling more than one axis at a time, such as X/Y drive or multi-joint arms. Each axis can have its own PID controller, and sometimes you need to coordinate them for smooth, accurate movement.
+
+### Example: Dual-Axis PID for Drivetrain
+
+This snippet shows how you might use two PID controllers to drive a robot to a target X and Y position:
+
+
+
+```java
+double xError = targetX - getCurrentX();
+double yError = targetY - getCurrentY();
+double xOutput = xPID.calculate(xError);
+double yOutput = yPID.calculate(yError);
+setDrivePower(xOutput, yOutput);
+```
+
+### Drivetrain PID Control
+
+PID control is commonly used for driving straight, turning to a specific angle, or following a path. By using encoders and IMUs, you can create closed-loop control for your drivetrain.
+
+### Example: PID Turn to Angle (IMU)
+
+This code shows how to use a PID controller to turn the robot to a target heading using the IMU:
+
+
+
+```java
+double error = targetAngle - imu.getHeading();
+double output = turnPID.calculate(error);
+leftMotor.setPower(output);
+rightMotor.setPower(-output);
+```
+
+### Arm and Mechanism PID Control
+
+PID is also used for arms, lifts, and other mechanisms. For example, you can use a PID controller to move an arm to a specific position using an encoder.
+
+### Example: Arm PID Control
+
+This snippet shows a basic PID loop for an arm motor:
+
+
+
+```java
+double error = targetPosition - armMotor.getCurrentPosition();
+double output = armPID.calculate(error);
+armMotor.setPower(Range.clip(output, -1, 1));
+```
+
+### Tuning Strategies for Complex Systems
+
+- Tune one axis or mechanism at a time.
+- Start with kP, then add kD and kI as needed.
+- Watch for interactions between axes (e.g., X and Y).
+- Use telemetry to monitor errors and outputs.
+
+### Integrating PID with the FTC SDK
+
+The FTC SDK provides built-in PIDFCoefficients classes so users can tune their motors' PIDF coefficients. You can use these classes for more advanced control and to simplify your code. See the official documentation for details: [PIDFCoefficients Javadoc](https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/PIDFCoefficients.html)
+
+### Safety and Best Practices
+
+- Always set limits on motor power and positions to prevent hardware damage.
+- Use failsafes and watchdog timers to stop the robot if something goes wrong.
+- Test new PID code at low power and with the robot off the ground.
+
+<LinkGrid links={[{"label":"gm0 Odometry Guide","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html","description":"Comprehensive guide to odometry and multi-axis control for FTC robots"},{"label":"FTC PID Coefficients Javadoc","url":"https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/com/qualcomm/robotcore/hardware/PIDFCoefficients.html","description":"Official FTC SDK documentation for PID control implementation"},{"label":"CTRL ALT FTC Motor Control","url":"https://www.ctrlaltftc.com/practical-examples/ftc-motor-control","description":"Practical guide to PID motor control with FTC-specific examples and implementation"}]} title="Additional Resources" section="ftc" />
+

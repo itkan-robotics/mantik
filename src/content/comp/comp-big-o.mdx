@@ -1,0 +1,88 @@
+---
+title: Big O Notation Mastery
+lessonId: comp-big-o
+section: comp
+group: comp-foundation
+groupLabel: Foundation Concepts
+groupOrder: 1
+order: 3
+difficulty: intermediate
+duration: 15 min
+description: ""
+---
+
+### Understanding Big O Notation
+
+Big O notation describes the upper bound of an algorithm's growth rate. It helps us compare algorithms and predict performance.
+
+### Key Rules for Big O Analysis
+
+- **Drop Constants:** O(2n) = O(n)
+- **Drop Lower Order Terms:** O(n² + n) = O(n²)
+- **Worst Case:** We analyze the worst-case scenario
+- **Input Size:** n represents the size of the input
+
+### Common Big O Complexities
+
+```java
+// O(1) - Constant Time
+int getElement(int[] arr, int index) {
+    return arr[index];
+}
+
+// O(log n) - Logarithmic Time
+int binarySearch(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+
+// O(n) - Linear Time
+int findMax(int[] arr) {
+    int max = arr[0];
+    for (int num : arr) {
+        if (num > max) max = num;
+    }
+    return max;
+}
+
+// O(n log n) - Linearithmic Time
+// Merge Sort, Quick Sort, Heap Sort
+
+// O(n²) - Quadratic Time
+void bubbleSort(int[] arr) {
+    for (int i = 0; i < arr.length; i++) {
+        for (int j = 0; j < arr.length - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // swap
+            }
+        }
+    }
+}
+
+// O(2ⁿ) - Exponential Time
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+```
+
+### Nested Loops Analysis
+
+- **Two nested loops:** O(n²)
+- **Three nested loops:** O(n³)
+- **Loop with different bounds:** O(n × m)
+- **Loop with halving:** O(log n)
+
+### Space Complexity Examples
+
+- **O(1):** Using only a few variables
+- **O(n):** Creating an array of size n
+- **O(n²):** Creating a 2D array of size n×n
+- **O(log n):** Recursive calls with halving
+

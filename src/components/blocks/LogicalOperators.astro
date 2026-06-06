@@ -1,0 +1,33 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  operators?: string[];
+  examples?: string;
+}
+
+const { title, subtitle, operators = [], examples } = Astro.props;
+const hasSlot = Astro.slots.has('default');
+---
+
+<div class="logical-operators-box">
+  {title && <h3>{title}</h3>}
+  {subtitle && <h4>{subtitle}</h4>}
+
+  {operators.length > 0 && (
+    <ul>
+      {operators.map((op) => <li set:html={op} />)}
+    </ul>
+  )}
+
+  {hasSlot && <div class="logical-operators-content"><slot /></div>}
+
+  {examples && !hasSlot && (
+    <div class="logical-operators-examples">
+      <h4>Examples:</h4>
+      <div class="code-block">
+        <pre><code>{examples}</code></pre>
+      </div>
+    </div>
+  )}
+</div>

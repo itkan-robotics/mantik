@@ -1,0 +1,123 @@
+---
+title: Android Studio Setup
+lessonId: android-studio-setup
+section: ftc
+group: android-studio-setup
+groupLabel: Android Studio Setup
+groupOrder: 9
+order: 1
+difficulty: intermediate
+duration: 75 min
+description: ""
+---
+
+### What is Android Studio for FTC?
+
+Android Studio is the professional development environment for FTC robots. You write code in a full IDE on your computer, use version control, and benefit from advanced tooling. This path is for teams ready for more sophisticated control systems, odometry, path planning, and computer vision.
+
+Android Studio is the official integrated development environment (IDE) for Android app development. FTC teams use it to write, test, and deploy robot code in Java. It provides advanced tools for editing, debugging, and managing your robot code, making it the preferred choice for teams with prior Java experience.
+
+Learn more: [FTC Docs: Android Studio Programming Tutorial](https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/Android-Studio-Tutorial.html)
+
+### Why Use Android Studio for FTC?
+
+Android Studio offers powerful features such as code completion, refactoring, integrated version control, and advanced debugging. These tools help teams write robust, maintainable code and collaborate effectively. Android Studio is recommended for advanced users with Java experience, as it provides more flexibility and control than OnBot Java or Blocks.
+
+### System Requirements
+
+Before installing Android Studio, ensure your computer meets the minimum requirements. Android Studio requires a modern processor, at least 8GB of RAM (16GB recommended), and several gigabytes of free disk space. For the latest requirements, see the [Android Studio Official Site](https://developer.android.com/studio).
+
+### Installing Android Studio
+
+1. Download the installer from the [Android Studio website](https://developer.android.com/studio).
+
+2. Run the installer and follow the setup wizard.
+
+3. During installation, select the default options unless your team has specific requirements.
+
+4. After installation, launch Android Studio to complete the initial setup.
+
+5. For a more detailed guide, see [FTC Docs: Android Studio Programming Tutorial](https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/install/install.html).
+
+### What is the Android SDK?
+
+The Android Software Development Kit (SDK) provides the libraries and tools needed to build, test, and run Android apps—including FTC robot code. Without the SDK, Android Studio cannot compile or deploy your code to the Robot Controller.
+
+Learn more: [Android Studio Official Site](https://developer.android.com/studio)
+
+### Why Do FTC Teams Need the SDK?
+
+FTC robots run on Android devices, so your code must be built using the Android SDK. The SDK ensures your code is compatible with the Robot Controller app and the Android operating system. Essentially, when you push your code to the robot, you are downloading the FTCRobotController app to the Control Hub. As such, it is often helpful to physically connect your Drive Hub to your computer via USB to maintain the WiFi connection between your computer and the Control Hub.
+
+### Installing the SDK via Android Studio
+
+When you first install Android Studio, it will prompt you to install the Android SDK. Always use the recommended settings. If you skipped this step, you can install the SDK later using the SDK Manager.
+
+To open the SDK Manager: Go to **Tools > SDK Manager** in Android Studio. Ensure you have the correct SDK version for FTC (usually API 25 or higher, but check the FTC Docs for the latest recommendation).
+
+### Managing SDK Tools and Updates
+
+The SDK Manager also lets you update or install additional tools. Only update the SDK if your team is sure it will not break FTC compatibility.
+
+For more information, see [Android Studio: Update the IDE and SDK Tools](https://developer.android.com/studio/intro/update).
+
+### Downloading and Setting Up the FTC SDK Project
+
+FTC teams use a special project called the FTC SDK. You can download it from the official [FTC GitHub repository](https://github.com/FIRST-Tech-Challenge/FtcRobotController).
+
+To set up the project: Clone or download the repository to your computer. Open Android Studio and select 'Open an existing project'. Navigate to the folder where you saved the FTC SDK and open it.
+
+### High-Level Project Layout
+
+The FTC SDK project is organized into modules and directories to separate your code from the official SDK. This structure helps you keep your code organized and makes it easier to update the SDK in the future.
+
+For a visual overview, see [FTC Docs: Android Studio Programming Tutorial](https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/Android-Studio-Tutorial.html).
+
+### Key Files and Directories
+
+- **FtcRobotController**: Contains the official SDK code. Do not modify files here.
+
+- **TeamCode**: This is where you write your own OpModes and custom classes.
+
+- **build.gradle**: The build configuration file for each module.
+
+- **AndroidManifest.xml**: Declares app permissions and components.
+
+- **libs/**: Place any third-party libraries here if needed.
+
+### Where to Write Your Code (TeamCode vs. FtcRobotController)
+
+Always write your OpModes and custom code in the **TeamCode** module. This keeps your code separate from the SDK, making it easier to update the SDK and avoid conflicts.
+
+To create a new OpMode, add a new Java class in **TeamCode/src/main/java/org/firstinspires/ftc/teamcode**.
+
+### Gradle and Build System Basics
+
+Gradle is the build system used by Android Studio. It compiles your code, manages dependencies, and packages your app for deployment. Most of the time, you won't need to edit Gradle files directly, but understanding the basics can help you troubleshoot build errors.
+
+Learn more: [Gradle User Guide](https://docs.gradle.org/current/userguide/userguide.html)
+
+<ExerciseBox title="Practice Exercise: Creating Your First OpMode" description="Create a simple OpMode in Android Studio and deploy it to your Driver Hub.">
+
+- Open the FTC SDK project in Android Studio
+- Navigate to TeamCode/src/main/java/org/firstinspires/ftc/teamcode
+- Create a new Java class called 'MyFirstOpMode'
+- Implement a basic LinearOpMode with telemetry output
+- Build the project and deploy to your Driver Hub
+- Test the OpMode on your robot
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Code Version Control","id":"code-version-control"},{"label":"FTC SDK GitHub Repository","url":"https://github.com/FIRST-Tech-Challenge/FtcRobotController","description":"Download the official FTC SDK and view source code"},{"label":"FTC Android Studio Tutorial","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/Android-Studio-Tutorial.html","description":"Official step-by-step guide for setting up Android Studio"},{"label":"FTC OpMode Documentation","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/opmodes/index.html","description":"Learn about OpMode types, lifecycle, and best practices"},{"label":"Android Studio Official Site","url":"https://developer.android.com/studio","description":"Download Android Studio and access official documentation"}]} title="Setup & Resources" section="ftc" />
+
+### Android Studio Learning Path
+
+Complete setup first, then move through Advanced Movement Control, Odometry, and Path Planning. Debugging & Best Practices applies across all topics.
+
+<LinkGrid links={[{"label":"Advanced Movement Control","id":"advanced-movement-control"},{"label":"External Libraries in FTC","id":"external-libraries"},{"label":"PID Control","id":"pid-control"},{"label":"Robot PID Control","id":"robot-pid-control"},{"label":"Motion Profiling","id":"motion-profiling"}]} title="Advanced Movement Control" section="ftc" />
+
+<LinkGrid links={[{"label":"Introduction to Odometry","id":"intro-to-odometry"},{"label":"Dead Wheel Encoders","id":"dead-wheel-encoders"},{"label":"Three-Wheel Odometry","id":"three-wheel-odometry"},{"label":"Gobilda Pinpoint","id":"gobilda-pinpoint"}]} title="Odometry" section="ftc" />
+
+<LinkGrid links={[{"label":"Poses, Paths, and Theory","id":"poses-paths-theory"},{"label":"PedroPathing vs. Road Runner","id":"path-planning-comparison"},{"label":"Custom Path Following Algorithms","id":"custom-path-following"}]} title="Path Planning" section="ftc" />
+
+<LinkGrid links={[{"label":"Advanced Debugging","id":"advanced-debugging"},{"label":"Performance Optimization","id":"performance-optimization"},{"label":"Software Development Best Practices","id":"software-development-best-practices"},{"label":"Code Review","id":"code-review"},{"label":"Unit Testing","id":"unit-testing"},{"label":"Debugging Strategies","id":"debugging-strategies"},{"label":"FTCDashboard Comprehensive Guide","id":"ftc-dashboard-comprehensive"}]} title="Debugging & Best Practices" section="ftc" />

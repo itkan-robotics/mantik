@@ -1,0 +1,170 @@
+---
+import { sections, siteConfig } from '@/config/navigation';
+import type { SidebarGroup } from '@/lib/content';
+
+interface Props {
+  currentPath: string;
+  sidebarGroups: SidebarGroup[];
+  showSidebar: boolean;
+}
+
+const { currentPath, sidebarGroups, showSidebar } = Astro.props;
+
+function isLessonActive(href: string): boolean {
+  return currentPath === href || currentPath === `${href}/`;
+}
+
+function groupHasActiveLesson(group: SidebarGroup): boolean {
+  return group.items.some((item) => isLessonActive(item.href));
+}
+---
+
+<aside class="sidebar-drawer">
+  <div class="sidebar-container">
+    <div class="sidebar-sticky">
+      <a class="sidebar-brand" href={siteConfig.github} target="_blank" rel="noopener noreferrer">
+        <span class="sidebar-brand-text">Mantik</span>
+      </a>
+
+      <div class="sidebar-scroll">
+        <div class="mobile-sidebar-nav">
+          <div class="mobile-sidebar-search-container">
+            <input
+              type="text"
+              class="mobile-sidebar-search-input"
+              placeholder="Search..."
+              id="mobile-sidebar-search"
+              autocomplete="off"
+              autocorrect="off"
+              data-pagefind-search
+            />
+          </div>
+          <a href="/" class:list={['header-nav-link', { active: currentPath === '/' }]}>Home</a>
+          {sections.map((section) => (
+            <a
+              href={section.path}
+              class:list={['header-nav-link', { active: currentPath.startsWith(section.path) }]}
+            >
+              {section.label} Training
+            </a>
+          ))}
+        </div>
+
+        {showSidebar && sidebarGroups.length > 0 && (
+          <div class="sidebar-tree">
+            <p class="caption" role="heading">
+              <span class="caption-text">Contents:</span>
+            </p>
+            <ul id="sidebar-navigation">
+              {sidebarGroups.map((group) => {
+                const isExpanded = groupHasActiveLesson(group);
+                return (
+                  <li class="parent-tab sidebar-group" data-group-id={group.id}>
+                    <button
+                      type="button"
+                      class="parent-reference sidebar-group-toggle"
+                      data-group-toggle={group.id}
+                      aria-expanded={isExpanded}
+                    >
+                      <span class:list={['expand-icon', `expand-icon-${group.id}`]}>
+                        {isExpanded ? '▼' : '▶'}
+                      </span>
+                      {group.label}
+                    </button>
+                    <ul
+                      class:list={['children-nav', { expanded: isExpanded, collapsed: !isExpanded }]}
+                      id={`children-${group.id}`}
+                    >
+                      {group.items.map((item) => (
+                        <li class="child-tab">
+                          <a
+                            href={item.href}
+                            class:list={['child-reference sidebar-link', { active: isLessonActive(item.href) }]}
+                          >
+                            {item.label}
+                            {item.duration && <span class="sidebar-meta">{item.duration}</span>}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-resize-handle" data-sidebar-resize></div>
+</aside>
+
+<script>
+  function initSidebarGroups() {
+    document.querySelectorAll('[data-group-toggle]').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+
+      btn.addEventListener('click', () => {
+        const groupId = btn.getAttribute('data-group-toggle');
+        if (!groupId) return;
+
+        const childrenNav = document.getElementById(`children-${groupId}`);
+        const expandIcon = document.querySelector(`.expand-icon-${groupId}`);
+        if (!childrenNav || !expandIcon) return;
+
+        const isExpanded = childrenNav.classList.contains('expanded');
+        if (isExpanded) {
+          childrenNav.classList.remove('expanded');
+          childrenNav.classList.add('collapsed');
+          expandIcon.textContent = '▶';
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          childrenNav.classList.add('expanded');
+          childrenNav.classList.remove('collapsed');
+          expandIcon.textContent = '▼';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
+  function applySidebarWidth(drawer: HTMLElement, width: number) {
+    const px = `${width}px`;
+    drawer.style.width = px;
+    document.documentElement.style.setProperty('--sidebar-width', px);
+    localStorage.setItem('mantik-sidebar-width', px);
+  }
+
+  function initSidebarResize() {
+    const handle = document.querySelector('[data-sidebar-resize]');
+    const drawer = document.querySelector('.sidebar-drawer') as HTMLElement | null;
+    if (!handle || !drawer) return;
+
+    const saved = localStorage.getItem('mantik-sidebar-width');
+    if (saved) {
+      drawer.style.width = saved;
+      document.documentElement.style.setProperty('--sidebar-width', saved);
+    }
+
+    let resizing = false;
+    handle.addEventListener('mousedown', () => {
+      resizing = true;
+    });
+    document.addEventListener('mouseup', () => {
+      resizing = false;
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!resizing) return;
+      const width = Math.min(Math.max(e.clientX, 200), 500);
+      applySidebarWidth(drawer, width);
+    });
+  }
+
+  initSidebarGroups();
+  initSidebarResize();
+  document.addEventListener('astro:page-load', () => {
+    initSidebarGroups();
+    initSidebarResize();
+  });
+</script>

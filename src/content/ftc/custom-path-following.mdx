@@ -1,0 +1,59 @@
+---
+title: Building a Custom Path Following Algorithm (FTC)
+lessonId: custom-path-following
+section: ftc
+group: android-studio-path-planning
+groupLabel: Path Planning
+groupOrder: 12
+order: 3
+difficulty: advanced
+duration: 30 min
+description: ""
+---
+
+### Why Build Your Own Path Follower?
+
+While libraries like Road Runner and PedroPathing are powerful, building your own path following algorithm helps you understand the math and control theory behind autonomous navigation. It also lets you customize behavior for your robot's unique needs.
+
+### Core Concepts: Poses, Paths, and Controllers
+
+A path follower works by generating a sequence of target poses (x, y, heading) along a path. At each control loop, the robot calculates the error between its current pose and the target pose, then uses PIDF controllers to generate motor commands that minimize this error. Typically, you use one PIDF controller for translation (distance) and one for rotation (heading).
+
+### Basic Structure of a Custom Path Follower
+
+```java
+Here's a simplified Java structure for a custom path follower in FTC:
+
+// Assume you have a list of target poses (waypoints)
+List<Pose2d> path = ...;
+PIDFController translationalPID, headingPID;
+
+while (opModeIsActive() && !path.isEmpty()) {
+    Pose2d currentPose = getCurrentRobotPose();
+    Pose2d targetPose = path.get(0);
+    double distanceError = currentPose.distanceTo(targetPose);
+    double headingError = angleWrap(targetPose.heading - currentPose.heading);
+    double drivePower = translationalPID.calculate(distanceError);
+    double turnPower = headingPID.calculate(headingError);
+    setDrivePowers(drivePower, turnPower);
+    if (distanceError < threshold && Math.abs(headingError) < headingThreshold) {
+        path.remove(0); // Move to next waypoint
+    }
+}
+
+// Helper: angleWrap wraps angle to [-pi, pi]
+public double angleWrap(double angle) {
+    while (angle > Math.PI) angle -= 2 * Math.PI;
+    while (angle < -Math.PI) angle += 2 * Math.PI;
+    return angle;
+}
+```
+
+### Tuning and Practical Tips
+
+- Tune your PIDF controllers for smooth, accurate following.
+- Use odometry or localization for accurate pose estimation.
+- Test with simple paths before trying complex trajectories.
+- Add feedforward terms for better performance at high speeds.
+- Visualize your robot's path and errors using telemetry or FTC Dashboard.
+

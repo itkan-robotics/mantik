@@ -1,0 +1,14 @@
+---
+interface Props {
+  title?: string;
+  code: string;
+  language?: string;
+}
+
+const { title, code, language = 'java' } = Astro.props;
+---
+
+{title && <h3>{title}</h3>}
+<div class="code-block">
+  <pre><code class={`language-${language}`}>{code}</code></pre>
+</div>

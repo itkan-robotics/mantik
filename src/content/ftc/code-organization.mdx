@@ -1,0 +1,141 @@
+---
+title: Organizing Your FTC Code for Debuggability and Growth
+lessonId: code-organization
+section: ftc
+group: onbot-java-debugging-best-practices
+groupLabel: "OBJ Debugging & Best Practices"
+groupOrder: 7
+order: 3
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Why Code Organization Matters
+
+Good code organization makes your programs easier to debug, maintain, and expand. In FTC, it's especially important to avoid large, monolithic files. Instead, break your code into small, focused classes and methods.
+
+### Modularizing Hardware Initialization in Your OpMode
+
+To keep your OpMode organized and easy to debug, move hardware initialization into a separate function within your OpMode class. This keeps your main logic clean and makes it easier to update or troubleshoot hardware mapping without touching the rest of your code.
+
+### Example: Hardware Initialization Function
+
+Define a dedicated method for hardware setup in your OpMode:
+
+
+
+```java
+private DcMotor leftMotor, rightMotor;
+
+private void initHardware() {
+    leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+    rightMotor = hardwareMap.get(DcMotor.class, "right_drive");
+}
+```
+
+### Using the Hardware Initialization Function in Your OpMode
+
+Call your hardware initialization function at the start of `runOpMode()`:
+
+
+
+```java
+@TeleOp
+public class ModularOpMode extends LinearOpMode {
+    private DcMotor leftMotor, rightMotor;
+    @Override
+    public void runOpMode() {
+        initHardware();
+        waitForStart();
+        while (opModeIsActive()) {
+            leftMotor.setPower(0.5);
+            rightMotor.setPower(0.5);
+        }
+    }
+
+    private void initHardware() {
+        leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_drive");
+    }
+}
+```
+
+### Naming Conventions and File Structure
+
+Use clear, descriptive names for your classes, methods, and variables. Organize your files so that related code is grouped together. This helps you and your teammates find and fix bugs faster.
+
+### Tips for Good Code Organization
+
+- Keep each file focused on one purpose (e.g., hardware, drive logic, sensors).
+- Use consistent naming conventions.
+- Document your code with comments and JavaDoc.
+- Avoid duplicating code—use helper methods or classes instead.
+- Review and refactor your code regularly.
+
+### Documenting Your Code
+
+Comments and documentation help you remember your logic and make it easier for others to help debug. Use JavaDoc for methods and classes, and add inline comments for tricky logic.
+
+### JavaDoc Example
+
+Here's how to document a method with JavaDoc:
+
+
+
+```java
+/**
+ * Sets the power for both drive motors.
+ * @param power The power level (-1.0 to 1.0)
+ */
+public void setDrivePower(double power) {
+    leftMotor.setPower(power);
+    rightMotor.setPower(power);
+}
+```
+
+### Using Version Control for Debugging
+
+Version control lets you track changes and revert to working code. While OnBot Java doesn't have built-in Git, you can still keep backups and use comments to mark changes. For more on version control in FTC, see [FTC Docs: Programming Resources](https://ftc-docs.firstinspires.org/en/latest/programming_resources/index.html).
+
+<ExerciseBox title="Practice: Refactor a Monolithic OpMode" description="Take a long OpMode file and break it into at least two classes (e.g., hardware and logic). Add comments and JavaDoc to your methods. Test that your code still works." answers={[{"task":"Identify sections of code that can be moved to helper classes.","content":"// In the monolithic OpMode above, the following sections can be moved to helper classes:\n// 1. Hardware initialization (mapping motors and servos)\n// 2. Drive logic (setting motor power)\n// 3. Claw control logic (setting servo position)\n// 4. Telemetry display\n// By separating these, your code becomes easier to read, debug, and expand."},{"task":"Refactor the code and update your OpMode to use the new classes.","content":"// Step 1: Create a RobotHardware helper class\npublic class RobotHardware {\n    public DcMotor leftMotor, rightMotor;\n    public Servo clawServo;\n    /**\n     * Initializes all hardware components.\n     */\n    public void init(HardwareMap hardwareMap) {\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_drive\");\n        clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n    }\n}\n\n// Step 2: Refactor the OpMode to use RobotHardware and modular methods\n@TeleOp\npublic class ModularOpMode extends LinearOpMode {\n    private RobotHardware robot = new RobotHardware();\n    @Override\n    public void runOpMode() {\n        robot.init(hardwareMap);\n        waitForStart();\n        while (opModeIsActive()) {\n            drive();\n            controlClaw();\n            showTelemetry();\n        }\n    }\n    /**\n     * Drives the robot using joystick input.\n     */\n    private void drive() {\n        double leftPower = -gamepad1.left_stick_y;\n        double rightPower = -gamepad1.right_stick_y;\n        robot.leftMotor.setPower(leftPower);\n        robot.rightMotor.setPower(rightPower);\n    }\n    /**\n     * Controls the claw servo with gamepad buttons.\n     */\n    private void controlClaw() {\n        if (gamepad1.a) {\n            robot.clawServo.setPosition(1.0);\n        } else if (gamepad1.b) {\n            robot.clawServo.setPosition(0.0);\n        }\n    }\n    /**\n     * Displays telemetry data on the Driver Station.\n     */\n    private void showTelemetry() {\n        telemetry.addData(\"Left Power\", robot.leftMotor.getPower());\n        telemetry.addData(\"Right Power\", robot.rightMotor.getPower());\n        telemetry.addData(\"Claw Position\", robot.clawServo.getPosition());\n        telemetry.update();\n    }\n}"},{"task":"Add JavaDoc and comments to explain your logic.","content":"// In the refactored code above, each method has a JavaDoc comment explaining its purpose.\n// For example:\n/**\n * Drives the robot using joystick input.\n */\nprivate void drive() { ... }\n// Inline comments can be added for tricky logic.\n// This makes the code easier to understand, debug, and maintain."}]}>
+
+- Identify sections of code that can be moved to helper classes.
+- Refactor the code and update your OpMode to use the new classes.
+- Add JavaDoc and comments to explain your logic.
+
+```java
+// Example of a monolithic OpMode (all logic and hardware in one class)
+@TeleOp
+public class MonolithicOpMode extends LinearOpMode {
+    private DcMotor leftMotor, rightMotor;
+    private Servo clawServo;
+    @Override
+    public void runOpMode() {
+        leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_drive");
+        clawServo = hardwareMap.get(Servo.class, "claw_servo");
+        waitForStart();
+        while (opModeIsActive()) {
+            double leftPower = -gamepad1.left_stick_y;
+            double rightPower = -gamepad1.right_stick_y;
+            leftMotor.setPower(leftPower);
+            rightMotor.setPower(rightPower);
+            if (gamepad1.a) {
+                clawServo.setPosition(1.0);
+            } else if (gamepad1.b) {
+                clawServo.setPosition(0.0);
+            }
+            telemetry.addData("Left Power", leftPower);
+            telemetry.addData("Right Power", rightPower);
+            telemetry.addData("Claw Position", clawServo.getPosition());
+            telemetry.update();
+        }
+    }
+}
+```
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Java: Writing JavaDoc Comments","url":"https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html"},{"label":"Java Best Practices: (GeeksforGeeks)","url":"https://www.geeksforgeeks.org/java/java-best-practices/"}]} title="Further Reading Resources" section="ftc" />
+

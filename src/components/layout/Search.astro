@@ -1,0 +1,126 @@
+---
+---
+
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+<script src="/pagefind/pagefind-ui.js" is:inline></script>
+
+<div id="mantik-search-overlay" class="search-results-overlay" data-search-overlay aria-hidden="true" hidden>
+  <div class="search-results-modal" data-search-modal>
+    <div id="pagefind-search"></div>
+    <p id="search-unavailable" class="search-unavailable-message" hidden>
+      Search requires an index. Run <code>npm run build</code> once, then restart dev.
+    </p>
+  </div>
+</div>
+
+<script>
+  function setSearchOverlayOpen(open: boolean) {
+    const overlay = document.querySelector('[data-search-overlay]') as HTMLElement | null;
+    if (!overlay) return;
+    overlay.classList.toggle('visible', open);
+    overlay.toggleAttribute('hidden', !open);
+    overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if ('inert' in overlay) {
+      (overlay as HTMLElement & { inert: boolean }).inert = false;
+    }
+  }
+
+  function closeSearchOverlay() {
+    setSearchOverlayOpen(false);
+  }
+
+  function openSearchOverlay(query = '') {
+    setSearchOverlayOpen(true);
+
+    const container = document.getElementById('pagefind-search');
+    const pfInput = container?.querySelector('input');
+    if (pfInput instanceof HTMLInputElement) {
+      pfInput.value = query;
+      pfInput.focus();
+      pfInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  function showUnavailable() {
+    const msg = document.getElementById('search-unavailable');
+    const container = document.getElementById('pagefind-search');
+    if (msg) msg.hidden = false;
+    if (container) container.style.display = 'none';
+  }
+
+  function wireSearchInputs() {
+    document.querySelectorAll('[data-pagefind-search]').forEach((input) => {
+      if (input.getAttribute('data-search-wired')) return;
+      input.setAttribute('data-search-wired', 'true');
+
+      const sync = () => {
+        if (input instanceof HTMLInputElement) openSearchOverlay(input.value);
+      };
+
+      input.addEventListener('focus', sync);
+      input.addEventListener('input', sync);
+    });
+  }
+
+  function initPagefind() {
+    // @ts-expect-error pagefind UI loaded via script tag
+    if (typeof PagefindUI === 'undefined') {
+      showUnavailable();
+      return;
+    }
+
+    const container = document.getElementById('pagefind-search');
+    if (!container || container.getAttribute('data-initialized')) {
+      wireSearchInputs();
+      return;
+    }
+    container.setAttribute('data-initialized', 'true');
+
+    try {
+      // @ts-expect-error global from pagefind-ui.js
+      new PagefindUI({
+        element: '#pagefind-search',
+        showSubResults: true,
+        resetStyles: false,
+      });
+    } catch {
+      showUnavailable();
+      return;
+    }
+
+    wireSearchInputs();
+
+    // @ts-expect-error expose for keyboard shortcuts
+    window.mantikOpenSearch = openSearchOverlay;
+
+    const overlay = document.querySelector('[data-search-overlay]');
+    if (overlay && !overlay.getAttribute('data-overlay-init')) {
+      overlay.setAttribute('data-overlay-init', 'true');
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSearchOverlay();
+      });
+    }
+
+    const modal = document.querySelector('[data-search-modal]');
+    if (modal && !modal.getAttribute('data-modal-init')) {
+      modal.setAttribute('data-modal-init', 'true');
+      modal.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    if (!document.body.getAttribute('data-search-key-init')) {
+      document.body.setAttribute('data-search-key-init', 'true');
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSearchOverlay();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initPagefind();
+    setSearchOverlayOpen(false);
+  });
+  document.addEventListener('astro:page-load', () => {
+    initPagefind();
+    setSearchOverlayOpen(false);
+  });
+</script>

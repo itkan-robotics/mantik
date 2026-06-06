@@ -1,0 +1,59 @@
+---
+import { sections } from '@/config/navigation';
+import ThemeToggle from '@/components/islands/ThemeToggle.astro';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+function isActive(path: string): boolean {
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+}
+---
+
+<header class="mobile-header">
+  <div class="header-left">
+    <label class="nav-overlay-icon" for="__navigation">
+      <div class="visually-hidden">Toggle site navigation sidebar</div>
+      <div class="icon">☰</div>
+    </label>
+  </div>
+  <div class="header-center">
+    <nav class="header-navigation">
+      <a href="/" class:list={['header-nav-link', { active: isActive('/') }]}>Home</a>
+      {sections.map((section) => (
+        <a
+          href={section.path}
+          class:list={['header-nav-link', { active: isActive(section.path) }]}
+        >
+          {section.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+  <div class="header-right">
+    <div class="search-container-header">
+      <input
+        type="text"
+        class="search-input-header"
+        placeholder="Search (Ctrl+K)..."
+        id="header-search"
+        autocomplete="off"
+        autocorrect="off"
+        data-pagefind-search
+      />
+    </div>
+    <div class="help-toggle-container">
+      <button class="help-toggle" type="button" data-keyboard-help>
+        <div class="visually-hidden">Show keyboard shortcuts</div>
+        <span class="help-icon">?</span>
+      </button>
+    </div>
+    <div class="theme-toggle-container theme-toggle-header">
+      <ThemeToggle />
+    </div>
+  </div>
+</header>

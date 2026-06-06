@@ -1,0 +1,43 @@
+---
+title: "Poses, Paths, and Path Planning Theory (FTC)"
+lessonId: poses-paths-theory
+section: ftc
+group: android-studio-path-planning
+groupLabel: Path Planning
+groupOrder: 12
+order: 1
+difficulty: advanced
+duration: 30 min
+description: ""
+---
+
+### What is a Pose?
+
+A **pose** describes a robot's position and orientation on the field. In FTC, a pose is usually represented as (x, y, θ), where x and y are coordinates (in inches or meters) and θ (theta) is the heading (angle) in radians or degrees. Poses are essential for autonomous navigation and path following. 
+
+
+
+See: [gm0: Pose](https://gm0.org/en/latest/docs/software/concepts/odometry.html#pose)
+
+### Coordinate Frames and Field Representation
+
+FTC fields use a 2D coordinate system. The origin (0,0) is usually at a field corner, and heading θ is measured from the x-axis. Understanding coordinate frames is crucial for translating between robot-centric and field-centric movement. 
+
+
+
+See: [Road Runner: Coordinate Frame](https://acme-robotics.gitbook.io/road-runner/tour/coordinate-frame)
+
+### Path Representations
+
+A **path** is a sequence of poses or waypoints that the robot should follow. Paths can be straight lines, curves, or splines. Advanced path planners use mathematical functions (like cubic splines or Bezier curves) to generate smooth, continuous paths. 
+
+
+
+Paths are used by algorithms to generate reference poses for the robot to follow at each moment in time.
+
+### Why Poses and Paths Matter
+
+By representing the robot's movement as a series of poses along a path, you can plan complex autonomous routines, avoid obstacles, and ensure precise scoring. Path planning is the foundation for advanced autonomous navigation in FTC.
+
+<LinkGrid links={[{"label":"gm0: Odometry & Pose Theory","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html"},{"label":"Road Runner Coordinate Frame","url":"https://acme-robotics.gitbook.io/road-runner/tour/coordinate-frame"},{"label":"Tyler Veness' Controls Engineering in FRC","url":"https://www.youtube.com/watch?v=JQEa36F91Nw"}]} title="Further Reading" section="ftc" />
+

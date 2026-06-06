@@ -1,0 +1,187 @@
+---
+title: Calculating with Numbers
+lessonId: java-calculations
+section: java
+group: java-basics
+groupLabel: Java Basics
+groupOrder: 1
+order: 4
+difficulty: beginner
+duration: 55 min
+description: ""
+---
+
+### Basic Mathematical Operations
+
+Java supports the standard mathematical operations: addition `+`, subtraction `-`, multiplication `*`, and division `/`. Operations follow familiar precedence rules.
+
+### Simple Calculations:
+
+```java
+int first = 2;
+int second = 4;
+int sum = first + second;        // Addition: 6
+int difference = second - first; // Subtraction: 2
+int product = first * second;    // Multiplication: 8
+int quotient = second / first;   // Division: 2
+
+System.out.println("Sum: " + sum);
+System.out.println("Product: " + product);
+```
+
+### Precedence and Parentheses
+
+Operations are performed left to right, with `*` and `/` calculated before `+` and `-`. Use parentheses to control the order of operations.
+
+### Order of Operations:
+
+```java
+int withParentheses = (1 + 1) + 3 * (2 + 5);
+System.out.println(withParentheses); // prints 23
+
+int withoutParentheses = 1 + 1 + 3 * 2 + 5;
+System.out.println(withoutParentheses); // prints 13
+
+// Step by step:
+// (1 + 1) = 2, (2 + 5) = 7, 3 * 7 = 21, 2 + 21 = 23
+// vs
+// 3 * 2 = 6, then 1 + 1 + 6 + 5 = 13
+```
+
+### Key Concepts:
+
+- **Expression:** A combination of values that produces another value
+- **Statement:** A complete instruction that performs an action
+- **Precedence:** Multiplication and division before addition and subtraction
+- **Parentheses:** Override normal precedence rules
+
+### Calculating and Printing:
+
+```java
+int robotSpeed = 25;
+int time = 4;
+int distance = robotSpeed * time;
+
+// Combine text and calculations
+System.out.println("Robot speed: " + robotSpeed + " mph");
+System.out.println("Distance traveled: " + distance + " miles");
+System.out.println("Average: " + (robotSpeed + time) / 2);
+
+// String concatenation precedence
+System.out.println("Result: " + (2 + 3));     // prints "Result: 5"
+System.out.println("Wrong: " + 2 + 3);        // prints "Wrong: 23"
+```
+
+### Division and Data Types
+
+Division behavior depends on the data types involved. Integer division produces integer results, while floating-point division produces decimal results.
+
+### Integer vs Floating-Point Division:
+
+```java
+// Integer division - truncates decimal part
+int intResult = 7 / 2;
+System.out.println(intResult); // prints 3
+
+// Floating-point division
+double floatResult1 = 7.0 / 2;    // 3.5
+double floatResult2 = 7 / 2.0;    // 3.5
+double floatResult3 = 7.0 / 2.0;  // 3.5
+
+// Type casting for precise division
+int a = 7;
+int b = 2;
+double precise = (double) a / b;  // 3.5
+double wrong = (double) (a / b);  // 3.0 (division done first!)
+```
+
+<RulesBox title="Division Best Practices:">
+
+**Good Practices:**
+
+- Use `double` for calculations requiring decimal precision
+- Cast to `(double)` before division for exact results
+- Be aware of integer division truncation
+- Use parentheses to control evaluation order
+
+**Avoid:**
+
+- Expecting decimals from integer division
+- Casting after division: `(double)(a/b)`
+- Dividing by zero (causes runtime error)
+- Forgetting precedence in mixed operations
+
+</RulesBox>
+
+### Practical Robot Calculations:
+
+```java
+public class RobotCalculations {
+    public static void main(String[] args) {
+        // Robot navigation calculations
+        double startX = 10.5;
+        double startY = 15.0;
+        double endX = 25.3;
+        double endY = 30.7;
+        
+        // Distance formula: sqrt((x2-x1)² + (y2-y1)²)
+        double deltaX = endX - startX;
+        double deltaY = endY - startY;
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        System.out.println("Robot must travel: " + distance + " units");
+        
+        // Battery calculation
+        double batteryStart = 100.0;
+        double powerConsumption = 2.5; // percent per minute
+        int timeMinutes = 25;
+        
+        double batteryUsed = powerConsumption * timeMinutes;
+        double batteryRemaining = batteryStart - batteryUsed;
+        
+        System.out.println("Battery remaining: " + batteryRemaining + "%");
+    }
+}
+```
+
+<RulesBox title="Common Variable Assignment Misconceptions:" subtitle="Understanding Variable Assignment:">
+
+- **Assignment is copying:** `a = b` copies b's value to a, b keeps its value
+- **No automatic dependency:** Changing b later doesn't affect a
+- **Direction matters:** `a = b` means 'copy b into a', not the reverse
+- **One-time operation:** Assignment happens once when the line executes
+
+</RulesBox>
+
+### Variable Assignment Example:
+
+```java
+int robotCount = 5;
+int backupCount = robotCount;  // Copy 5 to backupCount
+
+System.out.println("Original: " + robotCount);    // 5
+System.out.println("Backup: " + backupCount);     // 5
+
+// Change original
+robotCount = 10;
+
+System.out.println("After change:");
+System.out.println("Original: " + robotCount);    // 10
+System.out.println("Backup: " + backupCount);     // Still 5!
+
+// backupCount did NOT automatically change
+```
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: Calculation Practice" answers={[{"task":"Calculate the area of a rectangular robot base (length × width)","content":"public class RobotBaseArea {\n    public static void main(String[] args) {\n        double length = 45.5;  // cm\n        double width = 30.2;   // cm\n        \n        double area = length * width;\n        double perimeter = 2 * (length + width);\n        \n        System.out.println(\"=== Robot Base Dimensions ===\");\n        System.out.println(\"Length: \" + length + \" cm\");\n        System.out.println(\"Width: \" + width + \" cm\");\n        System.out.println(\"Area: \" + area + \" cm²\");\n        System.out.println(\"Perimeter: \" + perimeter + \" cm\");\n    }\n}"},{"task":"Compute average speed from distance and time with proper division","content":"public class SpeedCalculator {\n    public static void main(String[] args) {\n        int distanceTraveled = 150;  // meters\n        int timeSeconds = 45;        // seconds\n        \n        // Proper floating-point division\n        double averageSpeed = (double) distanceTraveled / timeSeconds;\n        \n        // Convert to different units\n        double speedMPS = averageSpeed;  // meters per second\n        double speedKMH = averageSpeed * 3.6;  // km/h conversion\n        \n        System.out.println(\"=== Speed Analysis ===\");\n        System.out.println(\"Distance: \" + distanceTraveled + \" meters\");\n        System.out.println(\"Time: \" + timeSeconds + \" seconds\");\n        System.out.println(\"Speed: \" + speedMPS + \" m/s\");\n        System.out.println(\"Speed: \" + speedKMH + \" km/h\");\n        \n        // Show wrong way (integer division)\n        int wrongSpeed = distanceTraveled / timeSeconds;\n        System.out.println(\"Wrong (integer): \" + wrongSpeed + \" m/s\");\n    }\n}"},{"task":"Create a battery percentage calculator with remaining time","content":"public class BatteryCalculator {\n    public static void main(String[] args) {\n        double currentBattery = 85.5;     // percent\n        double consumptionRate = 3.2;    // percent per hour\n        double lowBatteryThreshold = 20.0;\n        \n        // Calculate remaining time\n        double usableBattery = currentBattery - lowBatteryThreshold;\n        double remainingHours = usableBattery / consumptionRate;\n        double remainingMinutes = remainingHours * 60;\n        \n        System.out.println(\"=== Battery Status ===\");\n        System.out.println(\"Current battery: \" + currentBattery + \"%\");\n        System.out.println(\"Consumption rate: \" + consumptionRate + \"%/hour\");\n        System.out.println(\"Low battery threshold: \" + lowBatteryThreshold + \"%\");\n        System.out.println(\"Remaining time: \" + remainingHours + \" hours\");\n        System.out.println(\"Remaining time: \" + remainingMinutes + \" minutes\");\n        \n        if (remainingHours < 1.0) {\n            System.out.println(\"⚠️ WARNING: Less than 1 hour remaining!\");\n        }\n    }\n}"},{"task":"Demonstrate the difference between integer and floating-point division","content":"public class DivisionDemo {\n    public static void main(String[] args) {\n        int totalSensors = 7;\n        int robotCount = 2;\n        \n        System.out.println(\"=== Division Comparison ===\");\n        System.out.println(\"Total sensors: \" + totalSensors);\n        System.out.println(\"Robot count: \" + robotCount);\n        System.out.println();\n        \n        // Integer division - truncates\n        int sensorsPerRobotInt = totalSensors / robotCount;\n        System.out.println(\"Integer division: \" + sensorsPerRobotInt + \" sensors per robot\");\n        \n        // Floating-point division - precise\n        double sensorsPerRobotDouble = (double) totalSensors / robotCount;\n        System.out.println(\"Precise division: \" + sensorsPerRobotDouble + \" sensors per robot\");\n        \n        // Show the difference\n        System.out.println();\n        System.out.println(\"Difference: \" + (sensorsPerRobotDouble - sensorsPerRobotInt));\n        \n        // Real-world application\n        double leftoverSensors = totalSensors % robotCount;\n        System.out.println(\"Leftover sensors: \" + leftoverSensors);\n    }\n}"}]}>
+
+- Calculate the area of a rectangular robot base (length × width)
+- Compute average speed from distance and time with proper division
+- Create a battery percentage calculator with remaining time
+- Demonstrate the difference between integer and floating-point division
+
+```java
+Practice with mathematical operations and calculations:
+```
+
+</ExerciseBox>
+

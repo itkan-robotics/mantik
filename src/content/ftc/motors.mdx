@@ -1,0 +1,76 @@
+---
+title: DC Motors and Motor Control
+lessonId: motors
+section: ftc
+group: onbot-java-robot-hardware
+groupLabel: Robot Hardware
+groupOrder: 4
+order: 1
+difficulty: beginner
+duration: 10 min
+description: ""
+---
+
+### Overview
+
+DC motors drive wheels, arms, and other moving parts. Access motors through the `hardwareMap`—an FTC SDK object that provides references to configured devices. Declare motors as member variables and initialize them in `runOpMode()`.
+
+### Initialization and Basic Control
+
+The name passed to `hardwareMap.get()` must match your robot configuration. Power values range from -1.0 (full reverse) to 1.0 (full forward).
+
+
+
+```java
+private DcMotor leftDrive, rightDrive;
+
+@Override
+public void runOpMode() {
+    leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+    rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+    
+    leftDrive.setDirection(DcMotor.Direction.REVERSE); // Adjust for motor mounting
+    leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    
+    waitForStart();
+    while (opModeIsActive()) {
+        leftDrive.setPower(-gamepad1.left_stick_y);
+        rightDrive.setPower(-gamepad1.right_stick_y);
+        telemetry.update();
+    }
+    leftDrive.setPower(0);
+    rightDrive.setPower(0);
+}
+```
+
+### Run Modes and Encoders
+
+Use `RUN_WITHOUT_ENCODER` for basic power control. Use `RUN_USING_ENCODER` when you need position feedback. Use `RUN_TO_POSITION` for moving to a target. Reset encoders before use.
+
+### Encoder-Based Movement
+
+Move a motor a set distance using encoder counts.
+
+
+
+```java
+leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+int target = 1000;
+leftDrive.setPower(0.5);
+while (opModeIsActive() && leftDrive.getCurrentPosition() < target) {
+    telemetry.addData("Position", leftDrive.getCurrentPosition());
+    telemetry.update();
+}
+leftDrive.setPower(0);
+```
+
+<RulesBox title="Troubleshooting">
+
+If a motor does not move: verify the configuration name matches exactly, check wiring, and ensure power is nonzero. For encoders, confirm the motor supports them and reset before use.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"Drivebase Types","id":"drivebase-types"}]} title="Further Reading" section="ftc" />
+

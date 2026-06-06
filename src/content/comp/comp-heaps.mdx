@@ -1,0 +1,93 @@
+---
+title: "Heaps & Priority Queues"
+lessonId: comp-heaps
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 9
+difficulty: intermediate
+duration: 20 min
+description: ""
+---
+
+### Heap Data Structure
+
+A heap is a specialized tree-based data structure that satisfies the heap property. In a max heap, parent nodes are always greater than or equal to their children.
+
+### Types of Heaps
+
+- **Max Heap:** Parent is always greater than or equal to children
+- **Min Heap:** Parent is always less than or equal to children
+- **Binary Heap:** Most common implementation using arrays
+
+### Priority Queue in Java
+
+```java
+// Min Heap (default)
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+minHeap.offer(5);
+minHeap.offer(2);
+minHeap.offer(8);
+System.out.println(minHeap.poll()); // 2 (smallest)
+
+// Max Heap
+PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+maxHeap.offer(5);
+maxHeap.offer(2);
+maxHeap.offer(8);
+System.out.println(maxHeap.poll()); // 8 (largest)
+
+// Custom comparator
+PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+// For max heap: (a, b) -> b[0] - a[0]
+```
+
+### Common Applications
+
+- **Top K Elements:** Find k largest/smallest elements
+- **Heap Sort:** Sorting using heap data structure
+- **Dijkstra's Algorithm:** Shortest path in weighted graphs
+- **Merge K Sorted Lists:** Efficient merging
+- **Task Scheduling:** Priority-based scheduling
+
+### Find Top K Elements
+
+```java
+// Find k largest elements
+public int[] findKLargest(int[] nums, int k) {
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    
+    for (int num : nums) {
+        minHeap.offer(num);
+        if (minHeap.size() > k) {
+            minHeap.poll();
+        }
+    }
+    
+    int[] result = new int[k];
+    for (int i = k - 1; i >= 0; i--) {
+        result[i] = minHeap.poll();
+    }
+    return result;
+}
+
+// Find k smallest elements
+public int[] findKSmallest(int[] nums, int k) {
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    
+    for (int num : nums) {
+        maxHeap.offer(num);
+        if (maxHeap.size() > k) {
+            maxHeap.poll();
+        }
+    }
+    
+    int[] result = new int[k];
+    for (int i = 0; i < k; i++) {
+        result[i] = maxHeap.poll();
+    }
+    return result;
+}
+```
+

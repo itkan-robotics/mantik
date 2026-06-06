@@ -1,0 +1,185 @@
+---
+title: Project Creation
+lessonId: project-creation
+section: frc
+group: frc-environment-setup
+groupLabel: Environment Setup
+groupOrder: 1
+order: 4
+difficulty: beginner
+duration: 30 min
+description: ""
+---
+
+### Overview
+
+This guide covers creating a new WPILib project in VS Code. WPILib projects can use two main templates: **Timed Robot** and **Command Robot**. Timed Robot is simpler and uses periodic methods that run at fixed intervals. Command Robot uses a command-based architecture that organizes code into reusable commands and subsystems.
+
+### Prerequisites
+
+Before creating a project, ensure you have:
+
+
+
+• Visual Studio Code installed
+
+• WPILib extension installed in VS Code
+
+• Your FRC team number ready
+
+• A location on your computer where you want to save the project
+
+### Creating a Timed Robot Project
+
+The Timed Robot template provides a simple structure with periodic methods that run at fixed intervals. This template is good for beginners and simpler robots. The template includes a `Robot.java` file with all lifecycle methods pre-defined.
+
+### Timed Robot Video Tutorial
+
+Watch this video for a complete walkthrough of creating a Timed Robot project:
+
+
+
+### Step 1: Open Command Palette
+
+Open VS Code. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) to open the Command Palette. This is where you access WPILib commands.
+
+### Step 2: Start Project Creation
+
+In the Command Palette, type "WPILib: Create a new project" and select it from the dropdown. The New Project Creator window will open.
+
+### Step 3: Select Project Type
+
+In the New Project Creator window, choose **Template** as the project type. This gives you access to pre-configured project templates.
+
+### Step 4: Choose Programming Language
+
+Select your preferred programming language. Choose **Java** or **C++** based on your team's preference. Most teams use Java.
+
+### Step 5: Select Timed Robot Base Class
+
+Select **TimedRobot** as the base class. This template provides control through a collection of `init()` and `periodic()` methods that are called by WPILib during specific robot states.
+
+### Step 6: Configure Project Details
+
+Enter the following information:
+
+
+
+• **Team Number:** Enter your FRC team number
+
+• **Project Location:** Choose the folder where you want to save the project
+
+• **Project Name:** Enter a descriptive name (e.g., "MantikTimedRobot")
+
+### Step 7: Generate the Project
+
+Click **Generate Project** to create the new robot project. VS Code will generate all necessary files and folders. Once complete, the project will open automatically in VS Code.
+
+### Step 8: Understanding the Project Structure
+
+After creation, your Timed Robot project will have this structure:
+
+### Timed Robot Project Files
+
+- `src/main/java/frc/robot/Robot.java` - Main robot class with lifecycle methods
+- `src/main/java/frc/robot/Main.java` - Entry point that starts the robot program
+- `build.gradle` - Build configuration and dependencies
+- `wpilib.json` - WPILib project configuration
+- `.vscode/` - VS Code settings and launch configurations
+
+### Step 9: Understanding Robot.java
+
+Open `Robot.java` to see the template structure. The Timed Robot template includes these lifecycle methods:
+
+### Timed Robot Lifecycle Methods
+
+- `robotInit()` - Runs once when the robot starts
+- `robotPeriodic()` - Runs repeatedly (every 20ms) regardless of mode
+- `autonomousInit()` - Runs once when autonomous mode starts
+- `autonomousPeriodic()` - Runs repeatedly during autonomous (every 20ms)
+- `teleopInit()` - Runs once when teleoperated mode starts
+- `teleopPeriodic()` - Runs repeatedly during teleoperated mode (every 20ms)
+- `disabledInit()` - Runs once when robot is disabled
+- `disabledPeriodic()` - Runs repeatedly when robot is disabled (every 20ms)
+- `testInit()` - Runs once when test mode starts
+- `testPeriodic()` - Runs repeatedly during test mode (every 20ms)
+
+### Creating a Command Robot Project
+
+The Command Robot template uses a command-based architecture. This organizes code into reusable commands and subsystems, making it easier to manage complex robots. The Command Robot framework builds upon the TimedRobot base class by introducing a structure that allows for modular and reusable code.
+
+### Command Robot Video Tutorial
+
+Watch this video for a complete walkthrough of creating a Command Robot project:
+
+
+
+### Step 1: Open Command Palette
+
+Open VS Code. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac) to open the Command Palette.
+
+### Step 2: Start Project Creation
+
+In the Command Palette, type "WPILib: Create a new project" and select it from the dropdown. The New Project Creator window will open.
+
+### Step 3: Select Project Type
+
+In the New Project Creator window, choose **Template** as the project type.
+
+### Step 4: Choose Programming Language
+
+Select your preferred programming language. Choose **Java** or **C++** based on your team's preference.
+
+### Step 5: Select Command Robot Base Class
+
+Select **Command Robot** as the base class. This template includes a command-based structure with subsystems and commands.
+
+### Step 6: Configure Project Details
+
+Enter the following information:
+
+
+
+• **Team Number:** Enter your FRC team number
+
+• **Project Location:** Choose the folder where you want to save the project
+
+• **Project Name:** Enter a descriptive name (e.g., "MantikCommandRobot")
+
+### Step 7: Generate the Project
+
+Click **Generate Project** to create the new robot project. VS Code will generate all necessary files and folders. Once complete, the project will open automatically in VS Code.
+
+### Step 8: Understanding the Project Structure
+
+After creation, your Command Robot project will have this structure:
+
+### Command Robot Project Files
+
+- `src/main/java/frc/robot/Robot.java` - Main robot class
+- `src/main/java/frc/robot/Main.java` - Entry point that starts the robot program
+- `src/main/java/frc/robot/commands/` - Folder for command classes
+- `src/main/java/frc/robot/subsystems/` - Folder for subsystem classes
+- `build.gradle` - Build configuration and dependencies
+- `wpilib.json` - WPILib project configuration
+- `.vscode/` - VS Code settings and launch configurations
+
+### Step 9: Understanding Command Robot Architecture
+
+The Command Robot template uses a different architecture:
+
+### Command Robot Components
+
+- **Subsystems:** Represent physical parts of the robot (drivetrain, intake, shooter, etc.). Each subsystem manages its own hardware.
+- **Commands:** Represent actions the robot can perform (drive forward, collect game piece, shoot, etc.). Commands use subsystems to perform actions.
+- **Robot.java:** Sets up subsystems, creates command bindings, and schedules commands based on robot state.
+- **Command Scheduler:** Automatically runs scheduled commands and manages their lifecycle.
+
+### Choosing Between Templates
+
+Choose **Timed Robot** if you're new to FRC programming or building a simple robot. Choose **Command Robot** if you're building a complex robot with multiple mechanisms that need to work together, or if you want better code organization and reusability.
+
+### Next Steps
+
+After creating your project, you can start adding hardware configuration, writing code for your mechanisms, and testing your robot. Make sure to configure your team number in `wpilib.json` if you haven't already.
+

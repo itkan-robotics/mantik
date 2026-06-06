@@ -1,0 +1,871 @@
+---
+title: Advanced Debugging Techniques
+lessonId: advanced-debugging
+section: ftc
+group: android-studio-as-debugging-best-practices
+groupLabel: AS Debugging Best Practices
+groupOrder: 13
+order: 1
+difficulty: advanced
+duration: 120 min
+description: ""
+---
+
+### Introduction to Advanced Debugging
+
+Advanced debugging in Android Studio is essential for FTC development. When your robot doesn't behave as expected, you need powerful tools to identify and fix issues quickly. This lesson covers professional debugging techniques that will help you troubleshoot complex robot behaviors efficiently.
+
+<RulesBox title="Why Advanced Debugging Matters">
+
+- FTC robots operate in real-time environments where issues must be resolved quickly
+- Complex autonomous programs require systematic debugging approaches
+- Hardware-software interactions can create difficult-to-reproduce bugs
+- Competition environments demand reliable debugging skills
+
+</RulesBox>
+
+### Android Studio Debugger Setup for FTC
+
+Setting up the Android Studio debugger for FTC projects requires a specific configuration to work with the Control Hub and Expansion Hub. The debugger allows you to pause execution, inspect variables, and step through code line by line.
+
+### Basic Debug Logging Setup
+
+Start with basic debug logging to track program execution. The TAG constant helps organize log messages:
+
+
+
+```java
+// Add this at the top of your OpMode class
+private static final String TAG = "MyDebugOpMode";
+
+// This TAG will be used in all log statements to identify your OpMode's logs
+```
+
+### Understanding the TAG Constant
+
+The `TAG` constant is a string identifier that appears in all log messages from this OpMode. It helps you filter and organize logs when debugging. Choose a descriptive name that clearly identifies your OpMode.
+
+### Adding Debug Logging to Init Method
+
+Add debug logging to track the initialization process:
+
+
+
+```java
+@Override
+public void init() {
+    // Log the start of initialization
+    Log.d(TAG, "Initializing OpMode");
+    
+    // Your initialization code goes here
+    
+    // Log successful completion
+    Log.d(TAG, "Initialization complete");
+}
+```
+
+### Understanding Log Levels
+
+Android provides different log levels for different types of messages:`Log.d()` - Debug messages for development`Log.i()` - Information messages for general status`Log.w()` - Warning messages for potential issues`Log.e()` - Error messages for actual problems
+
+### Error Handling with Logging
+
+Add error handling to catch and log initialization problems:
+
+
+
+```java
+@Override
+public void init() {
+    Log.d(TAG, "Initializing OpMode");
+    
+    try {
+        // Your initialization code here
+        initializeHardware();
+        Log.d(TAG, "Hardware initialized successfully");
+    } catch (Exception e) {
+        // Log the error with full details
+        Log.e(TAG, "Hardware initialization failed", e);
+        
+        // Also show error on telemetry for driver station
+        telemetry.addData("Error", "Hardware init failed: " + e.getMessage());
+    }
+}
+```
+
+### Understanding Try-Catch for Debugging
+
+The `try-catch` block allows you to catch exceptions and handle them gracefully. The `Log.e()` call includes the exception object, which provides the full stack trace for debugging.
+
+### Complete Debug OpMode Example
+
+Here's the complete OpMode with all debugging elements combined:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.util.Log;
+
+@TeleOp(name = "Debug Example")
+public class MyDebugOpMode extends OpMode {
+    private static final String TAG = "MyDebugOpMode";
+    
+    private DcMotor leftMotor, rightMotor;
+    private Servo armServo;
+    
+    @Override
+    public void init() {
+        // Enable debug logging
+        Log.d(TAG, "Initializing OpMode");
+        
+        // Initialize hardware with debug info
+        try {
+            initializeHardware();
+            Log.d(TAG, "Hardware initialized successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Hardware initialization failed", e);
+            telemetry.addData("Error", "Hardware init failed: " + e.getMessage());
+        }
+    }
+    
+    private void initializeHardware() {
+        // Initialize motors
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        
+        // Initialize servo
+        armServo = hardwareMap.get(Servo.class, "arm_servo");
+        
+        // Log hardware details
+        Log.d(TAG, "Motors initialized: " + leftMotor.getDeviceName() + ", " + rightMotor.getDeviceName());
+        Log.d(TAG, "Servo initialized: " + armServo.getDeviceName());
+    }
+    
+    @Override
+    public void loop() {
+        // Your robot control code here
+        // Add breakpoints in this method to debug robot behavior
+    }
+}
+```
+
+### Setting Up Debug Logging
+
+Debug logging is the foundation of advanced debugging. By adding strategic log statements throughout your code, you can track program execution and identify where issues occur. The TAG constant helps organize log messages, and different log levels (d for debug, e for error) provide appropriate detail.
+
+### Setting Breakpoints
+
+Breakpoints are the foundation of debugging. They allow you to pause execution at specific points in your code to inspect the program state. In Android Studio, you can set breakpoints by clicking in the gutter next to line numbers.
+
+<RulesBox title="Breakpoint Best Practices">
+
+- Set breakpoints at the beginning of methods you suspect have issues
+- Use breakpoints to inspect variable values before and after critical operations
+- Place breakpoints before conditional statements to verify logic flow
+- Remove or disable breakpoints when not actively debugging to improve performance
+
+</RulesBox>
+
+### Conditional Breakpoints and Watch Expressions
+
+Conditional breakpoints are powerful tools for debugging complex robot behaviors. They only pause execution when specific conditions are met, making it easier to debug rare or specific scenarios.
+
+### State Machine Setup
+
+First, set up the basic state machine structure with an enum to define possible states:
+
+
+
+```java
+public class StateMachineOpMode extends OpMode {
+    // Define possible robot states
+    enum RobotState {
+        IDLE,      // Robot is waiting
+        MOVING,    // Robot is in motion
+        COMPLETE   // Robot has finished its task
+    }
+    
+    // Track current state and loop count
+    private RobotState currentState = RobotState.IDLE;
+    private int loopCount = 0;
+}
+```
+
+### Understanding State Machines
+
+A state machine is a programming pattern where your robot can be in one of several defined states at any time. Each state represents a different behavior or phase of operation. The robot transitions between states based on conditions or events.
+
+### Adding the Main Loop with State Logic
+
+Add the main loop method that handles state transitions:
+
+
+
+```java
+@Override
+public void loop() {
+    // This is where you'll set conditional breakpoints
+    switch (currentState) {
+        case IDLE:
+            handleIdleState();
+            break;
+            
+        case MOVING:
+            handleMovingState();
+            break;
+            
+        case COMPLETE:
+            handleCompleteState();
+            break;
+    }
+    
+    // Update loop counter and telemetry
+    loopCount++;
+    telemetry.addData("State", currentState);
+    telemetry.addData("Loop Count", loopCount);
+}
+```
+
+### Understanding the Switch Statement
+
+The `switch` statement checks the current state and calls the appropriate handler method. This makes the code more organized and easier to debug. Each case represents a different state of the robot.
+
+### Implementing State Handler Methods
+
+Create separate methods to handle each state's logic:
+
+
+
+```java
+private void handleIdleState() {
+    // Set conditional breakpoint here with condition: loopCount > 100
+    if (loopCount > 100) {
+        currentState = RobotState.MOVING;
+        Log.d("StateMachine", "Transitioning to MOVING state");
+    }
+}
+
+private void handleMovingState() {
+    // Set conditional breakpoint here with condition: getRuntime() > 5.0
+    if (getRuntime() > 5.0) {
+        currentState = RobotState.COMPLETE;
+        Log.d("StateMachine", "Movement complete");
+    }
+}
+
+private void handleCompleteState() {
+    // Set breakpoint with condition: true (always break)
+    Log.d("StateMachine", "OpMode complete");
+    requestOpModeStop();
+}
+```
+
+### Understanding Conditional Breakpoints
+
+Conditional breakpoints only pause execution when a specific condition is true. This is useful for debugging rare events or specific scenarios without stopping on every loop iteration.`loopCount > 100` - Only breaks when the robot has been idle for 100 loops`getRuntime() > 5.0` - Only breaks when the robot has been moving for 5 seconds`true` - Always breaks (useful for debugging the complete state)
+
+### Complete State Machine Example
+
+Here's the complete state machine OpMode with all debugging elements:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import android.util.Log;
+
+@TeleOp(name = "State Machine Debug")
+public class StateMachineOpMode extends OpMode {
+    // Define possible robot states
+    enum RobotState {
+        IDLE,      // Robot is waiting
+        MOVING,    // Robot is in motion
+        COMPLETE   // Robot has finished its task
+    }
+    
+    // Track current state and loop count
+    private RobotState currentState = RobotState.IDLE;
+    private int loopCount = 0;
+    private DcMotor driveMotor;
+    
+    @Override
+    public void init() {
+        driveMotor = hardwareMap.get(DcMotor.class, "drive_motor");
+        Log.d("StateMachine", "Initialized in IDLE state");
+    }
+    
+    @Override
+    public void loop() {
+        // Set conditional breakpoints in each case
+        switch (currentState) {
+            case IDLE:
+                handleIdleState();
+                break;
+                
+            case MOVING:
+                handleMovingState();
+                break;
+                
+            case COMPLETE:
+                handleCompleteState();
+                break;
+        }
+        
+        // Update loop counter and telemetry
+        loopCount++;
+        telemetry.addData("State", currentState);
+        telemetry.addData("Loop Count", loopCount);
+        telemetry.addData("Runtime", "%.2f", getRuntime());
+    }
+    
+    private void handleIdleState() {
+        // Set conditional breakpoint here with condition: loopCount > 100
+        if (loopCount > 100) {
+            currentState = RobotState.MOVING;
+            Log.d("StateMachine", "Transitioning to MOVING state");
+            driveMotor.setPower(0.5); // Start moving
+        }
+    }
+    
+    private void handleMovingState() {
+        // Set conditional breakpoint here with condition: getRuntime() > 5.0
+        if (getRuntime() > 5.0) {
+            currentState = RobotState.COMPLETE;
+            Log.d("StateMachine", "Movement complete");
+            driveMotor.setPower(0); // Stop moving
+        }
+    }
+    
+    private void handleCompleteState() {
+        // Set breakpoint with condition: true (always break)
+        Log.d("StateMachine", "OpMode complete");
+        requestOpModeStop();
+    }
+}
+```
+
+### Watch Expressions
+
+Watch expressions allow you to monitor specific variables or expressions without setting breakpoints. They're displayed in the debug window and update in real-time as your program runs.
+
+### Setting Up Variables for Watching
+
+First, declare the variables you want to monitor during debugging:
+
+
+
+```java
+public class WatchExpressionsExample extends OpMode {
+    // Hardware components
+    private DcMotor leftMotor, rightMotor;
+    
+    // Variables to watch during debugging
+    private double targetPower = 0.5;    // Maximum power limit
+    private double currentPower = 0.0;   // Current motor power
+    private boolean isMoving = false;    // Movement state
+    
+    // These variables will be monitored in the debugger
+```
+
+### Understanding Watch Expressions
+
+Watch expressions allow you to monitor specific variables or expressions in real-time during debugging. They appear in the debug window and update as your program runs, making it easy to track how values change over time.
+
+### Initializing Hardware Components
+
+Set up the hardware components that you'll want to monitor:
+
+
+
+```java
+@Override
+public void init() {
+    // Initialize motors
+    leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+    rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+    
+    // Set up watch expressions for these variables:
+    // - targetPower (double)
+    // - currentPower (double)
+    // - isMoving (boolean)
+    // - leftMotor.getPower() (method call)
+    // - rightMotor.getPower() (method call)
+    // - getRuntime() (method call)
+}
+```
+
+### Understanding Method Calls in Watch Expressions
+
+You can watch method calls like `leftMotor.getPower()` to see the actual power being sent to the motor. This is useful for verifying that your commands are being executed correctly.
+
+### Implementing Gamepad Control Logic
+
+Add the control logic that changes the variables you're watching:
+
+
+
+```java
+@Override
+public void loop() {
+    // Check if the left stick is being used
+    if (gamepad1.left_stick_y > 0.1) {
+        // Calculate power based on stick position
+        currentPower = gamepad1.left_stick_y * targetPower;
+        isMoving = true;
+    } else {
+        // Stop the robot
+        currentPower = 0.0;
+        isMoving = false;
+    }
+    
+    // Apply power to motors
+    leftMotor.setPower(currentPower);
+    rightMotor.setPower(currentPower);
+}
+```
+
+### Understanding the Control Logic
+
+The control logic checks if the left stick Y-axis is pressed beyond a small threshold (0.1) to avoid accidental movement. When pressed, it calculates the power as a percentage of the target power. When released, it stops the robot.
+
+### Adding Telemetry for Debugging
+
+Add telemetry to display the watched variables on the driver station:
+
+
+
+```java
+// Add this to the end of the loop() method
+// Add telemetry for debugging
+telemetry.addData("Target Power", targetPower);
+telemetry.addData("Current Power", currentPower);
+telemetry.addData("Is Moving", isMoving);
+telemetry.addData("Left Motor Power", leftMotor.getPower());
+telemetry.addData("Right Motor Power", rightMotor.getPower());
+telemetry.addData("Runtime", "%.2f", getRuntime());
+```
+
+### Understanding Telemetry vs Watch Expressions
+
+Telemetry displays information on the driver station screen, while watch expressions are only visible in the debugger. Use telemetry for information the driver needs, and watch expressions for detailed debugging information.
+
+### Complete Watch Expressions Example
+
+Here's the complete OpMode with all watch expression variables:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@TeleOp(name = "Watch Expressions Example")
+public class WatchExpressionsExample extends OpMode {
+    // Hardware components
+    private DcMotor leftMotor, rightMotor;
+    
+    // Variables to watch during debugging
+    private double targetPower = 0.5;    // Maximum power limit
+    private double currentPower = 0.0;   // Current motor power
+    private boolean isMoving = false;    // Movement state
+    
+    @Override
+    public void init() {
+        // Initialize motors
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        
+        // Set up watch expressions for these variables:
+        // - targetPower
+        // - currentPower
+        // - isMoving
+        // - leftMotor.getPower()
+        // - rightMotor.getPower()
+        // - getRuntime()
+    }
+    
+    @Override
+    public void loop() {
+        // Watch how these values change during execution
+        if (gamepad1.left_stick_y > 0.1) {
+            currentPower = gamepad1.left_stick_y * targetPower;
+            isMoving = true;
+        } else {
+            currentPower = 0.0;
+            isMoving = false;
+        }
+        
+        // Apply power to motors
+        leftMotor.setPower(currentPower);
+        rightMotor.setPower(currentPower);
+        
+        // Add telemetry for debugging
+        telemetry.addData("Target Power", targetPower);
+        telemetry.addData("Current Power", currentPower);
+        telemetry.addData("Is Moving", isMoving);
+        telemetry.addData("Left Motor Power", leftMotor.getPower());
+        telemetry.addData("Right Motor Power", rightMotor.getPower());
+        telemetry.addData("Runtime", "%.2f", getRuntime());
+    }
+}
+```
+
+### Logging Strategies for Robot State
+
+Effective logging is crucial for debugging robot behavior. You need to log enough information to understand what's happening without overwhelming the system or making logs unreadable.
+
+### Setting Up Logging Configuration
+
+First, define the logging configuration constants that control what gets logged:
+
+
+
+```java
+public class StructuredLoggingOpMode extends OpMode {
+    private static final String TAG = "RobotDebug";
+    private static final boolean DEBUG_MODE = true;      // Enable debug logging
+    private static final boolean VERBOSE_LOGGING = false; // Enable verbose logging
+    
+    // Hardware components
+    private DcMotor driveMotor;
+    private Servo armServo;
+    private ColorSensor colorSensor;
+}
+```
+
+### Understanding Logging Configuration
+
+The boolean constants control which logging levels are active. You can change these values to enable or disable different levels of logging without modifying the code. This is useful for performance tuning and debugging different scenarios.
+
+### Creating Custom Logging Methods
+
+Create helper methods for different logging levels:
+
+
+
+```java
+// Logging methods with different levels
+private void logInfo(String message) {
+    Log.i(TAG, message);
+    telemetry.addData("INFO", message);
+}
+
+private void logDebug(String message) {
+    if (DEBUG_MODE) {
+        Log.d(TAG, message);
+        telemetry.addData("DEBUG", message);
+    }
+}
+
+private void logVerbose(String message) {
+    if (VERBOSE_LOGGING) {
+        Log.v(TAG, message);
+    }
+}
+
+private void logError(String message, Exception e) {
+    Log.e(TAG, message, e);
+    telemetry.addData("ERROR", message + ": " + e.getMessage());
+}
+```
+
+### Understanding Logging Levels
+
+Each logging method serves a different purpose:`logInfo()` - Always logs important information to both logcat and telemetry`logDebug()` - Only logs when DEBUG_MODE is true, useful for development`logVerbose()` - Only logs when VERBOSE_LOGGING is true, for detailed debugging`logError()` - Always logs errors with full exception details
+
+### Initializing Hardware with Logging
+
+Add logging to the initialization process:
+
+
+
+```java
+@Override
+public void init() {
+    // Initialize hardware
+    driveMotor = hardwareMap.get(DcMotor.class, "drive_motor");
+    armServo = hardwareMap.get(Servo.class, "arm_servo");
+    colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+    
+    // Log successful initialization
+    logInfo("Hardware initialized successfully");
+    
+    // Log detailed hardware information (debug level)
+    logDebug("Drive motor: " + driveMotor.getDeviceName());
+    logDebug("Arm servo: " + armServo.getDeviceName());
+    logDebug("Color sensor: " + colorSensor.getDeviceName());
+}
+```
+
+### Understanding Hardware Logging
+
+The initialization logs help you verify that all hardware components are properly connected and accessible. The debug-level logs provide detailed information about each device, which is useful for troubleshooting hardware issues.
+
+### Adding Event-Based Logging
+
+Add logging for important events in the main loop:
+
+
+
+```java
+@Override
+public void loop() {
+    // Log state changes (important events)
+    if (gamepad1.a) {
+        logInfo("Button A pressed - starting autonomous sequence");
+        startAutonomousSequence();
+    }
+    
+    // Log sensor readings periodically (debug information)
+    if (getRuntime() % 2.0 < 0.1) { // Every 2 seconds
+        logDebug("Color sensor reading: R=" + colorSensor.red() + ", G=" + colorSensor.green() + ", B=" + colorSensor.blue());
+    }
+    
+    // Log motor behavior (verbose information)
+    double motorPower = gamepad1.left_stick_y;
+    if (Math.abs(motorPower) > 0.1) {
+        logVerbose("Setting motor power to: " + motorPower);
+        driveMotor.setPower(motorPower);
+    }
+}
+```
+
+### Understanding Event-Based Logging
+
+Different types of events are logged at different levels:**Info level** - Important user actions (button presses, mode changes)**Debug level** - Periodic sensor readings and system status**Verbose level** - Frequent motor commands and detailed behavior
+
+### Creating Sequence Logging
+
+Add logging to track multi-step sequences:
+
+
+
+```java
+private void startAutonomousSequence() {
+    logInfo("Starting autonomous sequence");
+    
+    // Log each step of the sequence
+    logDebug("Step 1: Moving arm to position");
+    armServo.setPosition(0.5);
+    
+    logDebug("Step 2: Driving forward");
+    driveMotor.setPower(0.5);
+    
+    logInfo("Autonomous sequence started");
+}
+```
+
+### Understanding Sequence Logging
+
+Sequence logging helps you track the progress of complex operations. Each step is logged at the debug level, while the start and completion are logged at the info level. This makes it easy to see where a sequence might be failing or taking too long.
+
+### Complete Structured Logging Example
+
+Here's the complete OpMode with all structured logging elements:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import android.util.Log;
+
+@TeleOp(name = "Structured Logging Example")
+public class StructuredLoggingOpMode extends OpMode {
+    private static final String TAG = "RobotDebug";
+    private static final boolean DEBUG_MODE = true;      // Enable debug logging
+    private static final boolean VERBOSE_LOGGING = false; // Enable verbose logging
+    
+    // Hardware components
+    private DcMotor driveMotor;
+    private Servo armServo;
+    private ColorSensor colorSensor;
+    
+    @Override
+    public void init() {
+        // Initialize hardware
+        driveMotor = hardwareMap.get(DcMotor.class, "drive_motor");
+        armServo = hardwareMap.get(Servo.class, "arm_servo");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        
+        // Log successful initialization
+        logInfo("Hardware initialized successfully");
+        
+        // Log detailed hardware information (debug level)
+        logDebug("Drive motor: " + driveMotor.getDeviceName());
+        logDebug("Arm servo: " + armServo.getDeviceName());
+        logDebug("Color sensor: " + colorSensor.getDeviceName());
+    }
+    
+    @Override
+    public void loop() {
+        // Log state changes (important events)
+        if (gamepad1.a) {
+            logInfo("Button A pressed - starting autonomous sequence");
+            startAutonomousSequence();
+        }
+        
+        // Log sensor readings periodically (debug information)
+        if (getRuntime() % 2.0 < 0.1) { // Every 2 seconds
+            logDebug("Color sensor reading: R=" + colorSensor.red() + ", G=" + colorSensor.green() + ", B=" + colorSensor.blue());
+        }
+        
+        // Log motor behavior (verbose information)
+        double motorPower = gamepad1.left_stick_y;
+        if (Math.abs(motorPower) > 0.1) {
+            logVerbose("Setting motor power to: " + motorPower);
+            driveMotor.setPower(motorPower);
+        }
+    }
+    
+    private void startAutonomousSequence() {
+        logInfo("Starting autonomous sequence");
+        
+        // Log each step of the sequence
+        logDebug("Step 1: Moving arm to position");
+        armServo.setPosition(0.5);
+        
+        logDebug("Step 2: Driving forward");
+        driveMotor.setPower(0.5);
+        
+        logInfo("Autonomous sequence started");
+    }
+    
+    // Logging methods with different levels
+    private void logInfo(String message) {
+        Log.i(TAG, message);
+        telemetry.addData("INFO", message);
+    }
+    
+    private void logDebug(String message) {
+        if (DEBUG_MODE) {
+            Log.d(TAG, message);
+            telemetry.addData("DEBUG", message);
+        }
+    }
+    
+    private void logVerbose(String message) {
+        if (VERBOSE_LOGGING) {
+            Log.v(TAG, message);
+        }
+    }
+    
+    private void logError(String message, Exception e) {
+        Log.e(TAG, message, e);
+        telemetry.addData("ERROR", message + ": " + e.getMessage());
+    }
+}
+```
+
+### Remote Debugging on Control Hub
+
+Remote debugging allows you to debug code running on the actual Control Hub hardware. This is essential for debugging issues that only occur on the real robot.
+
+### ADB Connection Setup
+
+To set up remote debugging, you need to establish an ADB (Android Debug Bridge) connection to the Control Hub. Here's the process:
+
+
+
+```java
+// First, ensure your Control Hub is connected to the same network
+// Then use ADB to connect to the Control Hub
+
+// In terminal/command prompt:
+// adb connect 192.168.43.1:5555
+// (Replace with your Control Hub's IP address)
+
+// Verify connection:
+// adb devices
+
+// In your OpMode, add remote debugging support:
+public class RemoteDebugOpMode extends OpMode {
+    private static final String TAG = "RemoteDebug";
+    private boolean remoteDebugEnabled = false;
+    
+    @Override
+    public void init() {
+        // Check if remote debugging is available
+        try {
+            // This will only work if ADB is connected
+            Log.d(TAG, "Remote debugging available");
+            remoteDebugEnabled = true;
+        } catch (Exception e) {
+            Log.w(TAG, "Remote debugging not available: " + e.getMessage());
+            remoteDebugEnabled = false;
+        }
+        
+        // Initialize hardware with remote debugging support
+        initializeHardwareWithDebugging();
+    }
+    
+    private void initializeHardwareWithDebugging() {
+        try {
+            // Initialize motors
+            DcMotor leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+            DcMotor rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+            
+            if (remoteDebugEnabled) {
+                Log.d(TAG, "Motors initialized: " + leftMotor.getDeviceName() + ", " + rightMotor.getDeviceName());
+            }
+            
+            // Initialize sensors
+            ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+            
+            if (remoteDebugEnabled) {
+                Log.d(TAG, "Color sensor initialized: " + colorSensor.getDeviceName());
+            }
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Hardware initialization failed", e);
+            if (remoteDebugEnabled) {
+                // Additional debugging information for remote sessions
+                Log.e(TAG, "Hardware map contents: " + hardwareMap.getAll(DcMotor.class).size() + " motors, " + 
+                      hardwareMap.getAll(ColorSensor.class).size() + " color sensors");
+            }
+        }
+    }
+    
+    @Override
+    public void loop() {
+        if (remoteDebugEnabled) {
+            // Enhanced logging for remote debugging
+            Log.d(TAG, "Loop iteration: " + getRuntime() + "s");
+            
+            // Log gamepad state
+            if (gamepad1.a) {
+                Log.d(TAG, "Button A pressed");
+            }
+            if (Math.abs(gamepad1.left_stick_y) > 0.1) {
+                Log.d(TAG, "Left stick Y: " + gamepad1.left_stick_y);
+            }
+        }
+        
+        // Your normal OpMode logic here
+    }
+}
+```
+
+<ExerciseBox title="Practice: Advanced Debugging" description="Try these debugging exercises to reinforce your understanding:" answers={[{"task":"Create an OpMode with a state machine that controls a robot drivetrain","content":"import com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport android.util.Log;\n\n@TeleOp(name = \"DebuggingExercise\")\npublic class DebuggingExerciseOpMode extends OpMode {\n    private static final String TAG = \"DebugExercise\";\n    \n    // State machine for robot control\n    private enum RobotState { IDLE, FORWARD, TURNING, COMPLETE }\n    private RobotState currentState = RobotState.IDLE;\n    \n    // Hardware components\n    private DcMotor leftMotor, rightMotor;\n    \n    // State tracking variables\n    private int loopCount = 0;\n    private double startTime = 0.0;\n    \n    @Override\n    public void init() {\n        // Initialize hardware\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n        \n        // Add debug logging\n        Log.d(TAG, \"Hardware initialized\");\n        Log.d(TAG, \"Left motor: \" + leftMotor.getDeviceName());\n        Log.d(TAG, \"Right motor: \" + rightMotor.getDeviceName());\n    }\n    \n    @Override\n    public void loop() {\n        // State machine logic\n        switch (currentState) {\n            case IDLE:\n                handleIdleState();\n                break;\n            case FORWARD:\n                handleForwardState();\n                break;\n            case TURNING:\n                handleTurningState();\n                break;\n            case COMPLETE:\n                handleCompleteState();\n                break;\n        }\n        \n        // Update tracking variables\n        loopCount++;\n        \n        // Add telemetry\n        telemetry.addData(\"State\", currentState);\n        telemetry.addData(\"Loop Count\", loopCount);\n        telemetry.addData(\"Runtime\", \"%.2f\", getRuntime());\n    }\n    \n    private void handleIdleState() {\n        // TODO: Implement idle state logic\n    }\n    \n    private void handleForwardState() {\n        // TODO: Implement forward state logic\n    }\n    \n    private void handleTurningState() {\n        // TODO: Implement turning state logic\n    }\n    \n    private void handleCompleteState() {\n        // TODO: Implement complete state logic\n    }\n}"},{"task":"Intentionally introduce a bug (e.g., wrong state transition condition)","content":"private void handleIdleState() {\n    // BUG: Wrong condition - should be loopCount > 50, not 5\n    if (loopCount > 5) {  // This bug makes the robot start too early\n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        Log.d(TAG, \"Transitioning to FORWARD state\");\n        \n        // Start driving forward\n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n    }\n}\n\nprivate void handleForwardState() {\n    // BUG: Wrong condition - should be getRuntime() - startTime > 3.0\n    if (getRuntime() - startTime > 1.0) {  // This bug makes the robot turn too early\n        currentState = RobotState.TURNING;\n        Log.d(TAG, \"Transitioning to TURNING state\");\n        \n        // Start turning\n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n    }\n}\n\nprivate void handleTurningState() {\n    // BUG: Wrong condition - should be getRuntime() - startTime > 5.0\n    if (getRuntime() - startTime > 2.0) {  // This bug makes the robot stop too early\n        currentState = RobotState.COMPLETE;\n        Log.d(TAG, \"Transitioning to COMPLETE state\");\n        \n        // Stop motors\n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n    }\n}\n\nprivate void handleCompleteState() {\n    Log.d(TAG, \"Robot sequence complete\");\n    // Keep the robot stopped\n    leftMotor.setPower(0);\n    rightMotor.setPower(0);\n}"},{"task":"Set up conditional breakpoints to catch the bug","content":"// Set these conditional breakpoints in your debugger:\n// 1. In handleIdleState() at line: if (loopCount > 5)\n//    Condition: loopCount > 5\n//    This will break when the buggy condition is met\n\n// 2. In handleForwardState() at line: if (getRuntime() - startTime > 1.0)\n//    Condition: getRuntime() - startTime > 1.0\n//    This will break when the robot transitions too early\n\n// 3. In handleTurningState() at line: if (getRuntime() - startTime > 2.0)\n//    Condition: getRuntime() - startTime > 2.0\n//    This will break when the robot completes too early\n\n// 4. In handleCompleteState() at the first line\n//    Condition: true\n//    This will always break when reaching the complete state\n\n// Watch these variables during debugging:\n// - currentState\n// - loopCount\n// - startTime\n// - getRuntime()\n// - leftMotor.getPower()\n// - rightMotor.getPower()"},{"task":"Use watch expressions to monitor state variables","content":"// Add these watch expressions in your debugger:\n// 1. currentState - Monitor the current robot state\n// 2. loopCount - Track how many loops have executed\n// 3. startTime - See when the sequence started\n// 4. getRuntime() - Monitor the total runtime\n// 5. getRuntime() - startTime - Calculate elapsed time since sequence start\n// 6. leftMotor.getPower() - Monitor left motor power\n// 7. rightMotor.getPower() - Monitor right motor power\n\n// Expected behavior vs actual behavior:\n// Expected: Robot waits 50 loops before starting\n// Actual: Robot starts after only 5 loops (BUG)\n// \n// Expected: Robot drives forward for 3 seconds\n// Actual: Robot drives forward for only 1 second (BUG)\n// \n// Expected: Robot turns for 2 seconds\n// Actual: Robot turns for only 1 second (BUG)"},{"task":"Implement structured logging to track the bug","content":"// Add this logging configuration at the top of your class:\nprivate static final boolean DEBUG_MODE = true;\nprivate static final boolean VERBOSE_LOGGING = true;\n\n// Add these logging methods:\nprivate void logInfo(String message) {\n    Log.i(TAG, message);\n    telemetry.addData(\"INFO\", message);\n}\n\nprivate void logDebug(String message) {\n    if (DEBUG_MODE) {\n        Log.d(TAG, message);\n        telemetry.addData(\"DEBUG\", message);\n    }\n}\n\nprivate void logVerbose(String message) {\n    if (VERBOSE_LOGGING) {\n        Log.v(TAG, message);\n    }\n}\n\n// Update your state handlers with logging:\nprivate void handleIdleState() {\n    logDebug(\"Idle state - Loop count: \" + loopCount);\n    \n    if (loopCount > 5) {  // BUG: Should be 50\n        logInfo(\"BUG: Transitioning to FORWARD too early!\");\n        logDebug(\"Expected: loopCount > 50, Actual: loopCount = \" + loopCount);\n        \n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        \n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n        \n        logInfo(\"Started driving forward\");\n    }\n}\n\nprivate void handleForwardState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 1.0) {  // BUG: Should be 3.0\n        logInfo(\"BUG: Transitioning to TURNING too early!\");\n        logDebug(\"Expected: elapsedTime > 3.0, Actual: elapsedTime = \" + elapsedTime);\n        \n        currentState = RobotState.TURNING;\n        \n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n        \n        logInfo(\"Started turning\");\n    }\n}\n\nprivate void handleTurningState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 2.0) {  // BUG: Should be 5.0\n        logInfo(\"BUG: Completing sequence too early!\");\n        logDebug(\"Expected: elapsedTime > 5.0, Actual: elapsedTime = \" + elapsedTime);\n        \n        currentState = RobotState.COMPLETE;\n        \n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n        \n        logInfo(\"Sequence complete\");\n    }\n}\n\nprivate void handleCompleteState() {\n    logInfo(\"Robot stopped - Sequence finished\");\n    leftMotor.setPower(0);\n    rightMotor.setPower(0);\n}"},{"task":"Use remote debugging to verify the fix works on hardware","content":"// First, fix the bugs in your code:\nprivate void handleIdleState() {\n    logDebug(\"Idle state - Loop count: \" + loopCount);\n    \n    if (loopCount > 50) {  // FIXED: Changed from 5 to 50\n        logInfo(\"Transitioning to FORWARD state\");\n        \n        currentState = RobotState.FORWARD;\n        startTime = getRuntime();\n        \n        leftMotor.setPower(0.5);\n        rightMotor.setPower(0.5);\n        \n        logInfo(\"Started driving forward\");\n    }\n}\n\nprivate void handleForwardState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 3.0) {  // FIXED: Changed from 1.0 to 3.0\n        logInfo(\"Transitioning to TURNING state\");\n        \n        currentState = RobotState.TURNING;\n        \n        leftMotor.setPower(0.3);\n        rightMotor.setPower(-0.3);\n        \n        logInfo(\"Started turning\");\n    }\n}\n\nprivate void handleTurningState() {\n    double elapsedTime = getRuntime() - startTime;\n    logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n    \n    if (elapsedTime > 5.0) {  // FIXED: Changed from 2.0 to 5.0\n        logInfo(\"Transitioning to COMPLETE state\");\n        \n        currentState = RobotState.COMPLETE;\n        \n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n        \n        logInfo(\"Sequence complete\");\n    }\n}\n\n// Remote debugging setup:\n// 1. Connect to Control Hub via ADB:\n//    adb connect 192.168.43.1:5555\n// \n// 2. Verify connection:\n//    adb devices\n// \n// 3. Set breakpoints on the fixed conditions\n// \n// 4. Run the OpMode and verify:\n//    - Robot waits 50 loops before starting\n//    - Robot drives forward for 3 seconds\n//    - Robot turns for 2 seconds\n//    - Robot stops and completes sequence\n// \n// 5. Check logs to confirm no more bug messages\n// \n// 6. Verify motor behavior matches expected timing"},{"task":"Combine all tasks into one complete debugging exercise","content":"import com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport android.util.Log;\n\n@TeleOp(name = \"CompleteDebuggingExercise\")\npublic class CompleteDebuggingExercise extends OpMode {\n    private static final String TAG = \"CompleteDebug\";\n    private static final boolean DEBUG_MODE = true;\n    private static final boolean VERBOSE_LOGGING = true;\n    \n    // State machine\n    private enum RobotState { IDLE, FORWARD, TURNING, COMPLETE }\n    private RobotState currentState = RobotState.IDLE;\n    \n    // Hardware\n    private DcMotor leftMotor, rightMotor;\n    \n    // State tracking\n    private int loopCount = 0;\n    private double startTime = 0.0;\n    \n    // Logging methods\n    private void logInfo(String message) {\n        Log.i(TAG, message);\n        telemetry.addData(\"INFO\", message);\n    }\n    \n    private void logDebug(String message) {\n        if (DEBUG_MODE) {\n            Log.d(TAG, message);\n            telemetry.addData(\"DEBUG\", message);\n        }\n    }\n    \n    private void logVerbose(String message) {\n        if (VERBOSE_LOGGING) {\n            Log.v(TAG, message);\n        }\n    }\n    \n    @Override\n    public void init() {\n        // Initialize hardware\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_motor\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_motor\");\n        \n        logInfo(\"Hardware initialized successfully\");\n        logDebug(\"Left motor: \" + leftMotor.getDeviceName());\n        logDebug(\"Right motor: \" + rightMotor.getDeviceName());\n    }\n    \n    @Override\n    public void loop() {\n        // State machine with debugging\n        switch (currentState) {\n            case IDLE:\n                handleIdleState();\n                break;\n            case FORWARD:\n                handleForwardState();\n                break;\n            case TURNING:\n                handleTurningState();\n                break;\n            case COMPLETE:\n                handleCompleteState();\n                break;\n        }\n        \n        loopCount++;\n        \n        // Telemetry for debugging\n        telemetry.addData(\"State\", currentState);\n        telemetry.addData(\"Loop Count\", loopCount);\n        telemetry.addData(\"Runtime\", \"%.2f\", getRuntime());\n        telemetry.addData(\"Left Power\", leftMotor.getPower());\n        telemetry.addData(\"Right Power\", rightMotor.getPower());\n    }\n    \n    private void handleIdleState() {\n        logDebug(\"Idle state - Loop count: \" + loopCount);\n        \n        if (loopCount > 50) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to FORWARD state\");\n            \n            currentState = RobotState.FORWARD;\n            startTime = getRuntime();\n            \n            leftMotor.setPower(0.5);\n            rightMotor.setPower(0.5);\n            \n            logInfo(\"Started driving forward\");\n        }\n    }\n    \n    private void handleForwardState() {\n        double elapsedTime = getRuntime() - startTime;\n        logDebug(\"Forward state - Elapsed time: \" + elapsedTime);\n        \n        if (elapsedTime > 3.0) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to TURNING state\");\n            \n            currentState = RobotState.TURNING;\n            \n            leftMotor.setPower(0.3);\n            rightMotor.setPower(-0.3);\n            \n            logInfo(\"Started turning\");\n        }\n    }\n    \n    private void handleTurningState() {\n        double elapsedTime = getRuntime() - startTime;\n        logDebug(\"Turning state - Elapsed time: \" + elapsedTime);\n        \n        if (elapsedTime > 5.0) {  // FIXED: Correct condition\n            logInfo(\"Transitioning to COMPLETE state\");\n            \n            currentState = RobotState.COMPLETE;\n            \n            leftMotor.setPower(0);\n            rightMotor.setPower(0);\n            \n            logInfo(\"Sequence complete\");\n        }\n    }\n    \n    private void handleCompleteState() {\n        logInfo(\"Robot stopped - Sequence finished\");\n        leftMotor.setPower(0);\n        rightMotor.setPower(0);\n    }\n}"}]}>
+
+- Create an OpMode with a state machine that controls a robot drivetrain
+- Intentionally introduce a bug (e.g., wrong state transition condition)
+- Set up conditional breakpoints to catch the bug
+- Use watch expressions to monitor state variables
+- Implement structured logging to track the bug
+- Use remote debugging to verify the fix works on hardware
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Android Studio Debugging Guide","url":"https://developer.android.com/studio/debug"},{"label":"Android Studio Conditional Breakpoints","url":"https://developer.android.com/studio/debug#breakPoints"},{"label":"Variables and Watch Expressions","url":"https://developer.android.com/studio/debug#variablesAndWatches"},{"label":"State Machines","id":"state-machines"}]} title="Additional Resources" section="ftc" />
+

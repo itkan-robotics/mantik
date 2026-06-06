@@ -1,0 +1,126 @@
+---
+title: Two Pointers Technique
+lessonId: comp-two-pointers
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 4
+difficulty: intermediate
+duration: 30 min
+description: ""
+---
+
+### Two Pointers Technique
+
+The two pointers technique is a common algorithmic pattern that uses two pointers to solve problems efficiently. It's particularly useful for array and string problems.
+
+### Types of Two Pointers
+
+- **Opposite Directional:** Pointers start from opposite ends and move toward each other
+- **Same Directional:** Pointers start from the same end and move in the same direction
+- **Fast and Slow:** One pointer moves faster than the other
+
+### Opposite Directional Example - Two Sum in Sorted Array
+
+```java
+// Find two numbers that sum to target in sorted array
+public int[] twoSum(int[] numbers, int target) {
+    int left = 0;
+    int right = numbers.length - 1;
+    
+    while (left < right) {
+        int sum = numbers[left] + numbers[right];
+        
+        if (sum == target) {
+            return new int[]{left + 1, right + 1}; // 1-indexed
+        } else if (sum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    return new int[]{-1, -1};
+}
+```
+
+### Same Directional Example - Remove Duplicates
+
+```java
+// Remove duplicates from sorted array
+public int removeDuplicates(int[] nums) {
+    if (nums.length == 0) return 0;
+    
+    int writeIndex = 1;
+    
+    for (int readIndex = 1; readIndex < nums.length; readIndex++) {
+        if (nums[readIndex] != nums[readIndex - 1]) {
+            nums[writeIndex] = nums[readIndex];
+            writeIndex++;
+        }
+    }
+    
+    return writeIndex;
+}
+
+// Remove duplicates allowing at most 2 occurrences
+public int removeDuplicatesII(int[] nums) {
+    if (nums.length <= 2) return nums.length;
+    
+    int writeIndex = 2;
+    
+    for (int readIndex = 2; readIndex < nums.length; readIndex++) {
+        if (nums[readIndex] != nums[writeIndex - 2]) {
+            nums[writeIndex] = nums[readIndex];
+            writeIndex++;
+        }
+    }
+    
+    return writeIndex;
+}
+```
+
+### Fast and Slow Pointers - Cycle Detection
+
+```java
+// Detect cycle in linked list (Floyd's Algorithm)
+public boolean hasCycle(ListNode head) {
+    if (head == null || head.next == null) return false;
+    
+    ListNode slow = head;
+    ListNode fast = head;
+    
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        
+        if (slow == fast) return true;
+    }
+    
+    return false;
+}
+
+// Find middle of linked list
+public ListNode findMiddle(ListNode head) {
+    if (head == null) return null;
+    
+    ListNode slow = head;
+    ListNode fast = head;
+    
+    while (fast.next != null && fast.next.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    
+    return slow;
+}
+```
+
+### Common Applications
+
+- **Array Problems:** Two sum, container with most water, 3 sum
+- **String Problems:** Palindrome check, reverse string
+- **Linked List:** Cycle detection, find middle, reverse
+- **Optimization:** Reduce time complexity from O(n²) to O(n)
+

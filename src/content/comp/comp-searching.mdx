@@ -1,0 +1,138 @@
+---
+title: Searching Algorithms
+lessonId: comp-searching
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 2
+difficulty: beginner
+duration: 30 min
+description: ""
+---
+
+### Searching Algorithm Overview
+
+Searching algorithms are used to find specific elements in data structures. The choice of algorithm depends on the data structure and whether it's sorted.
+
+### Linear Search
+
+```java
+// Linear Search - O(n) time
+public int linearSearch(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    return -1; // Not found
+}
+
+// Linear Search with enhanced for loop
+public int linearSearchEnhanced(int[] arr, int target) {
+    for (int num : arr) {
+        if (num == target) {
+            return num; // Return the value if found
+        }
+    }
+    return -1;
+}
+```
+
+### Binary Search
+
+```java
+// Binary Search - O(log n) time (requires sorted array)
+public int binarySearch(int[] arr, int target) {
+    int left = 0;
+    int right = arr.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return -1; // Not found
+}
+
+// Binary Search with recursion
+public int binarySearchRecursive(int[] arr, int target, int left, int right) {
+    if (left > right) {
+        return -1;
+    }
+    
+    int mid = left + (right - left) / 2;
+    
+    if (arr[mid] == target) {
+        return mid;
+    } else if (arr[mid] < target) {
+        return binarySearchRecursive(arr, target, mid + 1, right);
+    } else {
+        return binarySearchRecursive(arr, target, left, mid - 1);
+    }
+}
+```
+
+### Binary Search Variations
+
+```java
+// Find first occurrence of target
+public int findFirstOccurrence(int[] arr, int target) {
+    int left = 0;
+    int right = arr.length - 1;
+    int result = -1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            result = mid;
+            right = mid - 1; // Continue searching left
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return result;
+}
+
+// Find last occurrence of target
+public int findLastOccurrence(int[] arr, int target) {
+    int left = 0;
+    int right = arr.length - 1;
+    int result = -1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            result = mid;
+            left = mid + 1; // Continue searching right
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return result;
+}
+```
+
+### Searching in Different Data Structures
+
+- **Arrays:** Linear search (O(n)), Binary search (O(log n)) if sorted
+- **Linked Lists:** Linear search only (O(n))
+- **Hash Tables:** Average O(1), worst case O(n)
+- **Binary Search Trees:** O(log n) average, O(n) worst case
+- **Heaps:** Linear search (O(n))
+

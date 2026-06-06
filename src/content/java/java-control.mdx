@@ -1,0 +1,108 @@
+---
+title: Control Structures
+lessonId: java-control
+section: java
+group: java-programming-logic
+groupLabel: Programming Logic
+groupOrder: 2
+order: 3
+difficulty: beginner
+duration: 40 min
+description: ""
+---
+
+### Making Decisions with if/else
+
+Control structures help your program make decisions and repeat actions based on conditions.
+
+### If/Else Statements:
+
+```java
+int batteryLevel = 75;
+
+if (batteryLevel > 80) {
+    System.out.println("Battery level is good");
+} else if (batteryLevel > 50) {
+    System.out.println("Battery level is okay");
+} else if (batteryLevel > 20) {
+    System.out.println("Battery level is low");
+} else {
+    System.out.println("Battery critically low!");
+}
+```
+
+<RulesBox title="Comparison Operators:" subtitle="Common Operators:">
+
+- `==` - Equal to
+- `!=` - Not equal to
+- `&gt;` - Greater than
+- `&lt;` - Less than
+- `&gt;=` - Greater than or equal
+- `&lt;=` - Less than or equal
+
+</RulesBox>
+
+### Loops - For Loop:
+
+```java
+// For loop - when you know how many times to repeat
+for (int i = 1; i <= 5; i++) {
+    System.out.println("Count: " + i);
+}
+
+// For loop with arrays
+int[] motorPowers = {50, 75, 100, 25};
+for (int i = 0; i < motorPowers.length; i++) {
+    System.out.println("Motor " + i + " power: " + motorPowers[i]);
+}
+```
+
+### Loops - While Loop:
+
+```java
+// While loop - repeat based on a condition
+int attempts = 0;
+boolean sensorDetected = false;
+
+while (!sensorDetected && attempts < 10) {
+    sensorDetected = checkSensor();
+    attempts++;
+    System.out.println("Attempt " + attempts);
+}
+```
+
+<LogicalOperators title="Logical Operators:" subtitle="Combining Conditions:">
+
+- `&&` - AND (both conditions must be true)
+- `||` - OR (at least one condition must be true)
+- `!` - NOT (reverses the condition)
+
+#### Examples:
+
+```java
+// AND example
+if (batteryLevel > 20 && motorTemperature < 80) {
+    robot.startDriving();
+}
+
+// OR example  
+if (gamepad1.a || gamepad1.b) {
+    robot.activateClaw();
+}
+```
+
+</LogicalOperators>
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: Control Flow" answers={[{"task":"An if/else chain that sets motor speed based on distance to target","content":"public void setMotorSpeedByDistance(double distanceToTarget) {\n    double motorSpeed;\n    \n    if (distanceToTarget > 50) {\n        motorSpeed = 1.0;  // Full speed for far distances\n        System.out.println(\"Far from target - full speed\");\n    } else if (distanceToTarget > 20) {\n        motorSpeed = 0.6;  // Medium speed\n        System.out.println(\"Medium distance - reduced speed\");\n    } else if (distanceToTarget > 5) {\n        motorSpeed = 0.3;  // Slow speed for precision\n        System.out.println(\"Close to target - slow speed\");\n    } else {\n        motorSpeed = 0.0;  // Stop when very close\n        System.out.println(\"At target - stopping\");\n    }\n    \n    setDriveMotors(motorSpeed);\n}"},{"task":"A for loop that checks multiple sensors","content":"public void checkAllSensors() {\n    String[] sensorNames = {\"colorSensor\", \"distanceSensor\", \"touchSensor\", \"gyroSensor\"};\n    boolean[] sensorStatus = new boolean[4];\n    \n    System.out.println(\"=== Sensor Check ===\");\n    \n    for (int i = 0; i < sensorNames.length; i++) {\n        // Simulate sensor check (replace with actual sensor code)\n        sensorStatus[i] = Math.random() > 0.2; // 80% chance of working\n        \n        if (sensorStatus[i]) {\n            System.out.println(sensorNames[i] + \": [OK] Working\");\n        } else {\n            System.out.println(sensorNames[i] + \": [ERROR] Error\");\n        }\n    }\n}"},{"task":"A while loop that runs until a button is pressed","content":"public void waitForButtonPress() {\n    System.out.println(\"Waiting for button press to continue...\");\n    \n    while (!gamepad1.a && !gamepad1.b) {\n        // Keep checking for button press\n        telemetry.addData(\"Status\", \"Press A or B to continue\");\n        telemetry.update();\n        \n        // Small delay to prevent excessive CPU usage\n        try {\n            Thread.sleep(50);\n        } catch (InterruptedException e) {\n            break;\n        }\n    }\n    \n    if (gamepad1.a) {\n        System.out.println(\"Button A pressed - continuing\");\n    } else if (gamepad1.b) {\n        System.out.println(\"Button B pressed - continuing\");\n    }\n}"},{"task":"Combine conditions using logical operators","content":"public void robotSafetyCheck() {\n    double batteryLevel = 75;\n    double motorTemp = 45;\n    boolean emergencyStop = false;\n    boolean sensorError = false;\n    \n    // AND operator - both conditions must be true\n    if (batteryLevel > 20 && motorTemp < 80) {\n        System.out.println(\"Robot ready to operate\");\n    }\n    \n    // OR operator - at least one condition must be true\n    if (emergencyStop || sensorError || batteryLevel < 10) {\n        System.out.println(\"[WARNING] STOPPING ROBOT - Safety issue detected\");\n        stopAllMotors();\n    }\n    \n    // NOT operator - reverse the condition\n    if (!emergencyStop && !sensorError) {\n        System.out.println(\"All systems normal\");\n    }\n    \n    // Complex combination\n    if ((batteryLevel > 50 && motorTemp < 70) || \n        (batteryLevel > 30 && motorTemp < 60)) {\n        System.out.println(\"Safe to run autonomous mode\");\n    }\n}"}]}>
+
+- An if/else chain that sets motor speed based on distance to target
+- A for loop that checks multiple sensors
+- A while loop that runs until a button is pressed
+- Combine conditions using logical operators
+
+```java
+Write control structures for robot behavior:
+```
+
+</ExerciseBox>
+
