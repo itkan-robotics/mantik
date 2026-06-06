@@ -1,0 +1,78 @@
+---
+title: Java Classes
+lessonId: java-classes
+section: java
+group: java-oop
+groupLabel: Object-Oriented Programming
+groupOrder: 4
+order: 1
+difficulty: intermediate
+duration: 20 min
+description: ""
+---
+
+### Introduction to Object-Oriented Programming
+
+Object-oriented programming is concerned with isolating concepts of a problem domain into separate entities and then using those entities to solve problems. In FRC robotics, we can think of concepts like 'Robot', 'Motor', 'Sensor', and 'GameController' as separate entities that work together to create a complete robot system.
+
+### Classes and Objects: The Blueprint Analogy
+
+A **class** defines the attributes of objects (the information related to them) and their commands (their methods). Think of a class as a blueprint for a house. The blueprint specifies what kinds of houses can be built from it - the number of rooms, the materials, the layout. Similarly, a class specifies what kinds of objects can be created from it.
+
+### Real-World Example:
+
+```java
+// Just like ArrayList is a class provided by Java:
+ArrayList<Integer> integers = new ArrayList<>();
+integers.add(15);
+integers.add(34);
+integers.add(65);
+integers.add(111);
+System.out.println(integers.size());
+
+// We can create our own classes for robotics:
+FRCRobot competitionBot = new FRCRobot("TeamBot");
+competitionBot.initializeHardware();
+competitionBot.startAutonomous();
+```
+
+### The Relationship Between a Class and an Object
+
+Individual objects are all created based on the same class blueprint - they're **instances** of the same class. The states of individual objects (their attributes like motor power, sensor readings, team number) may all vary, however. Each object has its own unique state while sharing the same structure defined by the class.
+
+### Creating Our Own Classes
+
+A class specifies what objects instantiated from it are like. The object's **instance variables** specify the internal state of the object, and the object's **methods** specify what the object does. Let's create a class to represent an FRC robot team member.
+
+### Basic Class Structure:
+
+```java
+public class TeamMember {
+    // Instance variables (attributes)
+    private String name;
+    private int age;
+    private String role;
+    
+    // Constructor
+    public TeamMember(String memberName) {
+        this.name = memberName;
+        this.age = 0;
+        this.role = "Student";
+    }
+    
+    // Methods (behaviors)
+    public void assignRole(String newRole) {
+        this.role = newRole;
+        System.out.println(name + " is now the " + newRole);
+    }
+    
+    public String getName() {
+        return this.name;
+    }
+}
+```
+
+### Instance Variables and Encapsulation
+
+Variables defined inside a class are called **instance variables**, object fields, or object attributes. Each variable is preceded by the keyword `private`, which means the variables are 'hidden' inside the object. This is known as **encapsulation** - a fundamental principle of object-oriented programming.
+

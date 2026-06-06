@@ -1,0 +1,46 @@
+---
+title: Advanced Control
+lessonId: advanced-control-theory
+section: frc
+group: frc-control-theory
+groupLabel: Control Theory
+groupOrder: 5
+order: 4
+difficulty: advanced
+duration: 30 min
+description: ""
+---
+
+### Overview
+
+Beyond PID, advanced control techniques like State-Space, LQR, and Feedforward offer superior performance for complex systems. These are useful for multi-joint arms, swerve drives, or systems requiring high precision.
+
+<RulesBox title="Techniques" subtitle="Key concepts:">
+
+- **State-Space:** Models systems using state variables (position, velocity) and matrix equations.
+- **LQR (Linear Quadratic Regulator):** Optimal control that balances error reduction with control effort.
+- **Feedforward:** Predicts required output based on physics models (gravity, friction, inertia).
+- **MIMO:** Multi-Input Multi-Output control for coupled systems (e.g., Swerve).
+
+</RulesBox>
+
+### State-Space Control
+
+Uses the equation `ẋ = Ax + Bu` to model how system state changes. This allows controlling multiple coupled variables (like arm angle and velocity) simultaneously. WPILib provides `LinearSystem` and `LinearSystemLoop` for implementation.
+
+### LQR (Optimal Control)
+
+LQR finds the 'best' control gains by minimizing a cost function. You tune **Q** (penalty for error) and **R** (penalty for effort).
+
+High Q = aggressive correction.
+
+High R = smooth/efficient motion.
+
+### When to Use
+
+**PID:** Sufficient for 90% of FRC mechanisms (shooters, simple arms, intakes).
+
+**Advanced Control:** Needed for inverted pendulums, balancing robots, or highly coupled multi-joint arms.
+
+<LinkGrid links={[{"label":"WPILib State-Space","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/index.html"},{"label":"PID Control","id":"frc-pid-control"}]} title="Resources" section="frc" />
+

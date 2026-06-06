@@ -1,0 +1,74 @@
+---
+title: Problem-Solving Framework
+lessonId: comp-problem-solving
+section: comp
+group: comp-foundation
+groupLabel: Foundation Concepts
+groupOrder: 1
+order: 2
+difficulty: beginner
+duration: 10 min
+description: ""
+---
+
+### The 4-Step Framework
+
+Every competitive coding problem can be solved using this systematic approach: Understand, Plan, Execute, Review.
+
+### Step 1: Understand the Problem
+
+- Read the problem statement carefully
+- Identify input/output format
+- Note constraints and edge cases
+- Ask clarifying questions if needed
+- Write down what you understand in your own words
+
+### Step 2: Plan Your Solution
+
+- Think of a brute force approach first
+- Identify patterns or data structures that could help
+- Consider time and space complexity
+- Write pseudocode or draw diagrams
+- Think of edge cases and how to handle them
+
+### Step 3: Execute Your Plan
+
+- Implement your solution step by step
+- Test with small examples first
+- Handle edge cases explicitly
+- Write clean, readable code
+- Add comments for complex logic
+
+### Step 4: Review and Optimize
+
+- Test with the given examples
+- Check for bugs and edge cases
+- Analyze time and space complexity
+- Look for optimization opportunities
+- Consider alternative approaches
+
+### Example: Two Sum Problem
+
+```java
+// Problem: Find two numbers that add up to target
+// Input: nums = [2, 7, 11, 15], target = 9
+// Output: [0, 1]
+
+// Step 1: Understand - need to find two indices
+// Step 2: Plan - use hash map to store complements
+// Step 3: Execute
+// Step 4: Review - O(n) time, O(n) space
+
+public int[] twoSum(int[] nums, int target) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        int complement = target - nums[i];
+        if (map.containsKey(complement)) {
+            return new int[]{map.get(complement), i};
+        }
+        map.put(nums[i], i);
+    }
+    return new int[]{-1, -1};
+}
+```
+

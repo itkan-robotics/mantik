@@ -1,0 +1,95 @@
+---
+title: Three-Wheel Odometry
+lessonId: three-wheel-odometry
+section: ftc
+group: android-studio-odometry
+groupLabel: Odometry
+groupOrder: 11
+order: 3
+difficulty: advanced
+duration: 55 min
+description: ""
+---
+
+### Why Use Three Wheels?
+
+A three-wheel odometry setup allows your robot to track its position (X, Y) and heading (angle) on the field with high accuracy. By using two parallel wheels and one perpendicular wheel, you can resolve both translational and rotational movement.
+
+### Mathematics of Three-Wheel Odometry
+
+Three-wheel odometry uses the change in encoder values from each wheel to calculate the robot's movement. The two parallel wheels measure forward/backward and rotational movement, while the perpendicular wheel measures side-to-side (lateral) movement. 
+
+
+
+For a detailed explanation, see [gm0: Odometry](https://gm0.org/en/latest/docs/software/concepts/odometry.html).
+
+### Basic Position Update Logic
+
+This code snippet demonstrates how to update the robot's X, Y, and heading using three encoders:
+
+
+
+```java
+// Assume previous and current encoder values are stored
+double leftDelta = currentLeft - previousLeft;
+double rightDelta = currentRight - previousRight;
+double centerDelta = currentCenter - previousCenter;
+
+double forwardMovement = (leftDelta + rightDelta) / 2.0;
+double headingChange = (rightDelta - leftDelta) / trackWidth;
+double lateralMovement = centerDelta - (headingChange * centerWheelOffset);
+
+// Update robot's position
+robotX += forwardMovement * Math.cos(robotHeading) - lateralMovement * Math.sin(robotHeading);
+robotY += forwardMovement * Math.sin(robotHeading) + lateralMovement * Math.cos(robotHeading);
+robotHeading += headingChange;
+```
+
+### Implementing Three-Wheel Odometry in Android Studio
+
+In your FTC code, you will need to read encoder values each loop, calculate the deltas, and update your robot's position. This is typically done in a loop inside your op mode.
+
+### Sample Loop for Odometry Update
+
+This snippet shows how to structure your op mode loop for odometry:
+
+
+
+```java
+@Override
+public void runOpMode() {
+    // Initialize encoders and variables...
+    waitForStart();
+    while (opModeIsActive()) {
+        // Read current encoder values
+        int left = leftEncoder.getCurrentPosition();
+        int right = rightEncoder.getCurrentPosition();
+        int center = centerEncoder.getCurrentPosition();
+        // Calculate deltas and update position (see above)
+        // ...
+        telemetry.addData("X", robotX);
+        telemetry.addData("Y", robotY);
+        telemetry.addData("Heading", Math.toDegrees(robotHeading));
+        telemetry.update();
+        // Store previous values for next loop
+        // ...
+    }
+}
+```
+
+### Calibration and Tuning
+
+Accurate odometry requires careful calibration. Measure your track width (distance between parallel wheels) and center wheel offset precisely. Test your robot's movement and adjust these values as needed for best results. Additionally, if you have a CAD model of your robot, you can also use those distances for a more accurate measurement.
+
+### Common Pitfalls and How to Avoid Them
+
+Common mistakes include swapping encoder directions, incorrect math, or mismeasured distances. Always verify your encoder directions and test with simple movements before running complex autonomous routines.
+
+<ExerciseBox title="Practice Exercise" description="Write a function that takes in the previous and current encoder values for all three wheels and returns the robot's new X, Y, and heading." answers={[{"task":"Implement the position update logic in Java.","content":"public class OdometryPose {\n    public double x, y, heading;\n    public OdometryPose(double x, double y, double heading) {\n        this.x = x; this.y = y; this.heading = heading;\n    }\n}\n\npublic OdometryPose updatePose(\n    int prevLeft, int prevRight, int prevCenter,\n    int currLeft, int currRight, int currCenter,\n    double prevX, double prevY, double prevHeading,\n    double trackWidth, double centerWheelOffset\n) {\n    double leftDelta = currLeft - prevLeft;\n    double rightDelta = currRight - prevRight;\n    double centerDelta = currCenter - prevCenter;\n    double forwardMovement = (leftDelta + rightDelta) / 2.0;\n    double headingChange = (rightDelta - leftDelta) / trackWidth;\n    double lateralMovement = centerDelta - (headingChange * centerWheelOffset);\n    double newX = prevX + forwardMovement * Math.cos(prevHeading) - lateralMovement * Math.sin(prevHeading);\n    double newY = prevY + forwardMovement * Math.sin(prevHeading) + lateralMovement * Math.cos(prevHeading);\n    double newHeading = prevHeading + headingChange;\n    return new OdometryPose(newX, newY, newHeading);\n}"},{"task":"Test your function with sample encoder values.","content":"You can test your updatePose method with sample values. For example:\n\nOdometryPose pose = updatePose(0, 0, 0, 1000, 1000, 0, 0, 0, 0, 15.0, 7.5);\nSystem.out.println(\"X: \" + pose.x + \" Y: \" + pose.y + \" Heading: \" + Math.toDegrees(pose.heading));\n// This should show a forward movement with no rotation or lateral movement."},{"task":"Verify the output by making the robot create a simple \"S\" shape.","content":"To verify, simulate a sequence of encoder values that would make the robot move forward, turn, and then move forward again in the opposite direction. After each update, print the pose. You should see the X, Y, and heading values change in a way that traces an \"S\" path."},{"task":"Put it all together: Modular Odometry Update Example","content":"public class OdometryPose {\n    public double x, y, heading;\n    public OdometryPose(double x, double y, double heading) {\n        this.x = x; this.y = y; this.heading = heading;\n    }\n}\n\npublic OdometryPose updatePose(\n    int prevLeft, int prevRight, int prevCenter,\n    int currLeft, int currRight, int currCenter,\n    double prevX, double prevY, double prevHeading,\n    double trackWidth, double centerWheelOffset\n) {\n    double leftDelta = currLeft - prevLeft;\n    double rightDelta = currRight - prevRight;\n    double centerDelta = currCenter - prevCenter;\n    double forwardMovement = (leftDelta + rightDelta) / 2.0;\n    double headingChange = (rightDelta - leftDelta) / trackWidth;\n    double lateralMovement = centerDelta - (headingChange * centerWheelOffset);\n    double newX = prevX + forwardMovement * Math.cos(prevHeading) - lateralMovement * Math.sin(prevHeading);\n    double newY = prevY + forwardMovement * Math.sin(prevHeading) + lateralMovement * Math.cos(prevHeading);\n    double newHeading = prevHeading + headingChange;\n    return new OdometryPose(newX, newY, newHeading);\n}\n\n// In your op mode loop:\nOdometryPose pose = new OdometryPose(0, 0, 0);\nint prevLeft = 0, prevRight = 0, prevCenter = 0;\nwhile (opModeIsActive()) {\n    int currLeft = leftEncoder.getCurrentPosition();\n    int currRight = rightEncoder.getCurrentPosition();\n    int currCenter = centerEncoder.getCurrentPosition();\n    pose = updatePose(prevLeft, prevRight, prevCenter, currLeft, currRight, currCenter, pose.x, pose.y, pose.heading, TRACK_WIDTH, CENTER_WHEEL_OFFSET);\n    telemetry.addData(\"X\", pose.x);\n    telemetry.addData(\"Y\", pose.y);\n    telemetry.addData(\"Heading\", Math.toDegrees(pose.heading));\n    telemetry.update();\n    prevLeft = currLeft; prevRight = currRight; prevCenter = currCenter;\n}"}]}>
+
+- Implement the position update logic in Java.
+- Test your function with sample encoder values.
+- Verify the output by making the robot create a simple "S" shape.
+
+</ExerciseBox>
+

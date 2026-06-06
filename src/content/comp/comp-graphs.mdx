@@ -1,0 +1,143 @@
+---
+title: "Graphs & Graph Algorithms"
+lessonId: comp-graphs
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 4
+difficulty: intermediate
+duration: 35 min
+description: ""
+---
+
+### Graph Basics
+
+A graph is a data structure consisting of vertices (nodes) connected by edges. Graphs can be directed or undirected, weighted or unweighted.
+
+### Graph Representation
+
+```java
+// Adjacency List representation
+class Graph {
+    private Map<Integer, List<Integer>> adjacencyList;
+    
+    public Graph() {
+        adjacencyList = new HashMap<>();
+    }
+    
+    public void addVertex(int vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList<>());
+    }
+    
+    public void addEdge(int source, int destination) {
+        adjacencyList.get(source).add(destination);
+        // For undirected graph, also add reverse edge
+        // adjacencyList.get(destination).add(source);
+    }
+    
+    public List<Integer> getNeighbors(int vertex) {
+        return adjacencyList.getOrDefault(vertex, new ArrayList<>());
+    }
+}
+
+// Adjacency Matrix representation
+class GraphMatrix {
+    private int[][] adjacencyMatrix;
+    private int numVertices;
+    
+    public GraphMatrix(int numVertices) {
+        this.numVertices = numVertices;
+        this.adjacencyMatrix = new int[numVertices][numVertices];
+    }
+    
+    public void addEdge(int source, int destination) {
+        adjacencyMatrix[source][destination] = 1;
+        // For undirected graph
+        // adjacencyMatrix[destination][source] = 1;
+    }
+}
+```
+
+### Graph Traversal
+
+- **Depth-First Search (DFS):** Explore as far as possible along each branch before backtracking
+- **Breadth-First Search (BFS):** Explore all neighbors at the present depth before moving to next level
+
+### DFS Implementation
+
+```java
+// DFS using recursion
+void dfsRecursive(int vertex, boolean[] visited, List<Integer> result) {
+    visited[vertex] = true;
+    result.add(vertex);
+    
+    for (int neighbor : getNeighbors(vertex)) {
+        if (!visited[neighbor]) {
+            dfsRecursive(neighbor, visited, result);
+        }
+    }
+}
+
+// DFS using stack (iterative)
+List<Integer> dfsIterative(int startVertex) {
+    List<Integer> result = new ArrayList<>();
+    boolean[] visited = new boolean[numVertices];
+    Stack<Integer> stack = new Stack<>();
+    
+    stack.push(startVertex);
+    
+    while (!stack.isEmpty()) {
+        int vertex = stack.pop();
+        
+        if (!visited[vertex]) {
+            visited[vertex] = true;
+            result.add(vertex);
+            
+            for (int neighbor : getNeighbors(vertex)) {
+                if (!visited[neighbor]) {
+                    stack.push(neighbor);
+                }
+            }
+        }
+    }
+    
+    return result;
+}
+```
+
+### BFS Implementation
+
+```java
+List<Integer> bfs(int startVertex) {
+    List<Integer> result = new ArrayList<>();
+    boolean[] visited = new boolean[numVertices];
+    Queue<Integer> queue = new LinkedList<>();
+    
+    queue.offer(startVertex);
+    visited[startVertex] = true;
+    
+    while (!queue.isEmpty()) {
+        int vertex = queue.poll();
+        result.add(vertex);
+        
+        for (int neighbor : getNeighbors(vertex)) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                queue.offer(neighbor);
+            }
+        }
+    }
+    
+    return result;
+}
+```
+
+### Common Graph Problems
+
+- **Connected Components:** Find all connected components in a graph
+- **Cycle Detection:** Detect cycles in directed/undirected graphs
+- **Topological Sort:** Order vertices in directed acyclic graph
+- **Shortest Path:** Find shortest path between vertices
+- **Minimum Spanning Tree:** Find minimum weight spanning tree
+

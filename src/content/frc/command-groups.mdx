@@ -1,0 +1,101 @@
+---
+title: Command Groups
+lessonId: command-groups
+section: frc
+group: frc-command-based
+groupLabel: Command-Based Programming
+groupOrder: 3
+order: 5
+difficulty: intermediate
+duration: 20 min
+description: ""
+---
+
+### Overview
+
+Command groups combine multiple commands to create complex behaviors. Use them for autonomous routines or coordinated mechanism movements.
+
+<RulesBox title="Group Types" subtitle="Two main patterns:">
+
+- **Sequential:** Commands run one after another, waiting for each to finish.
+- **Parallel:** Commands run simultaneously, all finishing when the last one completes.
+- **Mixed:** Combine both patterns for complex routines.
+
+</RulesBox>
+
+### Sequential Commands
+
+Commands execute in order. Each command waits for the previous one to finish before starting. Use `new SequentialCommandGroup()` to create sequential groups.
+
+### Sequential Example
+
+```java
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
+// Run commands one after another
+Command autoRoutine = new SequentialCommandGroup(
+    new DriveForward(drivetrain).withTimeout(2.0),
+    new RunIntake(intake).withTimeout(1.0),
+    new InstantCommand(() -> intake.stop(), intake)
+);
+```
+
+### Parallel Commands
+
+Commands run at the same time. The group finishes when all commands finish. Use `new ParallelCommandGroup()` to create parallel groups.
+
+### Parallel Example
+
+```java
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
+// Run commands simultaneously
+Command simultaneous = new ParallelCommandGroup(
+    new RaiseElevator(elevator).withTimeout(3.0),
+    new ExtendArm(arm).withTimeout(2.0)
+);
+```
+
+### Mixed Groups
+
+Combine sequential and parallel commands to create complex routines. Groups can contain other groups.
+
+### Autonomous Routine Example
+
+```java
+package frc.robot;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.commands.DriveForward;
+import frc.robot.commands.RunIntake;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+
+public class RobotContainer {
+    private Drivetrain drivetrain = new Drivetrain();
+    private Intake intake = new Intake();
+    
+    public Command getAutoCommand() {
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new DriveForward(drivetrain).withTimeout(2.0),
+                new RunIntake(intake).withTimeout(2.0)
+            ),
+            new InstantCommand(() -> intake.stop(), intake)
+        );
+    }
+}
+```
+
+### Timeout & Conditions
+
+Use `.withTimeout(seconds)` to limit command duration. Use `.until(condition)` to finish when a condition is met. Chain these methods for precise control.
+
+<LinkGrid links={[{"label":"WPILib Command-Based","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/index.html"},{"label":"Command Groups Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/command-groups.html"}]} title="Resources" section="frc" />
+

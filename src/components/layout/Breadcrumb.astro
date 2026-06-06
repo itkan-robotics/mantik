@@ -1,0 +1,28 @@
+---
+import { sections, sectionFromPath } from '@/config/navigation';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+if (currentPath === '/') return null;
+
+const sectionId = sectionFromPath(currentPath);
+const section = sectionId ? sections.find((s) => s.id === sectionId) : null;
+if (!section) return null;
+
+const sectionLabel = `${section.label} Training`;
+---
+
+<nav class="breadcrumb-nav" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item breadcrumb-current">
+      <span>{sectionLabel}</span>
+    </li>
+  </ol>
+</nav>

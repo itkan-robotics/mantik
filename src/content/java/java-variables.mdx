@@ -1,0 +1,91 @@
+---
+title: Java Variables
+lessonId: java-variables
+section: java
+group: java-basics
+groupLabel: Java Basics
+groupOrder: 1
+order: 3
+difficulty: beginner
+duration: 35 min
+description: ""
+---
+
+### What are Variables?
+
+Variables in Java are containers that store data values. Think of them as labeled boxes where you can keep different types of information that your program can use and modify.
+
+### Key Concepts:
+
+- **Declaration:** Creating a variable with a specific type
+- **Initialization:** Giving the variable its first value
+- **Assignment:** Changing the variable's value
+- **Scope:** Where in your code the variable can be used
+
+### Basic Variable Example:
+
+```java
+// Declaration and initialization
+int age = 16;
+String name = "Robot";
+double speed = 12.5;
+boolean isActive = true;
+
+// Using variables
+System.out.println("Robot name: " + name);
+System.out.println("Age: " + age + " months");
+System.out.println("Speed: " + speed + " mph");
+```
+
+<RulesBox title="Variable Naming Rules:">
+
+**Good Practices:**
+
+- Use descriptive names: `motorSpeed` instead of `ms`
+- Start with lowercase letter: `robotName`
+- Use camelCase for multiple words: `maxBatteryLevel`
+- Constants in UPPER_CASE: `MAX_SPEED`
+
+**Avoid:**
+
+- Starting with numbers: `2wheels`
+- Using Java keywords: `class`, `public`
+- Special characters (except _ and $): `robot-name`
+- Single letters (except for loop counters): `x`, `y`
+
+</RulesBox>
+
+### Variable Scope Example:
+
+```java
+public class Robot {
+    // Class-level variable (can be used anywhere in the class)
+    private String robotName = "FRC Bot";
+    
+    public void startRobot() {
+        // Method-level variable (only used in this method)
+        int startupTime = 5;
+        
+        if (startupTime > 0) {
+            // Block-level variable (only used in this if block)
+            String message = "Starting up...";
+            System.out.println(message);
+        }
+        // 'message' cannot be used here - out of scope!
+    }
+}
+```
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: Create Variables" answers={[{"task":"A String for the robot's team name","content":"String teamName = \"Lightning Bolts\";\nSystem.out.println(\"Team: \" + teamName);"},{"task":"An integer for the number of wheels","content":"int numberOfWheels = 4;\nSystem.out.println(\"Wheels: \" + numberOfWheels);"},{"task":"A double for the robot's weight in pounds","content":"double weightInPounds = 125.5;\nSystem.out.println(\"Weight: \" + weightInPounds + \" lbs\");"},{"task":"A boolean to track if the robot is autonomous","content":"boolean isAutonomous = true;\nSystem.out.println(\"Autonomous mode: \" + isAutonomous);\n\n// Complete example:\npublic class RobotInfo {\n    public static void main(String[] args) {\n        String teamName = \"Lightning Bolts\";\n        int numberOfWheels = 4;\n        double weightInPounds = 125.5;\n        boolean isAutonomous = true;\n        \n        System.out.println(\"=== Robot Information ===\");\n        System.out.println(\"Team: \" + teamName);\n        System.out.println(\"Wheels: \" + numberOfWheels);\n        System.out.println(\"Weight: \" + weightInPounds + \" lbs\");\n        System.out.println(\"Autonomous: \" + isAutonomous);\n    }\n}"}]}>
+
+- A String for the robot's team name
+- An integer for the number of wheels
+- A double for the robot's weight in pounds
+- A boolean to track if the robot is autonomous
+
+```java
+Create variables for a robot's properties:
+```
+
+</ExerciseBox>
+

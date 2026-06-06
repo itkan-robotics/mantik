@@ -1,0 +1,168 @@
+---
+title: Using State Machines for Reliable FTC Code
+lessonId: state-machines
+section: ftc
+group: onbot-java-debugging-best-practices
+groupLabel: "OBJ Debugging & Best Practices"
+groupOrder: 7
+order: 2
+difficulty: intermediate
+duration: 65 min
+description: ""
+---
+
+### Introduction to State Machines
+
+State machines are a powerful way to organize your robot's logic, especially for complex tasks. They help you avoid tangled code and make debugging much easier. In FTC, state machines are often used to control sequences of actions in both autonomous and teleop modes.
+
+### What is a State Machine?
+
+A state machine is a programming pattern where your code is always in one of several defined 'states.' Each state represents a specific behavior or phase of your robot's operation. The robot transitions between states based on events or conditions. 
+
+
+
+For a general introduction, see [gm0: Finite State Machines](https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html).
+
+### Simple State Machine Example
+
+This example shows a basic state machine for a robot that drives forward, then turns, then stops:
+
+
+
+```java
+@TeleOp
+public class StateMachineOpMode extends LinearOpMode {
+    private enum State { DRIVE_FORWARD, TURN, STOP }
+    private State currentState = State.DRIVE_FORWARD;
+    private DcMotor leftMotor, rightMotor;
+    @Override
+    public void runOpMode() {
+        leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_drive");
+        waitForStart();
+        while (opModeIsActive()) {
+            switch (currentState) {
+                case DRIVE_FORWARD:
+                    leftMotor.setPower(0.5);
+                    rightMotor.setPower(0.5);
+                    if (leftMotor.getCurrentPosition() > 1000) {
+                        currentState = State.TURN;
+                    }
+                    break;
+                case TURN:
+                    leftMotor.setPower(0.5);
+                    rightMotor.setPower(-0.5);
+                    if (rightMotor.getCurrentPosition() < -500) {
+                        currentState = State.STOP;
+                    }
+                    break;
+                case STOP:
+                    leftMotor.setPower(0);
+                    rightMotor.setPower(0);
+                    break;
+            }
+            telemetry.addData("State", currentState);
+            telemetry.update();
+        }
+    }
+}
+```
+
+### State Machines with Multiple Subsystems
+
+State machines are especially powerful when you need to coordinate multiple subsystems, such as a lift and a pivot, or an intake and a drive. Each subsystem can have its own state, or you can use a single state machine to manage the sequence of actions across subsystems. This approach helps prevent conflicts and ensures that each part of the robot acts at the right time.
+
+### Example: Coordinating a Lift and a Pivot with a State Machine
+
+```java
+@TeleOp
+public class MultiSubsystemStateMachineOpMode extends LinearOpMode {
+    private enum State { START, LIFT_UP, PIVOT_OUT, PLACE, RETRACT, STOP }
+    private State currentState = State.START;
+    private DcMotor liftMotor;
+    private Servo pivotServo;
+    @Override
+    public void runOpMode() {
+        liftMotor = hardwareMap.get(DcMotor.class, "lift_motor");
+        pivotServo = hardwareMap.get(Servo.class, "pivot_servo");
+        waitForStart();
+        while (opModeIsActive()) {
+            switch (currentState) {
+                case START:
+                    // Wait for button to start sequence
+                    if (gamepad1.a) {
+                        liftMotor.setTargetPosition(1000);
+                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        liftMotor.setPower(0.5);
+                        currentState = State.LIFT_UP;
+                    }
+                    break;
+                case LIFT_UP:
+                    if (!liftMotor.isBusy()) {
+                        pivotServo.setPosition(1.0); // Pivot out
+                        currentState = State.PIVOT_OUT;
+                    }
+                    break;
+                case PIVOT_OUT:
+                    // Wait for pivot to reach position (simulate with timer or sensor)
+                    sleep(500);
+                    currentState = State.PLACE;
+                    break;
+                case PLACE:
+                    // Place object (e.g., open claw)
+                    // ... add code for placing ...
+                    currentState = State.RETRACT;
+                    break;
+                case RETRACT:
+                    pivotServo.setPosition(0.0); // Pivot back
+                    liftMotor.setTargetPosition(0);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftMotor.setPower(0.5);
+                    if (!liftMotor.isBusy()) {
+                        currentState = State.STOP;
+                    }
+                    break;
+                case STOP:
+                    liftMotor.setPower(0);
+                    // Sequence complete
+                    break;
+            }
+            telemetry.addData("State", currentState);
+            telemetry.addData("Lift Position", liftMotor.getCurrentPosition());
+            telemetry.addData("Pivot Position", pivotServo.getPosition());
+            telemetry.update();
+        }
+    }
+}
+```
+
+### Debugging with State Machines
+
+State machines make it easier to pinpoint where logic fails. By reporting the current state with telemetry, you can quickly see what your robot is doing and why. If something goes wrong, you know which state to investigate.
+
+### Telemetry for State Debugging
+
+```java
+telemetry.addData("Current State", currentState);
+telemetry.addData("Left Encoder", leftMotor.getCurrentPosition());
+telemetry.update();
+```
+
+### Best Practices for State Machine Design
+
+- Keep each state simple and focused on one task.
+- Use enums for state names to avoid typos and improve readability.
+- Avoid deeply nested logic inside states.
+- Use telemetry to track state transitions.
+- Break up large state machines into smaller, manageable pieces if needed.
+
+<ExerciseBox title="Practice: Build Your Own State Machine" description="Write an OpMode that uses a state machine to perform a sequence of actions (e.g., drive forward, pause, then reverse). Use telemetry to display the current state and test your transitions." answers={[{"task":"Define at least three states for your robot.","content":"// Use an enum to define your states\nenum State { DRIVE_FORWARD, PAUSE, REVERSE, STOP }\n// This makes your code clear and easy to debug."},{"task":"Implement transitions based on encoder values or timers.","content":"// Example: Transition from DRIVE_FORWARD to PAUSE after encoder reaches a value\nif (currentState == State.DRIVE_FORWARD && leftMotor.getCurrentPosition() > 1000) {\n    currentState = State.PAUSE;\n    pauseStartTime = System.currentTimeMillis();\n}\n// Transition from PAUSE to REVERSE after 1 second\nif (currentState == State.PAUSE && System.currentTimeMillis() - pauseStartTime > 1000) {\n    currentState = State.REVERSE;\n}"},{"task":"Add telemetry to show the current state and relevant sensor data.","content":"// Add this inside your loop\ntelemetry.addData(\"State\", currentState);\ntelemetry.addData(\"Left Encoder\", leftMotor.getCurrentPosition());\ntelemetry.update();"},{"task":"Combine all tasks into one working OpMode","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@TeleOp(name = \"StateMachinePractice\")\npublic class StateMachinePractice extends LinearOpMode {\n    private enum State { DRIVE_FORWARD, PAUSE, REVERSE, STOP }\n    private State currentState = State.DRIVE_FORWARD;\n    private DcMotor leftMotor, rightMotor;\n    private long pauseStartTime = 0;\n\n    @Override\n    public void runOpMode() {\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_drive\");\n        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n        waitForStart();\n        while (opModeIsActive()) {\n            switch (currentState) {\n                case DRIVE_FORWARD:\n                    leftMotor.setPower(0.5);\n                    rightMotor.setPower(0.5);\n                    if (leftMotor.getCurrentPosition() > 1000) {\n                        currentState = State.PAUSE;\n                        pauseStartTime = System.currentTimeMillis();\n                        leftMotor.setPower(0);\n                        rightMotor.setPower(0);\n                    }\n                    break;\n                case PAUSE:\n                    leftMotor.setPower(0);\n                    rightMotor.setPower(0);\n                    if (System.currentTimeMillis() - pauseStartTime > 1000) {\n                        currentState = State.REVERSE;\n                    }\n                    break;\n                case REVERSE:\n                    leftMotor.setPower(-0.5);\n                    rightMotor.setPower(-0.5);\n                    if (leftMotor.getCurrentPosition() < 200) {\n                        currentState = State.STOP;\n                    }\n                    break;\n                case STOP:\n                    leftMotor.setPower(0);\n                    rightMotor.setPower(0);\n                    break;\n            }\n            telemetry.addData(\"State\", currentState);\n            telemetry.addData(\"Left Encoder\", leftMotor.getCurrentPosition());\n            telemetry.update();\n        }\n    }\n}"}]}>
+
+- Define at least three states for your robot.
+- Implement transitions based on encoder values or timers.
+- Add telemetry to show the current state and relevant sensor data.
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Java Enums (Official Java Docs)","url":"https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html"},{"label":"State Machines in Robotics (Wikipedia)","url":"https://en.wikipedia.org/wiki/Finite-state_machine"},{"label":"gm0: State Machines in FTC","url":"https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html"}]} title="Further Reading Resources" section="ftc" />
+

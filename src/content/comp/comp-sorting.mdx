@@ -1,0 +1,147 @@
+---
+title: Sorting Algorithms
+lessonId: comp-sorting
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 1
+difficulty: beginner
+duration: 35 min
+description: ""
+---
+
+### Sorting Algorithm Overview
+
+Sorting is one of the most fundamental operations in computer science. Understanding different sorting algorithms helps in choosing the right one for specific scenarios.
+
+### Quick Sort
+
+```java
+// Quick Sort - O(n log n) average, O(n²) worst case
+public void quickSort(int[] arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+private int partition(int[] arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr, i, j);
+        }
+    }
+    
+    swap(arr, i + 1, high);
+    return i + 1;
+}
+
+private void swap(int[] arr, int i, int j) {
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+```
+
+### Merge Sort
+
+```java
+// Merge Sort - O(n log n) time, O(n) space
+public void mergeSort(int[] arr, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+private void merge(int[] arr, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    int[] leftArr = new int[n1];
+    int[] rightArr = new int[n2];
+    
+    for (int i = 0; i < n1; i++) {
+        leftArr[i] = arr[left + i];
+    }
+    for (int j = 0; j < n2; j++) {
+        rightArr[j] = arr[mid + 1 + j];
+    }
+    
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (leftArr[i] <= rightArr[j]) {
+            arr[k] = leftArr[i];
+            i++;
+        } else {
+            arr[k] = rightArr[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while (i < n1) {
+        arr[k] = leftArr[i];
+        i++;
+        k++;
+    }
+    
+    while (j < n2) {
+        arr[k] = rightArr[j];
+        j++;
+        k++;
+    }
+}
+```
+
+### Heap Sort
+
+```java
+// Heap Sort - O(n log n) time, O(1) space
+public void heapSort(int[] arr) {
+    int n = arr.length;
+    
+    // Build max heap
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+    
+    // Extract elements from heap one by one
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr, 0, i);
+        heapify(arr, i, 0);
+    }
+}
+
+private void heapify(int[] arr, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    
+    if (left < n && arr[left] > arr[largest]) {
+        largest = left;
+    }
+    
+    if (right < n && arr[right] > arr[largest]) {
+        largest = right;
+    }
+    
+    if (largest != i) {
+        swap(arr, i, largest);
+        heapify(arr, n, largest);
+    }
+}
+```
+
+### Sorting Algorithm Comparison
+
+AlgorithmTime ComplexitySpace ComplexityStableIn-PlaceQuick SortO(n log n) avg, O(n²) worstO(log n)NoYesMerge SortO(n log n)O(n)YesNoHeap SortO(n log n)O(1)NoYesBubble SortO(n²)O(1)YesYesInsertion SortO(n²)O(1)YesYes
+

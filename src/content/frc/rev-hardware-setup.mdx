@@ -1,0 +1,93 @@
+---
+title: REV Hardware Setup
+lessonId: rev-hardware-setup
+section: frc
+group: frc-environment-setup
+groupLabel: Environment Setup
+groupOrder: 1
+order: 2
+difficulty: beginner
+duration: 20 min
+description: ""
+---
+
+### Overview
+
+This guide covers setting up REVLib for SPARK MAX, SPARK Flex, and NEO motors.
+
+### Installation
+
+1. **VS Code:** Command Palette → "WPILib: Manage Vendor Libraries" → "Install new (online)".
+
+2. **URL:** `https://software-metadata.revrobotics.com/REVLib-2025.json`
+
+### REV Hardware Client
+
+Download [REV Hardware Client](https://docs.revrobotics.com/rev-hardware-client/) to configure CAN IDs, update firmware, and test motors via USB.
+
+### SPARK MAX Setup
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.PersistMode;
+
+public class DriveMotor extends SubsystemBase {
+    // Create motor instance: CAN ID 1, brushless type
+    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);
+
+    public DriveMotor() {
+        // Configure motor settings
+        SparkMaxConfig config = new SparkMaxConfig();
+        // Set brake mode (motor resists motion when stopped)
+        config.idleMode(IdleMode.kBrake);
+        
+        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    /**
+     * Set motor output percentage
+     * @param percent Motor output (-1.0 to 1.0)
+     */
+    public void set(double percent) {
+        m_motor.set(percent);
+    }
+}
+```
+
+### Follower Mode
+
+Configure a motor to follow another.
+
+### Follower Example
+
+```java
+package frc.robot.subsystems;
+
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.PersistMode;
+
+public class Drivetrain extends SubsystemBase {
+    private SparkMax m_leader = new SparkMax(1, MotorType.kBrushless);
+    private SparkMax m_follower = new SparkMax(2, MotorType.kBrushless);
+    
+    public void configure() {
+        // Configure follower to mirror leader
+        SparkMaxConfig followerConfig = new SparkMaxConfig();
+        followerConfig.follow(m_leader.getDeviceId()); // Leader CAN ID
+        m_follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+}
+```
+
+<LinkGrid links={[{"label":"Sensors and Encoders","id":"sensors-and-encoders"},{"label":"Motor Configuration","id":"motor-controller-configuration"}]} title="Resources" section="frc" />
+

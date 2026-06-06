@@ -1,0 +1,77 @@
+---
+title: Drivebase Types
+lessonId: drivebase-types
+section: ftc
+group: onbot-java-teleop-programming
+groupLabel: TeleOp Programming
+groupOrder: 5
+order: 3
+difficulty: beginner
+duration: 10 min
+description: ""
+---
+
+### Overview
+
+The drivebase is the foundation of your robot's movement. Common FTC drivebases are tank, mecanum, and holonomic. Each has different movement capabilities and programming requirements.
+
+### Tank Drive
+
+Tank drive uses two sets of wheels (left and right), each controlled by one joystick. Forward/backward when both sticks move the same direction; turning when they move opposite directions. Simple, reliable, and easy to program.
+
+### Tank Drive Control
+
+Each joystick controls one side of the robot.
+
+
+
+```java
+while (opModeIsActive()) {
+    double leftPower = -gamepad1.left_stick_y;
+    double rightPower = -gamepad1.right_stick_y;
+    leftDrive.setPower(leftPower);
+    rightDrive.setPower(rightPower);
+    telemetry.addData("Left Power", leftPower);
+    telemetry.addData("Right Power", rightPower);
+    telemetry.update();
+}
+```
+
+### Mecanum Drive
+
+Mecanum drive uses four special wheels that allow strafing (moving left/right without turning). Requires four motors and different math for wheel powers. High maneuverability for driver-controlled play.
+
+### Mecanum Drive Control
+
+Y for forward/back, X for strafe, right stick X for rotation.
+
+
+
+```java
+double y = -gamepad1.left_stick_y;
+double x = gamepad1.left_stick_x;
+double rx = gamepad1.right_stick_x;
+
+double lf = y + x + rx;
+double lb = y - x + rx;
+double rf = y - x - rx;
+double rb = y + x - rx;
+
+leftFront.setPower(lf);
+leftBack.setPower(lb);
+rightFront.setPower(rf);
+rightBack.setPower(rb);
+```
+
+### Holonomic (Omni) Drive
+
+Holonomic drivebases use omni wheels in an X or triangle pattern. Like mecanum, they allow omnidirectional movement. The math for wheel powers differs from mecanum based on wheel arrangement.
+
+### Comparison
+
+- Tank: Simple, robust, cannot strafe.
+- Mecanum: Omnidirectional, can strafe, more complex hardware and code.
+- Holonomic: Omnidirectional, different wheel layout, less common in FTC.
+
+<LinkGrid links={[{"label":"gm0: Tank Drive","url":"https://gm0.org/en/latest/docs/robot-design/drivetrains/tank.html"},{"label":"gm0: Mecanum Drive","url":"https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html"},{"label":"gm0: Holonomic Drive","url":"https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html"}]} title="Further Reading" section="ftc" />
+

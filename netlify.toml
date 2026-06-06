@@ -1,20 +1,13 @@
-# Netlify Configuration for Mantik - FIRST Programming Made Easy
-# Optimized for SEO, Core Web Vitals, and SPA routing
+# Netlify Configuration for Mantik - Astro static site
 
 [build]
-  # Generate static HTML per lesson (SEO), sitemap.xml, and copy into publish root (cross-platform)
-  command = "node scripts/build-seo-pages.js"
-  publish = "."
+  command = "npm run build"
+  publish = "dist"
 
 [build.environment]
-  # Node.js version for any build scripts
   NODE_VERSION = "20"
 
-# ==================== Redirects for SPA Routing ====================
-# These redirects handle client-side routing for the SPA while maintaining
-# proper SEO-friendly URLs for each curriculum section
-
-# Canonical domain: HTTPS + non-www (strict canonicalization)
+# Canonical domain: HTTPS + non-www
 [[redirects]]
   from = "http://www.mantik.netlify.app/*"
   to = "https://mantik.netlify.app/:splat"
@@ -33,8 +26,7 @@
   status = 301
   force = true
 
-# Trailing slash normalization (remove trailing slashes from section URLs)
-# This prevents duplicate content issues with /java vs /java/
+# Trailing slash normalization
 [[redirects]]
   from = "/java/"
   to = "/java"
@@ -55,68 +47,38 @@
   to = "/comp"
   status = 301
 
-# Lesson paths with trailing slash -> canonical without trailing (avoids duplicate indexing)
 [[redirects]]
   from = "/java/*/"
   to = "/java/:splat"
   status = 301
+
 [[redirects]]
   from = "/frc/*/"
   to = "/frc/:splat"
   status = 301
+
 [[redirects]]
   from = "/ftc/*/"
   to = "/ftc/:splat"
   status = 301
+
 [[redirects]]
   from = "/comp/*/"
   to = "/comp/:splat"
   status = 301
 
-# Section roots only -> SPA (index.html). Lesson paths (/java/lesson-id) are NOT
-# redirected so Netlify serves static HTML from java/lesson-id/index.html when present.
+# Decap CMS
 [[redirects]]
-  from = "/java"
-  to = "/index.html"
+  from = "/admin"
+  to = "/admin/index.html"
   status = 200
 
 [[redirects]]
-  from = "/frc"
-  to = "/index.html"
+  from = "/admin/"
+  to = "/admin/index.html"
   status = 200
 
-[[redirects]]
-  from = "/ftc"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/comp"
-  to = "/index.html"
-  status = 200
-
-# Sitemap and robots.txt should be served directly
-[[redirects]]
-  from = "/sitemap.xml"
-  to = "/sitemap.xml"
-  status = 200
-
-[[redirects]]
-  from = "/robots.txt"
-  to = "/robots.txt"
-  status = 200
-
-# Fallback: All other routes go to index.html (SPA catch-all)
-# This must be LAST to not override specific routes
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# ==================== Custom Headers ====================
-# Headers for security, caching, and performance
-
-# Global security headers for all pages
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -125,78 +87,29 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
-    # HSTS for HTTPS enforcement
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
-# HTML pages - no caching to ensure fresh content
 [[headers]]
-  for = "/index.html"
+  for = "/_astro/*"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-    # Preload critical resources for better LCP (root-relative URLs)
-    Link = "</styles.css>; rel=preload; as=style, </js/app-state.js>; rel=modulepreload, </media/FRCCodeLabDark.svg>; rel=preload; as=image; type=image/svg+xml"
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# CSS files - moderate cache with must-revalidate
-[[headers]]
-  for = "/styles.css"
-  [headers.values]
-    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
-
-# JavaScript files - moderate cache with must-revalidate  
-[[headers]]
-  for = "/js/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
-
-# Static media assets - long cache (immutable)
 [[headers]]
   for = "/media/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# SVG files - long cache
 [[headers]]
-  for = "/*.svg"
+  for = "/pagefind/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "image/svg+xml"
-
-# PNG files - long cache
-[[headers]]
-  for = "/*.png"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# JSON data files - short cache for content updates
-[[headers]]
-  for = "/data/*"
-  [headers.values]
-    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
-    Access-Control-Allow-Origin = "*"
-
-# Sitemap - short cache for frequent updates
-[[headers]]
-  for = "/sitemap.xml"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-    Content-Type = "application/xml"
-
-# Robots.txt - moderate cache
-[[headers]]
-  for = "/robots.txt"
-  [headers.values]
-    Cache-Control = "public, max-age=86400"
-    Content-Type = "text/plain"
-
-# Font files - long cache if any are added locally
-[[headers]]
-  for = "/*.woff2"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
 
 [[headers]]
-  for = "/*.woff"
+  for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

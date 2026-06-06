@@ -1,0 +1,55 @@
+---
+title: Branching and Merging
+lessonId: branching-merging
+section: java
+group: version-control
+groupLabel: "Version Control with Git & GitHub"
+groupOrder: 5
+order: 4
+difficulty: intermediate
+duration: 20 min
+description: ""
+---
+
+### Working with Branches
+
+Branches allow you to work on different features or improvements without affecting the main code. This lesson covers creating branches, switching between them, and merging changes back together.
+
+### Key Concepts
+
+Branches are separate lines of development that allow you to work on features independently. The main branch (often called master or main) contains stable code that is ready for production or competition. Feature branches isolate new work and prevent it from affecting the main codebase until it's ready. Merging combines changes from different branches back into the main branch. Branching enables parallel development where multiple team members can work on different features simultaneously.
+
+### Branch Operations
+
+Use these commands to work with branches:
+
+
+
+```java
+git branch feature-name          # Create new branch
+git checkout branch-name        # Switch to branch
+git checkout -b new-branch     # Create and switch
+git branch                      # List branches
+git branch -d branch-name      # Delete branch
+```
+
+### Merging Workflows
+
+When you're ready to combine your feature work with the main code, you merge the feature branch into main using git merge feature-branch. Git will create fast-forward merges for linear history when possible, or merge commits for more complex histories. Sometimes branches modify the same files, which creates conflicts that must be resolved manually. The key is to keep the main branch stable and tested while allowing experimental work on feature branches.
+
+<RulesBox title="Robotics Branching Examples">
+
+For robotics teams, you might create an autonomous branch with `git checkout -b autonomous-improvements`, work on teleop features with `git checkout -b teleop-enhancements`, create a bug fix branch with `git checkout -b fix-drivetrain-issue`, merge working features with `git merge autonomous-improvements`, and keep the main branch for competition-ready code.
+
+</RulesBox>
+
+### Conflict Resolution
+
+Conflicts occur when branches modify the same lines in the same files. Git marks conflicts in affected files with special markers, and you must manually edit the files to resolve the conflicts. You can use git status to see which files have conflicts. Once you've resolved all conflicts, you complete the merge by adding the resolved files and committing the merge.
+
+### Understanding Branch Management
+
+Effective branch management is crucial for team collaboration. The main branch should always contain stable, working code that's ready for competition or deployment. Feature branches should be short-lived and focused on single features or fixes to make them easier to review and merge. When merging, choose the appropriate strategy: fast-forward merges keep history linear, while merge commits preserve the branch structure. Regular cleanup of merged branches keeps your repository organized and prevents confusion about which branches are still active.
+
+<LinkGrid links={[{"label":"Git Documentation: Branching and Merging","url":"https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"},{"label":"Git Branching Tutorial","url":"https://learngitbranching.js.org/"},{"label":"GitHub Skills: Introduction to GitHub","url":"https://skills.github.com/"}]} title="Further Reading Resources" section="java" />
+

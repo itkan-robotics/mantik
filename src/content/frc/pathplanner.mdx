@@ -1,0 +1,144 @@
+---
+title: "PathPlanner: Visual Autonomous Routines"
+lessonId: pathplanner
+section: frc
+group: frc-external-tools
+groupLabel: External Tools
+groupOrder: 9
+order: 2
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### What is PathPlanner?
+
+PathPlanner is a motion profile generator and autonomous path planning tool for FRC robots. It allows you to draw paths on a field map, configure robot constraints (max velocity, acceleration), and automatically generate smooth trajectories. It integrates seamlessly with WPILib via [PathPlannerLib](https://pathplanner.dev/api/java/) to follow these paths in code.
+
+
+
+The modern workflow uses **[AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html)**, which automatically generates commands to follow paths and trigger event markers (like "Intake" or "Shoot") defined in the GUI.
+
+
+
+Learn more: [PathPlanner Documentation](https://pathplanner.dev/home.html) | [PathPlannerLib API](https://pathplanner.dev/api/java/)
+
+### Key Concepts
+
+**Path:** A single trajectory from point A to point B, with waypoints and rotation targets. ([PathPlannerPath API](https://pathplanner.dev/api/java/com/pathplanner/lib/path/PathPlannerPath.html))
+
+**Auto:** A full autonomous routine consisting of multiple paths and commands (e.g., "Score -> Taxi -> Balance").
+
+**Event Markers:** Triggers placed along a path that execute commands (like running an intake) when the robot reaches that point. ([NamedCommands API](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html))
+
+**Holonomic Mode:** For swerve/mecanum drives, allows the robot to rotate independently of its movement direction.
+
+**AutoBuilder:** A utility that builds a full "Command" from a PathPlanner file, handling path following, event markers, and telemetry automatically. ([AutoBuilder API](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html))
+
+### Configuring AutoBuilder
+
+To use PathPlanner, you must configure [AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html) in your "RobotContainer" or "Drivetrain" subsystem. This tells PathPlanner how to control your robot and where it is. See [AutoBuilder Configuration Documentation](https://pathplanner.dev/pplib-build-an-auto.html).
+
+### AutoBuilder Configuration (Swerve)
+
+```java
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
+public class Drivetrain extends SubsystemBase {
+    public Drivetrain() {
+        // ... hardware init ...
+
+        // API: AutoBuilder.configureHolonomic() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html
+        AutoBuilder.configureHolonomic(
+                this::getPose,          // Supplier<Pose2d> function to supply current robot pose
+                this::resetPose,        // Consumer<Pose2d> function to reset the pose
+                this::getRobotRelativeSpeeds, // Supplier<ChassisSpeeds> current speeds
+                this::driveRobotRelative,     // Consumer<ChassisSpeeds> output for driving
+                // API: HolonomicPathFollowerConfig - https://pathplanner.dev/api/java/com/pathplanner/lib/util/HolonomicPathFollowerConfig.html
+                new HolonomicPathFollowerConfig(
+                        // API: PIDConstants - https://pathplanner.dev/api/java/com/pathplanner/lib/util/PIDConstants.html
+                        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                        new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                        4.5,                             // Max module speed (m/s)
+                        0.4,                             // Drive base radius (m) (distance from center to furthest module)
+                        // API: ReplanningConfig - https://pathplanner.dev/api/java/com/pathplanner/lib/util/ReplanningConfig.html
+                        new ReplanningConfig()           // Default path replanning config
+                ),
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this // Reference to this subsystem to set requirements
+        );
+    }
+}
+```
+
+### Creating and Running Paths
+
+Once configured, you can load paths or full autos by name. PathPlanner files are deployed to the robot's "deploy/pathplanner" directory.
+
+### Loading Paths
+
+```java
+// In RobotContainer.java
+
+// API: AutoBuilder.buildAuto() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html#buildAuto(java.lang.String)
+// Build an auto command from a named "Auto" file in the GUI
+Command myAuto = AutoBuilder.buildAuto("My Two Piece Auto");
+
+// API: AutoBuilder.followPath() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html#followPath(com.pathplanner.lib.path.PathPlannerPath)
+// API: PathPlannerPath.fromPathFile() - https://pathplanner.dev/api/java/com/pathplanner/lib/path/PathPlannerPath.html#fromPathFile(java.lang.String)
+// Or, follow a single path
+Command followPath = AutoBuilder.followPath(PathPlannerPath.fromPathFile("Taxi Path"));
+
+// API: AutoBuilder.buildAutoChooser() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html#buildAutoChooser()
+// Add to SmartDashboard chooser
+SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+SmartDashboard.putData("Auto Chooser", autoChooser);
+```
+
+### Event Markers and Named Commands
+
+To use Event Markers, you must register your commands with [NamedCommands](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html) **before** building the auto. This maps the string names in the PathPlanner GUI to actual Java commands. See [Event Markers Documentation](https://pathplanner.dev/gui-editing-paths-and-autos.html#event-markers).
+
+### Registering Named Commands
+
+```java
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+public class RobotContainer {
+    public RobotContainer() {
+        // API: NamedCommands.registerCommand() - https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html#registerCommand(java.lang.String,edu.wpi.first.wpilibj2.command.Command)
+        // Register Named Commands
+        NamedCommands.registerCommand("intake", new IntakeCommand(m_intake));
+        NamedCommands.registerCommand("shoot", new ShootCommand(m_shooter));
+        NamedCommands.registerCommand("stop", new InstantCommand(m_intake::stop, m_intake));
+
+        // Now build the auto
+        autoChooser = AutoBuilder.buildAutoChooser();
+    }
+}
+```
+
+<RulesBox title="PathPlanner Tips" subtitle="Best practices for success:">
+
+- Always measure your robot's max velocity and acceleration accurately.
+- Use 'On-the-fly' generation for dynamic pathing if needed, but pre-generated paths are safer.
+- Visualize path following in AdvantageScope or Field2d to debug tracking errors.
+- Remember to register [NamedCommands](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/NamedCommands.html) before building the auto chooser.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"PathPlanner Docs","url":"https://pathplanner.dev/"},{"label":"PathPlannerLib API","url":"https://pathplanner.dev/api/java/"},{"label":"Command-Based Programming","id":"intro-to-command-based"},{"label":"Pose Estimation","id":"pose-estimation-intro"}]} title="Resources" section="frc" />
+

@@ -1,0 +1,110 @@
+---
+title: Advanced Telemetry Feedback for Drivers
+lessonId: telemetry-feedback
+section: ftc
+group: onbot-java-teleop-programming
+groupLabel: TeleOp Programming
+groupOrder: 5
+order: 4
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Introduction: What is Telemetry?
+
+This page covers advanced telemetry techniques for FTC robots. If you are new to telemetry, start with the [Telemetry Logging](../environment-setup/telemetry-logging.json) lesson for an introduction to basic telemetry concepts and usage.
+
+### Why Use Advanced Telemetry?
+
+Advanced telemetry lets you provide rich, organized, and actionable feedback to drivers and programmers. It helps with debugging, monitoring robot health, and making real-time decisions during matches. Well-structured telemetry can display warnings, highlight important states, and even help tune mechanisms on the fly.
+
+### Grouping and Formatting Telemetry Data
+
+Use clear labels and group related data together. Format values for readability (e.g., use `"%.2f"` for decimals). Consider using `addLine()` for section headers or summaries.
+
+### Example: Grouped and Formatted Telemetry
+
+```java
+telemetry.addLine("=== Drive ===");
+telemetry.addData("L", "%.2f", leftDrive.getPower());
+telemetry.addData("R", "%.2f", rightDrive.getPower());
+telemetry.addLine("=== Arm ===");
+telemetry.addData("Position", armMotor.getCurrentPosition());
+telemetry.addData("Limit", armAtLimit ? "YES" : "NO");
+telemetry.update();
+```
+
+### Persistent and Event-Based Telemetry
+
+Use `telemetry.log()` to display persistent messages (such as warnings or important events) that remain visible for longer. This is useful for debugging or alerting drivers to critical issues.
+
+### Example: Persistent Event Logging
+
+```java
+if (Math.abs(leftDrive.getPower()) > 0.9) {
+    telemetry.log().add("Warning: High left drive power!");
+}
+if (armAtLimit) {
+    telemetry.log().add("Arm at limit!");
+}
+telemetry.update();
+```
+
+### Dynamic Telemetry: Real-Time Feedback and Warnings
+
+Advanced telemetry can provide real-time feedback, such as mode indicators (e.g., slow mode enabled), sensor health, or warnings if a mechanism is stuck. Use conditional logic to highlight important states.
+
+### Example: Real-Time Warnings and Mode Indicators
+
+```java
+if (slowMode) {
+    telemetry.addData("Mode", "SLOW");
+}
+if (armMotor.getCurrentPosition() > ARM_UPPER_LIMIT) {
+    telemetry.addData("Warning", "Arm at upper limit!");
+}
+if (!sensor.isConnected()) {
+    telemetry.addData("Error", "Sensor disconnected!");
+}
+telemetry.update();
+```
+
+### Telemetry for Tuning and Autonomous Debugging
+
+Advanced teams use telemetry to tune PID coefficients, monitor sensor values, and debug autonomous routines. Display setpoints, errors, and control outputs to help with tuning and troubleshooting. For more information on PID tuning, see [PID Control](../advanced-movement-control/pid-control.json).
+
+### Example: Telemetry for PID Tuning
+
+```java
+telemetry.addData("Target", targetPosition);
+telemetry.addData("Current", armMotor.getCurrentPosition());
+telemetry.addData("Error", targetPosition - armMotor.getCurrentPosition());
+telemetry.addData("Output", pidOutput);
+telemetry.update();
+```
+
+<RulesBox title="Best Practices for Advanced Telemetry" subtitle="Tips for effective advanced telemetry:">
+
+- Call `telemetry.update()` once per loop.
+- Use clear, descriptive labels and group related data.
+- Limit the amount of data to avoid clutter.
+- Use `telemetry.log()` for persistent or event-based messages.
+- Display warnings and errors for critical issues.
+- Use telemetry to help with tuning and debugging.
+
+</RulesBox>
+
+<ExerciseBox title="Practice: Advanced Telemetry Feedback" description="Try these exercises to master advanced telemetry. Start with the basics and progress to more challenging tasks:" answers={[{"task":"Group drive and arm data with clear section headers.","content":"// Grouping drive and arm data\ntelemetry.addLine(\"=== Drive ===\");\ntelemetry.addData(\"Left Power\", leftDrive.getPower());\ntelemetry.addData(\"Right Power\", rightDrive.getPower());\ntelemetry.addLine(\"=== Arm ===\");\ntelemetry.addData(\"Arm Position\", armMotor.getCurrentPosition());\ntelemetry.update();"},{"task":"Add a persistent warning if a motor power exceeds 90%.","content":"// Persistent warning for high motor power\nif (Math.abs(leftDrive.getPower()) > 0.9) {\n    telemetry.log().add(\"Warning: High left drive power!\");\n}\nif (Math.abs(rightDrive.getPower()) > 0.9) {\n    telemetry.log().add(\"Warning: High right drive power!\");\n}\ntelemetry.update();"},{"task":"Display a real-time mode indicator (e.g., slow mode).","content":"// Show slow mode indicator\nif (slowMode) {\n    telemetry.addData(\"Mode\", \"SLOW\");\n} else {\n    telemetry.addData(\"Mode\", \"NORMAL\");\n}\ntelemetry.update();"},{"task":"Show a warning if a sensor is disconnected or returns an error value.","content":"// Warning for disconnected or error sensor\nif (!distanceSensor.isConnected()) {\n    telemetry.addData(\"Error\", \"Distance sensor disconnected!\");\n} else if (Double.isNaN(distanceSensor.getDistance(DistanceUnit.CM))) {\n    telemetry.addData(\"Error\", \"Distance sensor error!\");\n}\ntelemetry.update();"},{"task":"Display PID setpoint, current value, error, and output for a mechanism.","content":"// PID telemetry for tuning\ntelemetry.addData(\"Target\", targetPosition);\ntelemetry.addData(\"Current\", armMotor.getCurrentPosition());\ntelemetry.addData(\"Error\", targetPosition - armMotor.getCurrentPosition());\ntelemetry.addData(\"Output\", pidOutput);\ntelemetry.update();"},{"task":"(Challenge) Create a telemetry dashboard that updates only the most important values and uses color or formatting to highlight warnings.","content":"// Example: Minimal dashboard with color and formatting for warnings\ntelemetry.addData(\"Drive\", \"L: %.2f R: %.2f\", leftDrive.getPower(), rightDrive.getPower());\ntelemetry.addData(\"Arm\", armMotor.getCurrentPosition());\nif (armAtLimit) {\n    // Many Driver Station apps support Unicode and ANSI color codes for emphasis\n    // Try using Unicode symbols and ANSI red color for warnings (if supported)\n    String red = \"\\u001B[31m\"; // ANSI red\n    String reset = \"\\u001B[0m\";\n    telemetry.addLine(red + \"\\u26A0\\uFE0F WARNING: ARM AT LIMIT! \" + reset); // ⚠️ symbol and red text\n} else {\n    telemetry.addLine(\"\"); // Blank line for spacing\n}\nif (slowMode) {\n    String yellow = \"\\u001B[33m\";\n    String reset = \"\\u001B[0m\";\n    telemetry.addData(\"Mode\", yellow + \"SLOW\" + reset); // Yellow for slow mode\n}\ntelemetry.update();\n// Note: Not all Driver Station apps support color codes, but Unicode symbols and all-caps formatting are always visible."}]}>
+
+- Group drive and arm data with clear section headers.
+- Add a persistent warning if a motor power exceeds 90%.
+- Display a real-time mode indicator (e.g., slow mode).
+- Show a warning if a sensor is disconnected or returns an error value.
+- Display PID setpoint, current value, error, and output for a mechanism.
+- (Challenge) Create a telemetry dashboard that updates only the most important values and uses color or formatting to highlight warnings.
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Telemetry API","url":"https://javadoc.io/doc/org.firstinspires.ftc/RobotCore/latest/org/firstinspires/ftc/robotcore/external/Telemetry.html"},{"label":"gm0: Using Telemetry","url":"https://gm0.org/en/latest/docs/software/tutorials/using-telemetry.html"}]} title="Related Topics and Documentation" section="ftc" />
+

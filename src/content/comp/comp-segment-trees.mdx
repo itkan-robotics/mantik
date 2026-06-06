@@ -1,0 +1,189 @@
+---
+title: Segment Trees
+lessonId: comp-segment-trees
+section: comp
+group: comp-advanced
+groupLabel: Advanced Topics
+groupOrder: 4
+order: 3
+difficulty: advanced
+duration: 60 min
+description: ""
+---
+
+### Segment Tree Overview
+
+A Segment Tree is a data structure that allows efficient range queries and range updates on an array. It's particularly useful for problems involving range sum, range minimum/maximum, and range updates.
+
+### Segment Tree Properties
+
+- **Range Queries:** O(log n) time for range operations
+- **Point Updates:** O(log n) time for single element updates
+- **Range Updates:** O(log n) time with lazy propagation
+- **Space Complexity:** O(n) space
+
+### Basic Segment Tree Implementation
+
+```java
+class SegmentTree {
+    private int[] tree;
+    private int n;
+    
+    public SegmentTree(int[] arr) {
+        n = arr.length;
+        tree = new int[4 * n]; // Size should be 4 * n for safety
+        buildTree(arr, 0, 0, n - 1);
+    }
+    
+    private void buildTree(int[] arr, int node, int start, int end) {
+        if (start == end) {
+            tree[node] = arr[start];
+            return;
+        }
+        
+        int mid = start + (end - start) / 2;
+        buildTree(arr, 2 * node + 1, start, mid);
+        buildTree(arr, 2 * node + 2, mid + 1, end);
+        
+        tree[node] = tree[2 * node + 1] + tree[2 * node + 2]; // Sum operation
+    }
+    
+    // Range sum query
+    public int rangeSum(int left, int right) {
+        return rangeSumQuery(0, 0, n - 1, left, right);
+    }
+    
+    private int rangeSumQuery(int node, int start, int end, int left, int right) {
+        if (right < start || left > end) {
+            return 0; // Out of range
+        }
+        
+        if (left <= start && right >= end) {
+            return tree[node]; // Completely within range
+        }
+        
+        int mid = start + (end - start) / 2;
+        int leftSum = rangeSumQuery(2 * node + 1, start, mid, left, right);
+        int rightSum = rangeSumQuery(2 * node + 2, mid + 1, end, left, right);
+        
+        return leftSum + rightSum;
+    }
+    
+    // Point update
+    public void update(int index, int value) {
+        updatePoint(0, 0, n - 1, index, value);
+    }
+    
+    private void updatePoint(int node, int start, int end, int index, int value) {
+        if (start == end) {
+            tree[node] = value;
+            return;
+        }
+        
+        int mid = start + (end - start) / 2;
+        if (index <= mid) {
+            updatePoint(2 * node + 1, start, mid, index, value);
+        } else {
+            updatePoint(2 * node + 2, mid + 1, end, index, value);
+        }
+        
+        tree[node] = tree[2 * node + 1] + tree[2 * node + 2];
+    }
+}
+```
+
+### Range Sum Query - Mutable
+
+```java
+// Problem: Range sum query with point updates
+class NumArray {
+    private SegmentTree st;
+    
+    public NumArray(int[] nums) {
+        st = new SegmentTree(nums);
+    }
+    
+    public void update(int index, int val) {
+        st.update(index, val);
+    }
+    
+    public int sumRange(int left, int right) {
+        return st.rangeSum(left, right);
+    }
+}
+```
+
+### Segment Tree with Lazy Propagation
+
+```java
+class LazySegmentTree {
+    private int[] tree;
+    private int[] lazy;
+    private int n;
+    
+    public LazySegmentTree(int[] arr) {
+        n = arr.length;
+        tree = new int[4 * n];
+        lazy = new int[4 * n];
+        buildTree(arr, 0, 0, n - 1);
+    }
+    
+    private void buildTree(int[] arr, int node, int start, int end) {
+        if (start == end) {
+            tree[node] = arr[start];
+            return;
+        }
+        
+        int mid = start + (end - start) / 2;
+        buildTree(arr, 2 * node + 1, start, mid);
+        buildTree(arr, 2 * node + 2, mid + 1, end);
+        
+        tree[node] = tree[2 * node + 1] + tree[2 * node + 2];
+    }
+    
+    // Range update with lazy propagation
+    public void rangeUpdate(int left, int right, int value) {
+        rangeUpdateQuery(0, 0, n - 1, left, right, value);
+    }
+    
+    private void rangeUpdateQuery(int node, int start, int end, int left, int right, int value) {
+        // Propagate lazy values
+        if (lazy[node] != 0) {
+            tree[node] += lazy[node] * (end - start + 1);
+            if (start != end) {
+                lazy[2 * node + 1] += lazy[node];
+                lazy[2 * node + 2] += lazy[node];
+            }
+            lazy[node] = 0;
+        }
+        
+        if (right < start || left > end) {
+            return;
+        }
+        
+        if (left <= start && right >= end) {
+            tree[node] += value * (end - start + 1);
+            if (start != end) {
+                lazy[2 * node + 1] += value;
+                lazy[2 * node + 2] += value;
+            }
+            return;
+        }
+        
+        int mid = start + (end - start) / 2;
+        rangeUpdateQuery(2 * node + 1, start, mid, left, right, value);
+        rangeUpdateQuery(2 * node + 2, mid + 1, end, left, right, value);
+        
+        tree[node] = tree[2 * node + 1] + tree[2 * node + 2];
+    }
+}
+```
+
+### Common Applications
+
+- **Range Sum:** Sum of elements in a range
+- **Range Min/Max:** Minimum/maximum in a range
+- **Range Updates:** Add value to all elements in range
+- **Inversion Count:** Count inversions in array
+- **2D Problems:** 2D segment trees for matrix operations
+

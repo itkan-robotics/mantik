@@ -1,0 +1,43 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  items?: string[];
+  goodPractices?: string[];
+  avoid?: string[];
+}
+
+const { title, subtitle, items = [], goodPractices = [], avoid = [] } = Astro.props;
+const hasSlot = Astro.slots.has('default');
+---
+
+<div class="rules-box">
+  {title && <h3>{title}</h3>}
+  {subtitle && <h4 class="rules-box-subtitle">{subtitle}</h4>}
+
+  {goodPractices.length > 0 && (
+    <div class="rules-box-section">
+      <h5 class="rules-box-good">Good Practices:</h5>
+      <ul>
+        {goodPractices.map((item) => <li set:html={item} />)}
+      </ul>
+    </div>
+  )}
+
+  {avoid.length > 0 && (
+    <div class="rules-box-section">
+      <h5 class="rules-box-avoid">Avoid:</h5>
+      <ul>
+        {avoid.map((item) => <li set:html={item} />)}
+      </ul>
+    </div>
+  )}
+
+  {items.length > 0 && (
+    <ul>
+      {items.map((item) => <li set:html={item} />)}
+    </ul>
+  )}
+
+  {hasSlot && <div class="rules-box-content"><slot /></div>}
+</div>

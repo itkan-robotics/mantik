@@ -1,0 +1,47 @@
+---
+title: Local Git Workflow
+lessonId: local-workflow
+section: java
+group: version-control
+groupLabel: "Version Control with Git & GitHub"
+groupOrder: 5
+order: 3
+difficulty: beginner
+duration: 10 min
+description: ""
+---
+
+### Working with Git Locally
+
+Learn the fundamental Git commands for tracking changes in your robot code. This lesson covers the basic workflow of initializing repositories, tracking files, and saving changes.
+
+### Key Concepts
+
+Git repositories store project history and metadata in a hidden .git folder. The working directory contains your current files that you can see and edit. The staging area prepares changes for commit by allowing you to select which modifications to include. The repository history contains all committed changes and serves as a complete timeline of your project. Each commit creates a snapshot of your code at that specific moment in time.
+
+### Basic Git Workflow
+
+The typical Git workflow starts with initializing a repository using git init or cloning an existing one with git clone. You then check the status of your files with git status to see which files have been modified. When you're ready to save changes, you stage them using git add to prepare files for commit. Finally, you commit changes with `git commit -m "descriptive message"` and can view the history with git log.
+
+### Essential Commands
+
+Here are the most important Git commands you'll use:
+
+
+
+```java
+git init          # Create new repository
+git clone         # Copy existing repository
+git status        # Check file states
+git add           # Stage files for commit
+git commit        # Save staged changes
+git log           # View commit history
+git diff          # See changes between commits
+```
+
+### Understanding the Three Areas of Git
+
+Git operates in three main areas that work together to manage your code. The working directory is where you actually edit your files - this is your normal file system where you make changes to your robot code. The staging area (also called the index) is where you prepare changes for commit by selecting which modifications to include in your next commit. The repository contains all the committed snapshots of your project, creating a complete history of your development work. Understanding how these three areas interact is crucial for effective version control.
+
+<LinkGrid links={[{"label":"GitHub Guides","url":"https://guides.github.com/introduction/flow/"},{"label":"HubSpot Git Tutorial: Basic Commands","url":"https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners"},{"label":"Git Documentation: Getting Started","url":"https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control"},{"label":"Git Cheat Sheet","url":"https://education.github.com/git-cheat-sheet-education.pdf"}]} title="Further Reading Resources" section="java" />
+

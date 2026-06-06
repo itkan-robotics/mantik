@@ -1,0 +1,188 @@
+---
+title: Trie Data Structure
+lessonId: comp-trie
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 6
+difficulty: intermediate
+duration: 45 min
+description: ""
+---
+
+### Trie Overview
+
+A Trie (prefix tree) is a tree-like data structure used to store and retrieve strings. It's particularly efficient for prefix-based operations and autocomplete functionality.
+
+### Trie Properties
+
+- **Prefix Sharing:** Common prefixes are shared among strings
+- **Fast Lookup:** O(m) time for string operations where m is string length
+- **Space Efficient:** For strings with common prefixes
+- **Autocomplete:** Perfect for prefix-based searches
+
+### Basic Trie Implementation
+
+```java
+class TrieNode {
+    private TrieNode[] children;
+    private boolean isEndOfWord;
+    
+    public TrieNode() {
+        children = new TrieNode[26]; // For lowercase letters
+        isEndOfWord = false;
+    }
+}
+
+class Trie {
+    private TrieNode root;
+    
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    // Insert a word into the trie
+    public void insert(String word) {
+        TrieNode current = root;
+        
+        for (char c : word.toCharArray()) {
+            int index = c - 'a';
+            if (current.children[index] == null) {
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
+        }
+        
+        current.isEndOfWord = true;
+    }
+    
+    // Search for a word in the trie
+    public boolean search(String word) {
+        TrieNode current = root;
+        
+        for (char c : word.toCharArray()) {
+            int index = c - 'a';
+            if (current.children[index] == null) {
+                return false;
+            }
+            current = current.children[index];
+        }
+        
+        return current.isEndOfWord;
+    }
+    
+    // Check if there is any word that starts with the given prefix
+    public boolean startsWith(String prefix) {
+        TrieNode current = root;
+        
+        for (char c : prefix.toCharArray()) {
+            int index = c - 'a';
+            if (current.children[index] == null) {
+                return false;
+            }
+            current = current.children[index];
+        }
+        
+        return true;
+    }
+}
+```
+
+### Word Search II Problem
+
+```java
+// Find all words in the board that exist in the dictionary
+public List<String> findWords(char[][] board, String[] words) {
+    Trie trie = new Trie();
+    for (String word : words) {
+        trie.insert(word);
+    }
+    
+    Set<String> result = new HashSet<>();
+    int m = board.length;
+    int n = board[0].length;
+    
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            dfs(board, i, j, trie, "", result);
+        }
+    }
+    
+    return new ArrayList<>(result);
+}
+
+private void dfs(char[][] board, int i, int j, Trie trie, String current, Set<String> result) {
+    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || 
+        board[i][j] == '#') {
+        return;
+    }
+    
+    char c = board[i][j];
+    String newWord = current + c;
+    
+    if (!trie.startsWith(newWord)) {
+        return;
+    }
+    
+    if (trie.search(newWord)) {
+        result.add(newWord);
+    }
+    
+    board[i][j] = '#'; // Mark as visited
+    
+    dfs(board, i + 1, j, trie, newWord, result);
+    dfs(board, i - 1, j, trie, newWord, result);
+    dfs(board, i, j + 1, trie, newWord, result);
+    dfs(board, i, j - 1, trie, newWord, result);
+    
+    board[i][j] = c; // Backtrack
+}
+```
+
+### Longest Common Prefix
+
+```java
+// Find longest common prefix of all strings
+public String longestCommonPrefix(String[] strs) {
+    if (strs == null || strs.length == 0) return "";
+    
+    Trie trie = new Trie();
+    for (String str : strs) {
+        trie.insert(str);
+    }
+    
+    StringBuilder prefix = new StringBuilder();
+    TrieNode current = trie.getRoot();
+    
+    while (current != null) {
+        int childCount = 0;
+        int childIndex = -1;
+        
+        for (int i = 0; i < 26; i++) {
+            if (current.children[i] != null) {
+                childCount++;
+                childIndex = i;
+            }
+        }
+        
+        if (childCount != 1 || current.isEndOfWord) {
+            break;
+        }
+        
+        prefix.append((char) (childIndex + 'a'));
+        current = current.children[childIndex];
+    }
+    
+    return prefix.toString();
+}
+```
+
+### Common Applications
+
+- **Autocomplete:** Search suggestions as user types
+- **Spell Checker:** Dictionary lookup and suggestions
+- **IP Routing:** Longest prefix matching
+- **Contact List:** Phone number storage and search
+- **Text Processing:** Word frequency counting
+

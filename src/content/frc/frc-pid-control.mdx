@@ -1,0 +1,164 @@
+---
+title: PID Control
+lessonId: frc-pid-control
+section: frc
+group: frc-control-theory
+groupLabel: Control Theory
+groupOrder: 5
+order: 1
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Overview
+
+PID (Proportional-Integral-Derivative) is a feedback loop that corrects errors. It drives a mechanism to a target setpoint (like an elevator height or shooter speed) by adjusting motor output.
+
+### The Terms
+
+**P (Proportional):** Reacts to current error. "I'm far away, go fast." Main driver of motion.
+
+**I (Integral):** Reacts to accumulated error. "I've been close for a while, push harder." Fixes steady-state error (e.g., gravity).
+
+**D (Derivative):** Reacts to rate of change. "I'm closing in fast, slow down." Dampens oscillation.
+
+<RulesBox title="Implementation Methods" subtitle="Where to run PID:">
+
+- **On-RIO (WPILib PIDController):** Runs in user code (20ms loop). Flexible, easy to debug.
+- **On-Controller (Spark/Talon):** Runs on motor controller (1ms loop). Faster, frees up RIO CPU.
+
+</RulesBox>
+
+### WPILib PIDController
+
+Best for learning and complex logic.
+
+### RIO PID Example
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.PIDController;
+
+public class Elevator extends SubsystemBase {
+    // Create PID controller: kP, kI, kD
+    private PIDController pid = new PIDController(0.5, 0.0, 0.0);
+    
+    // Example: encoder and motor would be defined elsewhere
+    // private Encoder encoder;
+    // private Motor motor;
+    private double targetHeight = 0.0;
+    
+    // ... (other methods and fields)
+    
+    @Override
+    public void periodic() {
+        // Calculate PID output: current position vs target
+        double currentPosition = encoder.getPosition();
+        double output = pid.calculate(currentPosition, targetHeight);
+        
+        // Apply output to motor
+        motor.set(output);
+    }
+    
+    // ... (rest of class)
+```
+
+### On-Controller PID
+
+Best for performance.
+
+### Hardware PID
+
+<CodeTabs>
+<CodeTab label="Talon FX">
+
+```java
+package frc.robot.subsystems;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+public class Example {
+    private TalonFX motor = new TalonFX(1);
+    
+    public void configurePID() {
+        // Configure PID gains for Slot 0
+        Slot0Configs config = new Slot0Configs();
+        config.kP = 0.1;  // Proportional gain
+        config.kI = 0.0;  // Integral gain
+        config.kD = 0.01; // Derivative gain
+        motor.getConfigurator().apply(config);
+    }
+    
+    public void setPosition(double targetRotations) {
+        // Use position control with configured PID
+        motor.setControl(new PositionVoltage(targetRotations));
+    }
+}
+```
+
+</CodeTab>
+<CodeTab label="SPARK MAX">
+
+```java
+package frc.robot.subsystems;
+
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.ClosedLoopController.ControlType;
+
+public class Example {
+    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);
+    private SparkClosedLoopController controller = motor.getClosedLoopController();
+    
+    public void configurePID() {
+        // Configure PID gains
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.closedLoop.p(0.1).i(0.0).d(0.01);
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+    
+    public void setPosition(double target) {
+        // Use position control with configured PID
+        controller.setReference(target, ControlType.kPosition);
+    }
+}
+```
+
+</CodeTab>
+</CodeTabs>
+
+### Tuning Process
+
+Tune feedforward first, then PID. Use Phoenix Tuner or similar tools for quick constant changes. Log desired vs actual position using a vendor-specific tool (Phoenix Tuner, REV Hardware Client) or an external tool (AdvantageScope, Elastic) to see system behavior. (Credits to [SuperNURDS FRC 3255](https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116) for the original method)
+
+<RulesBox title="Feedforward Tuning" subtitle="Steps:">
+
+- Set all PID constants to 0.
+- Command the mechanism to a non-zero position.
+- Manually raise to that position and release.
+- Observe if it holds, raises, or falls.
+- Adjust kG (gravity feedforward) and repeat until it holds position.
+
+</RulesBox>
+
+<RulesBox title="PID Tuning" subtitle="Steps:">
+
+- Log desired position and actual position.
+- Slowly increase kP until you see overshoot, then set kP slightly below that value.
+- (For a riskier strategy, double kP until you see overshoot, then set kP to the midpoint between the old and current kP values until oscillation mostly disappears)
+- If steady-state error appears (doesn't reach target), increase kS (static feedforward) slightly.
+- This makes kP temporarily too large (overshoot), but your final kP will be close.
+- Repeat adjusting kS and kP until properly tuned.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"Trapezoidal Motion Profiling","id":"trapezoidal-motion-profiling"},{"label":"WPILib PID","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html"},{"label":"Mechanism PID Tuning Practice","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tutorial-intro.html"}]} title="Resources" section="frc" />
+

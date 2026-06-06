@@ -1,0 +1,1572 @@
+---
+title: Debugging Strategies for FTC Development
+lessonId: debugging-strategies
+section: ftc
+group: android-studio-as-debugging-best-practices
+groupLabel: AS Debugging Best Practices
+groupOrder: 13
+order: 6
+difficulty: advanced
+duration: 120 min
+description: ""
+---
+
+### Introduction to Systematic Debugging
+
+Effective debugging is not just about finding bugs—it's about developing a systematic approach to problem-solving. In FTC development, you need strategies that work both in the lab and under competition pressure. This lesson teaches you how to approach debugging methodically and efficiently.
+
+<RulesBox title="Why Systematic Debugging Matters">
+
+- FTC competitions have limited time for debugging and testing
+- Hardware-software interactions create complex failure modes
+- Systematic approaches prevent you from making the same mistakes
+- Good debugging skills transfer to other programming domains
+- Competition environments require quick problem resolution
+
+</RulesBox>
+
+### The Scientific Method of Debugging
+
+Apply the scientific method to debugging: observe the problem, form a hypothesis, test it, and refine your understanding. This systematic approach helps you avoid random trial-and-error debugging.
+
+### Debugging Framework - Core Structure
+
+Implement a structured debugging process in your code. This framework provides a systematic approach to debugging by following the scientific method. The framework tracks observations, hypotheses, tests, and conclusions:
+
+
+
+```java
+public class DebuggingFramework {
+    private static final String TAG = "DebugFramework";
+    private boolean debugMode = true;
+    private List<String> debugLog = new ArrayList<>();
+    
+    /**
+     * Step 1: Observe and Document the Problem
+     */
+    public void observeProblem(String problemDescription, Object... data) {
+        String observation = String.format("OBSERVATION: %s | Data: %s", 
+                                          problemDescription, 
+                                          Arrays.toString(data));
+        logDebug(observation);
+        debugLog.add(observation);
+    }
+    
+    /**
+     * Step 2: Form a Hypothesis
+     */
+    public void formHypothesis(String hypothesis, String expectedOutcome) {
+        String hypothesisEntry = String.format("HYPOTHESIS: %s | Expected: %s", 
+                                              hypothesis, 
+                                              expectedOutcome);
+        logDebug(hypothesisEntry);
+        debugLog.add(hypothesisEntry);
+    }
+```
+
+### Understanding the Scientific Method in Debugging
+
+The scientific method provides a systematic approach to debugging. First, you observe and document the problem with specific data. Then you form a hypothesis about what might be causing the issue. This structured approach prevents random trial-and-error debugging.
+
+### Debugging Framework - Testing and Conclusion Methods
+
+Add methods for testing hypotheses and documenting conclusions. These methods complete the scientific method cycle by testing your hypothesis and recording the results:
+
+
+
+```java
+    /**
+     * Step 3: Test the Hypothesis
+     */
+    public void testHypothesis(String testDescription, boolean result, Object actualOutcome) {
+        String testResult = String.format("TEST: %s | Result: %s | Actual: %s", 
+                                         testDescription, 
+                                         result ? "PASS" : "FAIL", 
+                                         actualOutcome);
+        logDebug(testResult);
+        debugLog.add(testResult);
+    }
+    
+    /**
+     * Step 4: Document the Conclusion
+     */
+    public void documentConclusion(String conclusion, String nextSteps) {
+        String conclusionEntry = String.format("CONCLUSION: %s | Next: %s", 
+                                              conclusion, 
+                                              nextSteps);
+        logDebug(conclusionEntry);
+        debugLog.add(conclusionEntry);
+    }
+    
+    private void logDebug(String message) {
+        if (debugMode) {
+            Log.d(TAG, message);
+        }
+    }
+    
+    public List<String> getDebugLog() {
+        return new ArrayList<>(debugLog);
+    }
+    
+    public void clearDebugLog() {
+        debugLog.clear();
+    }
+}
+```
+
+### Completing the Debugging Cycle
+
+The testing and conclusion methods complete the debugging cycle. Testing verifies whether your hypothesis was correct, and conclusions document what you learned and what steps to take next. This creates a record that helps with future debugging and team communication.
+
+### Common FTC Debugging Scenarios
+
+FTC development has specific challenges that require targeted debugging strategies. Understanding these common scenarios helps you develop effective debugging approaches.
+
+### Hardware Debugger - Basic Structure
+
+Hardware connection issues are common in FTC. Here's a systematic approach to debugging them. This class provides methods to test hardware connections systematically:
+
+
+
+```java
+public class HardwareDebugger {
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
+    private DebuggingFramework debugger;
+    
+    public HardwareDebugger(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
+        this.debugger = new DebuggingFramework();
+    }
+    
+    public boolean debugMotorConnection(String motorName) {
+        debugger.observeProblem("Motor " + motorName + " not responding");
+        
+        // Step 1: Check if motor exists in hardware map
+        debugger.formHypothesis("Motor not found in hardware map", "HardwareMap.get() throws exception");
+        
+        try {
+            DcMotor motor = hardwareMap.get(DcMotor.class, motorName);
+            debugger.testHypothesis("Motor exists in hardware map", true, motor.getDeviceName());
+            
+            // Step 2: Check if motor responds to basic commands
+            debugger.formHypothesis("Motor hardware connection issue", "setPower() should work without exception");
+            
+            try {
+                motor.setPower(0.1);
+                Thread.sleep(100); // Brief test
+                motor.setPower(0.0);
+                debugger.testHypothesis("Motor responds to commands", true, "Power set successfully");
+                
+                debugger.documentConclusion("Motor connection is working", "Check software logic");
+                return true;
+                
+            } catch (Exception e) {
+                debugger.testHypothesis("Motor responds to commands", false, e.getMessage());
+                debugger.documentConclusion("Motor hardware connection issue", "Check wiring and power");
+                return false;
+            }
+            
+        } catch (Exception e) {
+            debugger.testHypothesis("Motor exists in hardware map", false, e.getMessage());
+            debugger.documentConclusion("Motor not configured in hardware map", "Check configuration file");
+            return false;
+        }
+    }
+```
+
+### Understanding Hardware Debugging
+
+The hardware debugger systematically tests each component of the motor connection. First, it checks if the motor exists in the hardware map. Then it tests if the motor responds to basic commands. This helps identify whether the issue is configuration, wiring, or software-related.
+
+### Hardware Debugger - Sensor Connection Methods
+
+Add methods for debugging sensor connections. These methods handle different types of sensors:
+
+
+
+```java
+    public boolean debugSensorConnection(String sensorName, Class<?> sensorType) {
+        debugger.observeProblem("Sensor " + sensorName + " not providing data");
+        
+        try {
+            Object sensor = hardwareMap.get(sensorType, sensorName);
+            debugger.testHypothesis("Sensor exists in hardware map", true, sensor.getClass().getSimpleName());
+            
+            // Test sensor functionality based on type
+            if (sensor instanceof ColorSensor) {
+                return debugColorSensor((ColorSensor) sensor, sensorName);
+            } else if (sensor instanceof DistanceSensor) {
+                return debugDistanceSensor((DistanceSensor) sensor, sensorName);
+            }
+            
+            return true;
+            
+        } catch (Exception e) {
+            debugger.testHypothesis("Sensor exists in hardware map", false, e.getMessage());
+            debugger.documentConclusion("Sensor not configured", "Check configuration file");
+            return false;
+        }
+    }
+```
+
+### Understanding Sensor Debugging
+
+The sensor debugging method first checks if the sensor exists in the hardware map, then calls specific debugging methods based on the sensor type. This allows for customized testing for each type of sensor.
+
+### Hardware Debugger - Specific Sensor Debug Methods
+
+Add specific debugging methods for different sensor types. Each method tests the sensor's basic functionality:
+
+
+
+```java
+    private boolean debugColorSensor(ColorSensor sensor, String sensorName) {
+        debugger.formHypothesis("Color sensor not reading values", "getRed(), getGreen(), getBlue() should return values");
+        
+        try {
+            int red = sensor.red();
+            int green = sensor.green();
+            int blue = sensor.blue();
+            
+            String reading = String.format("R:%d G:%d B:%d", red, green, blue);
+            debugger.testHypothesis("Color sensor reading values", true, reading);
+            
+            debugger.documentConclusion("Color sensor working", "Check sensor positioning and lighting");
+            return true;
+            
+        } catch (Exception e) {
+            debugger.testHypothesis("Color sensor reading values", false, e.getMessage());
+            debugger.documentConclusion("Color sensor hardware issue", "Check wiring and power");
+            return false;
+        }
+    }
+    
+    private boolean debugDistanceSensor(DistanceSensor sensor, String sensorName) {
+        debugger.formHypothesis("Distance sensor not reading", "getDistance() should return distance value");
+        
+        try {
+            double distance = sensor.getDistance(DistanceUnit.INCH);
+            debugger.testHypothesis("Distance sensor reading", true, "Distance: " + distance + " inches");
+            
+            debugger.documentConclusion("Distance sensor working", "Check sensor positioning and calibration");
+            return true;
+            
+        } catch (Exception e) {
+            debugger.testHypothesis("Distance sensor reading", false, e.getMessage());
+            debugger.documentConclusion("Distance sensor hardware issue", "Check wiring and power");
+            return false;
+        }
+    }
+    
+    public void printDebugLog() {
+        List<String> log = debugger.getDebugLog();
+        telemetry.addLine("=== HARDWARE DEBUG LOG ===");
+        for (String entry : log) {
+            telemetry.addLine(entry);
+        }
+        telemetry.update();
+    }
+}
+```
+
+### Understanding Sensor-Specific Debugging
+
+Each sensor type has different testing requirements. Color sensors need to read RGB values, and distance sensors need to return distance measurements. These specific methods ensure each sensor type is tested appropriately.
+
+### State Machine Debugging
+
+State machines are common in FTC autonomous programs but can be difficult to debug. Use systematic approaches to track state transitions and identify issues.
+
+### Debuggable State Machine - Core Structure
+
+Create a debuggable state machine that tracks transitions and conditions. This class provides comprehensive debugging information for state machines:
+
+
+
+```java
+public class DebuggableStateMachine<T extends Enum<T>> {
+    private T currentState;
+    private T previousState;
+    private double stateStartTime;
+    private double currentTime;
+    private List<StateTransition> transitionHistory = new ArrayList<>();
+    private DebuggingFramework debugger;
+    
+    public DebuggableStateMachine(T initialState, DebuggingFramework debugger) {
+        this.currentState = initialState;
+        this.previousState = initialState;
+        this.debugger = debugger;
+        this.stateStartTime = 0.0;
+        this.currentTime = 0.0;
+    }
+    
+    public void update(double time) {
+        this.currentTime = time;
+        
+        // Log state duration if it's been too long
+        double stateDuration = time - stateStartTime;
+        if (stateDuration > 10.0) { // 10 second timeout
+            debugger.observeProblem("State " + currentState + " has been active for " + stateDuration + " seconds");
+            debugger.formHypothesis("State transition condition not met", "Check transition logic");
+        }
+    }
+```
+
+### Understanding State Machine Debugging
+
+The debuggable state machine tracks the current state, previous state, and how long each state has been active. It automatically detects when a state has been active too long, which often indicates a bug in the transition logic.
+
+### Debuggable State Machine - Transition and History Methods
+
+Add methods for managing state transitions and tracking history:
+
+
+
+```java
+    public void transitionTo(T newState, String reason) {
+        if (newState != currentState) {
+            previousState = currentState;
+            double stateDuration = currentTime - stateStartTime;
+            
+            // Record the transition
+            StateTransition transition = new StateTransition(
+                previousState, newState, reason, stateDuration, currentTime
+            );
+            transitionHistory.add(transition);
+            
+            // Log the transition
+            debugger.observeProblem("State transition: " + previousState + " -> " + newState + " (" + reason + ")");
+            
+            currentState = newState;
+            stateStartTime = currentTime;
+        }
+    }
+    
+    public T getCurrentState() {
+        return currentState;
+    }
+    
+    public T getPreviousState() {
+        return previousState;
+    }
+    
+    public double getStateDuration() {
+        return currentTime - stateStartTime;
+    }
+    
+    public List<StateTransition> getTransitionHistory() {
+        return new ArrayList<>(transitionHistory);
+    }
+```
+
+### Understanding State Transitions
+
+The transitionTo method records every state change with the reason for the transition and how long the previous state was active. This creates a complete history that helps identify patterns in state machine behavior.
+
+### Debuggable State Machine - Debug Display and Helper Class
+
+Add debug display methods and the StateTransition helper class:
+
+
+
+```java
+    public void debugStateMachine(Telemetry telemetry) {
+        telemetry.addLine("=== STATE MACHINE DEBUG ===");
+        telemetry.addData("Current State", currentState);
+        telemetry.addData("Previous State", previousState);
+        telemetry.addData("State Duration", String.format("%.2fs", getStateDuration()));
+        telemetry.addData("Total Time", String.format("%.2fs", currentTime));
+        
+        telemetry.addLine("\nRecent Transitions:");
+        int startIndex = Math.max(0, transitionHistory.size() - 5);
+        for (int i = startIndex; i < transitionHistory.size(); i++) {
+            StateTransition t = transitionHistory.get(i);
+            telemetry.addLine(String.format("%.1fs: %s -> %s (%s)", 
+                t.timestamp, t.fromState, t.toState, t.reason));
+        }
+        
+        telemetry.update();
+    }
+    
+    private static class StateTransition {
+        T fromState, toState;
+        String reason;
+        double duration, timestamp;
+        
+        StateTransition(T from, T to, String reason, double duration, double timestamp) {
+            this.fromState = from;
+            this.toState = to;
+            this.reason = reason;
+            this.duration = duration;
+            this.timestamp = timestamp;
+        }
+    }
+}
+```
+
+### Understanding State Machine Display
+
+The debugStateMachine method displays comprehensive information about the state machine's current status and recent history. The StateTransition helper class stores all the details about each state change for analysis.
+
+### Using the Debuggable State Machine
+
+Now let's see how to use the debuggable state machine in an actual autonomous OpMode. This example shows how to integrate the debugging framework with real robot behavior.
+
+### Debuggable Autonomous OpMode - Setup and Initialization
+
+Use the debuggable state machine in an autonomous OpMode. This example shows how to set up debugging for a complete autonomous sequence:
+
+
+
+```java
+public class DebuggableAutonomousOpMode extends OpMode {
+    private enum AutonomousState {
+        INIT, DRIVE_FORWARD, TURN_LEFT, DETECT_COLOR, COMPLETE
+    }
+    
+    private DebuggableStateMachine<AutonomousState> stateMachine;
+    private DebuggingFramework debugger;
+    private HardwareDebugger hardwareDebugger;
+    
+    private DcMotor leftMotor, rightMotor;
+    private ColorSensor colorSensor;
+    private double startTime;
+    
+    @Override
+    public void init() {
+        debugger = new DebuggingFramework();
+        stateMachine = new DebuggableStateMachine<>(AutonomousState.INIT, debugger);
+        hardwareDebugger = new HardwareDebugger(hardwareMap, telemetry);
+        
+        // Debug hardware connections
+        debugger.observeProblem("Initializing autonomous sequence");
+        
+        boolean motorsOK = hardwareDebugger.debugMotorConnection("left_motor") &&
+                           hardwareDebugger.debugMotorConnection("right_motor");
+        
+        boolean sensorOK = hardwareDebugger.debugSensorConnection("color_sensor", ColorSensor.class);
+        
+        if (!motorsOK || !sensorOK) {
+            debugger.documentConclusion("Hardware issues detected", "Fix hardware before proceeding");
+            return;
+        }
+        
+        // Initialize hardware
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        
+        debugger.documentConclusion("Hardware initialized successfully", "Ready to start autonomous");
+    }
+```
+
+### Understanding Autonomous Setup
+
+The initialization method sets up all the debugging components and tests hardware connections before starting the autonomous sequence. This ensures that any hardware issues are identified early.
+
+### Debuggable Autonomous OpMode - Main Loop and State Handling
+
+Add the main loop and state handling logic with comprehensive debugging:
+
+
+
+```java
+    @Override
+    public void start() {
+        startTime = getRuntime();
+        stateMachine.transitionTo(AutonomousState.DRIVE_FORWARD, "Starting autonomous sequence");
+        debugger.observeProblem("Autonomous sequence started");
+    }
+    
+    @Override
+    public void loop() {
+        double currentTime = getRuntime();
+        stateMachine.update(currentTime);
+        
+        AutonomousState currentState = stateMachine.getCurrentState();
+        
+        switch (currentState) {
+            case INIT:
+                // Should not reach here
+                debugger.observeProblem("Unexpected INIT state in loop");
+                break;
+                
+            case DRIVE_FORWARD:
+                // Drive forward for 2 seconds
+                if (currentTime - startTime < 2.0) {
+                    leftMotor.setPower(0.5);
+                    rightMotor.setPower(0.5);
+                } else {
+                    leftMotor.setPower(0.0);
+                    rightMotor.setPower(0.0);
+                    stateMachine.transitionTo(AutonomousState.TURN_LEFT, "Drive forward complete");
+                }
+                break;
+                
+            case TURN_LEFT:
+                // Turn left for 1 second
+                if (stateMachine.getStateDuration() < 1.0) {
+                    leftMotor.setPower(-0.3);
+                    rightMotor.setPower(0.3);
+                } else {
+                    leftMotor.setPower(0.0);
+                    rightMotor.setPower(0.0);
+                    stateMachine.transitionTo(AutonomousState.DETECT_COLOR, "Turn complete");
+                }
+                break;
+                
+            case DETECT_COLOR:
+                // Check for red color
+                int red = colorSensor.red();
+                int green = colorSensor.green();
+                int blue = colorSensor.blue();
+                
+                if (red > green && red > blue && red > 100) {
+                    debugger.observeProblem("Red color detected: R=" + red + " G=" + green + " B=" + blue);
+                    stateMachine.transitionTo(AutonomousState.COMPLETE, "Red color detected");
+                } else if (stateMachine.getStateDuration() > 5.0) {
+                    debugger.observeProblem("Color detection timeout after 5 seconds");
+                    stateMachine.transitionTo(AutonomousState.COMPLETE, "Color detection timeout");
+                }
+                break;
+                
+            case COMPLETE:
+                // Stop all motors
+                leftMotor.setPower(0.0);
+                rightMotor.setPower(0.0);
+                
+                if (stateMachine.getStateDuration() > 1.0) {
+                    requestOpModeStop();
+                }
+                break;
+        }
+        
+        // Display debug information
+        stateMachine.debugStateMachine(telemetry);
+        telemetry.addLine("");
+        hardwareDebugger.printDebugLog();
+    }
+}
+```
+
+### Understanding State Machine Logic
+
+Each state in the autonomous sequence has specific logic and transition conditions. The debugging framework tracks all state changes and provides detailed information about what's happening at each step.
+
+### Complete Debugging Framework Example
+
+Here's the complete debugging framework with all components combined:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.util.DistanceUnit;
+import android.util.Log;
+import java.util.*;
+
+@Autonomous(name = "Debugging Framework Example")
+public class DebuggingFrameworkExample extends OpMode {
+    private enum AutonomousState {
+        INIT, DRIVE_FORWARD, TURN_LEFT, DETECT_COLOR, COMPLETE
+    }
+    
+    private DebuggableStateMachine<AutonomousState> stateMachine;
+    private DebuggingFramework debugger;
+    private HardwareDebugger hardwareDebugger;
+    
+    private DcMotor leftMotor, rightMotor;
+    private ColorSensor colorSensor;
+    private double startTime;
+    
+    @Override
+    public void init() {
+        debugger = new DebuggingFramework();
+        stateMachine = new DebuggableStateMachine<>(AutonomousState.INIT, debugger);
+        hardwareDebugger = new HardwareDebugger(hardwareMap, telemetry);
+        
+        // Debug hardware connections
+        debugger.observeProblem("Initializing autonomous sequence");
+        
+        boolean motorsOK = hardwareDebugger.debugMotorConnection("left_motor") &&
+                           hardwareDebugger.debugMotorConnection("right_motor");
+        
+        boolean sensorOK = hardwareDebugger.debugSensorConnection("color_sensor", ColorSensor.class);
+        
+        if (!motorsOK || !sensorOK) {
+            debugger.documentConclusion("Hardware issues detected", "Fix hardware before proceeding");
+            return;
+        }
+        
+        // Initialize hardware
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        
+        debugger.documentConclusion("Hardware initialized successfully", "Ready to start autonomous");
+    }
+    
+    @Override
+    public void start() {
+        startTime = getRuntime();
+        stateMachine.transitionTo(AutonomousState.DRIVE_FORWARD, "Starting autonomous sequence");
+        debugger.observeProblem("Autonomous sequence started");
+    }
+    
+    @Override
+    public void loop() {
+        double currentTime = getRuntime();
+        stateMachine.update(currentTime);
+        
+        AutonomousState currentState = stateMachine.getCurrentState();
+        
+        switch (currentState) {
+            case INIT:
+                debugger.observeProblem("Unexpected INIT state in loop");
+                break;
+                
+            case DRIVE_FORWARD:
+                if (currentTime - startTime < 2.0) {
+                    leftMotor.setPower(0.5);
+                    rightMotor.setPower(0.5);
+                } else {
+                    leftMotor.setPower(0.0);
+                    rightMotor.setPower(0.0);
+                    stateMachine.transitionTo(AutonomousState.TURN_LEFT, "Drive forward complete");
+                }
+                break;
+                
+            case TURN_LEFT:
+                if (stateMachine.getStateDuration() < 1.0) {
+                    leftMotor.setPower(-0.3);
+                    rightMotor.setPower(0.3);
+                } else {
+                    leftMotor.setPower(0.0);
+                    rightMotor.setPower(0.0);
+                    stateMachine.transitionTo(AutonomousState.DETECT_COLOR, "Turn complete");
+                }
+                break;
+                
+            case DETECT_COLOR:
+                int red = colorSensor.red();
+                int green = colorSensor.green();
+                int blue = colorSensor.blue();
+                
+                if (red > green && red > blue && red > 100) {
+                    debugger.observeProblem("Red color detected: R=" + red + " G=" + green + " B=" + blue);
+                    stateMachine.transitionTo(AutonomousState.COMPLETE, "Red color detected");
+                } else if (stateMachine.getStateDuration() > 5.0) {
+                    debugger.observeProblem("Color detection timeout after 5 seconds");
+                    stateMachine.transitionTo(AutonomousState.COMPLETE, "Color detection timeout");
+                }
+                break;
+                
+            case COMPLETE:
+                leftMotor.setPower(0.0);
+                rightMotor.setPower(0.0);
+                
+                if (stateMachine.getStateDuration() > 1.0) {
+                    requestOpModeStop();
+                }
+                break;
+        }
+        
+        // Display debug information
+        stateMachine.debugStateMachine(telemetry);
+        telemetry.addLine("");
+        hardwareDebugger.printDebugLog();
+    }
+    
+    // Debugging Framework Classes
+    public static class DebuggingFramework {
+        private static final String TAG = "DebugFramework";
+        private boolean debugMode = true;
+        private List<String> debugLog = new ArrayList<>();
+        
+        public void observeProblem(String problemDescription, Object... data) {
+            String observation = String.format("OBSERVATION: %s | Data: %s", 
+                                              problemDescription, 
+                                              Arrays.toString(data));
+            logDebug(observation);
+            debugLog.add(observation);
+        }
+        
+        public void formHypothesis(String hypothesis, String expectedOutcome) {
+            String hypothesisEntry = String.format("HYPOTHESIS: %s | Expected: %s", 
+                                                  hypothesis, 
+                                                  expectedOutcome);
+            logDebug(hypothesisEntry);
+            debugLog.add(hypothesisEntry);
+        }
+        
+        public void testHypothesis(String testDescription, boolean result, Object actualOutcome) {
+            String testResult = String.format("TEST: %s | Result: %s | Actual: %s", 
+                                             testDescription, 
+                                             result ? "PASS" : "FAIL", 
+                                             actualOutcome);
+            logDebug(testResult);
+            debugLog.add(testResult);
+        }
+        
+        public void documentConclusion(String conclusion, String nextSteps) {
+            String conclusionEntry = String.format("CONCLUSION: %s | Next: %s", 
+                                                  conclusion, 
+                                                  nextSteps);
+            logDebug(conclusionEntry);
+            debugLog.add(conclusionEntry);
+        }
+        
+        private void logDebug(String message) {
+            if (debugMode) {
+                Log.d(TAG, message);
+            }
+        }
+        
+        public List<String> getDebugLog() {
+            return new ArrayList<>(debugLog);
+        }
+        
+        public void clearDebugLog() {
+            debugLog.clear();
+        }
+    }
+    
+    public static class HardwareDebugger {
+        private HardwareMap hardwareMap;
+        private Telemetry telemetry;
+        private DebuggingFramework debugger;
+        
+        public HardwareDebugger(HardwareMap hardwareMap, Telemetry telemetry) {
+            this.hardwareMap = hardwareMap;
+            this.telemetry = telemetry;
+            this.debugger = new DebuggingFramework();
+        }
+        
+        public boolean debugMotorConnection(String motorName) {
+            debugger.observeProblem("Motor " + motorName + " not responding");
+            
+            try {
+                DcMotor motor = hardwareMap.get(DcMotor.class, motorName);
+                debugger.testHypothesis("Motor exists in hardware map", true, motor.getDeviceName());
+                
+                try {
+                    motor.setPower(0.1);
+                    Thread.sleep(100);
+                    motor.setPower(0.0);
+                    debugger.testHypothesis("Motor responds to commands", true, "Power set successfully");
+                    debugger.documentConclusion("Motor connection is working", "Check software logic");
+                    return true;
+                    
+                } catch (Exception e) {
+                    debugger.testHypothesis("Motor responds to commands", false, e.getMessage());
+                    debugger.documentConclusion("Motor hardware connection issue", "Check wiring and power");
+                    return false;
+                }
+                
+            } catch (Exception e) {
+                debugger.testHypothesis("Motor exists in hardware map", false, e.getMessage());
+                debugger.documentConclusion("Motor not configured in hardware map", "Check configuration file");
+                return false;
+            }
+        }
+        
+        public boolean debugSensorConnection(String sensorName, Class<?> sensorType) {
+            debugger.observeProblem("Sensor " + sensorName + " not providing data");
+            
+            try {
+                Object sensor = hardwareMap.get(sensorType, sensorName);
+                debugger.testHypothesis("Sensor exists in hardware map", true, sensor.getClass().getSimpleName());
+                
+                if (sensor instanceof ColorSensor) {
+                    return debugColorSensor((ColorSensor) sensor, sensorName);
+                }
+                
+                return true;
+                
+            } catch (Exception e) {
+                debugger.testHypothesis("Sensor exists in hardware map", false, e.getMessage());
+                debugger.documentConclusion("Sensor not configured", "Check configuration file");
+                return false;
+            }
+        }
+        
+        private boolean debugColorSensor(ColorSensor sensor, String sensorName) {
+            debugger.formHypothesis("Color sensor not reading values", "getRed(), getGreen(), getBlue() should return values");
+            
+            try {
+                int red = sensor.red();
+                int green = sensor.green();
+                int blue = sensor.blue();
+                
+                String reading = String.format("R:%d G:%d B:%d", red, green, blue);
+                debugger.testHypothesis("Color sensor reading values", true, reading);
+                
+                debugger.documentConclusion("Color sensor working", "Check sensor positioning and lighting");
+                return true;
+                
+            } catch (Exception e) {
+                debugger.testHypothesis("Color sensor reading values", false, e.getMessage());
+                debugger.documentConclusion("Color sensor hardware issue", "Check wiring and power");
+                return false;
+            }
+        }
+        
+        public void printDebugLog() {
+            List<String> log = debugger.getDebugLog();
+            telemetry.addLine("=== HARDWARE DEBUG LOG ===");
+            for (String entry : log) {
+                telemetry.addLine(entry);
+            }
+            telemetry.update();
+        }
+    }
+    
+    public static class DebuggableStateMachine<T extends Enum<T>> {
+        private T currentState;
+        private T previousState;
+        private double stateStartTime;
+        private double currentTime;
+        private List<StateTransition> transitionHistory = new ArrayList<>();
+        private DebuggingFramework debugger;
+        
+        public DebuggableStateMachine(T initialState, DebuggingFramework debugger) {
+            this.currentState = initialState;
+            this.previousState = initialState;
+            this.debugger = debugger;
+            this.stateStartTime = 0.0;
+            this.currentTime = 0.0;
+        }
+        
+        public void update(double time) {
+            this.currentTime = time;
+            
+            double stateDuration = time - stateStartTime;
+            if (stateDuration > 10.0) {
+                debugger.observeProblem("State " + currentState + " has been active for " + stateDuration + " seconds");
+                debugger.formHypothesis("State transition condition not met", "Check transition logic");
+            }
+        }
+        
+        public void transitionTo(T newState, String reason) {
+            if (newState != currentState) {
+                previousState = currentState;
+                double stateDuration = currentTime - stateStartTime;
+                
+                StateTransition transition = new StateTransition(
+                    previousState, newState, reason, stateDuration, currentTime
+                );
+                transitionHistory.add(transition);
+                
+                debugger.observeProblem("State transition: " + previousState + " -> " + newState + " (" + reason + ")");
+                
+                currentState = newState;
+                stateStartTime = currentTime;
+            }
+        }
+        
+        public T getCurrentState() {
+            return currentState;
+        }
+        
+        public double getStateDuration() {
+            return currentTime - stateStartTime;
+        }
+        
+        public void debugStateMachine(Telemetry telemetry) {
+            telemetry.addLine("=== STATE MACHINE DEBUG ===");
+            telemetry.addData("Current State", currentState);
+            telemetry.addData("Previous State", previousState);
+            telemetry.addData("State Duration", String.format("%.2fs", getStateDuration()));
+            telemetry.addData("Total Time", String.format("%.2fs", currentTime));
+            
+            telemetry.addLine("\nRecent Transitions:");
+            int startIndex = Math.max(0, transitionHistory.size() - 5);
+            for (int i = startIndex; i < transitionHistory.size(); i++) {
+                StateTransition t = transitionHistory.get(i);
+                telemetry.addLine(String.format("%.1fs: %s -> %s (%s)", 
+                    t.timestamp, t.fromState, t.toState, t.reason));
+            }
+            
+            telemetry.update();
+        }
+        
+        private static class StateTransition {
+            T fromState, toState;
+            String reason;
+            double duration, timestamp;
+            
+            StateTransition(T from, T to, String reason, double duration, double timestamp) {
+                this.fromState = from;
+                this.toState = to;
+                this.reason = reason;
+                this.duration = duration;
+                this.timestamp = timestamp;
+            }
+        }
+    }
+}
+```
+
+### Performance Debugging
+
+Performance issues in FTC can cause missed commands, laggy telemetry, or unreliable autonomous behavior. Learn to identify and fix performance bottlenecks.
+
+### Performance Monitor - Core Structure
+
+Create a framework to monitor and debug performance issues. This class tracks loop timing and operation performance:
+
+
+
+```java
+public class PerformanceMonitor {
+    private Map<String, Long> operationStartTimes = new HashMap<>();
+    private Map<String, List<Long>> operationDurations = new HashMap<>();
+    private long loopStartTime;
+    private int loopCount = 0;
+    private double averageLoopTime = 0.0;
+    private double maxLoopTime = 0.0;
+    private DebuggingFramework debugger;
+    
+    public PerformanceMonitor(DebuggingFramework debugger) {
+        this.debugger = debugger;
+    }
+    
+    public void startLoop() {
+        loopStartTime = System.nanoTime();
+        loopCount++;
+    }
+    
+    public void endLoop() {
+        long loopDuration = System.nanoTime() - loopStartTime;
+        double loopTimeMs = loopDuration / 1_000_000.0;
+        
+        // Update average loop time
+        averageLoopTime = (averageLoopTime * (loopCount - 1) + loopTimeMs) / loopCount;
+        maxLoopTime = Math.max(maxLoopTime, loopTimeMs);
+        
+        // Check for performance issues
+        if (loopTimeMs > 50.0) { // More than 50ms per loop
+            debugger.observeProblem("Slow loop detected: " + String.format("%.2f", loopTimeMs) + "ms");
+            debugger.formHypothesis("Loop taking too long", "Check for expensive operations in loop");
+        }
+    }
+```
+
+### Understanding Performance Monitoring
+
+The performance monitor tracks how long each loop takes to execute. It calculates the average and maximum loop times, and alerts you when loops take too long. This helps identify performance bottlenecks in your code.
+
+### Performance Monitor - Operation Tracking Methods
+
+Add methods for tracking individual operation performance:
+
+
+
+```java
+    public void startOperation(String operationName) {
+        operationStartTimes.put(operationName, System.nanoTime());
+    }
+    
+    public void endOperation(String operationName) {
+        Long startTime = operationStartTimes.remove(operationName);
+        if (startTime != null) {
+            long duration = System.nanoTime() - startTime;
+            double durationMs = duration / 1_000_000.0;
+            
+            // Store duration for analysis
+            operationDurations.computeIfAbsent(operationName, k -> new ArrayList<>()).add(duration);
+            
+            // Check for slow operations
+            if (durationMs > 10.0) { // More than 10ms
+                debugger.observeProblem("Slow operation: " + operationName + " took " + String.format("%.2f", durationMs) + "ms");
+            }
+        }
+    }
+```
+
+### Understanding Operation Tracking
+
+The operation tracking methods allow you to measure how long specific operations take. You can wrap any code section with startOperation() and endOperation() calls to identify which parts of your code are causing performance issues.
+
+### Performance Monitor - Analysis and Reporting
+
+Add methods for analyzing and reporting performance data:
+
+
+
+```java
+    public void analyzePerformance(Telemetry telemetry) {
+        telemetry.addLine("=== PERFORMANCE ANALYSIS ===");
+        telemetry.addData("Loop Count", loopCount);
+        telemetry.addData("Average Loop Time", String.format("%.2fms", averageLoopTime));
+        telemetry.addData("Max Loop Time", String.format("%.2fms", maxLoopTime));
+        
+        if (averageLoopTime > 20.0) {
+            telemetry.addLine("WARNING: Average loop time is high!");
+        }
+        
+        telemetry.addLine("\nOperation Analysis:");
+        for (Map.Entry<String, List<Long>> entry : operationDurations.entrySet()) {
+            String operation = entry.getKey();
+            List<Long> durations = entry.getValue();
+            
+            if (durations.size() > 0) {
+                double avgDuration = durations.stream().mapToLong(Long::longValue).average().orElse(0) / 1_000_000.0;
+                double maxDuration = durations.stream().mapToLong(Long::longValue).max().orElse(0) / 1_000_000.0;
+                
+                telemetry.addData(operation, String.format("Avg: %.2fms, Max: %.2fms, Count: %d", 
+                    avgDuration, maxDuration, durations.size()));
+            }
+        }
+        
+        telemetry.update();
+    }
+    
+    public void reset() {
+        operationStartTimes.clear();
+        operationDurations.clear();
+        loopCount = 0;
+        averageLoopTime = 0.0;
+        maxLoopTime = 0.0;
+    }
+}
+```
+
+### Understanding Performance Analysis
+
+The analyzePerformance method provides detailed statistics about your code's performance. It shows average and maximum loop times, and breaks down the performance of individual operations. This helps you identify which parts of your code need optimization.
+
+### Competition Debugging Strategies
+
+Competition environments require different debugging strategies. You have limited time and need to work quickly and efficiently.
+
+<RulesBox title="Competition Debugging Checklist">
+
+- Have a pre-competition debugging checklist ready
+- Use quick diagnostic tools that provide immediate feedback
+- Keep debugging logs concise but informative
+- Have backup strategies for common failure modes
+- Practice debugging under time pressure before competition
+- Document successful debugging approaches for future reference
+
+</RulesBox>
+
+### Competition Debugger - Basic Structure
+
+Create lightweight debugging tools for competition use. This class provides quick diagnostics for competition environments:
+
+
+
+```java
+public class CompetitionDebugger {
+    private Telemetry telemetry;
+    private boolean quickMode = true; // Competition mode
+    private Map<String, Object> lastValues = new HashMap<>();
+    
+    public CompetitionDebugger(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+    
+    /**
+     * Quick hardware check for competition
+     */
+    public boolean quickHardwareCheck(HardwareMap hardwareMap) {
+        telemetry.addLine("=== QUICK HARDWARE CHECK ===");
+        
+        boolean allOK = true;
+        
+        // Check motors
+        try {
+            DcMotor leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+            DcMotor rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+            leftMotor.setPower(0.0);
+            rightMotor.setPower(0.0);
+            telemetry.addData("Motors", "OK");
+        } catch (Exception e) {
+            telemetry.addData("Motors", "FAIL: " + e.getMessage());
+            allOK = false;
+        }
+        
+        // Check sensors
+        try {
+            ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+            int red = colorSensor.red();
+            telemetry.addData("Color Sensor", "OK (R=" + red + ")");
+        } catch (Exception e) {
+            telemetry.addData("Color Sensor", "FAIL: " + e.getMessage());
+            allOK = false;
+        }
+        
+        telemetry.addData("Overall Status", allOK ? "READY" : "ISSUES DETECTED");
+        telemetry.update();
+        
+        return allOK;
+    }
+```
+
+### Understanding Competition Debugging
+
+The competition debugger provides quick, essential diagnostics that can be run rapidly during competition. It focuses on the most critical hardware components and provides immediate feedback about their status.
+
+### Competition Debugger - Monitoring and Display Methods
+
+Add methods for monitoring values and displaying competition status:
+
+
+
+```java
+    /**
+     * Monitor critical values for changes
+     */
+    public void monitorValue(String name, Object value) {
+        Object lastValue = lastValues.get(name);
+        if (!Objects.equals(lastValue, value)) {
+            telemetry.addData(name + " (CHANGED)", value);
+            lastValues.put(name, value);
+        } else {
+            telemetry.addData(name, value);
+        }
+    }
+    
+    /**
+     * Quick state display for competition
+     */
+    public void displayState(String state, double time, String... additionalInfo) {
+        telemetry.clear();
+        telemetry.addLine("=== COMPETITION STATUS ===");
+        telemetry.addData("State", state);
+        telemetry.addData("Time", String.format("%.1fs", time));
+        
+        for (String info : additionalInfo) {
+            telemetry.addLine(info);
+        }
+        
+        telemetry.update();
+    }
+    
+    /**
+     * Emergency stop with debugging info
+     */
+    public void emergencyStop(String reason, DcMotor... motors) {
+        telemetry.addLine("!!! EMERGENCY STOP !!!");
+        telemetry.addData("Reason", reason);
+        
+        for (DcMotor motor : motors) {
+            motor.setPower(0.0);
+        }
+        
+        telemetry.update();
+    }
+}
+```
+
+### Understanding Competition Monitoring
+
+The monitoring methods help track critical values during competition. The monitorValue method highlights when values change, making it easy to spot unexpected behavior. The displayState method provides a clean competition status display, and emergencyStop provides a safe way to stop the robot with debugging information.
+
+### Complete Performance and Competition Debugging Example
+
+Here's the complete performance monitoring and competition debugging example:
+
+
+
+```java
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import android.util.Log;
+import java.util.*;
+
+@TeleOp(name = "Performance and Competition Debugging Example")
+public class PerformanceAndCompetitionDebuggingExample extends OpMode {
+    private PerformanceMonitor performanceMonitor;
+    private CompetitionDebugger competitionDebugger;
+    private DebuggingFramework debugger;
+    
+    private DcMotor leftMotor, rightMotor;
+    private ColorSensor colorSensor;
+    private int loopCount = 0;
+    
+    @Override
+    public void init() {
+        debugger = new DebuggingFramework();
+        performanceMonitor = new PerformanceMonitor(debugger);
+        competitionDebugger = new CompetitionDebugger(telemetry);
+        
+        // Quick hardware check for competition
+        boolean hardwareOK = competitionDebugger.quickHardwareCheck(hardwareMap);
+        
+        if (!hardwareOK) {
+            debugger.observeProblem("Hardware check failed", "Hardware issues detected");
+            return;
+        }
+        
+        // Initialize hardware
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        
+        debugger.documentConclusion("Hardware initialized successfully", "Ready for operation");
+    }
+    
+    @Override
+    public void loop() {
+        performanceMonitor.startLoop();
+        
+        // Monitor gamepad input
+        performanceMonitor.startOperation("gamepad_processing");
+        double leftStickY = gamepad1.left_stick_y;
+        double rightStickY = gamepad1.right_stick_y;
+        performanceMonitor.endOperation("gamepad_processing");
+        
+        // Monitor motor control
+        performanceMonitor.startOperation("motor_control");
+        leftMotor.setPower(leftStickY);
+        rightMotor.setPower(rightStickY);
+        performanceMonitor.endOperation("motor_control");
+        
+        // Monitor sensor reading
+        performanceMonitor.startOperation("sensor_reading");
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
+        performanceMonitor.endOperation("sensor_reading");
+        
+        // Competition monitoring
+        competitionDebugger.monitorValue("Left Stick Y", leftStickY);
+        competitionDebugger.monitorValue("Right Stick Y", rightStickY);
+        competitionDebugger.monitorValue("Color Red", red);
+        
+        // Emergency stop check
+        if (gamepad1.back) {
+            competitionDebugger.emergencyStop("Back button pressed", leftMotor, rightMotor);
+            return;
+        }
+        
+        // Display performance analysis every 100 loops
+        if (loopCount % 100 == 0) {
+            performanceMonitor.analyzePerformance(telemetry);
+        }
+        
+        // Display competition status
+        competitionDebugger.displayState("TeleOp Running", getRuntime(), 
+            "Loop: " + loopCount,
+            "Motors: " + leftMotor.getPower() + ", " + rightMotor.getPower()
+        );
+        
+        performanceMonitor.endLoop();
+        loopCount++;
+    }
+    
+    // Performance Monitor Class
+    public static class PerformanceMonitor {
+        private Map<String, Long> operationStartTimes = new HashMap<>();
+        private Map<String, List<Long>> operationDurations = new HashMap<>();
+        private long loopStartTime;
+        private int loopCount = 0;
+        private double averageLoopTime = 0.0;
+        private double maxLoopTime = 0.0;
+        private DebuggingFramework debugger;
+        
+        public PerformanceMonitor(DebuggingFramework debugger) {
+            this.debugger = debugger;
+        }
+        
+        public void startLoop() {
+            loopStartTime = System.nanoTime();
+            loopCount++;
+        }
+        
+        public void endLoop() {
+            long loopDuration = System.nanoTime() - loopStartTime;
+            double loopTimeMs = loopDuration / 1_000_000.0;
+            
+            averageLoopTime = (averageLoopTime * (loopCount - 1) + loopTimeMs) / loopCount;
+            maxLoopTime = Math.max(maxLoopTime, loopTimeMs);
+            
+            if (loopTimeMs > 50.0) {
+                debugger.observeProblem("Slow loop detected: " + String.format("%.2f", loopTimeMs) + "ms");
+                debugger.formHypothesis("Loop taking too long", "Check for expensive operations in loop");
+            }
+        }
+        
+        public void startOperation(String operationName) {
+            operationStartTimes.put(operationName, System.nanoTime());
+        }
+        
+        public void endOperation(String operationName) {
+            Long startTime = operationStartTimes.remove(operationName);
+            if (startTime != null) {
+                long duration = System.nanoTime() - startTime;
+                double durationMs = duration / 1_000_000.0;
+                
+                operationDurations.computeIfAbsent(operationName, k -> new ArrayList<>()).add(duration);
+                
+                if (durationMs > 10.0) {
+                    debugger.observeProblem("Slow operation: " + operationName + " took " + String.format("%.2f", durationMs) + "ms");
+                }
+            }
+        }
+        
+        public void analyzePerformance(Telemetry telemetry) {
+            telemetry.addLine("=== PERFORMANCE ANALYSIS ===");
+            telemetry.addData("Loop Count", loopCount);
+            telemetry.addData("Average Loop Time", String.format("%.2fms", averageLoopTime));
+            telemetry.addData("Max Loop Time", String.format("%.2fms", maxLoopTime));
+            
+            if (averageLoopTime > 20.0) {
+                telemetry.addLine("WARNING: Average loop time is high!");
+            }
+            
+            telemetry.addLine("\nOperation Analysis:");
+            for (Map.Entry<String, List<Long>> entry : operationDurations.entrySet()) {
+                String operation = entry.getKey();
+                List<Long> durations = entry.getValue();
+                
+                if (durations.size() > 0) {
+                    double avgDuration = durations.stream().mapToLong(Long::longValue).average().orElse(0) / 1_000_000.0;
+                    double maxDuration = durations.stream().mapToLong(Long::longValue).max().orElse(0) / 1_000_000.0;
+                    
+                    telemetry.addData(operation, String.format("Avg: %.2fms, Max: %.2fms, Count: %d", 
+                        avgDuration, maxDuration, durations.size()));
+                }
+            }
+            
+            telemetry.update();
+        }
+        
+        public void reset() {
+            operationStartTimes.clear();
+            operationDurations.clear();
+            loopCount = 0;
+            averageLoopTime = 0.0;
+            maxLoopTime = 0.0;
+        }
+    }
+    
+    // Competition Debugger Class
+    public static class CompetitionDebugger {
+        private Telemetry telemetry;
+        private boolean quickMode = true;
+        private Map<String, Object> lastValues = new HashMap<>();
+        
+        public CompetitionDebugger(Telemetry telemetry) {
+            this.telemetry = telemetry;
+        }
+        
+        public boolean quickHardwareCheck(HardwareMap hardwareMap) {
+            telemetry.addLine("=== QUICK HARDWARE CHECK ===");
+            
+            boolean allOK = true;
+            
+            try {
+                DcMotor leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+                DcMotor rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+                leftMotor.setPower(0.0);
+                rightMotor.setPower(0.0);
+                telemetry.addData("Motors", "OK");
+            } catch (Exception e) {
+                telemetry.addData("Motors", "FAIL: " + e.getMessage());
+                allOK = false;
+            }
+            
+            try {
+                ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+                int red = colorSensor.red();
+                telemetry.addData("Color Sensor", "OK (R=" + red + ")");
+            } catch (Exception e) {
+                telemetry.addData("Color Sensor", "FAIL: " + e.getMessage());
+                allOK = false;
+            }
+            
+            telemetry.addData("Overall Status", allOK ? "READY" : "ISSUES DETECTED");
+            telemetry.update();
+            
+            return allOK;
+        }
+        
+        public void monitorValue(String name, Object value) {
+            Object lastValue = lastValues.get(name);
+            if (!Objects.equals(lastValue, value)) {
+                telemetry.addData(name + " (CHANGED)", value);
+                lastValues.put(name, value);
+            } else {
+                telemetry.addData(name, value);
+            }
+        }
+        
+        public void displayState(String state, double time, String... additionalInfo) {
+            telemetry.clear();
+            telemetry.addLine("=== COMPETITION STATUS ===");
+            telemetry.addData("State", state);
+            telemetry.addData("Time", String.format("%.1fs", time));
+            
+            for (String info : additionalInfo) {
+                telemetry.addLine(info);
+            }
+            
+            telemetry.update();
+        }
+        
+        public void emergencyStop(String reason, DcMotor... motors) {
+            telemetry.addLine("!!! EMERGENCY STOP !!!");
+            telemetry.addData("Reason", reason);
+            
+            for (DcMotor motor : motors) {
+                motor.setPower(0.0);
+            }
+            
+            telemetry.update();
+        }
+    }
+    
+    // Debugging Framework Class (from previous example)
+    public static class DebuggingFramework {
+        private static final String TAG = "DebugFramework";
+        private boolean debugMode = true;
+        private List<String> debugLog = new ArrayList<>();
+        
+        public void observeProblem(String problemDescription, Object... data) {
+            String observation = String.format("OBSERVATION: %s | Data: %s", 
+                                              problemDescription, 
+                                              Arrays.toString(data));
+            logDebug(observation);
+            debugLog.add(observation);
+        }
+        
+        public void formHypothesis(String hypothesis, String expectedOutcome) {
+            String hypothesisEntry = String.format("HYPOTHESIS: %s | Expected: %s", 
+                                                  hypothesis, 
+                                                  expectedOutcome);
+            logDebug(hypothesisEntry);
+            debugLog.add(hypothesisEntry);
+        }
+        
+        public void testHypothesis(String testDescription, boolean result, Object actualOutcome) {
+            String testResult = String.format("TEST: %s | Result: %s | Actual: %s", 
+                                             testDescription, 
+                                             result ? "PASS" : "FAIL", 
+                                             actualOutcome);
+            logDebug(testResult);
+            debugLog.add(testResult);
+        }
+        
+        public void documentConclusion(String conclusion, String nextSteps) {
+            String conclusionEntry = String.format("CONCLUSION: %s | Next: %s", 
+                                                  conclusion, 
+                                                  nextSteps);
+            logDebug(conclusionEntry);
+            debugLog.add(conclusionEntry);
+        }
+        
+        private void logDebug(String message) {
+            if (debugMode) {
+                Log.d(TAG, message);
+            }
+        }
+        
+        public List<String> getDebugLog() {
+            return new ArrayList<>(debugLog);
+        }
+        
+        public void clearDebugLog() {
+            debugLog.clear();
+        }
+    }
+}
+```
+
+<ExerciseBox title="Debugging Strategy Practice Exercise" description="Create a comprehensive debugging system for a complex robot behavior and practice systematic debugging approaches." answers={[{"task":"Implement the scientific method debugging framework","content":"// Integrate the DebuggingFramework to document observations, hypotheses, tests, and conclusions\nprivate DebuggingFramework debugger = new DebuggingFramework();\n\nprivate void observeAndDebug() {\n    debugger.observeProblem(\"Robot started searching for object\");\n    debugger.formHypothesis(\"Object will be detected when red > 100\", \"Color sensor red value exceeds 100\");\n    // ... after detection\n    debugger.testHypothesis(\"Color sensor detects red\", colorSensor.red() > 100, colorSensor.red());\n    debugger.documentConclusion(\"Object found\", \"Proceed to approach\");\n}\n\n// Call these methods at each state transition to document the debugging process."},{"task":"Add performance monitoring to identify bottlenecks","content":"// Use PerformanceMonitor to track loop and operation timing\nprivate PerformanceMonitor performanceMonitor = new PerformanceMonitor(debugger);\n\n@Override\npublic void loop() {\n    performanceMonitor.startLoop();\n    // ... robot logic ...\n    performanceMonitor.endLoop();\n    if (loopCount % 100 == 0) {\n        performanceMonitor.analyzePerformance(telemetry);\n    }\n}\n\n// Wrap expensive operations:\nperformanceMonitor.startOperation(\"sensor_reading\");\nint red = colorSensor.red();\nperformanceMonitor.endOperation(\"sensor_reading\");\n// This helps identify slow operations."},{"task":"Create competition-ready debugging tools","content":"// Use CompetitionDebugger for quick checks and emergency stops\nprivate CompetitionDebugger competitionDebugger = new CompetitionDebugger(telemetry);\n\n@Override\npublic void init() {\n    boolean hardwareOK = competitionDebugger.quickHardwareCheck(hardwareMap);\n    if (!hardwareOK) {\n        telemetry.addData(\"Error\", \"Hardware check failed\");\n    }\n}\n\n@Override\npublic void loop() {\n    competitionDebugger.monitorValue(\"Left Motor Power\", leftMotor.getPower());\n    competitionDebugger.monitorValue(\"Color Red\", colorSensor.red());\n    if (gamepad1.back) {\n        competitionDebugger.emergencyStop(\"Back button pressed\", leftMotor, rightMotor);\n        return;\n    }\n}\n// These tools provide fast diagnostics and safe emergency handling during competition."},{"task":"Write a debugging checklist for common failure modes","content":"// Example checklist:\n1. Verify all hardware is configured correctly in the configuration file.\n2. Run quick hardware check before each match.\n3. Check sensor readings in telemetry before starting.\n4. Use debug logs to confirm state transitions.\n5. Monitor loop timing for performance issues.\n6. Have a backup plan for hardware failures (e.g., swap motors, sensors).\n7. Document any issues and solutions for future reference."},{"task":"Practice debugging the system with intentional bugs","content":"// Example: Introduce a bug in the approach state\ncase APPROACH:\n    // BUG: Wrong time threshold (should be 2.0)\n    if (getRuntime() - startTime > 0.5) { // Too short, robot doesn't approach long enough\n        currentState = RobotState.GRAB;\n    } else {\n        leftMotor.setPower(0.3);\n        rightMotor.setPower(0.3);\n    }\n    break;\n// Use conditional breakpoints and watch expressions to catch the bug:\n// - Set a breakpoint on the if condition with: getRuntime() - startTime > 0.5\n// - Watch variables: currentState, startTime, getRuntime(), leftMotor.getPower()\n// - Use logs to confirm the bug triggers too early."},{"task":"Document your debugging process and findings","content":"// Example documentation:\n- Observed that the robot did not approach the object long enough.\n- Hypothesized that the time threshold was too short.\n- Set a conditional breakpoint on the approach state.\n- Confirmed that the transition occurred at 0.5s instead of 2.0s.\n- Fixed the bug by changing the threshold to 2.0.\n- Verified correct behavior with logs and telemetry.\n- Added this scenario to the debugging checklist for future reference."}]}>
+
+- Create a robot behavior that combines multiple sensors and actuators
+- Implement the scientific method debugging framework
+- Add performance monitoring to identify bottlenecks
+- Create competition-ready debugging tools
+- Write a debugging checklist for common failure modes
+- Practice debugging the system with intentional bugs
+- Document your debugging process and findings
+
+```java
+// Example: Robot searches for an object using a color sensor, approaches it, grabs it with a servo, and returns
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+@TeleOp(name = "DebuggingExercise")
+public class DebuggingExerciseOpMode extends OpMode {
+    private DcMotor leftMotor, rightMotor;
+    private Servo grabberServo;
+    private ColorSensor colorSensor;
+    private enum RobotState { INIT, SEARCH, APPROACH, GRAB, RETURN, COMPLETE }
+    private RobotState currentState = RobotState.INIT;
+    private double startTime = 0.0;
+    
+    @Override
+    public void init() {
+        leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
+        grabberServo = hardwareMap.get(Servo.class, "grabber_servo");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        currentState = RobotState.SEARCH;
+    }
+    
+    @Override
+    public void loop() {
+        switch (currentState) {
+            case SEARCH:
+                // Search for red object
+                if (colorSensor.red() > 100) {
+                    currentState = RobotState.APPROACH;
+                    startTime = getRuntime();
+                } else {
+                    leftMotor.setPower(0.2);
+                    rightMotor.setPower(0.2);
+                }
+                break;
+            case APPROACH:
+                // Approach for 2 seconds
+                if (getRuntime() - startTime > 2.0) {
+                    currentState = RobotState.GRAB;
+                } else {
+                    leftMotor.setPower(0.3);
+                    rightMotor.setPower(0.3);
+                }
+                break;
+            case GRAB:
+                grabberServo.setPosition(1.0); // Close grabber
+                currentState = RobotState.RETURN;
+                startTime = getRuntime();
+                break;
+            case RETURN:
+                // Return for 2 seconds
+                if (getRuntime() - startTime > 2.0) {
+                    currentState = RobotState.COMPLETE;
+                } else {
+                    leftMotor.setPower(-0.3);
+                    rightMotor.setPower(-0.3);
+                }
+                break;
+            case COMPLETE:
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                break;
+        }
+    }
+}
+
+// This code combines multiple actuators (motors, servo) and a sensor (color sensor) in a state machine.
+```
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"<a href=\"https://developer.android.com/studio/debug\" target=\"_blank\">Android Studio Debugging Guide</a>","url":"<a href=\"https://developer.android.com/studio/debug\" target=\"_blank\">Android Studio Debugging Guide</a>"},{"label":"<a href=\"https://developer.android.com/studio/profile\" target=\"_blank\">Android Studio Profiler</a>","url":"<a href=\"https://developer.android.com/studio/profile\" target=\"_blank\">Android Studio Profiler</a>"}]} title="Additional Resources" section="ftc" />
+

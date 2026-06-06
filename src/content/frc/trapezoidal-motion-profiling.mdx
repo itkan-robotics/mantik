@@ -1,0 +1,74 @@
+---
+title: "Motion Profiling: Trapezoidal"
+lessonId: trapezoidal-motion-profiling
+section: frc
+group: frc-control-theory
+groupLabel: Control Theory
+groupOrder: 5
+order: 2
+difficulty: intermediate
+duration: 75 min
+description: ""
+---
+
+### Template Project
+
+Start with the **Command Robot** template project. Motion profiling is typically implemented in subsystems, so the command-based structure works well. Create a new subsystem class in the `subsystems` package.
+
+### Overview
+
+Trapezoidal motion profiling creates smooth movement using constant acceleration to reach maximum velocity, then constant deceleration to stop. This profile has three phases: acceleration, cruise (constant speed), and deceleration. It's fast, predictable, and reduces mechanical stress compared to instant speed changes.
+
+### What is Trapezoidal Profiling?
+
+A trapezoidal profile accelerates at a constant rate until reaching maximum velocity, maintains that speed, then decelerates at a constant rate to stop. The name comes from the velocity graph: it looks like a trapezoid when plotted over time.
+
+<RulesBox title="Hardware Support" subtitle="Built-in controller features:">
+
+- **REV (SPARK MAX):** Uses `MAXMotion` (Trapezoidal).
+- **CTRE (Talon FX):** Uses `Motion Magic®` (Trapezoidal/S-Curve).
+
+</RulesBox>
+
+### Step 1: Understand Configuration Parameters
+
+Two main parameters control the profile: **Max Velocity** sets the top speed during the cruise phase. **Max Acceleration** determines how quickly the mechanism speeds up and slows down. Optional **Jerk** (for Talon FX) smooths the acceleration transitions.
+
+### Step 2: Configure Motion Profile Constraints
+
+We configure the motion profile constraints in the motor configuration. These values are typically set in rotations per second (RPS) for velocity and rotations per second squared (RPS²) for acceleration. Start with conservative values and tune based on your mechanism's capabilities.
+
+<CodeTabs tabs={[{"label":"SPARK MAX (MAXMotion)","code":"public void configureMotionProfile() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Configure motion profile constraints for Slot 0\n    // Max velocity in RPM (adjust based on your mechanism)\n    config.closedLoop.maxMotion\n        .maxVelocity(3000, ClosedLoopSlot.kSlot0)\n        // Max acceleration in RPM/s\n        .maxAcceleration(2000, ClosedLoopSlot.kSlot0);\n    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}","language":"java"},{"label":"Talon FX (Motion Magic®)","code":"public void configureMotionProfile() {\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    // Max velocity in rotations/sec\n    mm.MotionMagicCruiseVelocity = 10;\n    // Max acceleration in rotations/sec²\n    mm.MotionMagicAcceleration = 20;\n    // Optional: Jerk limit for smoothing (rotations/sec³)\n    mm.MotionMagicJerk = 100;\n    motor.getConfigurator().apply(mm);\n}","language":"java"}]} />
+
+### Step 3: Use Motion Profile Control
+
+Once configured, use the motion profile control mode when setting positions. The controller automatically generates the trapezoidal profile based on your constraints and the current position.
+
+<CodeTabs tabs={[{"label":"SPARK MAX","code":"public void setPosition(double target) {\n    // Use MAXMotion position control (trapezoidal profile)\n    controller.setReference(target, ControlType.kMAXMotionPositionControl);\n}","language":"java"},{"label":"Talon FX","code":"private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n\npublic void setPosition(double target) {\n    // Use Motion Magic® position control\n    motor.setControl(m_request.withPosition(target));\n}","language":"java"}]} />
+
+### Tuning Trapezoidal Profiles
+
+Tuning a trapezoidal profile requires balancing speed and smoothness. Start by determining your mechanism's maximum safe speed and acceleration, then adjust based on performance.
+
+<RulesBox title="Tuning Process" subtitle="Follow this order:">
+
+- **1. Find Maximum Velocity:** Set acceleration very high, gradually increase velocity until the mechanism struggles to maintain speed or hits physical limits. Back off 10-20% for safety.
+- **2. Find Maximum Acceleration:** Keep velocity at your maximum, increase acceleration until you see overshoot, vibration, or mechanical stress. Reduce by 15-25%.
+- **3. Balance for Performance:** If movement is too slow, increase both values proportionally. If there's overshoot or vibration, reduce acceleration first.
+
+</RulesBox>
+
+### Tuning Tips
+
+Use dashboard tools to monitor position, velocity, and current draw during motion. The velocity graph should form a clean trapezoid: sharp ramp up, flat top, sharp ramp down. Oscillation or overshoot indicates acceleration is too high. Slow, sluggish movement means values are too conservative.
+
+### Common Issues and Solutions
+
+**Overshoot at end:** Reduce acceleration, increase PID derivative gain, or add jerk smoothing (Talon FX). **Too slow:** Increase velocity and acceleration together, but verify mechanism can handle it. **Vibration during motion:** Reduce acceleration significantly, check for mechanical issues. **Can't reach target:** Increase max velocity, check if distance is achievable with current constraints.
+
+### Full Code Example
+
+<CodeTabs tabs={[{"label":"SPARK MAX","code":"package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.revrobotics.spark.SparkMax;\nimport com.revrobotics.spark.SparkLowLevel.MotorType;\nimport com.revrobotics.spark.config.SparkMaxConfig;\nimport com.revrobotics.spark.ClosedLoopController.ControlType;\nimport com.revrobotics.spark.ClosedLoopController.ClosedLoopSlot;\nimport com.revrobotics.spark.SparkBase.ResetMode;\nimport com.revrobotics.spark.SparkBase.PersistMode;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private SparkMax motor = new SparkMax(1, MotorType.kBrushless);\n    private SparkClosedLoopController controller = motor.getClosedLoopController();\n    \n    public Elevator() {\n        configureMotionProfile();\n    }\n    \n    public void configureMotionProfile() {\n        SparkMaxConfig config = new SparkMaxConfig();\n        // Configure motion profile constraints for Slot 0\n        config.closedLoop.maxMotion\n            .maxVelocity(3000, ClosedLoopSlot.kSlot0)  // Max velocity in RPM\n            .maxAcceleration(2000, ClosedLoopSlot.kSlot0); // Max acceleration in RPM/s\n        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n    }\n    \n    public void setPosition(double target) {\n        // Use MAXMotion position control (trapezoidal profile)\n        controller.setReference(target, ControlType.kMAXMotionPositionControl);\n    }\n}","language":"java"},{"label":"Talon FX","code":"package frc.robot.subsystems;\n\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\nimport com.ctre.phoenix6.configs.MotionMagicConfigs;\nimport com.ctre.phoenix6.controls.MotionMagicVoltage;\nimport com.ctre.phoenix6.hardware.TalonFX;\n\n// Create this class in the subsystems package (template provides ExampleSubsystem as reference)\npublic class Elevator extends SubsystemBase {\n    private TalonFX motor = new TalonFX(1);\n    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n    \n    public Elevator() {\n        configureMotionProfile();\n    }\n    \n    public void configureMotionProfile() {\n        // Configure Motion Magic® (trapezoidal profile)\n        MotionMagicConfigs mm = new MotionMagicConfigs();\n        mm.MotionMagicCruiseVelocity = 10;  // Max velocity in rotations/sec\n        mm.MotionMagicAcceleration = 20;    // Max acceleration in rotations/sec²\n        mm.MotionMagicJerk = 100;           // Jerk limit for smoothing\n        motor.getConfigurator().apply(mm);\n    }\n    \n    public void setPosition(double target) {\n        // Use Motion Magic® position control\n        motor.setControl(m_request.withPosition(target));\n    }\n}","language":"java"}]} />
+
+<LinkGrid links={[{"label":"Exponential Motion Profiling","id":"exponential-motion-profiling"},{"label":"PID Control","id":"frc-pid-control"},{"label":"CTRE Motion Magic® Documentation","url":"https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html"}]} title="Resources" section="frc" />
+

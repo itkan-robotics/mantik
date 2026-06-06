@@ -1,0 +1,46 @@
+---
+title: Introduction to Odometry
+lessonId: intro-to-odometry
+section: ftc
+group: android-studio-odometry
+groupLabel: Odometry
+groupOrder: 11
+order: 1
+difficulty: advanced
+duration: 35 min
+description: ""
+---
+
+### What is Odometry?
+
+Odometry is the process of tracking a robot’s position and orientation on the field using sensors, typically wheel encoders. In FTC, odometry is essential for enabling your robot to navigate autonomously and perform tasks with precision.
+
+### Why Odometry Matters in FTC
+
+With odometry, your robot can follow complex paths, score game elements, and return to specific locations during autonomous periods. It is a foundational concept for advanced autonomous routines in FTC.
+
+### Basic Principles of Odometry
+
+Odometry systems use encoders attached to wheels to measure how far the robot has traveled. By analyzing the movement of these wheels, the robot can estimate its position (X, Y) and heading (angle) on the field. Most FTC robots use either drive encoders or dedicated 'dead wheels' for this purpose. 
+
+
+
+For more on the theory, see [gm0: Odometry](https://gm0.org/en/latest/docs/software/concepts/odometry.html).
+
+### Common Odometry Setups in FTC
+
+There are several ways to set up odometry on an FTC robot:**Drive Encoder Odometry:** Uses the encoders built into the drive motors. Simple, but can be inaccurate due to wheel slippage.**Dead Wheel Odometry:** Uses unpowered wheels with encoders for more accurate tracking.**Two-Wheel vs. Three-Wheel:** Two-wheel setups can track position but not always heading; three-wheel setups can track both position and orientation.
+
+### Limitations and Sources of Error
+
+Odometry is not perfect. Errors can come from wheel slippage, misalignment, or sensor noise. Understanding these limitations helps you design more robust autonomous routines and troubleshoot issues during competition.
+
+<LinkGrid links={[{"label":"gm0: Odometry (Theory)","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html"},{"label":"gm0: Kinematics (Related Concepts)","url":"https://gm0.org/en/latest/docs/software/concepts/kinematics.html"}]} title="Further Reading" section="ftc" />
+
+<ExerciseBox title="Practice Exercise" description="Think of a scenario in an FTC match where knowing your robot’s position is critical. How would odometry help? Sketch a simple diagram of a robot and label where you might place odometry wheels." answers={[{"task":"Describe a game scenario where odometry is useful.","content":"Suppose your robot needs to pick up a game element from one side of the field and deliver it to a scoring zone on the opposite side during the autonomous period. With odometry, your robot can accurately track its position and heading as it moves, allowing it to follow a precise path, avoid obstacles, and reliably reach the scoring zone even if the field is crowded or the robot starts at a slightly different position each match. Odometry helps ensure your robot can repeat complex autonomous routines with high accuracy."}]}>
+
+- Describe a game scenario where odometry is useful.
+- Draw a robot and show possible odometry wheel placements.
+
+</ExerciseBox>
+

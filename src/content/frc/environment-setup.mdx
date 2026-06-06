@@ -1,0 +1,100 @@
+---
+title: FRC Environment Setup
+lessonId: environment-setup
+section: frc
+group: frc-environment-setup
+groupLabel: Environment Setup
+groupOrder: 1
+order: 1
+difficulty: beginner
+duration: 40 min
+description: ""
+---
+
+### Overview
+
+Essential setup for FRC development includes installing WPILib, configuring the environment, and setting up the Driver Station.
+
+
+
+Full guide: [WPILib Zero to Robot](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html).
+
+<RulesBox title="Requirements" subtitle="Essential components:">
+
+- **WPILib:** The core framework.
+- **VS Code:** The IDE (with WPILib extension).
+- **Gradle:** Build system (included).
+- **Driver Station:** Robot control software.
+- **Game Tools:** Utilities.
+
+</RulesBox>
+
+### WPILib Installation
+
+WPILib is the official FRC framework. The installer includes libraries, JDK, Gradle, VS Code, and utilities.
+
+
+
+**System:** Windows 10/11, macOS 10.14+, or Ubuntu 18.04+ (5GB+ space).
+
+
+
+Instructions: [WPILib Installation Guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html).
+
+### First Project
+
+**Templates:** Use the Command Robot template (recommended).
+
+**Structure:** Code in `src/main/java/`, vendor libs in `vendordeps/`.
+
+
+
+Guide: [Creating a Robot Program](https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html).
+
+### VS Code
+
+VS Code with the WPILib extension is the standard IDE. It handles code editing, building, deploying, and debugging.
+
+
+
+Overview: [VS Code Overview](https://docs.wpilib.org/en/stable/docs/software/vscode-overview/index.html).
+
+### Gradle
+
+Gradle manages builds and dependencies. It downloads libraries and compiles code.
+
+**Commands:** `gradlew build` (compile), `gradlew deploy` (upload).
+
+
+
+Details: [Gradle & Libraries](https://docs.wpilib.org/en/stable/docs/software/vscode-overview/3rd-party-libraries.html).
+
+### Driver Station
+
+The Driver Station (DS) controls the robot during operation (Teleop, Auto, Test). It is part of the FRC Game Tools (Windows only).
+
+
+
+Docs: [Installing Game Tools](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html).
+
+<RulesBox title="Checklist" subtitle="Setup steps:">
+
+- Install WPILib.
+- Verify VS Code extension.
+- Create a project (configure team number).
+- Install FRC Game Tools.
+- Verify build and deploy.
+- Test Driver Station connection.
+
+</RulesBox>
+
+### Support
+
+**Docs:** [WPILib Documentation](https://docs.wpilib.org/en/stable/)
+
+**Community:** [Chief Delphi](https://www.chiefdelphi.com/)
+
+**Issues:** [WPILib GitHub](https://github.com/wpilibsuite/allwpilib/issues)
+
+<LinkGrid links={[{"label":"Zero to Robot","url":"https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html"},{"label":"VS Code Overview","url":"https://docs.wpilib.org/en/stable/docs/software/vscode-overview/index.html"},{"label":"Creating Projects","url":"https://docs.wpilib.org/en/stable/docs/software/vscode-overview/creating-robot-program.html"},{"label":"Driver Station","url":"https://docs.wpilib.org/en/stable/docs/software/driverstation/driver-station.html"}]} title="Resources" section="frc" />
+

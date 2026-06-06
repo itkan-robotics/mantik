@@ -1,0 +1,87 @@
+---
+title: Commands
+lessonId: commands
+section: frc
+group: frc-command-based
+groupLabel: Command-Based Programming
+groupOrder: 3
+order: 3
+difficulty: beginner
+duration: 15 min
+description: ""
+---
+
+### Overview
+
+Commands define robot actions. They use subsystem methods to perform tasks. Commands can be full classes or inline factories for simple actions.
+
+<RulesBox title="Command Lifecycle" subtitle="Four key methods:">
+
+- **initialize():** Called once when command starts.
+- **execute():** Called every loop (20ms) while scheduled.
+- **isFinished():** Returns true when command should end.
+- **end(interrupted):** Called once when command ends or is interrupted.
+
+</RulesBox>
+
+### Full Command Class
+
+For complex commands, create a class extending `Command`. Always call `addRequirements()` in the constructor to declare which subsystems the command uses.
+
+### Full Command Example
+
+```java
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Intake;
+
+public class RunIntakeCommand extends Command {
+    private final Intake m_intake;
+    
+    public RunIntakeCommand(Intake intake) {
+        m_intake = intake;
+        addRequirements(intake);
+    }
+    
+    @Override
+    public void initialize() {
+        m_intake.run(0.6);
+    }
+    
+    @Override
+    public void end(boolean interrupted) {
+        m_intake.stop();
+    }
+}
+```
+
+### Inline Commands
+
+For simple actions, use command constructors like `new RunCommand()` or `new InstantCommand()`. These reduce boilerplate for straightforward tasks.
+
+### Inline Command Examples
+
+```java
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.Intake;
+
+// Run continuously while scheduled
+Command runCmd = new RunCommand(() -> intake.run(0.6), intake);
+
+// Run once immediately, then finish
+Command stopCmd = new InstantCommand(() -> intake.stop(), intake);
+
+// Run with a condition
+Command conditionalCmd = new RunCommand(() -> intake.run(0.6), intake)
+    .until(() -> intake.hasGamePiece());
+```
+
+### Requirements
+
+Commands declare subsystem requirements to prevent conflicts. The Scheduler ensures only one command controls a subsystem at a time. If a new command requires a subsystem in use, it interrupts the current command.
+
+<LinkGrid links={[{"label":"RobotContainer & Bindings","id":"robot-container-and-bindings"},{"label":"Command Groups","id":"command-groups"},{"label":"WPILib Commands Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html"}]} title="Resources" section="frc" />
+

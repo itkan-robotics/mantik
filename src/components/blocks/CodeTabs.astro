@@ -1,0 +1,159 @@
+---
+import { Code } from 'astro:components';
+
+interface Tab {
+  label: string;
+  code: string;
+  language?: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  tabs?: Tab[];
+}
+
+/** Match astro.config.mjs markdown.shikiConfig (Code does not inherit it). */
+const shikiThemes = {
+  light: 'github-light',
+  dark: 'github-dark',
+} as const;
+
+const { title, description, tabs } = Astro.props;
+const useLegacyTabs = Array.isArray(tabs) && tabs.length > 0;
+const uid = `code-tabs-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+{title && <h3>{title}</h3>}
+{description && <p set:html={description} />}
+
+<div
+  class="code-tabs-container"
+  id={uid}
+  data-code-tabs
+  data-code-tabs-mode={useLegacyTabs ? 'legacy' : 'slots'}
+>
+  <div class="code-tabs-header">
+    <div class="code-tabs-wrapper">
+      {useLegacyTabs &&
+        tabs!.map((tab, index) => (
+          <button
+            type="button"
+            class:list={['code-tab-button', { active: index === 0 }]}
+            data-tab-index={index}
+            data-active={index === 0 ? 'true' : 'false'}
+          >
+            {tab.label}
+          </button>
+        ))}
+    </div>
+    <button type="button" class="copy-button code-tabs-copy" data-copy-tabs aria-label="Copy code">
+      <span class="copy-text">Copy</span>
+    </button>
+  </div>
+  <div class="code-tabs-content">
+    {useLegacyTabs ? (
+      tabs!.map((tab, index) => (
+        <div
+          class:list={['code-tab-content', { active: index === 0 }]}
+          data-tab-panel={index}
+          data-tab-label={tab.label}
+          style={index === 0 ? undefined : 'display: none'}
+        >
+          <div class="code-block">
+            <Code
+              code={tab.code}
+              lang={tab.language ?? 'java'}
+              themes={shikiThemes}
+              wrap
+            />
+          </div>
+        </div>
+      ))
+    ) : (
+      <slot />
+    )}
+  </div>
+</div>
+
+<script>
+  function initCodeTabs() {
+    document.querySelectorAll('[data-code-tabs]').forEach((container) => {
+      if (container.getAttribute('data-initialized')) return;
+      container.setAttribute('data-initialized', 'true');
+
+      const wrapper = container.querySelector<HTMLElement>('.code-tabs-wrapper');
+      const copyBtn = container.querySelector<HTMLButtonElement>('[data-copy-tabs]');
+      let panels = container.querySelectorAll<HTMLElement>('.code-tab-content');
+      let buttons = container.querySelectorAll<HTMLButtonElement>('.code-tab-button');
+      let activeIndex = 0;
+
+      if (container.dataset.codeTabsMode === 'slots' && wrapper && buttons.length === 0) {
+        panels.forEach((panel, index) => {
+          panel.dataset.tabPanel = String(index);
+          if (index > 0) {
+            panel.style.display = 'none';
+            panel.classList.remove('active');
+          } else {
+            panel.style.display = 'flex';
+            panel.classList.add('active');
+          }
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `code-tab-button${index === 0 ? ' active' : ''}`;
+          btn.dataset.tabIndex = String(index);
+          btn.dataset.active = index === 0 ? 'true' : 'false';
+          btn.textContent = panel.dataset.tabLabel ?? `Tab ${index + 1}`;
+          wrapper.appendChild(btn);
+        });
+        buttons = container.querySelectorAll<HTMLButtonElement>('.code-tab-button');
+      }
+
+      function activateTab(index: number) {
+        activeIndex = index;
+        buttons.forEach((b, i) => {
+          const isActive = i === index;
+          b.classList.toggle('active', isActive);
+          b.dataset.active = isActive ? 'true' : 'false';
+        });
+        panels.forEach((panel, i) => {
+          panel.style.display = i === index ? 'flex' : 'none';
+          panel.classList.toggle('active', i === index);
+        });
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activateTab(Number(btn.dataset.tabIndex));
+        });
+      });
+
+      copyBtn?.addEventListener('click', async () => {
+        const activePanel = panels[activeIndex];
+        const code = activePanel?.querySelector('code')?.textContent ?? '';
+        const text = copyBtn.querySelector('.copy-text');
+        try {
+          await navigator.clipboard.writeText(code);
+          if (text) {
+            text.textContent = 'Copied!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              text.textContent = 'Copy';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          }
+        } catch {
+          if (text) {
+            text.textContent = 'Failed';
+            copyBtn.classList.remove('copied');
+            setTimeout(() => { text.textContent = 'Copy'; }, 2000);
+          }
+        }
+      });
+    });
+  }
+
+  initCodeTabs();
+  document.addEventListener('astro:page-load', initCodeTabs);
+</script>

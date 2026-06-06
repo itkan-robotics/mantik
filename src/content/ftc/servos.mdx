@@ -1,0 +1,74 @@
+---
+title: Servos in FTC
+lessonId: servos
+section: ftc
+group: onbot-java-robot-hardware
+groupLabel: Robot Hardware
+groupOrder: 4
+order: 2
+difficulty: beginner
+duration: 10 min
+description: ""
+---
+
+### Overview
+
+Servos provide precise, limited-range movement for arms, claws, and similar mechanisms. Standard servos move to a position and hold it. Continuous rotation servos spin like motors.
+
+### Standard vs Continuous Rotation
+
+| Feature | Standard Servo | Continuous Rotation (CRServo) |
+| --- | --- | --- |
+| Control | <code>setPosition(0.0 to 1.0)</code> — position | <code>setPosition(0.0)</code> reverse, <code>0.5</code> stop, <code>1.0</code> forward |
+| Use Cases | Arms, claws, precise angles | Intake rollers, spinners |
+| Config | Servo | CRServo |
+
+### Basic Servo Use
+
+Position values 0.0–1.0 represent the servo's range. Check manufacturer specs for actual angular range.
+
+
+
+```java
+private Servo clawServo;
+
+@Override
+public void runOpMode() {
+    clawServo = hardwareMap.get(Servo.class, "claw_servo");
+    clawServo.setPosition(0.5); // Initial position
+    
+    waitForStart();
+    while (opModeIsActive()) {
+        if (gamepad1.a) clawServo.setPosition(0.0);
+        else if (gamepad1.b) clawServo.setPosition(1.0);
+        telemetry.addData("Position", clawServo.getPosition());
+        telemetry.update();
+    }
+}
+```
+
+### Multiple Servos and Gradual Movement
+
+Initialize each servo with a unique hardware map name. For smooth motion, change position in small increments over time. Keep positions within 0.0–1.0 to avoid damage.
+
+### Gradual Movement Example
+
+Move servo to target in steps.
+
+
+
+```java
+double current = clawServo.getPosition();
+double target = 1.0;
+double step = 0.02;
+
+while (Math.abs(current - target) > 0.01 && opModeIsActive()) {
+    current += (current < target ? step : -step);
+    current = Math.max(0.0, Math.min(1.0, current));
+    clawServo.setPosition(current);
+    sleep(20);
+}
+```
+
+<LinkGrid links={[{"label":"FTC Docs: Controlling a Servo","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/controlling_a_servo/Controlling-a-Servo-%28OnBot-Java%29.html"},{"label":"gm0: Servo Usage Tips","url":"https://gm0.org/en/latest/docs/power-and-electronics/servo-guide/usage-tips.html"}]} title="Further Reading" section="ftc" />
+

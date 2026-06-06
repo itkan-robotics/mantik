@@ -1,0 +1,148 @@
+---
+title: Greedy Algorithms
+lessonId: comp-greedy
+section: comp
+group: comp-algorithms
+groupLabel: Algorithms
+groupOrder: 3
+order: 7
+difficulty: intermediate
+duration: 35 min
+description: ""
+---
+
+### Greedy Algorithm Overview
+
+Greedy algorithms make locally optimal choices at each step with the hope of finding a globally optimal solution. They're simple and often efficient but don't always guarantee the best solution.
+
+### When to Use Greedy
+
+- **Optimal Substructure:** Optimal solution contains optimal solutions to subproblems
+- **Greedy Choice Property:** Locally optimal choice leads to globally optimal solution
+- **Simple Implementation:** Often easier to implement than DP
+- **Efficiency:** Usually O(n log n) or O(n) time complexity
+
+### Activity Selection Problem
+
+```java
+// Problem: Select maximum number of activities that don't overlap
+public int activitySelection(int[] start, int[] end) {
+    int n = start.length;
+    if (n == 0) return 0;
+    
+    // Create pairs of (start, end) and sort by end time
+    int[][] activities = new int[n][2];
+    for (int i = 0; i < n; i++) {
+        activities[i][0] = start[i];
+        activities[i][1] = end[i];
+    }
+    
+    Arrays.sort(activities, (a, b) -> a[1] - b[1]);
+    
+    int count = 1;
+    int lastEnd = activities[0][1];
+    
+    for (int i = 1; i < n; i++) {
+        if (activities[i][0] >= lastEnd) {
+            count++;
+            lastEnd = activities[i][1];
+        }
+    }
+    
+    return count;
+}
+```
+
+### Fractional Knapsack
+
+```java
+// Problem: Fill knapsack with fractional items to maximize value
+public double fractionalKnapsack(int[] weights, int[] values, int capacity) {
+    int n = weights.length;
+    
+    // Create items with value per unit weight
+    double[][] items = new double[n][3];
+    for (int i = 0; i < n; i++) {
+        items[i][0] = weights[i];
+        items[i][1] = values[i];
+        items[i][2] = (double) values[i] / weights[i];
+    }
+    
+    // Sort by value per unit weight (descending)
+    Arrays.sort(items, (a, b) -> Double.compare(b[2], a[2]));
+    
+    double totalValue = 0.0;
+    int remainingCapacity = capacity;
+    
+    for (int i = 0; i < n && remainingCapacity > 0; i++) {
+        double weight = items[i][0];
+        double value = items[i][1];
+        
+        if (weight <= remainingCapacity) {
+            totalValue += value;
+            remainingCapacity -= weight;
+        } else {
+            // Take fractional part
+            double fraction = remainingCapacity / weight;
+            totalValue += value * fraction;
+            remainingCapacity = 0;
+        }
+    }
+    
+    return totalValue;
+}
+```
+
+### Huffman Coding
+
+```java
+// Problem: Create optimal prefix code for characters
+class HuffmanNode implements Comparable<HuffmanNode> {
+    char data;
+    int frequency;
+    HuffmanNode left, right;
+    
+    public HuffmanNode(char data, int frequency) {
+        this.data = data;
+        this.frequency = frequency;
+    }
+    
+    @Override
+    public int compareTo(HuffmanNode other) {
+        return this.frequency - other.frequency;
+    }
+}
+
+public HuffmanNode buildHuffmanTree(char[] chars, int[] freq) {
+    PriorityQueue<HuffmanNode> pq = new PriorityQueue<>();
+    
+    // Create leaf nodes
+    for (int i = 0; i < chars.length; i++) {
+        pq.offer(new HuffmanNode(chars[i], freq[i]));
+    }
+    
+    // Build tree
+    while (pq.size() > 1) {
+        HuffmanNode left = pq.poll();
+        HuffmanNode right = pq.poll();
+        
+        HuffmanNode parent = new HuffmanNode('\0', left.frequency + right.frequency);
+        parent.left = left;
+        parent.right = right;
+        
+        pq.offer(parent);
+    }
+    
+    return pq.poll();
+}
+```
+
+### Common Greedy Problems
+
+- **Scheduling:** Activity selection, job scheduling
+- **Knapsack:** Fractional knapsack (0/1 knapsack is not greedy)
+- **Compression:** Huffman coding
+- **Graph:** Minimum spanning tree (Kruskal's, Prim's)
+- **Coin Change:** Making change with minimum coins (when greedy works)
+- **Gas Station:** Circular tour problem
+

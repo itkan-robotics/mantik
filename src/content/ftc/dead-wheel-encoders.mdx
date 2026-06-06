@@ -1,0 +1,94 @@
+---
+title: Dead Wheel Encoders
+lessonId: dead-wheel-encoders
+section: ftc
+group: android-studio-odometry
+groupLabel: Odometry
+groupOrder: 11
+order: 2
+difficulty: advanced
+duration: 40 min
+description: ""
+---
+
+### What are Dead Wheels?
+
+Dead wheels are unpowered, free-spinning wheels equipped with encoders. Unlike drive wheels, they are not affected by slippage from driving the robot, making them ideal for accurate position tracking in FTC robots.
+
+### Advantages of Dead Wheel Encoders
+
+Using dead wheels for odometry greatly improves accuracy because they are isolated from drivetrain forces. This reduces errors from wheel slip and provides more reliable encoder readings for autonomous navigation.
+
+### Hardware Setup and Placement
+
+Dead wheels are typically mounted on the robot chassis in parallel and perpendicular orientations. Proper placement is crucial for accurate tracking.
+
+### Reading Encoder Values in Android Studio
+
+To use dead wheel encoders in your FTC code, you must initialize and read from the encoders using the FTC SDK. Here is a sample snippet:
+
+
+
+```java
+// Declare encoder variables
+DcMotor leftEncoder, rightEncoder, centerEncoder;
+
+@Override
+public void runOpMode() {
+    leftEncoder = hardwareMap.get(DcMotor.class, "leftEncoder");
+    rightEncoder = hardwareMap.get(DcMotor.class, "rightEncoder");
+    centerEncoder = hardwareMap.get(DcMotor.class, "centerEncoder");
+
+    waitForStart();
+
+    while (opModeIsActive()) {
+        int leftTicks = leftEncoder.getCurrentPosition();
+        int rightTicks = rightEncoder.getCurrentPosition();
+        int centerTicks = centerEncoder.getCurrentPosition();
+        telemetry.addData("Left Encoder", leftTicks);
+        telemetry.addData("Right Encoder", rightTicks);
+        telemetry.addData("Center Encoder", centerTicks);
+        telemetry.update();
+    }
+}
+```
+
+### Calculating Robot Position from Encoders
+
+To convert encoder ticks to robot position, you need to know the wheel diameter, encoder resolution, and the distance between wheels. The basic formula is:
+
+`distance = (ticks / ticks_per_revolution) * wheel_circumference`
+
+By combining the distances from each wheel, you can estimate the robot's X, Y, and heading.
+
+ You can also determine the inches/tick ratio manually by moving your robot forward/laterally and dividing the distance traveled by the number of ticks recorded.
+
+### Sample Calculation Code
+
+This snippet shows how to convert encoder ticks to inches:
+
+
+
+```java
+double TICKS_PER_REV = 8192; // Example for REV Through Bore Encoder
+double WHEEL_DIAMETER_INCHES = 2.0;
+double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES;
+
+int ticks = leftEncoder.getCurrentPosition();
+double distanceInches = (ticks / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
+```
+
+### Troubleshooting Dead Wheel Odometry
+
+Common issues include incorrect encoder direction, mechanical binding, or misalignment. Always verify encoder readings and check for smooth wheel rotation.
+
+<LinkGrid links={[{"label":"gm0: Odometry (Dead Wheels)","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html"}]} title="Further Reading" section="ftc" />
+
+<ExerciseBox title="Practice Exercise" description="Write code to read all three dead wheel encoders and display their values on telemetry. Then, calculate the distance traveled by each wheel in inches." answers={[{"task":"Initialize three encoders in your op mode.","content":"// Declare encoder variables\nDcMotor leftEncoder, rightEncoder, centerEncoder;\n\n@Override\npublic void runOpMode() {\n    leftEncoder = hardwareMap.get(DcMotor.class, \"leftEncoder\");\n    rightEncoder = hardwareMap.get(DcMotor.class, \"rightEncoder\");\n    centerEncoder = hardwareMap.get(DcMotor.class, \"centerEncoder\");\n    // ... rest of your code\n}"},{"task":"Display their tick values on telemetry.","content":"while (opModeIsActive()) {\n    int leftTicks = leftEncoder.getCurrentPosition();\n    int rightTicks = rightEncoder.getCurrentPosition();\n    int centerTicks = centerEncoder.getCurrentPosition();\n    telemetry.addData(\"Left Encoder\", leftTicks);\n    telemetry.addData(\"Right Encoder\", rightTicks);\n    telemetry.addData(\"Center Encoder\", centerTicks);\n    telemetry.update();\n}"},{"task":"Convert the tick values to inches and display those as well.","content":"double TICKS_PER_REV = 8192; // Example for REV Through Bore Encoder\ndouble WHEEL_DIAMETER_INCHES = 2.0;\ndouble WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES;\n\nwhile (opModeIsActive()) {\n    int leftTicks = leftEncoder.getCurrentPosition();\n    int rightTicks = rightEncoder.getCurrentPosition();\n    int centerTicks = centerEncoder.getCurrentPosition();\n    double leftInches = (leftTicks / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;\n    double rightInches = (rightTicks / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;\n    double centerInches = (centerTicks / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;\n    telemetry.addData(\"Left Encoder (in)\", leftInches);\n    telemetry.addData(\"Right Encoder (in)\", rightInches);\n    telemetry.addData(\"Center Encoder (in)\", centerInches);\n    telemetry.update();\n}"}]}>
+
+- Initialize three encoders in your op mode.
+- Display their tick values on telemetry.
+- Convert the tick values to inches and display those as well.
+
+</ExerciseBox>
+

@@ -1,0 +1,23 @@
+---
+interface DataType {
+  name: string;
+  description: string;
+  example?: string;
+}
+
+interface Props {
+  types: DataType[];
+}
+
+const { types } = Astro.props;
+---
+
+<div class="data-types-grid">
+  {types.map((type) => (
+    <div class="data-type">
+      <h4>{type.name}</h4>
+      <p>{type.description}</p>
+      {type.example && <code>{type.example}</code>}
+    </div>
+  ))}
+</div>

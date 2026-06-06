@@ -1,0 +1,73 @@
+---
+title: Time-Based Movement (OnBot Java)
+lessonId: time-based-movement
+section: ftc
+group: onbot-java-autonomous-programming
+groupLabel: Autonomous Programming
+groupOrder: 6
+order: 2
+difficulty: intermediate
+duration: 40 min
+description: ""
+---
+
+### What is Time-Based Movement?
+
+Time-based movement is the simplest way to make your robot move autonomously: you set the motor power, wait for a certain amount of time, then stop the motors. This method does not use sensors or encoders, so it is easy to implement but not very precise.
+
+### Implementing Time-Based Movement
+
+To implement time-based movement in OnBot Java, you use the `setPower()` method to start the motors, then `sleep()` to wait for a set duration, and finally stop the motors. Always use `waitForStart()` before starting any movement.
+
+### Time-Based Movement Example
+
+This example shows how to drive a robot forward for 1 second using time-based movement.
+
+
+
+```java
+@Autonomous(name="TimeBasedMove")
+public class TimeBasedMove extends LinearOpMode {
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
+
+    @Override
+    public void runOpMode() {
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        waitForStart();
+        leftDrive.setPower(0.5);
+        rightDrive.setPower(0.5);
+        sleep(1000); // Move forward for 1 second
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+        telemetry.addData("Status", "Stopped");
+        telemetry.update();
+    }
+}
+```
+
+### Limitations and Use Cases
+
+Time-based movement is easy to implement but not very accurate. The robot's movement can vary due to battery voltage, floor friction, or motor inconsistencies. Use this method for simple tasks or when precision is not critical. For more reliable movement, consider using encoders or sensors.
+
+### Safety and Best Practices
+
+- Always stop your motors after movement to prevent damage.
+- Use telemetry to monitor robot status.
+- Test your code in a safe environment before running on the field.
+- Avoid running motors at full power for long periods.
+
+<ExerciseBox title="Practice Exercise: Time-Based Turn" description="Write an autonomous OpMode that turns the robot in place for 0.5 seconds, then stops. Use telemetry to display status before, during, and after the turn." answers={[{"task":"Map both left and right drive motors.","content":"// Map the drive motors in your OpMode\nDcMotor leftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\nDcMotor rightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\n// Make sure these names match your robot configuration!"},{"task":"Set one motor forward and the other backward to turn.","content":"// Set left motor forward, right motor backward to turn in place\nleftDrive.setPower(0.5);  // Forward\nrightDrive.setPower(-0.5); // Backward"},{"task":"Use sleep() to control the turn duration.","content":"// Turn for 0.5 seconds\nsleep(500); // 500 ms = 0.5 seconds"},{"task":"Stop both motors and update telemetry.","content":"// Stop both motors and show status\nleftDrive.setPower(0.0);\nrightDrive.setPower(0.0);\ntelemetry.addData(\"Status\", \"Turn Complete\");\ntelemetry.update();"},{"task":"Combine all tasks into one working OpMode.","content":"import com.qualcomm.robotcore.eventloop.opmode.Autonomous;\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@Autonomous(name = \"TimeBasedTurnAuto\")\npublic class TimeBasedTurnAuto extends LinearOpMode {\n    private DcMotor leftDrive, rightDrive;\n    @Override\n    public void runOpMode() {\n        // Map the motors\n        leftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\n        telemetry.addData(\"Status\", \"Initialized\");\n        telemetry.update();\n        // Wait for the game to start\n        waitForStart();\n        // Turn in place for 0.5 seconds\n        leftDrive.setPower(0.5);\n        rightDrive.setPower(-0.5);\n        telemetry.addData(\"Status\", \"Turning\");\n        telemetry.update();\n        sleep(500);\n        // Stop both motors\n        leftDrive.setPower(0.0);\n        rightDrive.setPower(0.0);\n        telemetry.addData(\"Status\", \"Turn Complete\");\n        telemetry.update();\n        // Optionally, keep the OpMode alive until STOP is pressed\n        while (opModeIsActive()) {\n            idle();\n        }\n    }\n}"}]}>
+
+- Map both left and right drive motors.
+- Set one motor forward and the other backward to turn.
+- Use sleep() to control the turn duration.
+- Stop both motors and update telemetry.
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Motor Encoders (Precise Movement)","url":"../motors/motor-encoders.json"},{"label":"Introduction to Odometry","url":"../../android-studio/odometry/intro-to-odometry.json"},{"label":"FTC SDK External Samples","url":"https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/master/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples"}]} title="References & Further Reading" section="ftc" />
+

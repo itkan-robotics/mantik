@@ -1,0 +1,105 @@
+---
+title: "Arrays & Strings"
+lessonId: comp-arrays-strings
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 1
+difficulty: beginner
+duration: 20 min
+description: ""
+---
+
+### Arrays in Competitive Coding
+
+Arrays are the most fundamental data structure. Understanding array manipulation is crucial for solving many problems efficiently.
+
+### Common Array Operations
+
+```java
+// Traversal
+for (int i = 0; i < arr.length; i++) {
+    // Process arr[i]
+}
+
+// Enhanced for loop
+for (int num : arr) {
+    // Process num
+}
+
+// Two pointers technique
+int left = 0, right = arr.length - 1;
+while (left < right) {
+    // Process arr[left] and arr[right]
+    left++;
+    right--;
+}
+
+// Sliding window
+int windowSum = 0;
+for (int i = 0; i < k; i++) {
+    windowSum += arr[i];
+}
+for (int i = k; i < arr.length; i++) {
+    windowSum = windowSum - arr[i-k] + arr[i];
+    // Process windowSum
+}
+```
+
+### String Manipulation
+
+Strings are essentially character arrays. Common operations include:
+
+
+
+**Length:** str.length()
+
+**Character access:** str.charAt(i)
+
+**Substring:** str.substring(start, end)
+
+**Character array:** str.toCharArray()
+
+**String building:** StringBuilder
+
+### String Examples
+
+```java
+// Palindrome check
+boolean isPalindrome(String s) {
+    int left = 0, right = s.length() - 1;
+    while (left < right) {
+        if (s.charAt(left) != s.charAt(right)) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+}
+
+// String reversal
+String reverse(String s) {
+    StringBuilder sb = new StringBuilder(s);
+    return sb.reverse().toString();
+}
+
+// Character frequency
+int[] getFrequency(String s) {
+    int[] freq = new int[26];
+    for (char c : s.toCharArray()) {
+        freq[c - 'a']++;
+    }
+    return freq;
+}
+```
+
+### Key Techniques
+
+- **Two Pointers:** For palindrome, two sum, container problems
+- **Sliding Window:** For substring, subarray problems
+- **Prefix Sum:** For range sum queries
+- **Kadane's Algorithm:** For maximum subarray sum
+- **Dutch National Flag:** For array partitioning
+

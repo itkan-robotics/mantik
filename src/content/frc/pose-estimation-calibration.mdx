@@ -1,0 +1,284 @@
+---
+title: Pose Estimation Calibration
+lessonId: pose-estimation-calibration
+section: frc
+group: frc-pose-estimation
+groupLabel: Pose Estimation
+groupOrder: 8
+order: 5
+difficulty: advanced
+duration: 65 min
+description: ""
+---
+
+### Calibration: The Foundation of Accuracy
+
+Even the best fusion algorithm can't overcome poor sensor calibration. Your pose estimation is only as good as your sensor measurements. Calibration ensures your sensors report accurate values, which directly translates to accurate pose estimation.
+
+
+
+Think of calibration as teaching your robot to measure correctly. If your encoders think the wheels are a different size than they actually are, every distance calculation will be wrong. If your gyro has an offset, every heading will be wrong. These errors compound over time, making accurate pose estimation impossible.
+
+### Calibrating Wheel Diameters
+
+Wheel diameter directly affects distance calculations. A small error in diameter measurement creates a systematic error in every distance measurement. Use calipers to measure the actual wheel diameter precisely—don't rely on manufacturer specifications, as wheels can compress or wear over time.
+
+### Configuring Encoder Distance Per Pulse
+
+```java
+import edu.wpi.first.wpilibj.Encoder;
+
+// Measured values (calibrate these with actual hardware)
+private static final double kMeasuredWheelDiameter = 0.1524;
+private static final double kEncoderCPR = 2048.0;
+
+// Calculate distance per encoder pulse
+private static final double kDistancePerPulse = 
+    (kMeasuredWheelDiameter * Math.PI) / kEncoderCPR;
+
+// Configure encoder with calibrated value
+m_encoder.setDistancePerPulse(kDistancePerPulse);
+```
+
+### Calibrating Track Width
+
+Track width (the distance between left and right wheels) affects rotation calculations. For swerve drives, you need both track width and wheelbase. Measure these carefully using precise tools—even a small error causes significant heading errors over time.
+
+### Testing Calibration Accuracy
+
+```java
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public void testCalibration(double knownDistanceMeters) {
+    double encoderDistance = m_encoder.getDistance();
+    double error = Math.abs(encoderDistance - knownDistanceMeters);
+    double errorPercent = (error / knownDistanceMeters) * 100.0;
+    
+    // Display results for analysis
+    SmartDashboard.putNumber("Calibration Error (m)", error);
+    SmartDashboard.putNumber("Calibration Error (%)", errorPercent);
+}
+```
+
+### Vision System Calibration
+
+Vision systems require camera calibration to correct for lens distortion and measure accurate distances. This is typically done using calibration tools provided by your vision library (PhotonVision, Limelight, etc.). The calibration process captures images of a known pattern and calculates the camera's intrinsic parameters.
+
+### Validating Vision Measurements
+
+```java
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.Optional;
+
+public void testVisionAccuracy(Pose2d knownActualPose) {
+    Optional<Pose2d> visionPose = m_vision.getAprilTagPose();
+    
+    if (visionPose.isPresent()) {
+        Pose2d estimatedPose = visionPose.get();
+        
+        // Calculate errors
+        double xError = Math.abs(estimatedPose.getX() - knownActualPose.getX());
+        double yError = Math.abs(estimatedPose.getY() - knownActualPose.getY());
+        double headingError = Math.abs(
+            estimatedPose.getRotation().minus(knownActualPose.getRotation()).getDegrees()
+        );
+        
+        // Display for analysis
+        SmartDashboard.putNumber("Vision X Error (m)", xError);
+        SmartDashboard.putNumber("Vision Y Error (m)", yError);
+        SmartDashboard.putNumber("Vision Heading Error (deg)", headingError);
+    }
+}
+```
+
+### Tuning Fusion Parameters
+
+The standard deviation parameters in your PoseEstimator control how much weight each measurement type receives. These are tuning parameters that you adjust based on your sensor accuracy and field conditions.
+
+### Adjusting Standard Deviations
+
+```java
+import edu.wpi.first.math.VecBuilder;
+
+// If odometry is accurate (good encoders, calibrated well)
+var stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.05);
+
+// If vision is accurate (good camera, multiple tags)
+var visionStdDevs = VecBuilder.fill(0.3, 0.3, 0.3);
+```
+
+### Testing and Validation
+
+Regular testing is essential to ensure your pose estimation remains accurate. Test at multiple field positions, under different conditions, and monitor for drift or errors. Use SmartDashboard to visualize your pose estimate and compare it to known positions.
+
+### Pose Accuracy Testing
+
+```java
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public void testPoseAccuracy(Pose2d targetPose, Pose2d actualPose) {
+    Pose2d estimatedPose = m_poseEstimation.getPose();
+    
+    // Calculate errors
+    double xError = Math.abs(estimatedPose.getX() - actualPose.getX());
+    double yError = Math.abs(estimatedPose.getY() - actualPose.getY());
+    double headingError = Math.abs(
+        estimatedPose.getRotation().minus(actualPose.getRotation()).getDegrees()
+    );
+    double positionError = estimatedPose.getTranslation()
+        .getDistance(actualPose.getTranslation());
+    
+    // Display for analysis
+    SmartDashboard.putNumber("Pose X Error (m)", xError);
+    SmartDashboard.putNumber("Pose Y Error (m)", yError);
+    SmartDashboard.putNumber("Pose Heading Error (deg)", headingError);
+    SmartDashboard.putNumber("Pose Position Error (m)", positionError);
+}
+```
+
+### Complete Fused Pose Estimation Flow
+
+```java
+package frc.robot.subsystems;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
+import java.util.Optional;
+
+public class FusedPoseEstimation extends SubsystemBase {
+    private final SwerveDriveKinematics m_kinematics;
+    private SwerveDrivePoseEstimator m_poseEstimator;
+    private SwerveModulePosition[] m_modulePositions;
+    private final ADXRS450_Gyro m_gyro;
+    private SwerveModule[] m_modules;
+    private final VisionSubsystem m_vision;
+    
+    private static final double kTrackWidth = 0.5;
+    private static final double kWheelBase = 0.5;
+    
+    public FusedPoseEstimation(SwerveModule[] modules) {
+        Translation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);
+        Translation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);
+        Translation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);
+        Translation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);
+        
+        m_kinematics = new SwerveDriveKinematics(
+            frontLeft, frontRight, rearLeft, rearRight
+        );
+        
+        m_gyro = new ADXRS450_Gyro();
+        m_gyro.calibrate();
+        
+        m_modules = modules;
+        m_modulePositions = new SwerveModulePosition[4];
+        for (int i = 0; i < 4; i++) {
+            m_modulePositions[i] = m_modules[i].getPosition();
+        }
+        
+        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+        var visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);
+        
+        m_poseEstimator = new SwerveDrivePoseEstimator(
+            m_kinematics,
+            m_gyro.getRotation2d(),
+            m_modulePositions,
+            new Pose2d(),
+            stateStdDevs,
+            visionStdDevs
+        );
+        
+        m_vision = new VisionSubsystem();
+    }
+    
+    @Override
+    public void periodic() {
+        // Update odometry continuously
+        updateOdometry();
+        
+        // Update vision when available
+        updateVision();
+        
+        // Get fused pose estimate
+        Pose2d currentPose = getPose();
+        
+        // Optional: Display for debugging
+        SmartDashboard.putNumber("Fused X", currentPose.getX());
+        SmartDashboard.putNumber("Fused Y", currentPose.getY());
+        SmartDashboard.putNumber("Fused Heading", 
+            currentPose.getRotation().getDegrees());
+    }
+    
+    public void updateOdometry() {
+        Rotation2d heading = m_gyro.getRotation2d();
+        
+        m_modulePositions[0] = m_modules[0].getPosition();
+        m_modulePositions[1] = m_modules[1].getPosition();
+        m_modulePositions[2] = m_modules[2].getPosition();
+        m_modulePositions[3] = m_modules[3].getPosition();
+        
+        m_poseEstimator.update(heading, m_modulePositions);
+    }
+    
+    public void updateVision() {
+        Optional<PoseEstimate> visionEstimate = m_vision.getAprilTagPoseEstimate();
+        
+        if (visionEstimate.isPresent()) {
+            PoseEstimate estimate = visionEstimate.get();
+            
+            // Validate measurement quality
+            boolean isValid = estimate.tagCount > 0 && 
+                LimelightHelpers.validPoseEstimate(estimate);
+            
+            if (isValid) {
+                if (estimate.tagCount >= 2) {
+                    m_poseEstimator.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(0.3, 0.3, 9999999)
+                    );
+                } else {
+                    m_poseEstimator.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(0.5, 0.5, 9999999)
+                    );
+                }
+                
+                m_poseEstimator.addVisionMeasurement(
+                    estimate.pose,
+                    estimate.timestampSeconds
+                );
+            }
+        }
+    }
+    
+    public Pose2d getPose() {
+        return m_poseEstimator.getEstimatedPosition();
+    }
+    
+    public void resetPose(Pose2d newPose) {
+        Rotation2d heading = m_gyro.getRotation2d();
+        SwerveModulePosition[] modulePositions = getModulePositions();
+        m_poseEstimator.resetPosition(heading, modulePositions, newPose);
+    }
+    
+    private SwerveModulePosition[] getModulePositions() {
+        SwerveModulePosition[] positions = new SwerveModulePosition[4];
+        for (int i = 0; i < 4; i++) {
+            positions[i] = m_modules[i].getPosition();
+        }
+        return positions;
+    }
+}
+```
+
+<LinkGrid links={[{"label":"Fused Pose Estimation","id":"vision-pose-estimation-fusion"},{"label":"Pose Estimation Introduction","id":"pose-estimation-intro"},{"label":"Odometry","id":"odometry"},{"label":"Vision Subsystem","id":"vision-subsystem"},{"label":"WPILib Pose Estimator","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators"},{"label":"WPILib Kinematics and Odometry","url":"https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"}]} title="Resources" section="frc" />
+

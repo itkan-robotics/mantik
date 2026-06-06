@@ -1,0 +1,192 @@
+---
+title: While Loops
+lessonId: java-while-loops
+section: java
+group: java-loops
+groupLabel: Loops and Iteration
+groupOrder: 3
+order: 1
+difficulty: beginner
+duration: 65 min
+description: ""
+---
+
+### Why Use Loops?
+
+Loops allow programs to repeat code efficiently. Instead of writing the same code multiple times, loops execute a block of code repeatedly based on a condition.
+
+### Problem: Repetitive Code
+
+```java
+// Without loops - inefficient and inflexible
+Scanner scanner = new Scanner(System.in);
+int sum = 0;
+
+System.out.println("Input a number: ");
+sum = sum + Integer.valueOf(scanner.nextLine());
+
+System.out.println("Input a number: ");
+sum = sum + Integer.valueOf(scanner.nextLine());
+
+System.out.println("Input a number: ");
+sum = sum + Integer.valueOf(scanner.nextLine());
+
+// What if we need 100 numbers? 1000 numbers?
+System.out.println("The sum is " + sum);
+```
+
+### Solution: Using While Loops
+
+```java
+// With loops - efficient and flexible
+Scanner scanner = new Scanner(System.in);
+int numbersRead = 0;
+int sum = 0;
+
+while (true) {
+    if (numbersRead == 5) {
+        break;  // Exit when we've read 5 numbers
+    }
+    
+    System.out.println("Input number");
+    sum = sum + Integer.valueOf(scanner.nextLine());
+    numbersRead = numbersRead + 1;
+}
+
+System.out.println("The sum of the numbers is " + sum);
+```
+
+### Basic While Loop Structure:
+
+```java
+while (condition) {
+    // Code to repeat
+    // This block executes while condition is true
+}
+
+// Simple counting example
+int count = 1;
+while (count <= 5) {
+    System.out.println("Count: " + count);
+    count = count + 1;  // Important: update the condition!
+}
+```
+
+### While Loop Syntax:
+
+```java
+while (condition) {
+    // Code to repeat
+    // This block executes while condition is true
+}
+
+// Simple counting example
+int count = 1;
+while (count <= 5) {
+    System.out.println("Count: " + count);
+    count = count + 1;  // Important: update the condition!
+}
+```
+
+### Infinite Loops
+
+Using `while (true)` creates an infinite loop that runs forever unless explicitly stopped with a `break` statement. This is useful for user input scenarios.
+
+### Infinite Loop Examples:
+
+```java
+// This runs forever (until break is encountered)
+while (true) {
+    System.out.println("I can program!");
+}
+
+// Practical infinite loop with break condition
+int robotSpeed = 0;
+while (true) {
+    robotSpeed += 10;
+    System.out.println("Robot speed: " + robotSpeed);
+    
+    if (robotSpeed >= 100) {
+        System.out.println("Maximum speed reached!");
+        break;  // Exit the loop
+    }
+}
+```
+
+### User Input with While Loops:
+
+```java
+Scanner scanner = new Scanner(System.in);
+
+// Keep asking until user wants to exit
+while (true) {
+    System.out.println("Exit? (y exits)");
+    String input = scanner.nextLine();
+    
+    if (input.equals("y")) {
+        break;  // Exit if user enters 'y'
+    }
+    
+    System.out.println("Ok! Let's carry on!");
+}
+
+System.out.println("Ready!");
+
+// Robot example: Read sensor values until threshold
+while (true) {
+    System.out.println("Input sensor reading (0 to quit)");
+    int reading = Integer.valueOf(scanner.nextLine());
+    
+    if (reading == 0) {
+        break;
+    }
+    
+    System.out.println("Sensor value: " + reading);
+}
+```
+
+### While Loops with Conditions
+
+Instead of using `while (true)` with `break`, you can put the condition directly in the while statement. This is more elegant when you know the exact condition to check.
+
+### Conditional While Loop:
+
+```java
+// Count from 1 to 5 using condition
+int number = 1;
+
+while (number < 6) {
+    System.out.println(number);
+    number++;  // Shorthand for number = number + 1
+}
+
+// Robot example: Drive until target reached
+double distanceToTarget = 100.0;
+double speed = 10.0;
+
+while (distanceToTarget > 0) {
+    System.out.println("Distance remaining: " + distanceToTarget + " cm");
+    distanceToTarget -= speed;  // Move closer to target
+    
+    // Slow down as we approach
+    if (distanceToTarget < 20) {
+        speed = 5.0;
+    }
+}
+
+System.out.println("Target reached!");
+```
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: While Loop Practice" answers={[{"task":"Create a simple counting loop that prints numbers 1 to 10","content":"public class CountingLoop {\n    public static void main(String[] args) {\n        // Method 1: Using while with condition\n        System.out.println(\"=== Counting 1 to 10 (Conditional While) ===\");\n        int count = 1;\n        \n        while (count <= 10) {\n            System.out.println(\"Count: \" + count);\n            count++;\n        }\n        \n        System.out.println(\"Counting complete!\");\n        \n        // Method 2: Using while(true) with break\n        System.out.println(\"\\n=== Counting 1 to 10 (Infinite While + Break) ===\");\n        int num = 1;\n        \n        while (true) {\n            System.out.println(\"Number: \" + num);\n            \n            if (num >= 10) {\n                break;\n            }\n            \n            num++;\n        }\n        \n        System.out.println(\"Break counting complete!\");\n        \n        // Robot example: Motor speed ramp\n        System.out.println(\"\\n=== Robot Motor Speed Ramp ===\");\n        int motorSpeed = 0;\n        \n        while (motorSpeed < 100) {\n            System.out.println(\"Motor speed: \" + motorSpeed + \"%\");\n            motorSpeed += 10;  // Increase by 10% each step\n            \n            // Simulate delay\n            try {\n                Thread.sleep(200);\n            } catch (InterruptedException e) {\n                break;\n            }\n        }\n        \n        System.out.println(\"Motor at full speed: \" + motorSpeed + \"%\");\n    }\n}"},{"task":"Build a robot battery monitor using while(true) and break","content":"import java.util.Scanner;\n\npublic class BatteryMonitor {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        double currentVoltage = 12.6;  // Starting voltage\n        int readingCount = 0;\n        double totalVoltage = 0.0;\n        int lowBatteryWarnings = 0;\n        \n        System.out.println(\"=== Robot Battery Monitor ===\");\n        System.out.println(\"Commands: 'reading' to simulate reading, 'exit' to quit\");\n        System.out.println(\"Current battery: \" + currentVoltage + \"V\");\n        \n        while (true) {\n            System.out.print(\"\\nBattery Monitor> \");\n            String command = scanner.nextLine().trim().toLowerCase();\n            \n            // Exit condition\n            if (command.equals(\"exit\") || command.equals(\"quit\")) {\n                System.out.println(\"Battery monitoring stopped.\");\n                break;\n            }\n            \n            // Simulate battery reading\n            if (command.equals(\"reading\")) {\n                // Simulate voltage drop over time\n                currentVoltage -= (Math.random() * 0.1 + 0.05);\n                readingCount++;\n                totalVoltage += currentVoltage;\n                \n                System.out.println(\"📊 Battery Reading #\" + readingCount);\n                System.out.println(\"Voltage: \" + String.format(\"%.2f\", currentVoltage) + \"V\");\n                \n                // Battery status analysis\n                if (currentVoltage >= 12.0) {\n                    System.out.println(\"🟢 Battery Status: GOOD\");\n                } else if (currentVoltage >= 11.5) {\n                    System.out.println(\"🟡 Battery Status: MODERATE\");\n                } else if (currentVoltage >= 11.0) {\n                    System.out.println(\"🟠 Battery Status: LOW\");\n                    lowBatteryWarnings++;\n                } else {\n                    System.out.println(\"🔴 Battery Status: CRITICAL - STOP ROBOT!\");\n                    lowBatteryWarnings++;\n                    System.out.println(\"⚠️ Automatic shutdown triggered!\");\n                    break;  // Critical battery - emergency stop\n                }\n                \n                // Show average\n                if (readingCount > 0) {\n                    double average = totalVoltage / readingCount;\n                    System.out.println(\"Average voltage: \" + String.format(\"%.2f\", average) + \"V\");\n                }\n                \n            } else if (command.equals(\"status\")) {\n                System.out.println(\"\\n=== Battery Status Report ===\");\n                System.out.println(\"Current voltage: \" + String.format(\"%.2f\", currentVoltage) + \"V\");\n                System.out.println(\"Readings taken: \" + readingCount);\n                System.out.println(\"Low battery warnings: \" + lowBatteryWarnings);\n                \n            } else if (command.equals(\"help\")) {\n                System.out.println(\"\\nAvailable commands:\");\n                System.out.println(\"  reading - Take a battery voltage reading\");\n                System.out.println(\"  status  - Show battery status report\");\n                System.out.println(\"  exit    - Exit battery monitor\");\n                System.out.println(\"  help    - Show this help\");\n                \n            } else {\n                System.out.println(\"❌ Unknown command: \" + command);\n                System.out.println(\"Type 'help' for available commands.\");\n            }\n        }\n        \n        // Final report\n        System.out.println(\"\\n=== Final Battery Report ===\");\n        System.out.println(\"Total readings: \" + readingCount);\n        System.out.println(\"Final voltage: \" + String.format(\"%.2f\", currentVoltage) + \"V\");\n        System.out.println(\"Low battery warnings: \" + lowBatteryWarnings);\n        \n        if (readingCount > 0) {\n            double average = totalVoltage / readingCount;\n            System.out.println(\"Average voltage: \" + String.format(\"%.2f\", average) + \"V\");\n        }\n        \n        System.out.println(\"Battery monitor shutdown complete.\");\n    }\n}"},{"task":"Make a number guessing game with user input validation","content":"import java.util.Scanner;\nimport java.util.Random;\n\npublic class NumberGuessingGame {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        Random random = new Random();\n        \n        // Game setup\n        int targetNumber = random.nextInt(100) + 1;  // 1-100\n        int attempts = 0;\n        int maxAttempts = 7;\n        boolean gameWon = false;\n        \n        System.out.println(\"=== Robot Sensor Calibration Game ===\");\n        System.out.println(\"The robot sensor needs calibration!\");\n        System.out.println(\"Guess the correct sensor value (1-100)\");\n        System.out.println(\"You have \" + maxAttempts + \" attempts.\");\n        \n        while (true) {\n            System.out.print(\"\\nAttempt \" + (attempts + 1) + \" of \" + maxAttempts + \": \");\n            String input = scanner.nextLine().trim();\n            \n            // Check for quit command\n            if (input.equalsIgnoreCase(\"quit\") || input.equalsIgnoreCase(\"exit\")) {\n                System.out.println(\"Game ended. The sensor value was: \" + targetNumber);\n                break;\n            }\n            \n            // Validate input\n            int guess;\n            try {\n                guess = Integer.parseInt(input);\n            } catch (NumberFormatException e) {\n                System.out.println(\"❌ Invalid input! Please enter a number (1-100) or 'quit'\");\n                continue;  // Don't count invalid inputs as attempts\n            }\n            \n            // Check range\n            if (guess < 1 || guess > 100) {\n                System.out.println(\"❌ Out of range! Enter a number between 1 and 100.\");\n                continue;  // Don't count out-of-range as attempts\n            }\n            \n            // Count valid attempt\n            attempts++;\n            \n            // Check guess\n            if (guess == targetNumber) {\n                gameWon = true;\n                System.out.println(\"🎉 CORRECT! Sensor calibrated successfully!\");\n                System.out.println(\"You found the value \" + targetNumber + \" in \" + attempts + \" attempts.\");\n                break;\n                \n            } else if (guess < targetNumber) {\n                int difference = targetNumber - guess;\n                System.out.println(\"📈 Too low! Sensor needs higher calibration.\");\n                \n                if (difference <= 5) {\n                    System.out.println(\"🔥 Very close! You're within 5 points.\");\n                } else if (difference <= 15) {\n                    System.out.println(\"⚡ Getting warmer!\");\n                }\n                \n            } else {\n                int difference = guess - targetNumber;\n                System.out.println(\"📉 Too high! Sensor needs lower calibration.\");\n                \n                if (difference <= 5) {\n                    System.out.println(\"🔥 Very close! You're within 5 points.\");\n                } else if (difference <= 15) {\n                    System.out.println(\"⚡ Getting warmer!\");\n                }\n            }\n            \n            // Check if attempts exhausted\n            if (attempts >= maxAttempts) {\n                System.out.println(\"\\n💥 Game Over! No more attempts remaining.\");\n                System.out.println(\"The correct sensor value was: \" + targetNumber);\n                break;\n            }\n            \n            // Show remaining attempts\n            int remaining = maxAttempts - attempts;\n            System.out.println(\"Attempts remaining: \" + remaining);\n        }\n        \n        // Game summary\n        System.out.println(\"\\n=== Game Summary ===\");\n        System.out.println(\"Target value: \" + targetNumber);\n        System.out.println(\"Attempts used: \" + attempts);\n        \n        if (gameWon) {\n            if (attempts == 1) {\n                System.out.println(\"🏆 PERFECT! First try calibration!\");\n            } else if (attempts <= 3) {\n                System.out.println(\"⭐ EXCELLENT! Quick calibration!\");\n            } else if (attempts <= 5) {\n                System.out.println(\"✅ GOOD! Efficient calibration.\");\n            } else {\n                System.out.println(\"✅ SUCCESS! Sensor calibrated.\");\n            }\n        } else {\n            System.out.println(\"❌ Calibration failed. Try again!\");\n        }\n        \n        System.out.println(\"Calibration session complete.\");\n    }\n}"},{"task":"Create a sensor reading loop that stops when target value is reached","content":"import java.util.Random;\n\npublic class SensorTargetLoop {\n    public static void main(String[] args) {\n        Random random = new Random();\n        \n        // Target sensor configuration\n        final double TARGET_VALUE = 75.0;\n        final double TOLERANCE = 2.0;  // ±2.0 tolerance\n        final int MAX_READINGS = 20;\n        \n        // Sensor simulation variables\n        double currentReading = 50.0;  // Starting point\n        int readingCount = 0;\n        boolean targetReached = false;\n        \n        System.out.println(\"=== Robot Sensor Target Detection ===\");\n        System.out.println(\"Target value: \" + TARGET_VALUE);\n        System.out.println(\"Tolerance: ±\" + TOLERANCE);\n        System.out.println(\"Acceptable range: \" + (TARGET_VALUE - TOLERANCE) + \" - \" + (TARGET_VALUE + TOLERANCE));\n        System.out.println(\"Maximum readings: \" + MAX_READINGS);\n        System.out.println(\"\\nStarting sensor readings...\");\n        \n        // Main sensor reading loop\n        while (!targetReached && readingCount < MAX_READINGS) {\n            readingCount++;\n            \n            // Simulate sensor reading with gradual approach to target\n            double adjustment = (TARGET_VALUE - currentReading) * 0.3;  // 30% correction\n            double noise = (random.nextDouble() - 0.5) * 4.0;  // ±2.0 noise\n            currentReading += adjustment + noise;\n            \n            // Ensure reading stays in realistic range\n            if (currentReading < 0) currentReading = 0;\n            if (currentReading > 100) currentReading = 100;\n            \n            System.out.println(\"Reading #\" + String.format(\"%2d\", readingCount) + \n                             \": \" + String.format(\"%6.2f\", currentReading));\n            \n            // Check if target is reached\n            double difference = Math.abs(currentReading - TARGET_VALUE);\n            \n            if (difference <= TOLERANCE) {\n                targetReached = true;\n                System.out.println(\"🎯 TARGET REACHED!\");\n                System.out.println(\"   Target: \" + TARGET_VALUE);\n                System.out.println(\"   Actual: \" + String.format(\"%.2f\", currentReading));\n                System.out.println(\"   Difference: \" + String.format(\"%.2f\", difference));\n            } else {\n                // Provide guidance\n                if (difference <= 5.0) {\n                    System.out.println(\"   🔥 Very close! (\" + String.format(\"%.2f\", difference) + \" away)\");\n                } else if (difference <= 10.0) {\n                    System.out.println(\"   ⚡ Getting closer (\" + String.format(\"%.2f\", difference) + \" away)\");\n                } else {\n                    if (currentReading < TARGET_VALUE) {\n                        System.out.println(\"   📈 Need higher value\");\n                    } else {\n                        System.out.println(\"   📉 Need lower value\");\n                    }\n                }\n            }\n            \n            // Simulate processing delay\n            try {\n                Thread.sleep(300);  // 300ms delay\n            } catch (InterruptedException e) {\n                System.out.println(\"Reading interrupted!\");\n                break;\n            }\n        }\n        \n        // Final results\n        System.out.println(\"\\n=== Sensor Detection Results ===\");\n        System.out.println(\"Total readings taken: \" + readingCount);\n        System.out.println(\"Final sensor value: \" + String.format(\"%.2f\", currentReading));\n        System.out.println(\"Target value: \" + TARGET_VALUE);\n        System.out.println(\"Final difference: \" + String.format(\"%.2f\", Math.abs(currentReading - TARGET_VALUE)));\n        \n        if (targetReached) {\n            System.out.println(\"\\n✅ SUCCESS: Target reached in \" + readingCount + \" readings!\");\n            \n            if (readingCount <= 5) {\n                System.out.println(\"🏆 EXCELLENT: Very fast convergence!\");\n            } else if (readingCount <= 10) {\n                System.out.println(\"⭐ GOOD: Quick convergence\");\n            } else {\n                System.out.println(\"✅ ACCEPTABLE: Target achieved\");\n            }\n        } else {\n            System.out.println(\"\\n❌ FAILED: Target not reached within \" + MAX_READINGS + \" readings\");\n            System.out.println(\"Consider adjusting sensor parameters or increasing reading limit.\");\n        }\n        \n        System.out.println(\"Sensor detection complete.\");\n    }\n}"}]}>
+
+- Create a simple counting loop that prints numbers 1 to 10
+- Build a robot battery monitor using while(true) and break
+- Make a number guessing game with user input validation
+- Create a sensor reading loop that stops when target value is reached
+
+```java
+Practice creating different types of while loops:
+```
+
+</ExerciseBox>
+

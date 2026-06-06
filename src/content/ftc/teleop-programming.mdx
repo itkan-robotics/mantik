@@ -1,0 +1,85 @@
+---
+title: TeleOp Programming Concepts
+lessonId: teleop-programming
+section: ftc
+group: onbot-java-teleop-programming
+groupLabel: TeleOp Programming
+groupOrder: 5
+order: 1
+difficulty: beginner
+duration: 45 min
+description: ""
+---
+
+### Overview of TeleOp Programming
+
+TeleOp programming is the process of writing code that allows drivers to control the robot in real time using gamepads. In this lesson, you'll learn how to read gamepad input, map controls to robot actions, and use telemetry for feedback.
+
+### Gamepad Input Handling
+
+The `gamepad1` and `gamepad2` objects provide access to all the buttons, sticks, and triggers on the controllers. Reading these values lets you control motors, servos, and other mechanisms.
+
+### Example: Reading Gamepad Input
+
+This snippet shows how to read joystick and button values from gamepad1.
+
+
+
+```java
+double drive = -gamepad1.left_stick_y; // Forward/backward
+double turn = gamepad1.right_stick_x;   // Turning
+boolean aPressed = gamepad1.a;          // Button A
+if (aPressed) {
+    // Do something when A is pressed
+}
+```
+
+### Mapping Gamepad Inputs to Robot Actions
+
+You can use gamepad input to control motors, servos, and other mechanisms. For example, you might use the left stick for driving and a button to control a claw.
+
+### Example: Mapping Controls to Drive and Servo
+
+```java
+// Drive control
+double leftPower = -gamepad1.left_stick_y;
+double rightPower = -gamepad1.right_stick_y;
+leftDrive.setPower(leftPower);
+rightDrive.setPower(rightPower);
+// Claw control
+if (gamepad1.a) {
+    clawServo.setPosition(1.0); // Open
+} else if (gamepad1.b) {
+    clawServo.setPosition(0.0); // Close
+}
+```
+
+### Telemetry for Debugging and Feedback
+
+Telemetry lets you send data from your robot to the Driver Station for real-time feedback. Use `telemetry.addData()` to add information and `telemetry.update()` to send it. This is essential for debugging and for providing drivers with useful information during a match. 
+
+
+
+For more on telemetry, see [FTC Docs: Telemetry](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/blocks/creating_op_modes/Writing-an-Op-Mode-with-FTC-Blocks.html#inserting-telemetry-statements) or [Telemetry Logging](../environment-setup/telemetry-logging.json).
+
+### Example: Using Telemetry
+
+```java
+telemetry.addData("Left Power", leftPower);
+telemetry.addData("Right Power", rightPower);
+telemetry.addData("Claw Position", clawServo.getPosition());
+telemetry.update();
+```
+
+<ExerciseBox title="Practice Exercise: Custom TeleOp Controls" description="Write a TeleOp OpMode that uses the left stick to drive, the right stick to turn, and buttons A/B to open/close a claw. Add telemetry to display all relevant values. Refactor your code to use helper methods for each subsystem." answers={[{"task":"Map drive motors and a claw servo","content":"// Declare hardware components\nprivate DcMotor leftDrive, rightDrive;\nprivate Servo clawServo;\n\n// Initialize in runOpMode()\nleftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\nrightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\nclawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n\n// Show initialization status\ntelemetry.addData(\"Status\", \"Custom TeleOp Controls Ready\");\ntelemetry.update();"},{"task":"Read joystick and button values from gamepad1","content":"// Read joystick values for drive control\ndouble drivePower = -gamepad1.left_stick_y;  // Forward/backward\ndouble turnPower = gamepad1.right_stick_x;   // Left/right turning\n\n// Read button values for claw control\nboolean aPressed = gamepad1.a;  // Open claw\nboolean bPressed = gamepad1.b;  // Close claw\n\n// Display input values\ntelemetry.addData(\"Drive Power\", \"%.2f\", drivePower);\ntelemetry.addData(\"Turn Power\", \"%.2f\", turnPower);\ntelemetry.addData(\"Button A\", aPressed);\ntelemetry.addData(\"Button B\", bPressed);\ntelemetry.update();"},{"task":"Set motor and servo power based on input","content":"// Calculate left and right motor powers\n// Drive power controls forward/backward\n// Turn power controls left/right turning\ndouble leftPower = drivePower + turnPower;\ndouble rightPower = drivePower - turnPower;\n\n// Apply power limits to prevent motor damage\nleftPower = Math.max(-1.0, Math.min(1.0, leftPower));\nrightPower = Math.max(-1.0, Math.min(1.0, rightPower));\n\n// Set motor powers\nleftDrive.setPower(leftPower);\nrightDrive.setPower(rightPower);\n\n// Control claw servo based on button presses\nif (aPressed) {\n    clawServo.setPosition(1.0);  // Open claw\n} else if (bPressed) {\n    clawServo.setPosition(0.0);  // Close claw\n}"},{"task":"Add telemetry for all controls","content":"// Display all control values and robot status\ntelemetry.addData(\"=== DRIVE CONTROLS ===\", \"\");\ntelemetry.addData(\"Drive Power\", \"%.2f\", drivePower);\ntelemetry.addData(\"Turn Power\", \"%.2f\", turnPower);\ntelemetry.addData(\"Left Motor Power\", \"%.2f\", leftPower);\ntelemetry.addData(\"Right Motor Power\", \"%.2f\", rightPower);\n\ntelemetry.addData(\"=== CLAW CONTROLS ===\", \"\");\ntelemetry.addData(\"Button A (Open)\", aPressed);\ntelemetry.addData(\"Button B (Close)\", bPressed);\ntelemetry.addData(\"Claw Position\", \"%.2f\", clawServo.getPosition());\n\ntelemetry.addData(\"=== ROBOT STATUS ===\", \"\");\ntelemetry.addData(\"OpMode Active\", opModeIsActive());\ntelemetry.addData(\"Match Time\", \"%.1f seconds\", getRuntime());\n\ntelemetry.update();"},{"task":"Refactor code into helper methods","content":"// Helper method for drive control\nprivate void controlDrive() {\n    double drivePower = -gamepad1.left_stick_y;\n    double turnPower = gamepad1.right_stick_x;\n    \n    double leftPower = drivePower + turnPower;\n    double rightPower = drivePower - turnPower;\n    \n    // Apply power limits\n    leftPower = Math.max(-1.0, Math.min(1.0, leftPower));\n    rightPower = Math.max(-1.0, Math.min(1.0, rightPower));\n    \n    leftDrive.setPower(leftPower);\n    rightDrive.setPower(rightPower);\n}\n\n// Helper method for claw control\nprivate void controlClaw() {\n    if (gamepad1.a) {\n        clawServo.setPosition(1.0);  // Open\n    } else if (gamepad1.b) {\n        clawServo.setPosition(0.0);  // Close\n    }\n}\n\n// Helper method for telemetry\nprivate void updateTelemetry() {\n    telemetry.addData(\"Drive Power\", \"%.2f\", -gamepad1.left_stick_y);\ntelemetry.addData(\"Turn Power\", \"%.2f\", gamepad1.right_stick_x);\ntelemetry.addData(\"Left Motor\", \"%.2f\", leftDrive.getPower());\ntelemetry.addData(\"Right Motor\", \"%.2f\", rightDrive.getPower());\ntelemetry.addData(\"Claw Position\", \"%.2f\", clawServo.getPosition());\ntelemetry.addData(\"Button A\", gamepad1.a);\ntelemetry.addData(\"Button B\", gamepad1.b);\ntelemetry.update();\n}"},{"task":"Combine all tasks into a complete TeleOp OpMode","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport com.qualcomm.robotcore.hardware.Servo;\n\n@TeleOp(name = \"CustomTeleOpControls\")\npublic class CustomTeleOpControls extends LinearOpMode {\n    private DcMotor leftDrive, rightDrive;\n    private Servo clawServo;\n\n    @Override\n    public void runOpMode() {\n        // Initialize hardware\n        leftDrive = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightDrive = hardwareMap.get(DcMotor.class, \"right_drive\");\n        clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n        \n        telemetry.addData(\"Status\", \"Custom TeleOp Controls Ready\");\ntelemetry.addData(\"Instructions\", \"Left stick: Drive, Right stick: Turn, A/B: Claw\");\ntelemetry.update();\n        \n        waitForStart();\n        \n        while (opModeIsActive()) {\n            // Control drive system\n            controlDrive();\n            \n            // Control claw\n            controlClaw();\n            \n            // Update telemetry\n            updateTelemetry();\n        }\n        \n        // Stop motors when OpMode ends\n        leftDrive.setPower(0);\n        rightDrive.setPower(0);\n    }\n    \n    // Helper method for drive control\n    private void controlDrive() {\n        double drivePower = -gamepad1.left_stick_y;\n        double turnPower = gamepad1.right_stick_x;\n        \n        double leftPower = drivePower + turnPower;\n        double rightPower = drivePower - turnPower;\n        \n        // Apply power limits\n        leftPower = Math.max(-1.0, Math.min(1.0, leftPower));\n        rightPower = Math.max(-1.0, Math.min(1.0, rightPower));\n        \n        leftDrive.setPower(leftPower);\n        rightDrive.setPower(rightPower);\n    }\n    \n    // Helper method for claw control\n    private void controlClaw() {\n        if (gamepad1.a) {\n            clawServo.setPosition(1.0);  // Open\n        } else if (gamepad1.b) {\n            clawServo.setPosition(0.0);  // Close\n        }\n    }\n    \n    // Helper method for telemetry\n    private void updateTelemetry() {\n        telemetry.addData(\"=== DRIVE CONTROLS ===\", \"\");\ntelemetry.addData(\"Drive Power\", \"%.2f\", -gamepad1.left_stick_y);\ntelemetry.addData(\"Turn Power\", \"%.2f\", gamepad1.right_stick_x);\ntelemetry.addData(\"Left Motor\", \"%.2f\", leftDrive.getPower());\ntelemetry.addData(\"Right Motor\", \"%.2f\", rightDrive.getPower());\n        \ntelemetry.addData(\"=== CLAW CONTROLS ===\", \"\");\ntelemetry.addData(\"Button A (Open)\", gamepad1.a);\ntelemetry.addData(\"Button B (Close)\", gamepad1.b);\ntelemetry.addData(\"Claw Position\", \"%.2f\", clawServo.getPosition());\n        \ntelemetry.addData(\"=== ROBOT STATUS ===\", \"\");\ntelemetry.addData(\"Match Time\", \"%.1f seconds\", getRuntime());\ntelemetry.update();\n    }\n}"}]}>
+
+- Map drive motors and a claw servo.
+- Read joystick and button values from gamepad1.
+- Set motor and servo power based on input.
+- Add telemetry for all controls.
+- Refactor code into helper methods.
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Gamepad Controls","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28Android-Studio%29.html#gamepad-input"}]} title="Related Topics and Documentation" section="ftc" />
+

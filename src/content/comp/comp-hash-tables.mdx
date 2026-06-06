@@ -1,0 +1,116 @@
+---
+title: "Hash Tables & Sets"
+lessonId: comp-hash-tables
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 5
+difficulty: intermediate
+duration: 30 min
+description: ""
+---
+
+### Hash Table Basics
+
+A hash table is a data structure that stores key-value pairs. It provides average O(1) time complexity for insertions, deletions, and lookups.
+
+### HashMap in Java
+
+```java
+// Basic HashMap operations
+HashMap<String, Integer> map = new HashMap<>();
+
+// Insert/Update
+map.put("apple", 1);
+map.put("banana", 2);
+
+// Get value
+int value = map.get("apple"); // 1
+
+// Check if key exists
+boolean contains = map.containsKey("apple"); // true
+
+// Remove key-value pair
+map.remove("apple");
+
+// Get size
+int size = map.size();
+
+// Check if empty
+boolean isEmpty = map.isEmpty();
+
+// Clear all entries
+map.clear();
+
+// Iterate through entries
+for (Map.Entry<String, Integer> entry : map.entrySet()) {
+    String key = entry.getKey();
+    Integer val = entry.getValue();
+    System.out.println(key + ": " + val);
+}
+```
+
+### HashSet in Java
+
+A HashSet is a collection that contains no duplicate elements. It's implemented using a hash table and provides O(1) average time complexity for add, remove, and contains operations.
+
+### HashSet Operations
+
+```java
+// Basic HashSet operations
+HashSet<Integer> set = new HashSet<>();
+
+// Add elements
+set.add(1);
+set.add(2);
+set.add(1); // Duplicate, won't be added
+
+// Check if element exists
+boolean contains = set.contains(1); // true
+
+// Remove element
+set.remove(1);
+
+// Get size
+int size = set.size();
+
+// Check if empty
+boolean isEmpty = set.isEmpty();
+
+// Clear all elements
+set.clear();
+
+// Iterate through elements
+for (int num : set) {
+    System.out.println(num);
+}
+```
+
+### Common Applications
+
+- **Duplicate Detection:** Find duplicates in arrays
+- **Two Sum:** Find pairs that sum to target
+- **Anagram Detection:** Check if strings are anagrams
+- **Subarray Sum:** Find subarrays with given sum
+- **Union/Intersection:** Set operations
+- **Frequency Counting:** Count occurrences of elements
+
+### Two Sum Example
+
+```java
+public int[] twoSum(int[] nums, int target) {
+    HashMap<Integer, Integer> map = new HashMap<>();
+    
+    for (int i = 0; i < nums.length; i++) {
+        int complement = target - nums[i];
+        if (map.containsKey(complement)) {
+            return new int[]{map.get(complement), i};
+        }
+        map.put(nums[i], i);
+    }
+    
+    return new int[]{-1, -1}; // No solution found
+}
+```
+

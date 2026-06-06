@@ -1,0 +1,55 @@
+---
+interface Link {
+  label: string;
+  id?: string;
+  url?: string;
+  description?: string;
+  underConstruction?: boolean;
+  external?: boolean;
+}
+
+interface Props {
+  title?: string;
+  links: Link[];
+  section?: string;
+}
+
+const { title, links, section } = Astro.props;
+
+function resolveHref(link: Link): string {
+  if (link.url) return link.url;
+  if (link.id) {
+    const sectionMap: Record<string, string> = {
+      'java-training': '/java',
+      'ftc-specific': '/ftc',
+      'frc-specific': '/frc',
+      'competitive-training': '/comp',
+      homepage: '/',
+    };
+    if (sectionMap[link.id]) return sectionMap[link.id];
+    if (section) return `/${section}/${link.id}`;
+    return `/${link.id}`;
+  }
+  return '#';
+}
+---
+
+{title && <h3>{title}</h3>}
+<div class="link-grid">
+  {links.map((link) => {
+    const href = resolveHref(link);
+    const isExternal = link.external || href.startsWith('http');
+    return (
+      <a
+        href={href}
+        class:list={['link-grid-button', { 'under-construction': link.underConstruction }]}
+        target={isExternal ? '_blank' : undefined}
+        rel={isExternal ? 'noopener noreferrer' : undefined}
+      >
+        {link.label}
+        {link.underConstruction && <span class="under-construction-badge">Coming Soon</span>}
+        {link.description && <span class="link-grid-description">{link.description}</span>}
+      </a>
+    );
+  })}
+</div>

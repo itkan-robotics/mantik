@@ -1,0 +1,74 @@
+---
+title: Command-Based Intro
+lessonId: intro-to-command-based
+section: frc
+group: frc-command-based
+groupLabel: Command-Based Programming
+groupOrder: 3
+order: 1
+difficulty: beginner
+duration: 15 min
+description: ""
+---
+
+### Overview
+
+Command-based programming organizes robot code into logical components. It separates hardware (subsystems) from logic (commands), making code reusable, maintainable, and scalable. It is the standard for modern FRC development.
+
+### Setting Up Your Project
+
+When creating a new WPILib project, use the **Command Robot** template. This provides the correct command-based structure with `Robot.java`, `RobotContainer.java`, and the necessary directories.
+
+
+
+In VS Code, use **WPILib: Create a new project** and select the Command Robot template. The template includes example subsystems and commands to help you get started.
+
+
+
+For detailed instructions, see the [Project Creation guide](#project-creation).
+
+<RulesBox title="Core Components" subtitle="The four pillars:">
+
+- **Subsystems:** Represent hardware (e.g., Intake, Drivetrain). Handle low-level control.
+- **Commands:** Represent actions (e.g., RunIntake, Drive). Use subsystems.
+- **RobotContainer:** The hub. Creates subsystems and binds buttons to commands.
+- **Scheduler:** Runs in the background, managing command execution.
+
+</RulesBox>
+
+### Comparison
+
+**Robot.java (TimedRobot):**
+
+- All logic in one file.
+
+- Hard to manage as complexity grows.
+
+- Direct hardware control mixed with logic.
+
+
+
+**Command-Based:**
+
+- Modular structure.
+
+- Reusable commands (auto & teleop).
+
+- Clean separation of concerns.
+
+### Command Lifecycle
+
+1. `initialize()`: Run once at start.
+
+2. `execute()`: Run every loop (20ms).
+
+3. `isFinished()`: Check if done.
+
+4. `end()`: Run once at finish/interrupt.
+
+### Subsystem Requirements
+
+Commands declare **requirements** (subsystems they use). The Scheduler ensures only one command controls a subsystem at a time, preventing conflicts (e.g., two commands trying to move the arm).
+
+<LinkGrid links={[{"label":"Intake (Command-Based)","id":"intake-command-based"},{"label":"What Is Command-Based Programming?","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html"},{"label":"Command-Based Programming Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/index.html"}]} title="Resources" section="frc" />
+

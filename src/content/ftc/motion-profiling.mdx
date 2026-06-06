@@ -1,0 +1,95 @@
+---
+title: Motor Motion Profiling (Android Studio)
+lessonId: motion-profiling
+section: ftc
+group: android-studio-advanced-movement-control
+groupLabel: Advanced Movement Control
+groupOrder: 10
+order: 5
+difficulty: advanced
+duration: 60 min
+description: ""
+---
+
+### What is Motion Profiling?
+
+Motion profiling is a technique for planning smooth, efficient movements for your robot. Instead of instantly commanding full speed or power, you generate a profile that gradually accelerates and decelerates, making your robot's motion faster, more accurate, and less likely to slip or tip.
+
+### Types of Motion Profiles
+
+- **Trapezoidal**: Accelerates to a constant speed, maintains it, then decelerates.
+- **S-curve**: Smooths out acceleration and deceleration for even less jerk.
+- **Custom**: You can design your own profiles for special tasks.
+
+### Generating a Trapezoidal Profile in Java
+
+This example shows how to generate a simple trapezoidal velocity profile:
+
+
+
+```java
+double maxVel = 30; // inches/sec
+double maxAccel = 60; // inches/sec^2
+double distance = 48; // inches
+
+double accelTime = maxVel / maxAccel;
+double accelDist = 0.5 * maxAccel * accelTime * accelTime;
+double cruiseDist = distance - 2 * accelDist;
+double cruiseTime = cruiseDist / maxVel;
+double totalTime = 2 * accelTime + cruiseTime;
+
+// At each time step, calculate target velocity and position
+for (double t = 0; t < totalTime; t += 0.02) {
+    double vel, pos;
+    if (t < accelTime) {
+        vel = maxAccel * t;
+        pos = 0.5 * maxAccel * t * t;
+    } else if (t < accelTime + cruiseTime) {
+        vel = maxVel;
+        pos = accelDist + maxVel * (t - accelTime);
+    } else {
+        double dt = t - (accelTime + cruiseTime);
+        vel = maxVel - maxAccel * dt;
+        pos = accelDist + cruiseDist + maxVel * dt - 0.5 * maxAccel * dt * dt;
+    }
+    // Use vel and pos as setpoints for your PID controller
+}
+```
+
+### Combining Motion Profiling with PID and Feedforward
+
+Motion profiles generate target positions and velocities over time. You use a PID controller to follow the position setpoint, and optionally add **feedforward** terms to account for expected velocity and acceleration. This combination gives you both accuracy and responsiveness.Learn more: [gm0: Feedforward Control](https://gm0.org/en/latest/docs/software/concepts/control-loops.html#feedforward-control)
+
+### Following a Profile with PID and Feedforward
+
+This snippet shows how to combine PID and feedforward to follow a profile:
+
+
+
+```java
+double kV = 1.0 / maxVel; // Velocity gain
+double kA = 0.1; // Acceleration gain
+
+for (ProfilePoint pt : profile) {
+    double error = pt.position - getCurrentPosition();
+    double pidOut = pid.calculate(error);
+    double ffOut = kV * pt.velocity + kA * pt.acceleration;
+    double output = pidOut + ffOut;
+    motor.setPower(Range.clip(output, -1, 1));
+    // Wait for next time step
+}
+```
+
+### Practical FTC Examples
+
+- Use motion profiling for autonomous driving, arm movement, and any task where smooth, fast motion is needed.
+- Libraries like Road Runner provide advanced motion profiling for FTC robots.
+
+### Troubleshooting and Tuning
+
+- If motion is jerky, lower max acceleration or tune PID gains.
+- If the robot overshoots, increase deceleration or tune PID/FF gains.
+- Use telemetry to plot position, velocity, and error for debugging.
+
+<LinkGrid links={[{"label":"gm0 Control Loops Guide","url":"https://gm0.org/en/latest/docs/software/concepts/control-loops.html","description":"Comprehensive guide to control loops, motion profiling, and feedforward control"},{"label":"Road Runner Motion Planning","url":"https://github.com/acmerobotics/road-runner","description":"Advanced motion planning library designed specifically for FTC autonomous movement"},{"label":"Learn Road Runner","url":"https://rr.brott.dev/docs/v1-0/installation/","description":"Step-by-step guide to setting up and using Road Runner for motion profiling"}]} title="Additional Resources" section="ftc" />
+

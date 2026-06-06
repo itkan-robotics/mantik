@@ -1,0 +1,31 @@
+---
+title: Java Data Types
+lessonId: datatypes
+section: java
+group: extra
+groupLabel: Additional
+groupOrder: 99
+order: 99
+draft: true
+duration: 10 min
+---
+
+### Primitive Data Types
+
+Java has 8 primitive data types that store simple values:
+
+<DataTypesGrid types={[{"name":"int","description":"Whole numbers","example":"int count = 42;","note":"Range: -2,147,483,648 to 2,147,483,647"},{"name":"double","description":"Decimal numbers","example":"double price = 19.99;","note":"15 decimal digits precision"},{"name":"boolean","description":"True or false","example":"boolean isActive = true;","note":"Only two values: true or false"},{"name":"char","description":"Single character","example":"char grade = 'A';","note":"Single quotes required"}]} />
+
+### Reference Data Types
+
+```java
+// String - sequence of characters
+String sensorName = "rev_color_sensor";
+
+// Arrays - collection of same-type elements  
+int[] driveMotors = {1, 4, 7, 10};
+
+// Objects - instances of classes
+Robot myRobot = new Robot();
+```
+

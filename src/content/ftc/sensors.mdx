@@ -1,0 +1,93 @@
+---
+title: Sensors in FTC
+lessonId: sensors
+section: ftc
+group: onbot-java-robot-hardware
+groupLabel: Robot Hardware
+groupOrder: 4
+order: 3
+difficulty: beginner
+duration: 15 min
+description: ""
+---
+
+### Overview
+
+Sensors let the robot perceive its environment. Configure each sensor in the robot's hardware configuration, then map it in code. Common types: distance (obstacle detection, alignment), color (line following, object detection), and IMU (orientation, turning).
+
+### Distance Sensors
+
+Distance sensors measure how far objects are. Use for obstacle avoidance, alignment, and detecting game elements.
+
+### Distance Sensor
+
+Read distance in centimeters. Handle NaN for out-of-range readings.
+
+
+
+```java
+private DistanceSensor distanceSensor;
+
+distanceSensor = hardwareMap.get(DistanceSensor.class, "distance_sensor");
+double distance = distanceSensor.getDistance(DistanceUnit.CM);
+
+if (!Double.isNaN(distance) && distance < 10) {
+    leftDrive.setPower(0);
+    rightDrive.setPower(0);
+}
+```
+
+### Color Sensors
+
+Color sensors return red, green, blue, and alpha values. Use for line following, game element detection, and object differentiation. Ambient light affects readings.
+
+### Color Sensor
+
+Read RGB values and detect conditions.
+
+
+
+```java
+private ColorSensor colorSensor;
+
+colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+colorSensor.enableLed(true);
+
+int red = colorSensor.red();
+int green = colorSensor.green();
+int blue = colorSensor.blue();
+
+if (red > 100 && red > blue) {
+    telemetry.addData("Object", "Red detected");
+}
+```
+
+### IMU (Inertial Measurement Unit)
+
+The IMU measures orientation (heading, pitch, roll). REV hubs include a built-in IMU; external BNO055 modules connect via I2C. Use for turning to angles, field-centric drive, and navigation.
+
+### IMU Initialization and Heading
+
+Both built-in and external BNO055 use the same initialization. Use a different I2C port than 0 for external IMUs.
+
+
+
+```java
+private BNO055IMU imu;
+
+imu = hardwareMap.get(BNO055IMU.class, "imu");
+BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+params.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+imu.initialize(params);
+
+float heading = imu.getAngularOrientation().firstAngle;
+```
+
+<RulesBox title="Troubleshooting">
+
+Distance: NaN usually means out of range. Color: test in your environment; use thresholds. IMU: calibrate before matches; handle drift.
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"FTC Docs: Using Sensors","url":"https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/using_sensors/Using-Sensors-%28OnBot-Java%29.html"}]} title="Further Reading" section="ftc" />
+

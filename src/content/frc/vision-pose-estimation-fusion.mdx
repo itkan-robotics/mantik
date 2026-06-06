@@ -1,0 +1,249 @@
+---
+title: Fused Pose Estimation
+lessonId: vision-pose-estimation-fusion
+section: frc
+group: frc-pose-estimation
+groupLabel: Pose Estimation
+groupOrder: 8
+order: 4
+difficulty: advanced
+duration: 70 min
+description: ""
+---
+
+### Introduction to Sensor Fusion
+
+Sensor fusion combines odometry and vision-based pose estimation to create a robust, accurate localization system. This lesson covers how to use WPILib's PoseEstimator to fuse odometry measurements with vision corrections.
+
+
+
+The code examples below show the general structure and flow for integrating vision with pose estimation. Your team's drivetrain template will have the complete, hardware-specific implementation with all the details needed for your specific robot configuration.
+
+
+
+Learn more: [WPILib: Pose Estimator Documentation](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators)
+
+### The Power of Sensor Fusion
+
+Vision provides excellent absolute positioning, but it has limitations. Cameras can't always see tags—other robots might block them, lighting might be poor, or the camera might be looking in the wrong direction. Meanwhile, odometry provides continuous updates at 50 Hz, but it drifts over time.
+
+
+
+Sensor fusion combines these complementary strengths. Think of it as having two navigation systems: odometry is your speedometer and compass (always working, but accumulating error), while vision is your GPS (occasionally available, but always accurate when it works). By intelligently combining both, you get continuous, accurate pose estimation that works in all conditions.
+
+### How Fusion Works
+
+WPILib's PoseEstimator uses Kalman filtering principles to optimally combine measurements. Here's the concept:
+
+
+
+**Continuous Odometry Updates** - Every robot loop (50 times per second), odometry provides a pose update based on wheel movement and gyro readings. The estimator uses these for continuous tracking.
+
+
+
+**Periodic Vision Corrections** - When vision detects a tag (10-30 times per second), it provides an absolute pose measurement. The estimator compares this to the current odometry-based estimate and smoothly incorporates the correction.
+
+
+
+**Intelligent Weighting** - The estimator automatically weights measurements based on their uncertainty. High-confidence vision measurements have more influence than low-confidence ones. Odometry confidence decreases over time since the last vision update, naturally giving more weight to fresh vision corrections.
+
+### Setting Up the Pose Estimator
+
+The PoseEstimator needs kinematics, sensor readings, and uncertainty parameters. Let's set it up step by step. The kinematics define your robot's geometry, the sensor readings provide initial state, and the uncertainty parameters control how much weight each measurement type receives.
+
+### Defining Kinematics
+
+```java
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+
+// Robot dimensions (measured from your robot, in meters)
+private static final double kTrackWidth = 0.5;
+private static final double kWheelBase = 0.5;
+
+// Calculate module positions from robot center
+Translation2d frontLeft = new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0);
+Translation2d frontRight = new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0);
+Translation2d rearLeft = new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0);
+Translation2d rearRight = new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0);
+
+// Create kinematics object
+SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+    frontLeft, frontRight, rearLeft, rearRight
+);
+```
+
+### Configuring Standard Deviations
+
+```java
+import edu.wpi.first.math.VecBuilder;
+
+// State uncertainty: how much odometry might drift
+// Tune based on your encoder and gyro accuracy
+var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+
+// Vision uncertainty: how accurate vision measurements are
+// Tune based on camera quality and tag detection accuracy
+var visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);
+```
+
+### Creating the Pose Estimator
+
+```java
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+
+// Get initial sensor readings from hardware
+Rotation2d initialHeading = m_gyro.getRotation2d();
+SwerveModulePosition[] initialModulePositions = getModulePositions();
+Pose2d initialPose = new Pose2d();
+
+// Create pose estimator with all required parameters
+m_poseEstimator = new SwerveDrivePoseEstimator(
+    m_kinematics,
+    initialHeading,
+    initialModulePositions,
+    initialPose,
+    stateStdDevs,
+    visionStdDevs
+);
+```
+
+### Updating with Odometry
+
+Odometry updates happen continuously—every robot loop. This provides the fast, continuous tracking that keeps your pose estimate current even when vision isn't available.
+
+### Getting Module Positions
+
+```java
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+
+public void updateOdometry() {
+    // Read position from each swerve module
+    m_modulePositions[0] = m_modules[0].getPosition();
+    m_modulePositions[1] = m_modules[1].getPosition();
+    m_modulePositions[2] = m_modules[2].getPosition();
+    m_modulePositions[3] = m_modules[3].getPosition();
+}
+```
+
+### Updating the Estimator
+
+```java
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+
+public void updateOdometry() {
+    // Get current sensor readings
+    Rotation2d heading = m_gyro.getRotation2d();
+    
+    // Get module positions
+    SwerveModulePosition[] modulePositions = getModulePositions();
+    
+    // Update pose estimator
+    m_poseEstimator.update(heading, modulePositions);
+}
+```
+
+### Adding Vision Measurements
+
+Vision updates are asynchronous—they arrive when tags are detected, not on a fixed schedule. The pose estimator handles this automatically, incorporating vision measurements whenever they're available to correct any drift that has accumulated.
+
+
+
+It's important to validate vision measurements before adding them to the pose estimator. Reject measurements with high ambiguity, measurements from tags that are too far away, or measurements that don't have enough tags detected. This prevents bad measurements from corrupting your pose estimate.
+
+### Integrating Vision with Pose Estimator
+
+```java
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import frc.robot.LimelightHelpers.PoseEstimate;
+import java.util.Optional;
+
+public void updateVision() {
+    // Get pose estimate from vision subsystem
+    Optional<PoseEstimate> visionPoseEstimate = m_vision.getAprilTagPoseEstimate();
+    
+    if (visionPoseEstimate.isPresent()) {
+        PoseEstimate estimate = visionPoseEstimate.get();
+        
+        // Validate measurement quality
+        boolean shouldReject = false;
+        
+        // Reject single-tag measurements with high ambiguity
+        if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {
+            if (estimate.rawFiducials[0].ambiguity > 0.7) {
+                shouldReject = true;
+            }
+        }
+        
+        // Reject tags that are too far away
+        if (estimate.tagCount == 1 && estimate.rawFiducials.length == 1) {
+            if (estimate.rawFiducials[0].distToCamera > 3.0) {
+                shouldReject = true;
+            }
+        }
+        
+        // Reject if no tags detected
+        if (estimate.tagCount == 0) {
+            shouldReject = true;
+        }
+        
+        if (!shouldReject) {
+            // Adjust uncertainty based on tag count
+            // More tags = more accurate = lower uncertainty
+            if (estimate.tagCount >= 2) {
+                m_poseEstimator.setVisionMeasurementStdDevs(
+                    VecBuilder.fill(0.3, 0.3, 9999999)
+                );
+            } else {
+                m_poseEstimator.setVisionMeasurementStdDevs(
+                    VecBuilder.fill(0.5, 0.5, 9999999)
+                );
+            }
+            
+            // Add vision measurement with timestamp
+            m_poseEstimator.addVisionMeasurement(
+                estimate.pose,
+                estimate.timestampSeconds
+            );
+        }
+    }
+}
+```
+
+### Putting It All Together
+
+In your subsystem's periodic method, you'll update both odometry and vision. The pose estimator automatically handles the fusion, giving you the best possible pose estimate at any moment.
+
+### Complete Periodic Update
+
+```java
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+@Override
+public void periodic() {
+    // Update odometry continuously (always available)
+    updateOdometry();
+    
+    // Update vision when available (asynchronous)
+    updateVision();
+    
+    // Get the fused pose estimate
+    Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+    
+    // Optional: Display on SmartDashboard for debugging
+    SmartDashboard.putNumber("Fused X", currentPose.getX());
+    SmartDashboard.putNumber("Fused Y", currentPose.getY());
+    SmartDashboard.putNumber("Fused Heading", 
+        currentPose.getRotation().getDegrees());
+}
+```
+
+<LinkGrid links={[{"label":"Pose Estimation Introduction","id":"pose-estimation-intro"},{"label":"Odometry","id":"odometry"},{"label":"Vision Subsystem","id":"vision-subsystem"},{"label":"Pose Estimation Calibration","id":"pose-estimation-calibration"},{"label":"WPILib Pose Estimator","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators"},{"label":"WPILib Kinematics and Odometry","url":"https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"}]} title="Resources" section="frc" />
+

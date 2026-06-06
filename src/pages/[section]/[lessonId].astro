@@ -1,0 +1,46 @@
+---
+import LessonLayout from '@/layouts/LessonLayout.astro';
+import { getSectionLessons, getSidebarGroups, getAdjacentLessons } from '@/lib/content';
+import { sections } from '@/config/navigation';
+import { render } from 'astro:content';
+import { components } from '@/mdx-components';
+import type { SectionId } from '@/config/navigation';
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const section of sections) {
+    const lessons = await getSectionLessons(section.id);
+    for (const lesson of lessons) {
+      if (lesson.data.isOverview || lesson.data.lessonId === 'overview') continue;
+      paths.push({
+        params: { section: section.id, lessonId: lesson.data.lessonId },
+        props: { lesson },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { section, lessonId } = Astro.params as { section: SectionId; lessonId: string };
+const { lesson } = Astro.props;
+
+const sidebarGroups = await getSidebarGroups(section);
+const { prev, next } = await getAdjacentLessons(section, lessonId);
+const { Content } = await render(lesson);
+const currentPath = `/${section}/${lessonId}`;
+---
+
+<LessonLayout
+  title={lesson.data.title}
+  description={lesson.data.description}
+  currentPath={currentPath}
+  sidebarGroups={sidebarGroups}
+  prev={prev}
+  next={next}
+  difficulty={lesson.data.difficulty}
+  duration={lesson.data.duration}
+>
+  <Content components={components} />
+</LessonLayout>

@@ -1,0 +1,153 @@
+---
+title: Troubleshooting Common FTC Programming Issues
+lessonId: troubleshooting-common-issues
+section: ftc
+group: onbot-java-debugging-best-practices
+groupLabel: "OBJ Debugging & Best Practices"
+groupOrder: 7
+order: 4
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Introduction
+
+Even experienced programmers run into common issues when working with FTC robots. This lesson will help you quickly identify and fix the most frequent problems in OnBot Java.
+
+### Hardware Mapping Errors
+
+One of the most common issues is a mismatch between your hardware configuration and your code. If you misspell a device name or forget to add a device in the configuration, your code will throw an error. Always double-check that your hardwareMap.get() calls match the names in your configuration.
+
+### Example: Hardware Mapping Error
+
+Because configuration names are case-sensitive, this code will throw an error even if 'left_drive' is in your configuration:
+
+
+
+```java
+leftMotor = hardwareMap.get(DcMotor.class, "LEFT_DRIVE");
+```
+
+### OpMode Lifecycle Mistakes
+
+Understanding when your code runs is crucial. Initialization code should go before waitForStart(), and your main loop should be inside while (opModeIsActive()). Placing code in the wrong place can cause unexpected behavior.
+
+### Correct OpMode Structure
+
+```java
+@TeleOp
+public class LifecycleExample extends LinearOpMode {
+    private DcMotor leftMotor;
+    @Override
+    public void runOpMode() {
+        leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+        waitForStart();
+        while (opModeIsActive()) {
+            leftMotor.setPower(0.5);
+        }
+    }
+}
+```
+
+### Sensor and Motor Initialization Problems
+
+If you try to use a sensor or motor before it's initialized, you'll get errors or unexpected results. Always initialize all hardware before waitForStart().
+
+### Initialization Example
+
+```java
+// Correct
+leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
+// Incorrect (will cause errors)
+leftMotor.setPower(1.0); // leftMotor not initialized yet
+```
+
+### Quick Troubleshooting Checklist
+
+- Check that all device names in your code match your configuration.
+- Initialize all hardware before waitForStart().
+- Put your main robot logic inside while (opModeIsActive()).
+- Use telemetry to display variable values and program state.
+- Read error messages carefully and look up unfamiliar terms.
+
+<ExerciseBox title="Practice: Find and Fix Common Issues" description="Below is an OpMode with multiple errors. Your task is to identify all the problems and fix them. Here are the devices configured in your robot:" answers={[{"task":"Identify all errors in the provided OpMode code.","content":"There are 4 errors in this OpMode:\n\n1. **Hardware Mapping Error (Line 12)**: \"LEFT_DRIVE\" should be \"left_drive\" (case-sensitive)\n2. **Initialization Order Error (Line 18)**: Setting motor power before waitForStart()\n3. **Unreachable Code Error (Lines 47-49)**: Code after the while loop will never execute\n4. **Missing Error Handling**: No try-catch for potential hardware failures"},{"task":"Explain what each error is and why it occurs.","content":"**Error 1**: Hardware mapping is case-sensitive. \"LEFT_DRIVE\" doesn't match the configured \"left_drive\".\n\n**Error 2**: Setting motor power before waitForStart() can cause unexpected behavior since the robot isn't ready yet.\n\n**Error 3**: Code after the while loop is unreachable because the loop only exits when the OpMode stops.\n\n**Error 4**: Missing error handling means hardware failures could crash the program."},{"task":"Provide a corrected version of the OpMode.","content":"@TeleOp\npublic class FixedOpMode extends LinearOpMode {\n    private DcMotor leftMotor, rightMotor;\n    private Servo clawServo;\n    private ColorSensor colorSensor;\n    private DistanceSensor distanceSensor;\n    \n    @Override\n    public void runOpMode() {\n        try {\n            // Initialize hardware with correct names\n            leftMotor = hardwareMap.get(DcMotor.class, \"left_drive\");\n            rightMotor = hardwareMap.get(DcMotor.class, \"right_drive\");\n            clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n            colorSensor = hardwareMap.get(ColorSensor.class, \"color_sensor\");\n            distanceSensor = hardwareMap.get(DistanceSensor.class, \"distance_sensor\");\n            \n            telemetry.addData(\"Status\", \"Initialized\");\n            telemetry.update();\n            \n            waitForStart();\n            \n            // Main loop\n            while (opModeIsActive()) {\n                // Drive logic\n                double leftPower = -gamepad1.left_stick_y;\n                double rightPower = -gamepad1.right_stick_y;\n                leftMotor.setPower(leftPower);\n                rightMotor.setPower(rightPower);\n                \n                // Claw control\n                if (gamepad1.a) {\n                    clawServo.setPosition(1.0);\n                } else if (gamepad1.b) {\n                    clawServo.setPosition(0.0);\n                }\n                \n                // Sensor reading\n                if (colorSensor.red() > 100) {\n                    telemetry.addData(\"Color Detected\", \"Red\");\n                }\n                \n                if (touchSensor.isPressed()) {\n                    telemetry.addData(\"Touch Sensor\", \"Pressed\");\n                }\n                \n                telemetry.addData(\"Left Power\", leftPower);\n                telemetry.addData(\"Right Power\", rightPower);\n                telemetry.addData(\"Claw Position\", clawServo.getPosition());\n                telemetry.update();\n            }\n        } catch (Exception e) {\n            telemetry.addData(\"Error\", e.getMessage());\n            telemetry.update();\n        }\n    }\n}"}]}>
+
+- Identify all errors in the provided OpMode code.
+- Explain what each error is and why it occurs.
+- Provide a corrected version of the OpMode.
+
+```java
+// Configured Devices:
+// - left_drive (DcMotor)
+// - right_drive (DcMotor)
+// - claw_servo (Servo)
+// - color_sensor (ColorSensor)
+// - distance_sensor (DistanceSensor)
+
+// Find all the errors in this OpMode:
+@TeleOp
+public class BuggyOpMode extends LinearOpMode {
+    private DcMotor leftMotor, rightMotor;
+    private Servo clawServo;
+    private ColorSensor colorSensor;
+    private DistanceSensor distanceSensor;
+    
+    @Override
+    public void runOpMode() {
+        // Initialize hardware
+        leftMotor = hardwareMap.get(DcMotor.class, "LEFT_DRIVE");
+        rightMotor = hardwareMap.get(DcMotor.class, "right_drive");
+        clawServo = hardwareMap.get(Servo.class, "claw_servo");
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distance_sensor");
+        
+        // Set motor power before initialization
+        leftMotor.setPower(0.5);
+        
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        
+        waitForStart();
+        
+        // Main loop
+        while (opModeIsActive()) {
+            // Drive logic
+            double leftPower = -gamepad1.left_stick_y;
+            double rightPower = -gamepad1.right_stick_y;
+            leftMotor.setPower(leftPower);
+            rightMotor.setPower(rightPower);
+            
+            // Claw control
+            if (gamepad1.a) {
+                clawServo.setPosition(1.0);
+            } else if (gamepad1.b) {
+                clawServo.setPosition(0.0);
+            }
+            
+            // Sensor reading
+            if (colorSensor.red() > 100) {
+                telemetry.addData("Color Detected", "Red");
+            }
+            
+            if (distanceSensor.getDistance(DistanceUnit.CM) < 10) {
+                telemetry.addData("Distance", "Object close");
+            }
+            
+            telemetry.addData("Left Power", leftPower);
+            telemetry.addData("Right Power", rightPower);
+            telemetry.addData("Claw Position", clawServo.getPosition());
+            telemetry.update();
+        }
+        
+        // Code after the loop (will never execute)
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+    }
+}
+```
+
+</ExerciseBox>
+
+<LinkGrid links={[{"label":"Basic Debugging Techniques","id":"basic-debugging-techniques"},{"label":"GeeksforGeeks: Debugging in Java","url":"https://www.geeksforgeeks.org/java/top-5-java-debugging-tips/"},{"label":"Java: Troubleshooting and Debugging Tips (Oracle)","url":"https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/"}]} title="Further Reading Resources" section="ftc" />
+

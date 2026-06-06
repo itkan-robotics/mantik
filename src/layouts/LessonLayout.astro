@@ -1,0 +1,96 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/layout/Breadcrumb.astro';
+import type { SidebarGroup } from '@/lib/content';
+import type { SidebarItem } from '@/lib/content';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentPath: string;
+  sidebarGroups: SidebarGroup[];
+  prev?: SidebarItem;
+  next?: SidebarItem;
+  difficulty?: string;
+  duration?: string;
+}
+
+const { title, description, currentPath, sidebarGroups, prev, next, difficulty, duration } =
+  Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPath={currentPath}
+  sidebarGroups={sidebarGroups}
+  showSidebar={true}
+>
+  <Breadcrumb currentPath={currentPath} />
+
+  <div class="lesson-header">
+    <h1>{title}</h1>
+    {(difficulty || duration) && (
+      <div class="lesson-meta">
+        {difficulty && <span class="lesson-difficulty">{difficulty}</span>}
+        {duration && <span class="lesson-duration">{duration}</span>}
+      </div>
+    )}
+  </div>
+
+  <div class="lesson-content" data-pagefind-body>
+    <slot />
+  </div>
+
+  {(prev || next) && (
+    <nav class="lesson-nav" aria-label="Lesson navigation">
+      {prev ? (
+        <a href={prev.href} class="lesson-nav-link lesson-nav-prev">
+          <span class="lesson-nav-label">Previous</span>
+          <span class="lesson-nav-title">{prev.label}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <a href={next.href} class="lesson-nav-link lesson-nav-next">
+          <span class="lesson-nav-label">Next</span>
+          <span class="lesson-nav-title">{next.label}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  )}
+</BaseLayout>
+
+<script>
+  function navigateLesson(direction: 'prev' | 'next') {
+    const selector = direction === 'prev' ? '.lesson-nav-prev' : '.lesson-nav-next';
+    const link = document.querySelector<HTMLAnchorElement>(selector);
+    if (link) window.location.href = link.href;
+  }
+
+  function initLessonNav() {
+    if (document.body.getAttribute('data-lesson-nav-init')) return;
+    document.body.setAttribute('data-lesson-nav-init', 'true');
+
+    document.addEventListener('keydown', (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
+      if (e.key === 'ArrowLeft' || e.key === '<') {
+        e.preventDefault();
+        navigateLesson('prev');
+      }
+      if (e.key === 'ArrowRight' || e.key === '>') {
+        e.preventDefault();
+        navigateLesson('next');
+      }
+    });
+  }
+
+  initLessonNav();
+  document.addEventListener('astro:page-load', initLessonNav);
+</script>

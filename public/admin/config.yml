@@ -1,0 +1,120 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: public/media
+public_folder: /media
+
+site_url: https://mantik.netlify.app
+display_url: https://mantik.netlify.app
+logo_url: /media/FRCCodeLab.png
+
+collections:
+  - name: homepage
+    label: Homepage
+    files:
+      - name: index
+        label: Homepage
+        file: src/content/homepage/index.mdx
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Description, name: description, widget: text, required: false }
+          - { label: Body, name: body, widget: markdown }
+
+  - name: java
+    label: Java Training
+    folder: src/content/java
+    create: true
+    slug: "{{lessonId}}"
+    extension: mdx
+    format: frontmatter
+    identifier_field: lessonId
+    summary: "{{title}} — {{difficulty}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Lesson ID, name: lessonId, widget: string, hint: "URL slug, e.g. java-intro" }
+      - { label: Section, name: section, widget: hidden, default: java }
+      - { label: Group ID, name: group, widget: string, required: false }
+      - { label: Group Label, name: groupLabel, widget: string, required: false }
+      - { label: Group Order, name: groupOrder, widget: number, required: false }
+      - { label: Order, name: order, widget: number, default: 0 }
+      - { label: Difficulty, name: difficulty, widget: select, options: [beginner, intermediate, advanced], required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Overview Page, name: isOverview, widget: boolean, default: false, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }
+
+  - name: ftc
+    label: FTC Training
+    folder: src/content/ftc
+    create: true
+    slug: "{{lessonId}}"
+    extension: mdx
+    format: frontmatter
+    identifier_field: lessonId
+    summary: "{{title}} — {{difficulty}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Lesson ID, name: lessonId, widget: string }
+      - { label: Section, name: section, widget: hidden, default: ftc }
+      - { label: Group ID, name: group, widget: string, required: false }
+      - { label: Group Label, name: groupLabel, widget: string, required: false }
+      - { label: Group Order, name: groupOrder, widget: number, required: false }
+      - { label: Order, name: order, widget: number, default: 0 }
+      - { label: Difficulty, name: difficulty, widget: select, options: [beginner, intermediate, advanced], required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Overview Page, name: isOverview, widget: boolean, default: false, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }
+
+  - name: frc
+    label: FRC Training
+    folder: src/content/frc
+    create: true
+    slug: "{{lessonId}}"
+    extension: mdx
+    format: frontmatter
+    identifier_field: lessonId
+    summary: "{{title}} — {{difficulty}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Lesson ID, name: lessonId, widget: string }
+      - { label: Section, name: section, widget: hidden, default: frc }
+      - { label: Group ID, name: group, widget: string, required: false }
+      - { label: Group Label, name: groupLabel, widget: string, required: false }
+      - { label: Group Order, name: groupOrder, widget: number, required: false }
+      - { label: Order, name: order, widget: number, default: 0 }
+      - { label: Difficulty, name: difficulty, widget: select, options: [beginner, intermediate, advanced], required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Overview Page, name: isOverview, widget: boolean, default: false, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }
+
+  - name: comp
+    label: Competitive Training
+    folder: src/content/comp
+    create: true
+    slug: "{{lessonId}}"
+    extension: mdx
+    format: frontmatter
+    identifier_field: lessonId
+    summary: "{{title}} — {{difficulty}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Lesson ID, name: lessonId, widget: string }
+      - { label: Section, name: section, widget: hidden, default: comp }
+      - { label: Group ID, name: group, widget: string, required: false }
+      - { label: Group Label, name: groupLabel, widget: string, required: false }
+      - { label: Group Order, name: groupOrder, widget: number, required: false }
+      - { label: Order, name: order, widget: number, default: 0 }
+      - { label: Difficulty, name: difficulty, widget: select, options: [beginner, intermediate, advanced], required: false }
+      - { label: Duration, name: duration, widget: string, required: false }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Overview Page, name: isOverview, widget: boolean, default: false, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }

@@ -1,0 +1,153 @@
+---
+title: Union Find (Disjoint Sets)
+lessonId: comp-union-find
+section: comp
+group: comp-data-structures
+groupLabel: Data Structures
+groupOrder: 2
+order: 7
+difficulty: intermediate
+duration: 40 min
+description: ""
+---
+
+### Union Find Overview
+
+Union Find (Disjoint Sets) is a data structure that tracks a set of elements partitioned into a number of disjoint subsets. It supports two main operations: find and union.
+
+### Operations
+
+- **Find:** Determine which subset an element belongs to
+- **Union:** Join two subsets into a single subset
+- **Connected:** Check if two elements are in the same subset
+
+### Basic Union Find Implementation
+
+```java
+class UnionFind {
+    private int[] parent;
+    private int[] rank;
+    private int count;
+    
+    public UnionFind(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        count = n;
+        
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+    
+    // Find with path compression
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); // Path compression
+        }
+        return parent[x];
+    }
+    
+    // Union by rank
+    public void union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        
+        if (rootX == rootY) return;
+        
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        
+        count--;
+    }
+    
+    public boolean connected(int x, int y) {
+        return find(x) == find(y);
+    }
+    
+    public int getCount() {
+        return count;
+    }
+}
+```
+
+### Number of Islands Problem
+
+```java
+// Count number of islands in 2D grid
+public int numIslands(char[][] grid) {
+    if (grid == null || grid.length == 0) return 0;
+    
+    int m = grid.length;
+    int n = grid[0].length;
+    UnionFind uf = new UnionFind(m * n);
+    
+    int count = 0;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (grid[i][j] == '1') {
+                count++;
+                
+                // Check four directions
+                int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+                for (int[] dir : directions) {
+                    int newI = i + dir[0];
+                    int newJ = j + dir[1];
+                    
+                    if (newI >= 0 && newI < m && newJ >= 0 && newJ < n && 
+                        grid[newI][newJ] == '1') {
+                        
+                        int id1 = i * n + j;
+                        int id2 = newI * n + newJ;
+                        
+                        if (!uf.connected(id1, id2)) {
+                            uf.union(id1, id2);
+                            count--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return count;
+}
+```
+
+### Redundant Connection Problem
+
+```java
+// Find redundant connection in undirected graph
+public int[] findRedundantConnection(int[][] edges) {
+    int n = edges.length;
+    UnionFind uf = new UnionFind(n + 1);
+    
+    for (int[] edge : edges) {
+        int u = edge[0];
+        int v = edge[1];
+        
+        if (uf.connected(u, v)) {
+            return edge;
+        }
+        
+        uf.union(u, v);
+    }
+    
+    return new int[0];
+}
+```
+
+### Common Applications
+
+- **Graph Problems:** Cycle detection, connected components
+- **Network Problems:** Network connectivity, clustering
+- **Image Processing:** Connected component labeling
+- **Kruskal's Algorithm:** Minimum spanning tree
+- **Game Theory:** Board games with connected regions
+

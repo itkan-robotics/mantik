@@ -1,0 +1,109 @@
+---
+title: For Loops
+lessonId: java-for-loops
+section: java
+group: java-loops
+groupLabel: Loops and Iteration
+groupOrder: 3
+order: 2
+difficulty: beginner
+duration: 45 min
+description: ""
+---
+
+### Introduction to For Loops
+
+For loops are ideal when you know exactly how many times to repeat something. They combine initialization, condition, and increment in one compact statement.
+
+### For Loop Structure:
+
+```java
+// Basic for loop structure
+for (initialization; condition; increment) {
+    // Code to repeat
+}
+
+// Example: Print numbers 0 to 9
+for (int i = 0; i < 10; i++) {
+    System.out.println(i);
+}
+
+// Same logic as while loop:
+// int i = 0;           // initialization
+// while (i < 10) {     // condition
+//     System.out.println(i);
+//     i++;             // increment
+// }
+```
+
+### For Loop Examples:
+
+```java
+// Count with variables
+int start = 3;
+int end = 7;
+for (int i = start; i < end; i++) {
+    System.out.println("Count: " + i);
+}
+// Output: 3, 4, 5, 6
+
+// Robot motor test - run each motor for 5 seconds
+String[] motorNames = {"frontLeft", "frontRight", "backLeft", "backRight"};
+
+for (int i = 0; i < motorNames.length; i++) {
+    System.out.println("Testing motor: " + motorNames[i]);
+    // setMotorPower(motorNames[i], 0.5);
+    // wait(5000);  // 5 seconds
+    // setMotorPower(motorNames[i], 0.0);
+}
+```
+
+### Calculating with For Loops:
+
+```java
+// Calculate 4 * 3 as repeated addition (3 + 3 + 3 + 3)
+int result = 0;
+
+for (int i = 0; i < 4; i++) {
+    result += 3;  // Add 3 each time
+}
+
+System.out.println("4 * 3 = " + result);  // 12
+
+// Robot sensor average over 10 readings
+int sensorSum = 0;
+int readings = 10;
+
+for (int i = 0; i < readings; i++) {
+    // int sensorValue = readSensor();
+    int sensorValue = (int)(Math.random() * 100);  // Simulate sensor
+    sensorSum += sensorValue;
+    System.out.println("Reading " + (i + 1) + ": " + sensorValue);
+}
+
+double average = (double) sensorSum / readings;
+System.out.println("Average sensor value: " + average);
+```
+
+<RulesBox title="When to Use For Loops:" subtitle="Perfect For:">
+
+- **Known iterations:** When you know exactly how many times to loop
+- **Array processing:** Iterating through arrays or collections
+- **Counting operations:** Incrementing or decrementing by fixed amounts
+- **Mathematical calculations:** Repeated calculations with counters
+
+</RulesBox>
+
+<ExerciseBox title="Try It Yourself:" subtitle="Exercise 1: For Loop Practice" answers={[{"task":"Create a multiplication table using nested for loops","content":"public class MultiplicationTable {\n    public static void main(String[] args) {\n        final int TABLE_SIZE = 10;\n        \n        System.out.println(\"=== Multiplication Table (1-\" + TABLE_SIZE + \") ===\");\n        \n        // Print header\n        System.out.print(\"   \");\n        for (int col = 1; col <= TABLE_SIZE; col++) {\n            System.out.printf(\"%4d\", col);\n        }\n        System.out.println();\n        \n        // Print separator line\n        System.out.print(\"   \");\n        for (int col = 1; col <= TABLE_SIZE; col++) {\n            System.out.print(\"----\");\n        }\n        System.out.println();\n        \n        // Print multiplication table\n        for (int row = 1; row <= TABLE_SIZE; row++) {\n            System.out.printf(\"%2d|\", row);  // Row header\n            \n            for (int col = 1; col <= TABLE_SIZE; col++) {\n                int product = row * col;\n                System.out.printf(\"%4d\", product);\n            }\n            System.out.println();  // New line after each row\n        }\n        \n        // Robot gear ratio table\n        System.out.println(\"\\n=== Robot Gear Ratio Table ===\");\n        double[] gearRatios = {1.0, 1.5, 2.0, 3.0, 4.0};\n        int[] motorSpeeds = {100, 200, 300, 400, 500};\n        \n        System.out.println(\"Motor Speed vs Gear Ratio (Output RPM)\");\n        System.out.print(\"Speed\\\\Ratio\");\n        for (double ratio : gearRatios) {\n            System.out.printf(\"%8.1f\", ratio);\n        }\n        System.out.println();\n        \n        for (int speed : motorSpeeds) {\n            System.out.printf(\"%9d\", speed);\n            for (double ratio : gearRatios) {\n                double outputRPM = speed / ratio;\n                System.out.printf(\"%8.1f\", outputRPM);\n            }\n            System.out.println();\n        }\n    }\n}"},{"task":"Build a robot sensor calibration system with progress tracking","content":"public class SensorCalibrationSystem {\n    public static void main(String[] args) {\n        final int CALIBRATION_SAMPLES = 15;\n        final double TARGET_AVERAGE = 50.0;\n        final double ACCEPTABLE_DEVIATION = 5.0;\n        \n        double[] calibrationData = new double[CALIBRATION_SAMPLES];\n        double sum = 0.0;\n        int validSamples = 0;\n        \n        System.out.println(\"=== Robot Sensor Calibration System ===\");\n        System.out.println(\"Target average: \" + TARGET_AVERAGE);\n        System.out.println(\"Acceptable deviation: ±\" + ACCEPTABLE_DEVIATION);\n        System.out.println(\"Samples to collect: \" + CALIBRATION_SAMPLES);\n        System.out.println();\n        \n        // Collect calibration samples\n        for (int sample = 0; sample < CALIBRATION_SAMPLES; sample++) {\n            // Simulate sensor reading with some noise around target\n            double reading = TARGET_AVERAGE + (Math.random() - 0.5) * 20;\n            calibrationData[sample] = reading;\n            \n            // Progress tracking\n            int progressPercent = (int)(((double)(sample + 1) / CALIBRATION_SAMPLES) * 100);\n            System.out.printf(\"Sample %2d/%d [%3d%%]: %6.2f\", \n                            sample + 1, CALIBRATION_SAMPLES, progressPercent, reading);\n            \n            // Validate reading\n            if (Math.abs(reading - TARGET_AVERAGE) <= ACCEPTABLE_DEVIATION * 2) {\n                sum += reading;\n                validSamples++;\n                System.out.println(\" ✅ Valid\");\n            } else {\n                System.out.println(\" ❌ Outlier\");\n            }\n            \n            // Show current average\n            if (validSamples > 0) {\n                double currentAverage = sum / validSamples;\n                System.out.printf(\"    Running average: %.2f (from %d valid samples)\\n\", \n                                currentAverage, validSamples);\n            }\n            \n            // Progress bar\n            System.out.print(\"    [\");\n            int barLength = 20;\n            int filledLength = (progressPercent * barLength) / 100;\n            \n            for (int i = 0; i < barLength; i++) {\n                if (i < filledLength) {\n                    System.out.print(\"█\");\n                } else {\n                    System.out.print(\"░\");\n                }\n            }\n            System.out.println(\"] \" + progressPercent + \"%\\n\");\n            \n            // Simulate delay\n            try {\n                Thread.sleep(200);\n            } catch (InterruptedException e) {\n                break;\n            }\n        }\n        \n        // Calibration analysis\n        System.out.println(\"=== Calibration Analysis ===\");\n        \n        if (validSamples >= CALIBRATION_SAMPLES * 0.7) { // Need 70% valid\n            double average = sum / validSamples;\n            double deviation = Math.abs(average - TARGET_AVERAGE);\n            \n            // Calculate standard deviation\n            double variance = 0.0;\n            for (int i = 0; i < CALIBRATION_SAMPLES; i++) {\n                if (Math.abs(calibrationData[i] - TARGET_AVERAGE) <= ACCEPTABLE_DEVIATION * 2) {\n                    double diff = calibrationData[i] - average;\n                    variance += diff * diff;\n                }\n            }\n            variance /= validSamples;\n            double standardDeviation = Math.sqrt(variance);\n            \n            System.out.println(\"Valid samples: \" + validSamples + \"/\" + CALIBRATION_SAMPLES);\n            System.out.println(\"Calibrated average: \" + String.format(\"%.2f\", average));\n            System.out.println(\"Target average: \" + TARGET_AVERAGE);\n            System.out.println(\"Deviation from target: \" + String.format(\"%.2f\", deviation));\n            System.out.println(\"Standard deviation: \" + String.format(\"%.2f\", standardDeviation));\n            \n            // Quality assessment\n            if (deviation <= ACCEPTABLE_DEVIATION && standardDeviation <= 3.0) {\n                System.out.println(\"\\n🎯 CALIBRATION SUCCESSFUL!\");\n                System.out.println(\"Sensor is properly calibrated and ready for use.\");\n            } else if (deviation <= ACCEPTABLE_DEVIATION * 1.5) {\n                System.out.println(\"\\n⚠️ CALIBRATION ACCEPTABLE\");\n                System.out.println(\"Sensor calibration within acceptable range.\");\n            } else {\n                System.out.println(\"\\n❌ CALIBRATION FAILED\");\n                System.out.println(\"Sensor requires recalibration or hardware check.\");\n            }\n            \n        } else {\n            System.out.println(\"❌ CALIBRATION FAILED - Insufficient valid samples\");\n            System.out.println(\"Only \" + validSamples + \"/\" + CALIBRATION_SAMPLES + \" samples were valid.\");\n            System.out.println(\"Check sensor connections and environment.\");\n        }\n    }\n}"},{"task":"Calculate factorial using for loops","content":"import java.util.Scanner;\n\npublic class FactorialCalculator {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        System.out.println(\"=== Factorial Calculator for Robot Path Planning ===\");\n        System.out.println(\"Calculate possible arrangements for robot waypoints\");\n        \n        System.out.print(\"Enter number of waypoints (1-12): \");\n        int n = scanner.nextInt();\n        \n        if (n < 1 || n > 12) {\n            System.out.println(\"❌ Invalid input. Using n = 5 as example.\");\n            n = 5;\n        }\n        \n        // Calculate factorial step by step\n        System.out.println(\"\\nCalculating \" + n + \"! (\" + n + \" factorial):\");\n        \n        long factorial = 1;\n        System.out.print(n + \"! = \");\n        \n        for (int i = 1; i <= n; i++) {\n            factorial *= i;\n            \n            System.out.print(i);\n            if (i < n) {\n                System.out.print(\" × \");\n            }\n        }\n        \n        System.out.println(\" = \" + factorial);\n        \n        // Robot application context\n        System.out.println(\"\\n🤖 Robot Path Planning Context:\");\n        System.out.println(\"With \" + n + \" waypoints, there are \" + factorial + \" possible arrangements.\");\n        \n        if (n <= 4) {\n            System.out.println(\"✅ Small number - can evaluate all paths\");\n        } else if (n <= 8) {\n            System.out.println(\"⚠️ Medium complexity - optimization needed\");\n        } else {\n            System.out.println(\"🔥 High complexity - advanced algorithms required\");\n        }\n        \n        // Calculate computation time estimates\n        System.out.println(\"\\n⏱️ Computation Time Estimates:\");\n        System.out.println(\"(Assuming 1 microsecond per path evaluation)\");\n        \n        for (int waypoints = 3; waypoints <= Math.min(n + 2, 10); waypoints++) {\n            long pathCount = 1;\n            for (int i = 1; i <= waypoints; i++) {\n                pathCount *= i;\n            }\n            \n            double microseconds = pathCount;\n            String timeUnit;\n            double timeValue;\n            \n            if (microseconds < 1000) {\n                timeValue = microseconds;\n                timeUnit = \"μs\";\n            } else if (microseconds < 1000000) {\n                timeValue = microseconds / 1000;\n                timeUnit = \"ms\";\n            } else if (microseconds < 1000000000) {\n                timeValue = microseconds / 1000000;\n                timeUnit = \"s\";\n            } else {\n                timeValue = microseconds / 1000000000;\n                timeUnit = \"s\";\n            }\n            \n            System.out.printf(\"%2d waypoints: %,15d paths = %8.2f %s\\n\", \n                            waypoints, pathCount, timeValue, timeUnit);\n        }\n        \n        // Calculate factorial table\n        System.out.println(\"\\n📊 Factorial Reference Table:\");\n        System.out.println(\"n\\t|\\tn!\\t\\t|\\tRobot Application\");\n        System.out.println(\"--------|---------------|---------------------------\");\n        \n        long currentFactorial = 1;\n        for (int i = 1; i <= 10; i++) {\n            currentFactorial *= i;\n            \n            String application;\n            if (i <= 3) {\n                application = \"Simple path\";\n            } else if (i <= 5) {\n                application = \"Basic optimization\";\n            } else if (i <= 7) {\n                application = \"Heuristic needed\";\n            } else {\n                application = \"Advanced algorithms\";\n            }\n            \n            System.out.printf(\"%d\\t|\\t%,12d\\t|\\t%s\\n\", i, currentFactorial, application);\n        }\n        \n        System.out.println(\"\\nFactorial calculation complete!\");\n    }\n}"},{"task":"Create a motor test sequence for all robot motors","content":"public class MotorTestSequence {\n    public static void main(String[] args) {\n        // Robot motor configuration\n        String[] motorNames = {\n            \"frontLeft\", \"frontRight\", \"backLeft\", \"backRight\", \n            \"arm\", \"intake\", \"launcher\", \"elevator\"\n        };\n        \n        double[] testSpeeds = {0.25, 0.5, 0.75, 1.0};\n        int testDurationMs = 1000; // 1 second per speed\n        \n        System.out.println(\"=== Robot Motor Test Sequence ===\");\n        System.out.println(\"Motors to test: \" + motorNames.length);\n        System.out.println(\"Test speeds: \" + testSpeeds.length);\n        System.out.println(\"Duration per speed: \" + testDurationMs + \"ms\");\n        \n        int totalTests = motorNames.length * testSpeeds.length;\n        int testCount = 0;\n        \n        System.out.println(\"Total tests: \" + totalTests);\n        System.out.println(\"\\nStarting motor test sequence...\\n\");\n        \n        // Test each motor at each speed\n        for (int motorIndex = 0; motorIndex < motorNames.length; motorIndex++) {\n            String motorName = motorNames[motorIndex];\n            \n            System.out.println(\"=== Testing Motor: \" + motorName.toUpperCase() + \" ===\");\n            System.out.println(\"Motor \" + (motorIndex + 1) + \" of \" + motorNames.length);\n            \n            // Test each speed for this motor\n            for (int speedIndex = 0; speedIndex < testSpeeds.length; speedIndex++) {\n                testCount++;\n                double speed = testSpeeds[speedIndex];\n                int speedPercent = (int)(speed * 100);\n                \n                System.out.printf(\"\\nTest %d/%d: %s at %d%% power\\n\", \n                                testCount, totalTests, motorName, speedPercent);\n                \n                // Simulate motor startup\n                System.out.print(\"Starting motor\");\n                for (int dots = 0; dots < 3; dots++) {\n                    try {\n                        Thread.sleep(200);\n                    } catch (InterruptedException e) {\n                        break;\n                    }\n                    System.out.print(\".\");\n                }\n                System.out.println(\" ✅ Running\");\n                \n                // Simulate motor running\n                System.out.print(\"Progress: [\");\n                int progressBarLength = 20;\n                \n                for (int progress = 0; progress <= progressBarLength; progress++) {\n                    // Update progress bar\n                    System.out.print(\"\\rProgress: [\");\n                    for (int i = 0; i < progressBarLength; i++) {\n                        if (i < progress) {\n                            System.out.print(\"█\");\n                        } else {\n                            System.out.print(\"░\");\n                        }\n                    }\n                    \n                    int percent = (progress * 100) / progressBarLength;\n                    System.out.printf(\"] %3d%% - %s at %d%% power\", \n                                    percent, motorName, speedPercent);\n                    \n                    try {\n                        Thread.sleep(testDurationMs / progressBarLength);\n                    } catch (InterruptedException e) {\n                        break;\n                    }\n                }\n                \n                System.out.println(\"\\n🛑 Motor stopped\");\n                \n                // Simulate motor analysis\n                double currentDraw = 0.5 + (speed * 2.0) + (Math.random() * 0.3);\n                double efficiency = 85 + (Math.random() * 10); // 85-95%\n                boolean testPassed = currentDraw < 3.0 && efficiency > 80;\n                \n                System.out.printf(\"   Current draw: %.2f A\\n\", currentDraw);\n                System.out.printf(\"   Efficiency: %.1f%%\\n\", efficiency);\n                System.out.println(\"   Status: \" + (testPassed ? \"✅ PASS\" : \"❌ FAIL\"));\n                \n                if (!testPassed) {\n                    System.out.println(\"   ⚠️ Motor may need maintenance\");\n                }\n                \n                // Cool down between tests\n                if (speedIndex < testSpeeds.length - 1) {\n                    System.out.print(\"   Cooling down\");\n                    for (int i = 0; i < 2; i++) {\n                        try {\n                            Thread.sleep(150);\n                        } catch (InterruptedException e) {\n                            break;\n                        }\n                        System.out.print(\".\");\n                    }\n                    System.out.println();\n                }\n            }\n            \n            System.out.println(\"\\n✅ \" + motorName.toUpperCase() + \" testing complete\");\n            \n            // Pause between motors\n            if (motorIndex < motorNames.length - 1) {\n                System.out.println(\"\\n\" + \"=\".repeat(50));\n                try {\n                    Thread.sleep(500);\n                } catch (InterruptedException e) {\n                    break;\n                }\n            }\n        }\n        \n        // Final summary\n        System.out.println(\"\\n=== Motor Test Sequence Complete ===\");\n        System.out.println(\"Motors tested: \" + motorNames.length);\n        System.out.println(\"Total tests performed: \" + testCount);\n        System.out.println(\"\\n🤖 All motors have been tested at multiple speeds.\");\n        System.out.println(\"📊 Review individual motor results above.\");\n        System.out.println(\"🔧 Address any failed tests before competition.\");\n        \n        // Summary table\n        System.out.println(\"\\n📋 Motor Test Summary:\");\n        for (int i = 0; i < motorNames.length; i++) {\n            String status = (Math.random() > 0.1) ? \"✅ PASS\" : \"❌ FAIL\";\n            System.out.printf(\"   %12s: %s\\n\", motorNames[i], status);\n        }\n        \n        System.out.println(\"\\nMotor testing system shutdown complete.\");\n    }\n}"}]}>
+
+- Create a multiplication table using nested for loops
+- Build a robot sensor calibration system with progress tracking
+- Calculate factorial using for loops
+- Create a motor test sequence for all robot motors
+
+```java
+Practice using for loops for different scenarios:
+```
+
+</ExerciseBox>
+

@@ -1,0 +1,112 @@
+---
+title: Linear vs Iterative OpModes
+lessonId: linear-vs-iterative-opmodes
+section: ftc
+group: onbot-java-setup
+groupLabel: OnBot Java Setup
+groupOrder: 2
+order: 4
+difficulty: beginner
+duration: 40 min
+description: ""
+---
+
+### OpMode Types in FTC
+
+FTC supports two main OpMode types: **LinearOpMode** and **Iterative OpMode**. Understanding the difference helps you choose the right structure for your code.
+
+
+
+A **LinearOpMode** runs your code from top to bottom, like a script. An **Iterative OpMode** runs your code in a loop, giving you more control over timing and state.
+
+
+
+See: [gm0: OpMode Types](https://gm0.org/en/latest/docs/software/getting-started/linear-opmode-vs-opmode.html)
+
+<RulesBox title="Key Differences" subtitle="LinearOpMode vs Iterative OpMode:">
+
+- LinearOpMode: Code runs sequentially, like a script.
+- Iterative OpMode: Code runs in repeated loop() calls.
+- LinearOpMode: Easier for beginners and autonomous routines.
+- Iterative OpMode: More control, better for advanced TeleOp.
+
+</RulesBox>
+
+### LinearOpMode Example
+
+```java
+@TeleOp(name = "LinearTeleOp")
+public class LinearTeleOp extends LinearOpMode {
+    private DcMotor leftDrive, rightDrive;
+
+    @Override
+    public void runOpMode() {
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        waitForStart();
+        while (opModeIsActive()) {
+            double leftPower = -gamepad1.left_stick_y;
+            double rightPower = -gamepad1.right_stick_y;
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+            telemetry.addData("Left Power", leftPower);
+            telemetry.addData("Right Power", rightPower);
+            telemetry.update();
+        }
+    }
+}
+```
+
+### Iterative OpMode Example
+
+```java
+@TeleOp(name = "IterativeTeleOp")
+public class IterativeTeleOp extends OpMode {
+    private DcMotor leftDrive, rightDrive;
+
+    @Override
+    public void init() {
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+    }
+
+    @Override
+    public void loop() {
+        double leftPower = -gamepad1.left_stick_y;
+        double rightPower = -gamepad1.right_stick_y;
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
+        telemetry.addData("Left Power", leftPower);
+        telemetry.addData("Right Power", rightPower);
+        telemetry.update();
+    }
+}
+```
+
+<RulesBox title="When to Use Each Type" subtitle="Choose based on your needs:">
+
+- Use LinearOpMode for simple autonomous or TeleOp routines.
+- Use Iterative OpMode for advanced TeleOp with state machines or timing.
+- Start with LinearOpMode if you are new to FTC.
+- Convert to Iterative OpMode as your code grows more complex.
+
+</RulesBox>
+
+### Converting Between Types
+
+You can convert a LinearOpMode to an Iterative OpMode by moving your logic into the `loop()` method and managing state with variables. For example, if you have a sequence of actions in LinearOpMode, you can use a state variable in Iterative OpMode to step through them.
+
+### Further Reading & Resources
+
+- [FTC SDK Example OpModes](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/master/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
+
+<LinkGrid links={[{"label":"Telemetry Logging","url":"telemetry-logging"},{"label":"Basic Robot Control","url":"basic-robot-control"}]} title="Next Steps" section="ftc" />
+
+<ExerciseBox title="Practice: OpMode Types" description="Try these to reinforce your understanding:" answers={[{"task":"Write a LinearOpMode that drives a motor","content":"import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@TeleOp(name = \"LinearMotorControl\")\npublic class LinearMotorControl extends LinearOpMode {\n    private DcMotor driveMotor;\n\n    @Override\n    public void runOpMode() {\n        // Initialize hardware\n        driveMotor = hardwareMap.get(DcMotor.class, \"drive_motor\");\n        \n        // Show initialization status\n        telemetry.addData(\"Status\", \"Initialized\");\n        telemetry.update();\n        \n        // Wait for game to start\n        waitForStart();\n        \n        // Main loop - runs sequentially\n        while (opModeIsActive()) {\n            // Read gamepad input\n            double power = -gamepad1.left_stick_y;\n            \n            // Drive motor\n            driveMotor.setPower(power);\n            \n            // Show telemetry\n            telemetry.addData(\"Motor Power\", power);\n            telemetry.addData(\"Status\", \"Running\");\n            telemetry.update();\n        }\n    }\n}"},{"task":"Convert it to an Iterative OpMode","content":"import com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\n@TeleOp(name = \"IterativeMotorControl\")\npublic class IterativeMotorControl extends OpMode {\n    private DcMotor driveMotor;\n\n    @Override\n    public void init() {\n        // Initialize hardware - called once at start\n        driveMotor = hardwareMap.get(DcMotor.class, \"drive_motor\");\n        \n        // Show initialization status\n        telemetry.addData(\"Status\", \"Initialized\");\n        telemetry.update();\n    }\n\n    @Override\n    public void loop() {\n        // Main loop - called repeatedly\n        // Read gamepad input\n        double power = -gamepad1.left_stick_y;\n        \n        // Drive motor\n        driveMotor.setPower(power);\n        \n        // Show telemetry\n        telemetry.addData(\"Motor Power\", power);\n        telemetry.addData(\"Status\", \"Running\");\n        telemetry.update();\n    }\n}"},{"task":"Compare the structure and behavior of both types","content":"// Key Differences:\n//\n// LINEAR OPMODE:\n// - Extends LinearOpMode\n// - All code in runOpMode() method\n// - Runs sequentially like a script\n// - Can use waitForStart() and sleep()\n// - Good for beginners and simple routines\n//\n// ITERATIVE OPMODE:\n// - Extends OpMode\n// - Separate init() and loop() methods\n// - init() runs once, loop() runs repeatedly\n// - More control over timing and state\n// - Better for advanced TeleOp and state machines\n//\n// Both achieve the same result but with different structures!"}]}>
+
+- Write a LinearOpMode that drives a motor.
+- Convert it to an Iterative OpMode.
+- Compare the structure and behavior of both types.
+
+</ExerciseBox>
+

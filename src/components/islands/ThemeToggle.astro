@@ -1,0 +1,47 @@
+---
+---
+
+<button class="theme-toggle" type="button" data-theme-toggle>
+  <div class="visually-hidden">Toggle Light / Dark theme</div>
+  <i class="fa-solid fa-moon theme-icon" data-theme-icon></i>
+</button>
+
+<script>
+  const STORAGE_KEY = 'mantik-theme';
+
+  function getPreferredTheme(): string {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme: string) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+    const icon = document.querySelector('[data-theme-icon]');
+    if (icon) {
+      icon.className =
+        theme === 'dark' ? 'fa-solid fa-sun theme-icon' : 'fa-solid fa-moon theme-icon';
+    }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#1a1a1a' : '#ffffff');
+  }
+
+  function initTheme() {
+    applyTheme(getPreferredTheme());
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+      if (btn.getAttribute('data-initialized')) return;
+      btn.setAttribute('data-initialized', 'true');
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') ?? 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(STORAGE_KEY, next);
+        applyTheme(next);
+      });
+    });
+  }
+
+  initTheme();
+  document.addEventListener('astro:page-load', initTheme);
+</script>

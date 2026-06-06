@@ -1,0 +1,86 @@
+---
+title: "AdvantageScope: Data Logging and Analysis"
+lessonId: advantagescope
+section: frc
+group: frc-external-tools
+groupLabel: External Tools
+groupOrder: 9
+order: 3
+difficulty: intermediate
+duration: 35 min
+description: ""
+---
+
+### What is AdvantageScope?
+
+AdvantageScope is a robot data visualization tool focused on analysis. Unlike a dashboard (Shuffleboard) which is for driver control, AdvantageScope is for the developer. It allows you to view log files (WPILOG, RLOG, Hoot) or live data (NT4) with powerful visualizations like 3D field views, graphing, and synchronization with match video.
+
+
+
+It is the companion tool to [AdvantageKit](https://docs.advantagekit.org/) but works with any WPILib project that logs data.
+
+
+
+Learn more: [AdvantageScope Documentation](https://docs.advantagescope.org) | [Download AdvantageScope](https://github.com/Mechanical-Advantage/AdvantageScope/releases)
+
+### Key Features
+
+**1. Multi-Format Support:** Opens WPILib data logs (.wpilog), AdvantageKit logs (.rlog), CTRE logs (.hoot), and Driver Station logs (.dslog). ([Loading Data Documentation](https://docs.advantagescope.org/overview/log-files/))
+
+
+
+**2. 3D Field Visualization:** Visualize your robot's pose, mechanism states (arm angles, elevator heights), and trajectory in full 3D. This is critical for debugging odometry and autonomous paths. ([3D Field View Documentation](https://docs.advantagescope.org/tab-reference/3d-field/))
+
+
+
+**3. Video Synchronization:** If you have match video, you can sync it with the log data. Clicking a point on the graph jumps the video to that exact moment. ([Video Sync Documentation](https://docs.advantagescope.org/tab-reference/video#automatic-synchronization))
+
+
+
+**4. Swerve Visualization:** Dedicated views for swerve module states (vectors) to debug drive issues. ([Swerve View Documentation](https://docs.advantagescope.org/tab-reference/swerve/))
+
+
+
+**5. Console Log Review:** Filter and search through robot console output synchronized with the data. ([Console View Documentation](https://docs.advantagescope.org/tab-reference/console/))
+
+### Using AdvantageScope with WPILib
+
+To get the most out of AdvantageScope, you should use ["DataLogManager"](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DataLogManager.html) in your WPILib code to record data to a USB stick or the RIO's internal storage. ([Recording Data Documentation](https://docs.advantagescope.org/overview/live-sources/))
+
+
+
+**Structured Data:** AdvantageScope supports the new WPILib "Struct" serialization. This allows you to log complex objects like "Pose2d", "Translation2d", or custom classes efficiently, and AdvantageScope will automatically recognize them as 3D objects or vectors. ([Structured Data Documentation](https://docs.advantagescope.org/tab-reference/line-graph/units/#-struct-units))
+
+### Logging for Visualization
+
+```java
+// In your robot code (RobotPeriodic or Subsystem)
+
+// Log a Pose2d for 3D field visualization
+// See: https://docs.advantagescope.org/tab-reference/3d-field/
+Logger.recordOutput("Odometry/RobotPose", m_drive.getPose());
+
+// Log a Trajectory to see the path
+Logger.recordOutput("Auto/Trajectory", m_trajectory);
+
+// Log mechanism states (e.g. Arm Angle)
+Logger.recordOutput("Arm/AngleDegrees", m_arm.getAngle());
+
+// Log Swerve Module States for vector visualization
+// See: https://docs.advantagescope.org/tab-reference/swerve/
+Logger.recordOutput("Swerve/ModuleStates", m_drive.getModuleStates());
+```
+
+<RulesBox title="Analysis Workflow" subtitle="How to debug effectively:">
+
+- Download the log file from the robot after a run.
+- Open in AdvantageScope. ([Loading Data Guide](https://docs.advantagescope.org/overview/log-files/))
+- Drag 'Odometry/RobotPose' to the '3D Field' tab to verify location. ([3D Field View Guide](https://docs.advantagescope.org/tab-reference/3d-field/))
+- Drag target vs actual values (e.g. 'Arm/Target' vs 'Arm/Actual') to a 'Line Graph' to check PID tuning. ([Graph View Guide](https://docs.advantagescope.org/tab-reference/line-graph/))
+- If investigating a crash/error, look at the 'Console' tab. ([Console View Guide](https://docs.advantagescope.org/tab-reference/console/))
+- Sync match video if available to correlate physical behavior with data. ([Video Sync Guide](https://docs.advantagescope.org/tab-reference/video#automatic-synchronization))
+
+</RulesBox>
+
+<LinkGrid links={[{"label":"AdvantageKit","id":"advantagekit"},{"label":"Pose Estimation","id":"pose-estimation-intro"},{"label":"Download AdvantageScope","url":"https://github.com/Mechanical-Advantage/AdvantageScope/releases"},{"label":"AdvantageScope Documentation","url":"https://docs.advantagescope.org"}]} title="Resources" section="frc" />
+

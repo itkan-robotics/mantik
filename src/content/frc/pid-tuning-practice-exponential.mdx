@@ -1,0 +1,105 @@
+---
+title: PID Tuning Practice - Exponential Motion Profiling
+lessonId: pid-tuning-practice-exponential
+section: frc
+group: frc-pid-tuning-practice
+groupLabel: PID Tuning Practice
+groupOrder: 6
+order: 6
+difficulty: intermediate
+duration: 55 min
+description: ""
+---
+
+### Overview
+
+This guide covers tuning PID controllers with exponential motion profiling for elevator mechanisms. You'll learn how to tune feedforward constants (kG, kV, kA) and PID constants (kP, kD) to achieve smooth, accurate control. This tutorial uses YAMS simulation but the techniques apply to physical hardware tuning with Phoenix Tuner or REV Hardware Client.
+
+### Video Tutorial
+
+Watch this video for a complete walkthrough of elevator PID tuning with exponential motion profiling:
+
+
+
+### Prerequisites
+
+Before starting, ensure you have:
+
+
+
+• Practice repository cloned and open in VS Code
+
+• Simulation running (Sim GUI)
+
+• Elastic dashboard configured with live tuning, tuning widgets, and position/velocity graphs
+
+• Understanding of basic mechanism setup
+
+<StepsBox title="Tuning Steps">
+
+1. Initialize all PID and feedforward values to zero. This gives you a clean baseline to work from. You'll gradually increase values during the tuning process.
+2. Enable teleoperated mode and live tuning. In the Sim GUI, press "Teleoperated" to enable robot control. The orange bar in the mechanism visualization is what you use to control the robot. In Elastic, click the "Live Tuning" button - it should turn blue when active. Blue means live tuning is enabled and you can start adjusting values.
+3. Tune kG (gravity feedforward). kG is the force used to counteract gravity. The goal is the smallest kG value that keeps the position completely stable:
+   - Set the setpoint to an unreasonably high value (e.g., 10 meters for a 7-foot elevator)
+   - Watch the position graph (blue line)
+   - Gradually increase kG (start with 0.25, then increase)
+   - When you see the position bar start moving up, that value is too high
+   - Set kG to zero to bring it back down
+   - Use binary search: find the midpoint between the last good value and the too-high value
+   - Continue refining until the position stays flat
+   - Aim for 3-5 decimal places of precision (e.g., 2.495)
+4. Tune kV (velocity feedforward). kV is in volts per rotations per second. It tells the controller how much voltage is needed per unit of velocity:
+   - Turn off live tuning temporarily (it will turn gray when you press a joystick button)
+   - Press 'C' on your keyboard to set duty cycle to a certain value (adjust if needed, e.g., 0.25)
+   - Watch the velocity graph and note the maximum velocity value (e.g., 27 rotations per second)
+   - Note the voltage value (e.g., 3.552 volts)
+   - Calculate: kV = voltage / max_velocity
+   - Copy the first 5 digits of the result
+   - Publish that value as your kV
+5. Tune kA (acceleration feedforward). kA accounts for how quickly the mechanism can change velocity:
+   - Set the setpoint back down
+   - Watch the velocity graph
+   - Measure the time it takes for the velocity to reach its maximum (e.g., one section = 0.1 seconds)
+   - Calculate: kA = kV / time_to_ramp_up
+   - Copy the first 4-5 digits
+   - Publish that value as your kA
+6. Tune kP (proportional). With feedforward tuned, now tune proportional control. The goal is a straight, rectangular motion profile. Important: Avoid touching joystick buttons while tuning - this disables live tuning (turns it gray):
+   - Turn live tuning back on (make sure it's blue)
+   - Set position to a reasonable value (e.g., 1 meter)
+   - Start with kP = 0.1
+   - Watch the position graph - if it's not moving or moving very slowly, double kP
+   - Continue doubling (0.1 → 0.2 → 0.4 → 0.8 → 1.6 → 3.2, etc.)
+   - Watch for the position graph to become straighter (less curved)
+   - When you see oscillation or overshoot, you've gone too high
+   - Find the midpoint between the last good value and the oscillating value
+7. Refine kP to eliminate oscillation. If you see oscillation (overshoot and correction), the goal is smooth motion without overshoot or oscillation:
+   - You've doubled kP too high (e.g., went from 2 to 4 and now it oscillates)
+   - Find the midpoint (e.g., 3) between the last good value and the oscillating value
+   - Test that value
+   - Continue refining until oscillation is minimal
+   - The oscillation should be within "one box" on your graph
+   - Watch both upward and downward movement - oscillation often appears more on the way down
+8. Tune kD (derivative). Derivative control reduces oscillation. kD is powerful but must be tuned carefully - don't be too aggressive:
+   - Start with a very low kD value (e.g., 0.05, or even 0.005 for first-time tuning)
+   - Watch the position graph for oscillation reduction
+   - Gradually increase kD by doubling (0.05 → 0.1 → 0.2, etc.)
+   - Observe how oscillation decreases
+   - Stop when oscillation is minimal
+   - Warning: Too high kD causes jittery, unstable behavior (like the "clack" noise in swerve drive)
+   - The mechanism should be smooth and steady, not jittery
+9. Fine-tune all values together. Once you have baseline values, fine-tune them together. Much of this is by feel and experience. Practice in simulation before tuning physical hardware to avoid damaging mechanisms:
+   - Test movement to different positions
+   - Make small adjustments to kP and kD
+   - Watch for the "box" shape in the position graph - sharp up, flat across, sharp down
+   - Avoid slow, curved motion
+   - Avoid oscillation and jitter
+   - The motion should look rectangular, not curved or oscillating
+
+</StepsBox>
+
+### Important Notes
+
+Practice in simulation before tuning physical hardware. Oscillation on a real robot can cause mechanisms to move at dangerous speeds (20-30 ft/s) and risk damage.
+
+<LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Practice Repository","url":"https://github.com/itkan-robotics/mantik-pid-practice"}]} title="Resources" section="frc" />
+

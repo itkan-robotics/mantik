@@ -1,0 +1,57 @@
+---
+title: Advanced Git Concepts
+lessonId: advanced-git
+section: java
+group: version-control
+groupLabel: "Version Control with Git & GitHub"
+groupOrder: 5
+order: 10
+difficulty: advanced
+duration: 30 min
+description: ""
+---
+
+### Advanced Version Control Techniques
+
+Advanced Git concepts help teams maintain clean history and handle complex scenarios. This lesson covers undoing changes, stashing, rebasing, and other advanced techniques useful for experienced users.
+
+### Key Concepts
+
+Git reset allows you to undo commits and changes at different levels, from keeping changes staged to completely discarding them. Git revert creates new commits that undo previous changes, which is safer for shared repositories. Stashing temporarily saves work without committing, allowing you to switch contexts quickly. Rebasing rewrites commit history for cleaner logs by moving commits to a new base. These advanced techniques require careful use to avoid data loss, so it's important to understand when and how to use them properly.
+
+### Undoing Changes
+
+Use these commands to undo changes safely:
+
+
+
+```java
+git reset --soft HEAD~1    # Undo commit, keep changes staged
+git reset --mixed HEAD~1   # Undo commit, unstage changes
+git reset --hard HEAD~1     # Undo commit, discard all changes
+git revert HEAD            # Create new commit that undoes previous
+git checkout -- filename   # Discard changes in working directory
+```
+
+### Stashing Work
+
+`Git stash` allows you to save work without committing, which is useful when you need to switch to a different task temporarily. Use `git stash` to save your current work, `git stash pop` to apply and remove the most recent stash, and `git stash list` to view all your stashes. You can apply a specific stash without removing it using `git stash apply`, and remove individual stashes with `git stash drop`. Stashing is particularly useful when you need to pull the latest changes but have uncommitted work that isn't ready to commit yet.
+
+### Rebasing for Clean History
+
+Git rebase rewrites commit history by moving commits to a new base, creating a linear history that's easier to follow. Interactive rebasing with `git rebase -i` allows you to squash commits, reorder them, or edit commit messages during the rebase process. Squashing commits combines multiple small commits into one larger commit, while reordering allows you to organize your commit history logically. You can also edit commit messages during rebase to improve clarity and consistency.
+
+### Tags and Releases
+
+Git tags mark important commits such as competition versions or major milestones in your robot's development. Annotated tags created with `git tag -a v1.0 -m "Competition ready"` include additional metadata and are recommended for important releases. GitHub releases can be created from tags, providing a way to package and distribute specific versions of your robot code. Version your robot code for different competitions to maintain clear separation between competition-ready code and development work. Document release notes for each version to help team members understand what changed and why.
+
+### Advanced Branching Strategies
+
+Git flow is a branching strategy that uses feature, develop, release, and hotfix branches to organize development work systematically. Trunk-based development works directly on the main branch, which is simpler but requires more discipline. Feature flags allow for gradual rollouts of new features by enabling or disabling code paths without deploying new versions. Environment-specific branches like dev, staging, and prod help manage code across different deployment environments. Choose your branching strategy based on team size, experience level, and the complexity of your project.
+
+### Mastering Advanced Git for Robotics Teams
+
+Advanced Git techniques become valuable as robotics teams grow more experienced and their projects become more complex. Understanding when to use reset versus revert, how to manage work with stashing, and when to rebase versus merge helps teams maintain clean, professional repositories. These skills are particularly important for teams that work on multiple features simultaneously or need to maintain different versions of their robot code for different competitions. The key is to choose the right tool for each situation while always prioritizing code safety and team collaboration.
+
+<LinkGrid links={[{"label":"Git Documentation: Advanced Topics","url":"https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified"},{"label":"GitHub Guides: Git Handbook","url":"https://guides.github.com/introduction/git-handbook/"},{"label":"Git Flow Workflow","url":"https://nvie.com/posts/a-successful-git-branching-model/"},{"label":"Git Rebase Tutorial","url":"https://git-scm.com/book/en/v2/Git-Branching-Rebasing"}]} title="Further Reading Resources" section="java" />
+
