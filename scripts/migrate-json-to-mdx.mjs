@@ -375,7 +375,7 @@ function migrateSectionConfig(configFile, section) {
       const lesson = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
       const body = convertSections(lesson.sections, section);
 
-      writeMdx(path.join(CONTENT, section, `${item.id}.mdx`), {
+      writeMdx(path.join(CONTENT, section, group.id, `${item.id}.mdx`), {
         title: lesson.title ?? item.label,
         lessonId: item.id,
         section,
@@ -445,7 +445,7 @@ function migrateOrphanJson() {
 
         const lesson = JSON.parse(fs.readFileSync(full, 'utf8'));
         const id = lesson.id ?? path.basename(entry.name, '.json');
-        const outPath = path.join(CONTENT, section, `${id}.mdx`);
+        const outPath = path.join(CONTENT, section, 'extra', `${id}.mdx`);
         if (fs.existsSync(outPath)) continue;
 
         const body = convertSections(lesson.sections, section);
