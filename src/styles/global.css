@@ -1841,6 +1841,10 @@ a:hover {
   .bottom-of-page .left-details {
     font-size: var(--font-size--small);
   }
+
+  .bottom-of-page .right-details {
+    font-size: var(--font-size--small);
+  }
   
   /* Overlay for mobile sidebar */
   .sidebar-toggle {
