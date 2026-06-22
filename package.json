@@ -31,6 +31,12 @@
     "uplot": "^1.6.32",
     "zod": "^3.25.67"
   },
+  "overrides": {
+    "dompurify": "^3.4.11",
+    "monaco-editor": {
+      "dompurify": "^3.4.11"
+    }
+  },
   "devDependencies": {
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
