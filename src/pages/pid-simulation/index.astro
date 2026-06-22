@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PidSimApp from '@/components/pid-sim/PidSimApp';
+import '@/styles/pid-sim.css';
+---
+
+<BaseLayout
+  title="PID Simulation"
+  description="Practice FRC elevator PID tuning in your browser with WPILib-style code, Elastic-style live tuning, and AdvantageScope-style graphs."
+  currentPath="/pid-simulation"
+  showSidebar={false}
+>
+  <PidSimApp client:only="react" />
+</BaseLayout>

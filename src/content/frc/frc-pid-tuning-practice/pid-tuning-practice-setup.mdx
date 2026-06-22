@@ -15,6 +15,17 @@ description: ""
 
 This guide covers setting up the PID tuning practice repository using YAMS simulation. YAMS provides better simulation than the default WPILib examples, which can be buggy and may not always load. The setup includes configuring the simulation, Elastic, and AdvantageScope for live tuning.
 
+### Browser or local?
+
+<RulesBox title="Choose your path">
+
+- **Tier 1 — Browser:** Open [PID Simulation](/pid-simulation) on Mantik. No install. Use for classroom labs, Chromebooks, or a first pass at kG/kP tuning. kG values transfer closely; kP uses WPILib units (V/m), not SparkMax/Phoenix slider numbers from the videos.
+- **Tier 2 — Local (this lesson):** Clone [mantik-pid-practice](https://github.com/itkan-robotics/mantik-pid-practice), install WPILib, and run full YAMS simulation with Elastic and AdvantageScope. Use when your team has a dev machine and wants the same tools as the lesson videos.
+
+Both paths teach the same kG → kP workflow. Start in the browser if setup time or IT policy is a constraint; graduate to Tier 2 before tuning on a real robot.
+
+</RulesBox>
+
 ### Video Tutorial
 
 Watch this video for a complete walkthrough of the setup process:
@@ -70,5 +81,5 @@ Before starting, ensure you have:
 
 </RulesBox>
 
-<LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Elastic Dashboard","id":"elastic-basics"},{"label":"AdvantageScope","id":"advantagescope"},{"label":"GitHub Repository","url":"https://github.com/itkan-robotics/mantik-pid-practice"}]} title="Resources" section="frc" />
+<LinkGrid links={[{"label":"Try in browser","url":"/pid-simulation"},{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Elastic Dashboard","id":"elastic-basics"},{"label":"AdvantageScope","id":"advantagescope"},{"label":"GitHub Repository","url":"https://github.com/itkan-robotics/mantik-pid-practice"}]} title="Resources" section="frc" />
 

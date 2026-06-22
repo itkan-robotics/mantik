@@ -67,6 +67,11 @@
   to = "/comp/:splat"
   status = 301
 
+[[redirects]]
+  from = "/pid-simulation/"
+  to = "/pid-simulation"
+  status = 301
+
 # Decap CMS
 [[redirects]]
   from = "/admin"

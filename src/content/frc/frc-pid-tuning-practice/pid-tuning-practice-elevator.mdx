@@ -63,9 +63,17 @@ Before starting this lesson, you should have:
    - Avoid slow curves or gradual taper
 7. Watch the mechanism's motion.
 8. Continue increasing P until the response is fast and clean.
-9. Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6-51.2 worked well for the simulated elevator, but your actual mechanism may need different values.
+9. Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6–51.2 worked well for the YAMS simulated elevator on SparkMax tuners — those are vendor-scaled units, not WPILib V/m. The [browser PID Simulation](/pid-simulation) uses WPILib-native kP (often ~0.1–5 on this plant); your physical mechanism may need different values on each tool.
 
 </StepsBox>
+
+<RulesBox title="Browser vs desktop tuning units">
+
+- **kG** (gravity feedforward) is in volts on both the browser sim and vendor tuners — values like ~0.61 transfer closely.
+- **kP** scale depends on the tool: browser sim and WPILib use volts per meter (V/m); SparkMax and Phoenix tuners use vendor-specific scales (lesson videos may show ~25–50).
+- Use the same workflow (binary search kG, double kP) on every tool — do not copy kP numbers from the video into the browser sim without retuning.
+
+</RulesBox>
 
 <RulesBox title="Elevator Tuning Summary" subtitle="The process:">
 
@@ -113,5 +121,5 @@ The same principles apply when tuning with physical hardware using Phoenix Tuner
 
 The tools may look different, but the techniques and principles remain the same.
 
-<LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Arm","id":"pid-tuning-practice-arm"},{"label":"Elevator Example","id":"elevator-example"}]} title="Resources" section="frc" />
+<LinkGrid links={[{"label":"Try in browser","url":"/pid-simulation"},{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Arm","id":"pid-tuning-practice-arm"},{"label":"Elevator Example","id":"elevator-example"}]} title="Resources" section="frc" />
 

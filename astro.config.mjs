@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'url';
 import { pagefindDevPlugin } from './scripts/pagefind-dev-plugin.mjs';
@@ -13,6 +14,7 @@ export default defineConfig({
   trailingSlash: 'never',
   integrations: [
     mdx(),
+    react(),
     sitemap({
       filter: (page) => !page.includes('/admin'),
     }),
@@ -33,6 +35,9 @@ export default defineConfig({
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
+    },
+    optimizeDeps: {
+      include: ['@monaco-editor/react', 'monaco-editor'],
     },
     ssr: {
       noExternal: ['pagefind'],

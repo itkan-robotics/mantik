@@ -1,5 +1,5 @@
 ---
-import { sections } from '@/config/navigation';
+import { sections, appRoutes } from '@/config/navigation';
 import ThemeToggle from '@/components/islands/ThemeToggle.astro';
 
 interface Props {
@@ -30,6 +30,14 @@ function isActive(path: string): boolean {
           class:list={['header-nav-link', { active: isActive(section.path) }]}
         >
           {section.label}
+        </a>
+      ))}
+      {appRoutes.map((route) => (
+        <a
+          href={route.path}
+          class:list={['header-nav-link', { active: isActive(route.path) }]}
+        >
+          {route.label}
         </a>
       ))}
     </nav>

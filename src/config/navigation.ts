@@ -1,11 +1,19 @@
 export type SectionId = 'java' | 'ftc' | 'frc' | 'comp';
 
+export type AppRouteId = 'pid-simulation';
+
 export interface NavSection {
   id: SectionId;
   label: string;
   path: string;
   collection: SectionId;
   underConstruction?: boolean;
+}
+
+export interface AppRoute {
+  id: AppRouteId;
+  label: string;
+  path: string;
 }
 
 export const sections: NavSection[] = [
@@ -19,6 +27,10 @@ export const sections: NavSection[] = [
     collection: 'comp',
     underConstruction: true,
   },
+];
+
+export const appRoutes: AppRoute[] = [
+  { id: 'pid-simulation', label: 'PID Simulation', path: '/pid-simulation' },
 ];
 
 export const siteConfig = {
