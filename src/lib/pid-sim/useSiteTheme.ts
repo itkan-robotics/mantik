@@ -1,26 +1,5 @@
-import { useEffect, useState } from 'react';
-
-export type SiteTheme = 'light' | 'dark';
-
-export function getSiteTheme(): SiteTheme {
-  if (typeof document === 'undefined') return 'light';
-  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
-
-/** Subscribes to `html[data-theme]` changes from the global theme toggle. */
-export function useSiteTheme(): SiteTheme {
-  const [theme, setTheme] = useState<SiteTheme>(getSiteTheme);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const sync = () => setTheme(getSiteTheme());
-    const observer = new MutationObserver(sync);
-    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
-
-  return theme;
-}
+export type { SiteTheme } from '@/lib/useSiteTheme';
+export { getSiteTheme, useSiteTheme } from '@/lib/useSiteTheme';
 
 export interface PidSimPalette {
   canvasBg: string;
@@ -34,7 +13,7 @@ export interface PidSimPalette {
   pivotStroke: string;
 }
 
-export const PID_SIM_PALETTES: Record<SiteTheme, PidSimPalette> = {
+export const PID_SIM_PALETTES: Record<'light' | 'dark', PidSimPalette> = {
   light: {
     canvasBg: '#f5f5f5',
     chartBg: '#ffffff',
@@ -59,6 +38,6 @@ export const PID_SIM_PALETTES: Record<SiteTheme, PidSimPalette> = {
   },
 };
 
-export function getPidSimPalette(theme: SiteTheme): PidSimPalette {
+export function getPidSimPalette(theme: 'light' | 'dark'): PidSimPalette {
   return PID_SIM_PALETTES[theme];
 }

@@ -1,0 +1,980 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "id": "frc-training-tutorials-abdullah-s-tutorials",
+      "title": "Abdullah's Tutorials",
+      "description": "Abdullah's Tutorials — Training & Tutorials resource for FIRST programming.",
+      "url": "https://www.youtube.com/playlist?list=PLXZmTommNXyXFZJGnoJt82-evVkSwn-f8",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-advanced-debugging",
+      "title": "Advanced Debugging",
+      "description": "Advanced Debugging — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/advanced-debugging",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-advanced-movement-control-advanced-movement-control",
+      "title": "Advanced Movement Control",
+      "description": "Advanced Movement Control — Advanced Movement Control resource for FIRST programming.",
+      "url": "/ftc/advanced-movement-control",
+      "major": "ftc",
+      "minor": "Advanced Movement Control",
+      "tags": [
+        "ftc",
+        "advanced-movement-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-getting-started-advanced-programming-notes",
+      "title": "Advanced Programming Notes",
+      "description": "Advanced Programming Notes — Getting Started resource for FIRST programming.",
+      "url": "https://docs.google.com/document/d/1qKTuPB7myu2Kce0LdjYmC6BKeGXBA_ozFjc9v1Wgyd4/edit?tab=t.0",
+      "major": "frc",
+      "minor": "Getting Started",
+      "tags": [
+        "frc",
+        "getting-started"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-advantagekit-swerve-template",
+      "title": "AdvantageKit Swerve Template",
+      "description": "AdvantageKit Swerve Template — Autonomous resource for FIRST programming.",
+      "url": "https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template/",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-android-studio-official-site",
+      "title": "Android Studio Official Site",
+      "description": "Download Android Studio and access official documentation",
+      "url": "https://developer.android.com/studio",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-auto-align-tutorial",
+      "title": "Auto Align Tutorial",
+      "description": "Auto Align Tutorial — Vision (Limelight) resource for FIRST programming.",
+      "url": "https://www.chiefdelphi.com/t/from-zero-to-auto-align-to-reef-tutorial-how-to-simply-auto-align-to-the-reef/494478",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-autonomous-programming-video",
+      "title": "Autonomous Programming (Video)",
+      "description": "Autonomous Programming (Video) — Autonomous resource for FIRST programming.",
+      "url": "https://youtu.be/vPrRsnVQgf4",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-autonomous-programming-basic-autonomous-programming",
+      "title": "Basic Autonomous Programming",
+      "description": "Basic Autonomous Programming — Autonomous Programming resource for FIRST programming.",
+      "url": "/ftc/basic-autonomous-programming",
+      "major": "ftc",
+      "minor": "Autonomous Programming",
+      "tags": [
+        "ftc",
+        "autonomous-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-basic-debugging-techniques",
+      "title": "Basic Debugging Techniques",
+      "description": "Basic Debugging Techniques — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/basic-debugging-techniques",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-bovlb-tips-commands",
+      "title": "BoVLB Tips: Commands",
+      "description": "BoVLB Tips: Commands — Command-Based resource for FIRST programming.",
+      "url": "https://bovlb.github.io/frc-tips/commands/",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-cd-tuning-guide",
+      "title": "CD Tuning Guide",
+      "description": "CD Tuning Guide — Control Theory resource for FIRST programming.",
+      "url": "https://www.chiefdelphi.com/t/is-this-really-how-we-tune-pids/496054/13",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-code-organization",
+      "title": "Code Organization",
+      "description": "Code Organization — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/code-organization",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-code-review",
+      "title": "Code Review",
+      "description": "Code Review — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/code-review",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-code-version-control",
+      "title": "Code Version Control",
+      "description": "Code Version Control — Setup & Resources resource for FIRST programming.",
+      "url": "/ftc/code-version-control",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-topics-control-hub-expansion-hub",
+      "title": "Control Hub & Expansion Hub",
+      "description": "Hardware overview and configuration",
+      "url": "/ftc/control-hub-expansion-hub",
+      "major": "ftc",
+      "minor": "Setup Topics",
+      "tags": [
+        "ftc",
+        "setup-topics"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-ctre-control-requests",
+      "title": "CTRE Control Requests",
+      "description": "CTRE Control Requests — Control Theory resource for FIRST programming.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/control-requests-guide.html",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-ctre-documentation",
+      "title": "CTRE Documentation",
+      "description": "CTRE Documentation — Official Documentation resource for FIRST programming.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-path-planning-custom-path-following-algorithms",
+      "title": "Custom Path Following Algorithms",
+      "description": "Custom Path Following Algorithms — Path Planning resource for FIRST programming.",
+      "url": "/ftc/custom-path-following",
+      "major": "ftc",
+      "minor": "Path Planning",
+      "tags": [
+        "ftc",
+        "path-planning"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-robot-hardware-dc-motors-and-motor-control",
+      "title": "DC Motors and Motor Control",
+      "description": "DC Motors and Motor Control — Robot Hardware resource for FIRST programming.",
+      "url": "/ftc/motors",
+      "major": "ftc",
+      "minor": "Robot Hardware",
+      "tags": [
+        "ftc",
+        "robot-hardware"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-odometry-dead-wheel-encoders",
+      "title": "Dead Wheel Encoders",
+      "description": "Dead Wheel Encoders — Odometry resource for FIRST programming.",
+      "url": "/ftc/dead-wheel-encoders",
+      "major": "ftc",
+      "minor": "Odometry",
+      "tags": [
+        "ftc",
+        "odometry"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-debugging-strategies",
+      "title": "Debugging Strategies",
+      "description": "Debugging Strategies — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/debugging-strategies",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-deep-blue-robotics",
+      "title": "Deep Blue Robotics",
+      "description": "Deep Blue Robotics — Training & Tutorials resource for FIRST programming.",
+      "url": "https://deep-blue-training.readthedocs.io/en/latest/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-teleop-programming-drivebase-types",
+      "title": "Drivebase Types",
+      "description": "Drivebase Types — TeleOp Programming resource for FIRST programming.",
+      "url": "/ftc/drivebase-types",
+      "major": "ftc",
+      "minor": "TeleOp Programming",
+      "tags": [
+        "ftc",
+        "teleop-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-autonomous-programming-encoder-based-movement",
+      "title": "Encoder-Based Movement",
+      "description": "Encoder-Based Movement — Autonomous Programming resource for FIRST programming.",
+      "url": "/ftc/encoder-based-movement",
+      "major": "ftc",
+      "minor": "Autonomous Programming",
+      "tags": [
+        "ftc",
+        "autonomous-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-everybot-commands-intro",
+      "title": "EveryBot Commands Intro",
+      "description": "EveryBot Commands Intro — Command-Based resource for FIRST programming.",
+      "url": "https://robonauts-everybot.github.io/Everybot-Docs/manual/code/",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-exponential-profiles-yams",
+      "title": "Exponential Profiles (YAMS)",
+      "description": "Exponential Profiles (YAMS) — Advanced Tools resource for FIRST programming.",
+      "url": "https://yagsl.gitbook.io/yams/documentation/how-to/how-do-i-use-exponential-profiles",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-advanced-movement-control-external-libraries-in-ftc",
+      "title": "External Libraries in FTC",
+      "description": "External Libraries in FTC — Advanced Movement Control resource for FIRST programming.",
+      "url": "/ftc/external-libraries",
+      "major": "ftc",
+      "minor": "Advanced Movement Control",
+      "tags": [
+        "ftc",
+        "advanced-movement-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-frc-git-tutorial",
+      "title": "FRC Git Tutorial",
+      "description": "FRC Git Tutorial — Version Control resource for FIRST programming.",
+      "url": "https://docs.google.com/presentation/d/1u6U_jYswAvdTaLUHEQ-OCSHSVd32xVkV7TSDiXvAtFM/edit",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-android-studio-tutorial",
+      "title": "FTC Android Studio Tutorial",
+      "description": "Official step-by-step guide for setting up Android Studio",
+      "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/Android-Studio-Tutorial.html",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-opmode-documentation",
+      "title": "FTC OpMode Documentation",
+      "description": "Learn about OpMode types, lifecycle, and best practices",
+      "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/opmodes/index.html",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-topics-ftc-sdk-basics",
+      "title": "FTC SDK Basics",
+      "description": "SDK structure, OpMode framework, HardwareMap",
+      "url": "/ftc/ftc-sdk-basics",
+      "major": "ftc",
+      "minor": "Setup Topics",
+      "tags": [
+        "ftc",
+        "setup-topics"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-sdk-github-repository",
+      "title": "FTC SDK GitHub Repository",
+      "description": "Download the official FTC SDK and view source code",
+      "url": "https://github.com/FIRST-Tech-Challenge/FtcRobotController",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-ftcdashboard-comprehensive-guid",
+      "title": "FTCDashboard Comprehensive Guide",
+      "description": "FTCDashboard Comprehensive Guide — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/ftc-dashboard-comprehensive",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-teleop-programming-gamepad-controls",
+      "title": "Gamepad Controls",
+      "description": "Gamepad Controls — TeleOp Programming resource for FIRST programming.",
+      "url": "/ftc/gamepad-controls",
+      "major": "ftc",
+      "minor": "TeleOp Programming",
+      "tags": [
+        "ftc",
+        "teleop-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-odometry-gobilda-pinpoint",
+      "title": "Gobilda Pinpoint",
+      "description": "Gobilda Pinpoint — Odometry resource for FIRST programming.",
+      "url": "/ftc/gobilda-pinpoint",
+      "major": "ftc",
+      "minor": "Odometry",
+      "tags": [
+        "ftc",
+        "odometry"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-odometry-introduction-to-odometry",
+      "title": "Introduction to Odometry",
+      "description": "Introduction to Odometry — Odometry resource for FIRST programming.",
+      "url": "/ftc/intro-to-odometry",
+      "major": "ftc",
+      "minor": "Odometry",
+      "tags": [
+        "ftc",
+        "odometry"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-limelight-documentation",
+      "title": "Limelight Documentation",
+      "description": "Limelight Documentation — Official Documentation resource for FIRST programming.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-limelight-lib",
+      "title": "Limelight Lib",
+      "description": "Limelight Lib — Vision (Limelight) resource for FIRST programming.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/apis/limelight-lib",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-topics-linear-vs-iterative-opmodes",
+      "title": "Linear vs Iterative OpModes",
+      "description": "When to use each approach",
+      "url": "/ftc/linear-vs-iterative-opmodes",
+      "major": "ftc",
+      "minor": "Setup Topics",
+      "tags": [
+        "ftc",
+        "setup-topics"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-motion-magic",
+      "title": "Motion Magic®",
+      "description": "Motion Magic® — Control Theory resource for FIRST programming.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-advanced-movement-control-motion-profiling",
+      "title": "Motion Profiling",
+      "description": "Motion Profiling — Advanced Movement Control resource for FIRST programming.",
+      "url": "/ftc/motion-profiling",
+      "major": "ftc",
+      "minor": "Advanced Movement Control",
+      "tags": [
+        "ftc",
+        "advanced-movement-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-topics-opmode-structure",
+      "title": "OpMode Structure",
+      "description": "OpMode types, annotations, lifecycle",
+      "url": "/ftc/opmode-structure",
+      "major": "ftc",
+      "minor": "Setup Topics",
+      "tags": [
+        "ftc",
+        "setup-topics"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-pathplanner-docs",
+      "title": "PathPlanner Docs",
+      "description": "PathPlanner Docs — Official Documentation resource for FIRST programming.",
+      "url": "https://pathplanner.dev/home.html",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-pathplanner-getting-started",
+      "title": "PathPlanner Getting Started",
+      "description": "PathPlanner Getting Started — Autonomous resource for FIRST programming.",
+      "url": "https://pathplanner.dev/gui-getting-started.html",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-path-planning-pedropathing-vs-road-runner",
+      "title": "PedroPathing vs. Road Runner",
+      "description": "PedroPathing vs. Road Runner — Path Planning resource for FIRST programming.",
+      "url": "/ftc/path-planning-comparison",
+      "major": "ftc",
+      "minor": "Path Planning",
+      "tags": [
+        "ftc",
+        "path-planning"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-performance-optimization",
+      "title": "Performance Optimization",
+      "description": "Performance Optimization — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/performance-optimization",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-advanced-movement-control-pid-control",
+      "title": "PID Control",
+      "description": "PID Control — Advanced Movement Control resource for FIRST programming.",
+      "url": "/ftc/pid-control",
+      "major": "ftc",
+      "minor": "Advanced Movement Control",
+      "tags": [
+        "ftc",
+        "advanced-movement-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-pid-simulation",
+      "title": "PID Simulation",
+      "description": "PID Simulation — Control Theory resource for FIRST programming.",
+      "url": "https://docs.google.com/document/d/13aGnRN9Ko_cBKw3Ya9WvrPnz8qgh_PAKr5CRwKrjZMM/edit?tab=t.0",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-path-planning-poses-paths-and-theory",
+      "title": "Poses, Paths, and Theory",
+      "description": "Poses, Paths, and Theory — Path Planning resource for FIRST programming.",
+      "url": "/ftc/poses-paths-theory",
+      "major": "ftc",
+      "minor": "Path Planning",
+      "tags": [
+        "ftc",
+        "path-planning"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-getting-started-problem-solving-guide-frc-167",
+      "title": "Problem Solving Guide | FRC 167",
+      "description": "Problem Solving Guide | FRC 167 — Getting Started resource for FIRST programming.",
+      "url": "https://docs.iowacityrobotics.org/programming/frc-programming",
+      "major": "frc",
+      "minor": "Getting Started",
+      "tags": [
+        "frc",
+        "getting-started"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-pull-requests-overview",
+      "title": "Pull Requests Overview",
+      "description": "Pull Requests Overview — Version Control resource for FIRST programming.",
+      "url": "https://youtu.be/L_Ism2q3m6c",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-rev-robotics-api",
+      "title": "REV Robotics API",
+      "description": "REV Robotics API — Official Documentation resource for FIRST programming.",
+      "url": "https://codedocs.revrobotics.com/java/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-advanced-movement-control-robot-pid-control",
+      "title": "Robot PID Control",
+      "description": "Robot PID Control — Advanced Movement Control resource for FIRST programming.",
+      "url": "/ftc/robot-pid-control",
+      "major": "ftc",
+      "minor": "Advanced Movement Control",
+      "tags": [
+        "ftc",
+        "advanced-movement-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-robot-hardware-sensors",
+      "title": "Sensors",
+      "description": "Sensors — Robot Hardware resource for FIRST programming.",
+      "url": "/ftc/sensors",
+      "major": "ftc",
+      "minor": "Robot Hardware",
+      "tags": [
+        "ftc",
+        "robot-hardware"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-robot-hardware-servos",
+      "title": "Servos",
+      "description": "Servos — Robot Hardware resource for FIRST programming.",
+      "url": "/ftc/servos",
+      "major": "ftc",
+      "minor": "Robot Hardware",
+      "tags": [
+        "ftc",
+        "robot-hardware"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-simple-limelight-tutorial",
+      "title": "Simple Limelight Tutorial",
+      "description": "Simple Limelight Tutorial — Vision (Limelight) resource for FIRST programming.",
+      "url": "https://youtu.be/rKTio2rlF_o",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-software-development-best-pract",
+      "title": "Software Development Best Practices",
+      "description": "Software Development Best Practices — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/software-development-best-practices",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-spectrum-training",
+      "title": "Spectrum Training",
+      "description": "Spectrum Training — Training & Tutorials resource for FIRST programming.",
+      "url": "https://www.spectrum3847.org/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-state-machines",
+      "title": "State Machines",
+      "description": "State Machines — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/state-machines",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-state-machines-intro",
+      "title": "State Machines Intro",
+      "description": "State Machines Intro — Advanced Tools resource for FIRST programming.",
+      "url": "https://www.youtube.com/watch?v=Vr-79QyLZvI",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-teleop-programming-telemetry-feedback",
+      "title": "Telemetry & Feedback",
+      "description": "Telemetry & Feedback — TeleOp Programming resource for FIRST programming.",
+      "url": "/ftc/telemetry-feedback",
+      "major": "ftc",
+      "minor": "TeleOp Programming",
+      "tags": [
+        "ftc",
+        "teleop-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-topics-telemetry-logging",
+      "title": "Telemetry Logging",
+      "description": "Display data on Driver Station",
+      "url": "/ftc/telemetry-logging",
+      "major": "ftc",
+      "minor": "Setup Topics",
+      "tags": [
+        "ftc",
+        "setup-topics"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-teleop-programming-teleop-programming",
+      "title": "TeleOp Programming",
+      "description": "TeleOp Programming — TeleOp Programming resource for FIRST programming.",
+      "url": "/ftc/teleop-programming",
+      "major": "ftc",
+      "minor": "TeleOp Programming",
+      "tags": [
+        "ftc",
+        "teleop-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-teleop-programming-teleop-programming-exercises",
+      "title": "TeleOp Programming Exercises",
+      "description": "TeleOp Programming Exercises — TeleOp Programming resource for FIRST programming.",
+      "url": "/ftc/teleop-exercises",
+      "major": "ftc",
+      "minor": "TeleOp Programming",
+      "tags": [
+        "ftc",
+        "teleop-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-the-compass-alliance",
+      "title": "The Compass Alliance",
+      "description": "The Compass Alliance — Training & Tutorials resource for FIRST programming.",
+      "url": "https://www.thecompassalliance.org/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-odometry-three-wheel-odometry",
+      "title": "Three-Wheel Odometry",
+      "description": "Three-Wheel Odometry — Odometry resource for FIRST programming.",
+      "url": "/ftc/three-wheel-odometry",
+      "major": "ftc",
+      "minor": "Odometry",
+      "tags": [
+        "ftc",
+        "odometry"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-autonomous-programming-time-based-movement",
+      "title": "Time-Based Movement",
+      "description": "Time-Based Movement — Autonomous Programming resource for FIRST programming.",
+      "url": "/ftc/time-based-movement",
+      "major": "ftc",
+      "minor": "Autonomous Programming",
+      "tags": [
+        "ftc",
+        "autonomous-programming"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-tracking-apriltags",
+      "title": "Tracking AprilTags",
+      "description": "Tracking AprilTags — Vision (Limelight) resource for FIRST programming.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-troubleshooting-common-issues",
+      "title": "Troubleshooting Common Issues",
+      "description": "Troubleshooting Common Issues — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/troubleshooting-common-issues",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-debugging-best-practices-unit-testing",
+      "title": "Unit Testing",
+      "description": "Unit Testing — Debugging & Best Practices resource for FIRST programming.",
+      "url": "/ftc/unit-testing",
+      "major": "ftc",
+      "minor": "Debugging & Best Practices",
+      "tags": [
+        "ftc",
+        "debugging-best-practices"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-wpilib-documentation",
+      "title": "WPILib Documentation",
+      "description": "WPILib Documentation — Official Documentation resource for FIRST programming.",
+      "url": "https://docs.wpilib.org/en/stable/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-wpilib-git-intro",
+      "title": "WPILib: Git Intro",
+      "description": "WPILib: Git Intro — Version Control resource for FIRST programming.",
+      "url": "https://docs.wpilib.org/en/stable/docs/software/basic-programming/git-getting-started.html",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-wpilib-what-is-command-based",
+      "title": "WPILib: What Is Command-Based?",
+      "description": "WPILib: What Is Command-Based? — Command-Based resource for FIRST programming.",
+      "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-yams-documentation",
+      "title": "YAMS Documentation",
+      "description": "YAMS Documentation — Advanced Tools resource for FIRST programming.",
+      "url": "https://yagsl.gitbook.io/yams/documentation/",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    }
+  ]
+}

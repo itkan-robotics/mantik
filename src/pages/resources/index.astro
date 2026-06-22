@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ResourcesApp from '@/components/resources/ResourcesApp';
+import { getResources, getMinorTags } from '@/lib/resources/getResources';
+import '@/styles/resources.css';
+
+const resources = getResources();
+const minorTags = getMinorTags(resources);
+---
+
+<BaseLayout
+  title="Programming Resources"
+  description="Searchable catalog of FIRST programming resources for Java, FTC, FRC, and competitive coding — docs, tutorials, tools, and community links."
+  currentPath="/resources"
+  showSidebar={false}
+>
+  <div class="resources-page">
+    <h1>Programming Resources</h1>
+    <p class="resources-intro" data-pagefind-body>
+      Browse docs, tutorials, and tools for FIRST programming. Filter by section and topic, or
+      submit a link for maintainer review.
+    </p>
+    <ResourcesApp client:idle resources={resources} minorTags={minorTags} />
+  </div>
+</BaseLayout>

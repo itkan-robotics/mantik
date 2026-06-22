@@ -199,3 +199,30 @@ npm run dev       # dev server at :4321
 npm run build     # production build + Pagefind index
 npm run preview   # serve dist/ (search works here)
 ```
+
+## Programming Resources catalog
+
+Curated external and internal links live in `src/data/resources.json` (validated at build time with Zod in `src/lib/resources/schema.ts`).
+
+| Task | How |
+|------|-----|
+| Bulk import from MDX LinkGrids | `npm run seed:resources` (reads FRC hub + FTC setup pages) |
+| Add one approved link | Edit `src/data/resources.json` after reviewing a submission issue |
+| Browse UI | `/resources` — React island in `src/components/resources/` |
+
+### Resource submission (Netlify)
+
+Public submissions POST to `/.netlify/functions/submit-resource`, which verifies Cloudflare Turnstile and opens a GitHub Issue for review. Set these in **Netlify → Site settings → Environment variables** (never commit secrets):
+
+| Variable | Purpose |
+|----------|---------|
+| `PUBLIC_TURNSTILE_SITE_KEY` | Turnstile site key (exposed to browser; set in build env) |
+| `TURNSTILE_SECRET_KEY` | Turnstile server verification |
+| `GITHUB_TOKEN` | PAT or GitHub App token with `issues: write` on the repo |
+| `GITHUB_REPO` | Optional; defaults to `itkan-robotics/mantik` |
+
+Turnstile test keys (local/preview only): site `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
+
+Create GitHub labels `resource-submission` and `needs-review` on the repo, or the function retries without labels.
+
+After approval, add an entry to `resources.json` with a unique `id` slug, then run `npm run build` to validate.
