@@ -38,6 +38,15 @@ export default function TuningGuidePanel({
         )}
         <h3>{step.title}</h3>
         <p>{step.body}</p>
+        {step.learnMore && step.learnMore.length > 0 && (
+          <ul className="pid-learn-more">
+            {step.learnMore.map((link) => (
+              <li key={link.href}>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        )}
         {step.referenceHint && tier !== 'minimal' && (
           <p className="pid-reference-hint">
             <strong>Reference:</strong> {step.referenceHint}

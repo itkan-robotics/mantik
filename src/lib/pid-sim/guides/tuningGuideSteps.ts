@@ -9,6 +9,7 @@ export interface TuningGuideStep {
   prompt?: string;
   checklist?: string[];
   referenceHint?: string;
+  learnMore?: { label: string; href: string }[];
   highlight?: { field?: keyof TuningConfig; mechanism?: boolean; graph?: boolean };
   needsSim?: boolean;
   advancePrerequisites?: GuidePrerequisite[];
@@ -72,8 +73,24 @@ export const TUNING_GUIDE_STEPS: TuningGuideStep[] = [
     advancePrerequisites: ['simRunning'],
   },
   {
+    id: 'motion-profiling',
+    title: 'Try trapezoidal motion profiling',
+    body: 'During kP tuning, max velocity and acceleration were 0 — the setpoint jumped instantly. That works for learning position hold, but sharp steps limit how high you can push kP before overshoot or oscillation.\n\nTrapezoidal motion profiling smooths the path: the controller ramps up, cruises, then ramps down instead of stepping. Set non-zero kMaxVelocity (rot/s) and kMaxAccel (rot/s²) in ElevatorSubsystem.java or SpringTune. Watch TraceView — the velocity trace should look like a trapezoid.\n\nWith profiling enabled, you can often raise kP further than during step moves. Feedforward helps during the move: kV (V/(rot/s)) during cruise, kA (V/(rot/s²)) during accel and decel. Tune kV on SpringTune; edit kA in code.\n\nStart with conservative limits, then increase velocity and acceleration until the position trace stays sharp without heavy overshoot.',
+    prompt: 'Why can you push kP higher with profiling than with a step setpoint?',
+    referenceHint: TUNING_REFERENCE.maxMotion.hint,
+    checklist: [
+      'Non-zero max velocity and max acceleration set',
+      'Velocity trace looks trapezoidal in TraceView',
+      'Position reaches setpoint cleanly without heavy overshoot',
+    ],
+    learnMore: [{ label: 'Trapezoidal motion profiling', href: '/frc/trapezoidal-motion-profiling' }],
+    highlight: { field: 'maxVelocity', mechanism: true, graph: true },
+    needsSim: true,
+    advancePrerequisites: ['simRunning'],
+  },
+  {
     id: 'complete',
     title: 'Next steps',
-    body: 'You practiced the same kG → kP workflow used with Elastic and AdvantageScope on a real robot. kG is plant-specific and depends on your motor vendor (REV NEO vs CTRE Kraken). kP is in volts per motor rotation — the same unit family as vendor tuners.\n\nFor full WPILib + YAMS simulation on your machine, clone mantik-pid-practice (Tier 2 in the setup lesson).',
+    body: 'You practiced the same kG → kP workflow used with Elastic and AdvantageScope on a real robot. kG is plant-specific and depends on your motor vendor (REV NEO vs CTRE Kraken). kP is in volts per motor rotation — the same unit family as vendor tuners.\n\nMotion profiling maps to MAXMotion on SparkMax and Motion Magic on Talon FX — the same kMaxVelocity and kMaxAccel constants in your subsystem code.\n\nFor full WPILib + YAMS simulation on your machine, clone mantik-pid-practice (Tier 2 in the setup lesson).',
   },
 ];

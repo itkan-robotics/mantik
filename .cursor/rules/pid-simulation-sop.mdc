@@ -36,6 +36,7 @@ Port from WPILib docs [controls_js_sim](https://github.com/wpilibsuite/wpilib-do
 
 - **Plant @ 5 ms:** `plant/verticalElevatorPlant.ts` (RK4, meters internal)
 - **Controller @ 20 ms:** `sim/verticalElevatorSim.ts` (PID + FF + trapezoid profile)
+- **Trapezoid profile:** WPILib incremental `calculate(dt, current, goal)` — not controls_js_sim absolute-time `init()` pattern (see design doc § Trapezoidal motion profiling)
 - **Encoder delay:** `utils/delayLine.ts`
 - **Loop docs:** [Physics Simulation with WPILib](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html)
 

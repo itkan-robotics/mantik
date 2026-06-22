@@ -1,6 +1,7 @@
 /**
  * Vertical elevator sim — ported from controls_js_sim sim/vertical-elevator-sim.js.
  * PID runs in motor rotations; plant + TraceView display in meters.
+ * Trapezoid profiling follows WPILib incremental calculate(dt, current, goal).
  */
 import type { PlantConfig, SimSample, TuningConfig, Vendor } from '../../types';
 import { REFERENCE_PLANT } from '../../reference/elevatorReference';
@@ -47,7 +48,6 @@ export class ElevatorSim {
   private integral = 0;
   private previousPositionError = 0;
   private simTime = 0;
-  private profileTime = 0;
   private samples: SimSample[] = [];
   private running = false;
   private config: TuningConfig | null = null;
@@ -72,10 +72,10 @@ export class ElevatorSim {
     this.position = plant.startHeightM;
     this.setpoint = plant.startHeightM;
     this.goalHeightM = plant.startHeightM;
-    this.profile = new TrapezoidProfile(new ProfileConstraints(NO_PROFILE_LIMIT, NO_PROFILE_LIMIT));
+    this.profile = new TrapezoidProfile(this.profileConstraints(null));
     const startRot = heightMToMotorRotations(plant.startHeightM, plant);
     this.delayLine = new DelayLine(DELAY_SAMPLES, startRot);
-    this.remakeProfile();
+    this.syncProfileSetpointFromPlant();
   }
 
   subscribe(listener: SimListener): () => void {
@@ -106,10 +106,17 @@ export class ElevatorSim {
     return this.plant.getHoldVoltage();
   }
 
+  private isProfilingDisabled(cfg: TuningConfig | null = this.config): boolean {
+    if (!cfg) return true;
+    return cfg.maxVelocity <= 0 && cfg.maxAccel <= 0;
+  }
+
   setConfig(config: TuningConfig): void {
     const gainsChanged =
       this.config !== null && GAIN_KEYS.some((k) => this.config![k] !== config[k]);
-    const setpointChanged = this.config?.setpoint !== config.setpoint;
+    const limitsChanged =
+      this.config?.maxVelocity !== config.maxVelocity ||
+      this.config?.maxAccel !== config.maxAccel;
 
     this.config = config;
     this.lastSetpointRot = config.setpoint;
@@ -121,9 +128,8 @@ export class ElevatorSim {
       this.previousPositionError = 0;
     }
 
-    if (setpointChanged || gainsChanged) {
-      this.profileTime = 0;
-      this.remakeProfile();
+    if (limitsChanged) {
+      this.profile = new TrapezoidProfile(this.profileConstraints(config));
     }
   }
 
@@ -138,7 +144,6 @@ export class ElevatorSim {
     this.integral = 0;
     this.previousPositionError = 0;
     this.simTime = 0;
-    this.profileTime = 0;
     this.inputVolts = 0;
     this.samples = [];
     this.latestSample = null;
@@ -149,18 +154,22 @@ export class ElevatorSim {
     if (this.config) {
       this.goalHeightM = motorRotationsToHeightM(this.config.setpoint, this.plantConfig);
       this.lastSetpointRot = this.config.setpoint;
+      this.profile = new TrapezoidProfile(this.profileConstraints(this.config));
     } else {
       this.goalHeightM = this.plantConfig.startHeightM;
       this.lastSetpointRot = startRot;
     }
     this.setpoint = this.goalHeightM;
-    this.remakeProfile();
+    this.syncProfileSetpointFromPlant();
     this.notify();
   }
 
-  private profileConstraints(): ProfileConstraints {
-    const cfg = this.config;
-    if (!cfg || (cfg.maxVelocity <= 0 && cfg.maxAccel <= 0)) {
+  private syncProfileSetpointFromPlant(): void {
+    this.profileSetpoint = new ProfileState(this.position, this.velocity, 0);
+  }
+
+  private profileConstraints(cfg: TuningConfig | null): ProfileConstraints {
+    if (!cfg || this.isProfilingDisabled(cfg)) {
       return new ProfileConstraints(NO_PROFILE_LIMIT, NO_PROFILE_LIMIT);
     }
     const maxVelMps =
@@ -174,12 +183,13 @@ export class ElevatorSim {
     return new ProfileConstraints(maxVelMps, maxAccelMps2);
   }
 
-  private remakeProfile(): void {
-    this.profile = new TrapezoidProfile(this.profileConstraints());
-    const start = new ProfileState(this.position, this.velocity, 0);
+  private updateProfileSetpoint(): void {
     const goal = new ProfileState(this.goalHeightM, 0, 0);
-    this.profile.init(start, goal);
-    this.profileSetpoint = new ProfileState(this.position, 0, 0);
+    if (this.isProfilingDisabled()) {
+      this.profileSetpoint = goal;
+    } else {
+      this.profileSetpoint = this.profile.calculate(SIM_DT, this.profileSetpoint, goal);
+    }
   }
 
   private updateController(setpoint: ProfileState, measuredRot: number): number {
@@ -221,8 +231,7 @@ export class ElevatorSim {
   step(): SimSample | null {
     if (!this.config || !this.enabled) return null;
 
-    this.profileSetpoint = this.profile.calculate(this.profileTime, this.profileSetpoint);
-    this.profileTime += SIM_DT;
+    this.updateProfileSetpoint();
 
     const measuredRot = this.delayLine.getSample();
     this.inputVolts = this.updateController(this.profileSetpoint, measuredRot);

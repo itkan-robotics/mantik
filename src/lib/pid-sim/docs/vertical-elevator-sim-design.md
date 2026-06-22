@@ -75,6 +75,80 @@ Ported from `vertical-elevator-plant.js`:
 
 User feedforward gains in `TuningConfig` are separate (controller side), matching real robot workflow.
 
+## Trapezoidal motion profiling
+
+Authoritative reference: [Trapezoidal Motion Profiles in WPILib](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/trapezoidal-profiles.html) and [`TrapezoidProfile.java`](https://github.wpilib.org/allwpilib/docs/release/java/src-html/edu/wpi/first/math/trajectory/TrapezoidProfile.html).
+
+Implementation: [`physics/utils/trapezoidProfile.ts`](../physics/utils/trapezoidProfile.ts), integrated in [`physics/sim/verticalElevatorSim.ts`](../physics/sim/verticalElevatorSim.ts).
+
+### Why incremental sampling (not absolute time)
+
+WPILib’s `TrapezoidProfile` is a **setpoint filter**: each controller period, advance the previous profiled setpoint toward the goal by one timestep:
+
+```java
+m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
+```
+
+The goal (`config.setpoint` → `goalHeightM`) can change every tick. The profile is recomputed from the current setpoint state toward the current goal. Do **not** reset profile time or zero out setpoint velocity on setpoint edits.
+
+Mantik previously ported [controls_js_sim `trapezoid-profile.js`](https://github.com/wpilibsuite/wpilib-docs/blob/main/source/_extensions/controls_js_sim/utils/trapezoid-profile.js), which used `init()` plus absolute simulation time. That port had math errors (missing start position offset, wrong acceleration term) and does not match how WPILib is used on real robots. **Use WPILib math and API going forward.**
+
+### Zero limits bypass (kP tuning mode)
+
+When `maxVelocity <= 0` **and** `maxAccel <= 0`, profiling is disabled:
+
+```typescript
+profileSetpoint = goal; // instant step setpoint
+```
+
+This preserves kG → kP tuning where the setpoint trace jumps immediately to the target. Do not substitute “infinite constraint” profiling for this path.
+
+When only one limit is non-zero, the other axis uses a large cap (`NO_PROFILE_LIMIT`) so partial constraints still work (velocity-only or acceleration-only caps).
+
+### Unit flow
+
+User code and SpringTune store limits in **motor rotations per second** and **rotations per second squared**. The profile runs internally in **m/s** and **m/s²** (plant units):
+
+```text
+maxVelMps   = rotPerSecToLinearMps(kMaxVelocity, plant)
+maxAccelMps2 = rotPerSec2ToLinearMps2(kMaxAccel, plant)
+```
+
+Profile output position/velocity are converted back to rotations for PID and to meters for TraceView.
+
+### Profile math (summary)
+
+Given constraints `maxVel`, `maxAccel`, current state `(pos, vel)`, goal `(goalPos, goalVel)`:
+
+1. **Direction flip** if `current.pos > goal.pos` (run math in a forward frame, flip signs back).
+2. **Truncated profile cutoffs** — if start or goal velocity is non-zero, compute `cutoffBegin` / `cutoffEnd` distances needed to ramp from/to zero.
+3. **Full trapezoid distance** = `cutoffDistBegin + (goalPos - currentPos) + cutoffDistEnd`.
+4. **Cruise phase** exists only if `fullSpeedDist >= 0`. Otherwise use a **triangle profile** (accel then decel, no flat top).
+5. Phase times: `endAccel`, `endFullSpeed`, `endDecel`.
+6. For timestep `dt`, return state at `t = dt` along the segment from current toward goal.
+
+```text
+     vel
+      |     +--------+  maxVel
+      |    /          \
+      |   /            \
+      +--+--------------+-- time
+        accel  cruise  decel
+```
+
+### kA feedforward
+
+WPILib `State` has position and velocity only. Mantik’s `ProfileState` adds `accel` for kA feedforward during profiling:
+
+| Phase | `accel` (directed frame) |
+|-------|--------------------------|
+| Acceleration | `+maxAccel` |
+| Cruise | `0` |
+| Deceleration | `-maxAccel` |
+| At goal | `0` |
+
+Converted to rot/s² before applying `kA` in `updateController`.
+
 ## Differences vs previous Mantik sim
 
 - Removed: Java RKDP `LinearSystemSim` port, golden CSV traces, `simMetrics`, V/m kP, hardcoded `getNeo(1)` for all vendors

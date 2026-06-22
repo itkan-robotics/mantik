@@ -4,6 +4,7 @@ import { REFERENCE_PLANT } from '../reference/elevatorReference';
 import {
   heightMToMotorRotations,
   motorRotationsToHeightM,
+  rotPerSecToLinearMps,
 } from './units/encoderUnits';
 import { VerticalElevatorPlant } from './plant/verticalElevatorPlant';
 import { motorForVendor } from './vendorMotor';
@@ -121,5 +122,76 @@ describe('vertical elevator sim', () => {
 
     expect(ascentDist).toBeGreaterThan(0);
     expect(descentDist).toBeGreaterThan(ascentDist);
+  });
+
+  it('with zero motion limits, setpoint jumps instantly to goal', () => {
+    const sim = new ElevatorSim('rev');
+    const hold = sim.getHoldVoltageHint();
+    const targetM = motorRotationsToHeightM(moveHighRot, REFERENCE_PLANT);
+
+    sim.setConfig(baseConfig({ kG: hold, setpoint: moveHighRot }));
+    sim.setEnabled(true);
+    sim.step();
+
+    const sample = sim.getLatest();
+    expect(sample?.setpoint).toBeCloseTo(targetM, 6);
+  });
+
+  it('with profiling enabled, setpoint ramps toward goal', () => {
+    const sim = new ElevatorSim('rev');
+    const hold = sim.getHoldVoltageHint();
+    const targetM = motorRotationsToHeightM(moveHighRot, REFERENCE_PLANT);
+    const maxVelMps = rotPerSecToLinearMps(5, REFERENCE_PLANT);
+
+    sim.setConfig(
+      baseConfig({
+        kG: hold,
+        maxVelocity: 5,
+        maxAccel: 20,
+        setpoint: moveHighRot,
+      }),
+    );
+    sim.setEnabled(true);
+    sim.step();
+
+    const sample = sim.getLatest();
+    expect(sample).not.toBeNull();
+    expect(sample!.setpoint).toBeGreaterThan(REFERENCE_PLANT.startHeightM);
+    expect(sample!.setpoint).toBeLessThan(targetM);
+    expect(Math.abs(sample!.velocity)).toBeLessThan(maxVelMps + 0.05);
+  });
+
+  it('setpoint change with profiling does not reset profile to origin', () => {
+    const sim = new ElevatorSim('rev');
+    const hold = sim.getHoldVoltageHint();
+    const lowTarget = heightMToMotorRotations(0.8, REFERENCE_PLANT);
+
+    sim.setConfig(
+      baseConfig({
+        kG: hold,
+        maxVelocity: 5,
+        maxAccel: 20,
+        setpoint: moveHighRot,
+      }),
+    );
+    sim.setEnabled(true);
+    runSteps(sim, 3);
+
+    const beforeRetarget = sim.getLatest()?.setpoint ?? REFERENCE_PLANT.startHeightM;
+    expect(beforeRetarget).toBeGreaterThan(REFERENCE_PLANT.startHeightM + 0.15);
+
+    sim.setConfig(
+      baseConfig({
+        kG: hold,
+        maxVelocity: 5,
+        maxAccel: 20,
+        setpoint: lowTarget,
+      }),
+    );
+    sim.step();
+    const afterRetarget = sim.getLatest()?.setpoint ?? beforeRetarget;
+
+    expect(afterRetarget).toBeGreaterThan(REFERENCE_PLANT.startHeightM);
+    expect(Math.abs(afterRetarget - beforeRetarget)).toBeLessThan(0.05);
   });
 });

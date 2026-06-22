@@ -47,10 +47,13 @@ export const TUNING_REFERENCE = {
   kD: { typical: 0, hint: 'Start at 0 unless you need extra damping after kP tuning.' },
   kS: { hint: 'kS overcomes static friction. Tune after kG/kP if the mechanism sticks at rest.' },
   kV: {
-    hint: 'kV is in V/(rot/s). Tune during motion profiling if you use non-zero max velocity.',
+    hint: 'kV is in V/(rot/s). Tune during motion profiling if cruise phase lags behind the profile.',
+  },
+  kA: {
+    hint: 'kA is in V/(rot/s²). Tune when accel or decel ramps feel weak. Edit kA in ElevatorSubsystem.java — SpringTune has no kA slider yet.',
   },
   maxMotion: {
-    hint: 'Max velocity and accel are in rot/s and rot/s². Zero means no profiling — step setpoint moves during kP tuning.',
+    hint: 'Max velocity and accel are in rot/s and rot/s². Zero means no profiling — the setpoint jumps instantly. Non-zero values generate a trapezoid path. Start conservative, then increase until overshoot or vibration appears.',
   },
 } as const;
 
