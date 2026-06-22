@@ -4,6 +4,7 @@ import { angleDegToMotorRotations } from '@/lib/pid-sim/physics/units/armUnits';
 import type { ArmPlantConfig } from '@/lib/pid-sim/types';
 import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 import type { ArmSim } from '@/lib/pid-sim/physics/armSim';
+import { getPidSimPalette, useSiteTheme } from '@/lib/pid-sim/useSiteTheme';
 
 interface Props {
   simRef: React.RefObject<PidMechanismSim | null>;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
+  const siteTheme = useSiteTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setpointRef = useRef(setpoint);
@@ -27,6 +29,8 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
     const draw = () => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
+
+      const palette = getPidSimPalette(siteTheme);
 
       const sim = simRef.current as ArmSim | null;
       const plant: ArmPlantConfig =
@@ -48,7 +52,7 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      ctx.fillStyle = '#141414';
+      ctx.fillStyle = palette.canvasBg;
       ctx.fillRect(0, 0, w, h);
 
       const pivotX = w * 0.35;
@@ -67,12 +71,12 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
         ctx.setLineDash([]);
       };
 
-      drawArc(plant.hardMinDeg, '#555');
-      drawArc(plant.hardMaxDeg, '#555');
+      drawArc(plant.hardMinDeg, palette.pivotStroke);
+      drawArc(plant.hardMaxDeg, palette.pivotStroke);
       drawArc(plant.softMinDeg, '#e55', [5, 4]);
       drawArc(plant.softMaxDeg, '#e55', [5, 4]);
 
-      ctx.strokeStyle = '#444';
+      ctx.strokeStyle = palette.pivotStroke;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(pivotX - armLen - 20, pivotY);
@@ -87,7 +91,7 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
       const end = armEnd(posDeg);
       const sp = armEnd(spDeg);
 
-      ctx.strokeStyle = '#888';
+      ctx.strokeStyle = palette.shaftStroke;
       ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.moveTo(pivotX, pivotY);
@@ -104,12 +108,12 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
       ctx.arc(end.x, end.y, 7, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#ccc';
+      ctx.fillStyle = palette.labelText;
       ctx.beginPath();
       ctx.arc(pivotX, pivotY, 6, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#aaa';
+      ctx.fillStyle = palette.mutedText;
       ctx.font = '12px system-ui, sans-serif';
       ctx.fillText(`Angle: ${posDeg.toFixed(1)}°`, 12, 20);
       ctx.fillText(`Setpoint: ${spDeg.toFixed(1)}°`, 12, 38);
@@ -133,7 +137,7 @@ function ArmMechanismPanel({ simRef, setpoint, highlight }: Props) {
       ro.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
-  }, [simRef]);
+  }, [simRef, siteTheme]);
 
   return (
     <div

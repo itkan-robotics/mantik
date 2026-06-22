@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef } from 'react';
 import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
+import { getPidSimPalette, useSiteTheme } from '@/lib/pid-sim/useSiteTheme';
 
 interface Props {
   simRef: React.RefObject<PidMechanismSim | null>;
@@ -18,6 +19,7 @@ function GraphPanel({
   highlight = false,
   yAxisLabel = 'm / m/s',
 }: Props) {
+  const siteTheme = useSiteTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<import('uplot').default | null>(null);
   const pausedRef = useRef(paused);
@@ -33,6 +35,7 @@ function GraphPanel({
 
   useEffect(() => {
     let destroyed = false;
+    const palette = getPidSimPalette(siteTheme);
 
     async function initChart() {
       const uPlot = (await import('uplot')).default;
@@ -56,8 +59,12 @@ function GraphPanel({
             { label: 'Velocity', stroke: '#4ade80', width: 1.5 },
           ],
           axes: [
-            { stroke: '#888', grid: { stroke: '#333' } },
-            { stroke: '#888', grid: { stroke: '#333' }, label: yAxisLabel },
+            { stroke: palette.axisStroke, grid: { stroke: palette.gridStroke } },
+            {
+              stroke: palette.axisStroke,
+              grid: { stroke: palette.gridStroke },
+              label: yAxisLabel,
+            },
           ],
           scales: { x: { time: false } },
           cursor: { drag: { x: true, y: false } },
@@ -85,7 +92,7 @@ function GraphPanel({
       chartRef.current?.destroy();
       chartRef.current = null;
     };
-  }, [yAxisLabel]);
+  }, [yAxisLabel, siteTheme]);
 
   useEffect(() => {
     const sim = simRef.current;

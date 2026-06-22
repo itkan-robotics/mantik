@@ -4,6 +4,7 @@ import { motorRotationsToHeightM } from '@/lib/pid-sim/physics/units/encoderUnit
 import type { PlantConfig } from '@/lib/pid-sim/types';
 import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
+import { getPidSimPalette, useSiteTheme } from '@/lib/pid-sim/useSiteTheme';
 
 interface Props {
   simRef: React.RefObject<PidMechanismSim | null>;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function MechanismPanel({ simRef, setpoint, highlight }: Props) {
+  const siteTheme = useSiteTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setpointRef = useRef(setpoint);
@@ -27,6 +29,8 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
     const draw = () => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
+
+      const palette = getPidSimPalette(siteTheme);
 
       const sim = simRef.current as ElevatorSim | null;
       const plant: PlantConfig =
@@ -48,7 +52,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      ctx.fillStyle = '#141414';
+      ctx.fillStyle = palette.canvasBg;
       ctx.fillRect(0, 0, w, h);
 
       const margin = 48;
@@ -59,7 +63,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       const travelH = floorY - topY;
       const scale = travelH / plant.maxHeightM;
 
-      ctx.strokeStyle = '#666';
+      ctx.strokeStyle = palette.shaftStroke;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(shaftLeft, floorY);
@@ -75,7 +79,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
 
       const limit0Y = floorY;
       const limitMaxY = floorY - plant.maxHeightM * scale;
-      ctx.strokeStyle = '#888';
+      ctx.strokeStyle = palette.limitStroke;
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -104,14 +108,14 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       ctx.lineWidth = 2;
       ctx.strokeRect(shaftLeft - 12, carriageY - 14, carriageW, 28);
 
-      ctx.strokeStyle = '#aaa';
+      ctx.strokeStyle = palette.mutedText;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo((shaftLeft + shaftRight) / 2, topY);
       ctx.lineTo((shaftLeft + shaftRight) / 2, carriageY - 14);
       ctx.stroke();
 
-      ctx.fillStyle = '#ccc';
+      ctx.fillStyle = palette.labelText;
       ctx.font = '12px JetBrains Mono, monospace';
       ctx.fillText('0 m', shaftRight + 16, limit0Y + 4);
       ctx.fillText(`${plant.maxHeightM} m`, shaftRight + 16, limitMaxY + 4);
@@ -119,7 +123,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       ctx.fillStyle = '#ff8c42';
       ctx.fillText(`set ${sp.toFixed(2)} m`, shaftRight + 16, spY - 8);
 
-      ctx.fillStyle = '#888';
+      ctx.fillStyle = palette.mutedText;
       ctx.font = '11px Cairo, sans-serif';
       ctx.fillText('Blue = carriage', margin, topY - 8);
       ctx.fillStyle = '#ff8c42';
@@ -143,7 +147,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       unsub?.();
       cancelAnimationFrame(rafRef.current);
     };
-  }, [simRef, setpoint]);
+  }, [simRef, setpoint, siteTheme]);
 
   return (
     <div className={`pid-mechanism-panel ${highlight ? 'highlighted' : ''}`}>

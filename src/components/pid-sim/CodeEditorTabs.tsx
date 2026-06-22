@@ -3,6 +3,7 @@ import type { Monaco } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import type { LintMessage } from '@/lib/pid-sim/types';
 import type { CodeFile } from '@/lib/pid-sim/guides/codeTourSteps';
+import { useSiteTheme } from '@/lib/pid-sim/useSiteTheme';
 
 const MonacoEditor = lazy(() => import('@monaco-editor/react'));
 
@@ -31,6 +32,8 @@ export default function CodeEditorTabs({
   highlightPulse = false,
   subsystemFileName = 'ElevatorSubsystem.java',
 }: Props) {
+  const siteTheme = useSiteTheme();
+  const monacoTheme = siteTheme === 'dark' ? 'vs-dark' : 'vs';
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const highlightDecorationIds = useRef<string[]>([]);
@@ -130,7 +133,7 @@ export default function CodeEditorTabs({
           key={activeTab}
           height="100%"
           defaultLanguage="java"
-          theme="vs-dark"
+          theme={monacoTheme}
           value={code}
           onChange={(v) => {
             if (activeTab === 'subsystem') onSubsystemChange(v ?? '');
