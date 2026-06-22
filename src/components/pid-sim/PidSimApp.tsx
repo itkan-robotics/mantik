@@ -7,7 +7,7 @@ import TeleopBindingsPanel from './TeleopBindingsPanel';
 import CodeTourPanel, { getCodeTourStep, CODE_TOUR_STEPS } from './CodeTourPanel';
 import TuningGuidePanel, { TUNING_GUIDE_STEPS } from './TuningGuidePanel';
 import PidSimLanding from './PidSimLanding';
-import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
+import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 import {
   parseElevatorCode,
   patchConstant,
@@ -15,10 +15,27 @@ import {
   getRobotTemplateForVendor,
   findConstLine,
 } from '@/lib/pid-sim/parser/elevatorParser';
+import {
+  parseArmCode,
+  getArmTemplateForVendor,
+  getArmRobotTemplateForVendor,
+} from '@/lib/pid-sim/parser/armParser';
 import { parsePlantConfig, plantWarnings, findPlantSectionLine, plantsEqual } from '@/lib/pid-sim/parser/plantParser';
+import {
+  parseArmPlantConfig,
+  armPlantWarnings,
+  findArmPlantSectionLine,
+  armPlantsEqual,
+} from '@/lib/pid-sim/parser/armPlantParser';
 import { aidLevel, aidTier } from '@/lib/pid-sim/guides/aidLevel';
+import { ARM_CODE_TOUR_STEPS } from '@/lib/pid-sim/guides/arm/codeTourSteps';
+import { ARM_TUNING_GUIDE_STEPS } from '@/lib/pid-sim/guides/arm/tuningGuideSteps';
 import type { PrerequisiteState } from '@/lib/pid-sim/guides/prerequisites';
 import { DEFAULT_SETPOINT_ROT, REFERENCE_PLANT } from '@/lib/pid-sim/reference/elevatorReference';
+import {
+  DEFAULT_ARM_SETPOINT_ROT,
+  REFERENCE_ARM_PLANT,
+} from '@/lib/pid-sim/reference/armReference';
 import {
   TRAVEL_PRESET_FRACTIONS,
   dedupeBindings,
@@ -29,15 +46,11 @@ import {
   saveTeleopBindings,
   travelFractionToSetpointRot,
 } from '@/lib/pid-sim/teleop/travelPresets';
-import type { TuningConfig, Vendor } from '@/lib/pid-sim/types';
+import { travelFractionToSetpointRot as armTravelFractionToSetpointRot } from '@/lib/pid-sim/physics/units/armUnits';
+import type { ArmPlantConfig, MechanismType, PlantConfig, TuningConfig, Vendor } from '@/lib/pid-sim/types';
 import { DEFAULT_TUNING } from '@/lib/pid-sim/types';
 
 type GuideMode = 'codeTour' | 'tuning';
-
-const DEFAULT_WORKSPACE_TUNING: TuningConfig = {
-  ...DEFAULT_TUNING,
-  setpoint: DEFAULT_SETPOINT_ROT,
-};
 
 const FIELD_TO_CONST: Record<keyof TuningConfig, string> = {
   kP: 'kP',
@@ -54,7 +67,12 @@ const FIELD_TO_CONST: Record<keyof TuningConfig, string> = {
 
 const CODE_PATCH_DEBOUNCE_MS = 150;
 
+function defaultSetpoint(mechanism: MechanismType): number {
+  return mechanism === 'arm' ? DEFAULT_ARM_SETPOINT_ROT : DEFAULT_SETPOINT_ROT;
+}
+
 export default function PidSimApp() {
+  const [mechanism, setMechanism] = useState<MechanismType | null>(null);
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [guideMode, setGuideMode] = useState<GuideMode>('codeTour');
   const [codeTourStep, setCodeTourStep] = useState(0);
@@ -62,7 +80,10 @@ export default function PidSimApp() {
   const [editorTab, setEditorTab] = useState<EditorTab>('subsystem');
   const [code, setCode] = useState('');
   const [robotCode, setRobotCode] = useState('');
-  const [config, setConfig] = useState<TuningConfig>(DEFAULT_WORKSPACE_TUNING);
+  const [config, setConfig] = useState<TuningConfig>({
+    ...DEFAULT_TUNING,
+    setpoint: DEFAULT_SETPOINT_ROT,
+  });
   const [liveTuning, setLiveTuning] = useState(false);
   const [teleopEnabled, setTeleopEnabled] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -75,29 +96,67 @@ export default function PidSimApp() {
   const [bindingCaptureIndex, setBindingCaptureIndex] = useState<number | null>(null);
   const [bindingRejectHint, setBindingRejectHint] = useState<string | null>(null);
 
-  const simRef = useRef<ElevatorSim | null>(null);
+  const simRef = useRef<PidMechanismSim | null>(null);
   const lastAutoTabStep = useRef(-1);
   const codePatchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingPatch = useRef<{ key: keyof TuningConfig; value: number } | null>(null);
-  const lastPlantRef = useRef<typeof REFERENCE_PLANT | null>(null);
+  const lastElevatorPlantRef = useRef<PlantConfig | null>(null);
+  const lastArmPlantRef = useRef<ArmPlantConfig | null>(null);
 
-  const parseResult = useMemo(() => parseElevatorCode(code, vendor ?? 'rev'), [code, vendor]);
-  const plantConfig = useMemo(() => parsePlantConfig(code), [code]);
+  const codeTourSteps = mechanism === 'arm' ? ARM_CODE_TOUR_STEPS : CODE_TOUR_STEPS;
+  const tuningGuideSteps = mechanism === 'arm' ? ARM_TUNING_GUIDE_STEPS : TUNING_GUIDE_STEPS;
+
+  const parseResult = useMemo(() => {
+    if (!vendor || !mechanism) return { config: null, errors: [] };
+    return mechanism === 'arm'
+      ? parseArmCode(code, vendor)
+      : parseElevatorCode(code, vendor);
+  }, [code, vendor, mechanism]);
+
+  const elevatorPlantConfig = useMemo(
+    () => (mechanism === 'elevator' ? parsePlantConfig(code) : REFERENCE_PLANT),
+    [code, mechanism],
+  );
+
+  const armPlantConfig = useMemo(
+    () => (mechanism === 'arm' ? parseArmPlantConfig(code) : REFERENCE_ARM_PLANT),
+    [code, mechanism],
+  );
+
   const lintMessages = useMemo(() => {
-    const plantMsgs = plantWarnings(plantConfig, parseResult.config?.setpoint).map((message) => ({
-      line: 1,
-      column: 1,
-      message,
-      severity: 'warning' as const,
-    }));
+    if (mechanism === 'arm') {
+      const plantMsgs = armPlantWarnings(armPlantConfig, parseResult.config?.setpoint).map(
+        (message) => ({
+          line: 1,
+          column: 1,
+          message,
+          severity: 'warning' as const,
+        }),
+      );
+      return [...parseResult.errors, ...plantMsgs];
+    }
+    const plantMsgs = plantWarnings(elevatorPlantConfig, parseResult.config?.setpoint).map(
+      (message) => ({
+        line: 1,
+        column: 1,
+        message,
+        severity: 'warning' as const,
+      }),
+    );
     return [...parseResult.errors, ...plantMsgs];
-  }, [parseResult.errors, parseResult.config?.setpoint, plantConfig]);
+  }, [
+    mechanism,
+    parseResult.errors,
+    parseResult.config?.setpoint,
+    elevatorPlantConfig,
+    armPlantConfig,
+  ]);
 
-  const codeTour = getCodeTourStep(codeTourStep);
-  const tuningGuide = TUNING_GUIDE_STEPS[tuningStep];
+  const codeTour = getCodeTourStep(codeTourStep, codeTourSteps);
+  const tuningGuide = tuningGuideSteps[tuningStep] ?? tuningGuideSteps[0];
 
-  const codeTourAid = aidLevel(codeTourStep, CODE_TOUR_STEPS.length);
-  const tuningAid = aidLevel(tuningStep, TUNING_GUIDE_STEPS.length);
+  const codeTourAid = aidLevel(codeTourStep, codeTourSteps.length);
+  const tuningAid = aidLevel(tuningStep, tuningGuideSteps.length);
 
   const prerequisiteState: PrerequisiteState = {
     teleopEnabled,
@@ -123,20 +182,32 @@ export default function PidSimApp() {
   }, []);
 
   useEffect(() => {
-    if (!vendor) return;
+    if (!vendor || !mechanism) return;
 
     let cancelled = false;
 
     async function loadSim() {
       try {
         simRef.current?.stop();
-        const mod = await import('@/lib/pid-sim/physics/elevatorSim');
-        if (cancelled) return;
-        if (typeof mod.ElevatorSim !== 'function') {
-          throw new Error('ElevatorSim export missing from physics module');
+        if (mechanism === 'arm') {
+          const mod = await import('@/lib/pid-sim/physics/armSim');
+          if (cancelled) return;
+          if (typeof mod.ArmSim !== 'function') {
+            throw new Error('ArmSim export missing from physics module');
+          }
+          const sim = new mod.ArmSim(vendor!);
+          sim.setPlant(REFERENCE_ARM_PLANT);
+          simRef.current = sim;
+        } else {
+          const mod = await import('@/lib/pid-sim/physics/elevatorSim');
+          if (cancelled) return;
+          if (typeof mod.ElevatorSim !== 'function') {
+            throw new Error('ElevatorSim export missing from physics module');
+          }
+          const sim = new mod.ElevatorSim(vendor!);
+          sim.setPlant(REFERENCE_PLANT);
+          simRef.current = sim;
         }
-        simRef.current = new mod.ElevatorSim(vendor);
-        simRef.current.setPlant(REFERENCE_PLANT);
         setSimReady(true);
         setSimLoadError(null);
       } catch (err) {
@@ -151,7 +222,7 @@ export default function PidSimApp() {
       flushCodePatch();
       simRef.current?.stop();
     };
-  }, [vendor, flushCodePatch]);
+  }, [vendor, mechanism, flushCodePatch]);
 
   useEffect(() => {
     if (!vendor) {
@@ -176,18 +247,25 @@ export default function PidSimApp() {
     };
   }, [vendor]);
 
-  const initVendor = useCallback((v: Vendor) => {
-    const initial = { ...DEFAULT_WORKSPACE_TUNING };
+  const initSession = useCallback((m: MechanismType, v: Vendor) => {
+    const initial: TuningConfig = { ...DEFAULT_TUNING, setpoint: defaultSetpoint(m) };
+    setMechanism(m);
     setVendor(v);
-    setCode(getTemplateForVendor(v, initial, REFERENCE_PLANT));
-    setRobotCode(getRobotTemplateForVendor(v));
+    if (m === 'arm') {
+      setCode(getArmTemplateForVendor(v, initial, REFERENCE_ARM_PLANT));
+      setRobotCode(getArmRobotTemplateForVendor(v));
+    } else {
+      setCode(getTemplateForVendor(v, initial, REFERENCE_PLANT));
+      setRobotCode(getRobotTemplateForVendor(v));
+    }
     setConfig(initial);
     setGuideMode('codeTour');
     setCodeTourStep(0);
     setTuningStep(0);
     setEditorTab('subsystem');
     lastAutoTabStep.current = -1;
-    lastPlantRef.current = null;
+    lastElevatorPlantRef.current = null;
+    lastArmPlantRef.current = null;
     setSimRunning(false);
     setTeleopEnabled(false);
     setLiveTuning(false);
@@ -196,11 +274,27 @@ export default function PidSimApp() {
 
   useEffect(() => {
     const sim = simRef.current;
-    if (!sim) return;
-    if (lastPlantRef.current && plantsEqual(lastPlantRef.current, plantConfig)) return;
-    lastPlantRef.current = plantConfig;
-    sim.setPlant(plantConfig);
-  }, [plantConfig]);
+    if (!sim || !mechanism) return;
+
+    if (mechanism === 'arm') {
+      if (lastArmPlantRef.current && armPlantsEqual(lastArmPlantRef.current, armPlantConfig)) {
+        return;
+      }
+      lastArmPlantRef.current = armPlantConfig;
+      (sim as import('@/lib/pid-sim/physics/armSim').ArmSim).setPlant(armPlantConfig);
+    } else {
+      if (
+        lastElevatorPlantRef.current &&
+        plantsEqual(lastElevatorPlantRef.current, elevatorPlantConfig)
+      ) {
+        return;
+      }
+      lastElevatorPlantRef.current = elevatorPlantConfig;
+      (sim as import('@/lib/pid-sim/physics/elevatorSim').ElevatorSim).setPlant(
+        elevatorPlantConfig,
+      );
+    }
+  }, [mechanism, elevatorPlantConfig, armPlantConfig]);
 
   useEffect(() => {
     if (parseResult.config) {
@@ -237,29 +331,32 @@ export default function PidSimApp() {
   const applyTravelPreset = useCallback(
     (presetIndex: number) => {
       const fraction = TRAVEL_PRESET_FRACTIONS[presetIndex];
-      if (fraction === undefined) return;
-      const rot = travelFractionToSetpointRot(fraction, plantConfig);
+      if (fraction === undefined || !mechanism) return;
+      const rot =
+        mechanism === 'arm'
+          ? armTravelFractionToSetpointRot(fraction, armPlantConfig)
+          : travelFractionToSetpointRot(fraction, elevatorPlantConfig);
       applySetpointRot(rot);
     },
-    [plantConfig, applySetpointRot],
+    [mechanism, armPlantConfig, elevatorPlantConfig, applySetpointRot],
   );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const code = normalizeKeyCode(event);
-      if (!code) return;
+      const keyCode = normalizeKeyCode(event);
+      if (!keyCode) return;
 
       if (bindingCaptureIndex !== null) {
-        if (code === 'Escape') {
+        if (keyCode === 'Escape') {
           setBindingCaptureIndex(null);
           setBindingRejectHint(null);
           return;
         }
-        if (!isLetterKey(code)) {
+        if (!isLetterKey(keyCode)) {
           setBindingRejectHint('Letters only — try QWERTY row (Q W E R T).');
           return;
         }
-        const next = dedupeBindings(teleopBindings, bindingCaptureIndex, code);
+        const next = dedupeBindings(teleopBindings, bindingCaptureIndex, keyCode);
         setTeleopBindings(next);
         saveTeleopBindings(next);
         setBindingCaptureIndex(null);
@@ -270,7 +367,7 @@ export default function PidSimApp() {
 
       if (!teleopEnabled || !simRunning || isTypingInEditor()) return;
 
-      const presetIndex = teleopBindings.indexOf(code);
+      const presetIndex = teleopBindings.indexOf(keyCode);
       if (presetIndex < 0) return;
 
       applyTravelPreset(presetIndex);
@@ -279,13 +376,7 @@ export default function PidSimApp() {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [
-    bindingCaptureIndex,
-    teleopBindings,
-    teleopEnabled,
-    simRunning,
-    applyTravelPreset,
-  ]);
+  }, [bindingCaptureIndex, teleopBindings, teleopEnabled, simRunning, applyTravelPreset]);
 
   const handleElasticChange = useCallback(
     (key: keyof TuningConfig, value: number) => {
@@ -319,7 +410,7 @@ export default function PidSimApp() {
 
   const startSim = () => {
     if (!parseResult.config || !teleopEnabled || !simRef.current) return;
-    const sim = simRef.current!;
+    const sim = simRef.current;
     sim.reset();
     sim.setConfig(parseResult.config);
     sim.setEnabled(true);
@@ -353,11 +444,13 @@ export default function PidSimApp() {
     if (tier === 'minimal') return null;
     const h = codeTour.highlight;
     if (!h?.constName || h.constName === 'elastic') return null;
-    if (h.constName === 'plant') return findPlantSectionLine(code);
+    if (h.constName === 'plant') {
+      return mechanism === 'arm' ? findArmPlantSectionLine(code) : findPlantSectionLine(code);
+    }
     if (h.constName === 'maxVelocity') return findConstLine(code, 'kMaxVelocity');
     if (h.constName === 'maxAccel') return findConstLine(code, 'kMaxAccel');
     return findConstLine(code, FIELD_TO_CONST[h.constName]);
-  }, [guideMode, editorTab, codeTour, codeTourAid, code]);
+  }, [guideMode, editorTab, codeTour, codeTourAid, code, mechanism]);
 
   const tuningElasticField =
     guideMode === 'tuning' && aidTier(tuningAid) !== 'minimal'
@@ -380,8 +473,11 @@ export default function PidSimApp() {
     !!codeTour.highlight &&
     codeTour.highlight.constName !== 'elastic';
 
-  if (!vendor) {
-    return <PidSimLanding onSelectVendor={initVendor} />;
+  const subsystemFileName = mechanism === 'arm' ? 'ArmSubsystem.java' : 'ElevatorSubsystem.java';
+  const mechanismLabel = mechanism === 'arm' ? 'Arm' : 'Elevator';
+
+  if (!mechanism || !vendor) {
+    return <PidSimLanding onStart={initSession} />;
   }
 
   if (simLoadError) {
@@ -410,19 +506,20 @@ export default function PidSimApp() {
     <div className="pid-sim-app pid-sim-workspace">
       <div className="pid-sim-toolbar">
         <div className="pid-sim-toolbar-left">
-          <span className="pid-badge">Elevator</span>
+          <span className="pid-badge">{mechanismLabel}</span>
           <span className="pid-badge">{vendor === 'rev' ? 'REV Spark MAX' : 'CTRE Talon FX'}</span>
           <button
             type="button"
             className="pid-link-btn"
             onClick={() => {
               stopSim();
+              setMechanism(null);
               setVendor(null);
               setCode('');
               setRobotCode('');
             }}
           >
-            Change vendor
+            Change mechanism
           </button>
         </div>
       </div>
@@ -482,6 +579,7 @@ export default function PidSimApp() {
               }}
               highlightPulse={editorPulse}
               prerequisiteState={prerequisiteState}
+              steps={codeTourSteps}
             />
           ) : (
             <TuningGuidePanel
@@ -490,6 +588,8 @@ export default function PidSimApp() {
               simRunning={simRunning}
               highlightPulse={aidTier(tuningAid) === 'full'}
               prerequisiteState={prerequisiteState}
+              steps={tuningGuideSteps}
+              mechanism={mechanism}
             />
           )}
         </aside>
@@ -505,12 +605,13 @@ export default function PidSimApp() {
               errors={lintMessages}
               highlightLine={highlightLine}
               highlightPulse={editorPulse}
+              subsystemFileName={subsystemFileName}
             />
           ) : (
             <div className="pid-code-editor pid-code-editor-placeholder">
               <div className="pid-panel-header pid-editor-tabs">
                 <div className="pid-tab-list">
-                  <span className="pid-file-tab active">ElevatorSubsystem.java</span>
+                  <span className="pid-file-tab active">{subsystemFileName}</span>
                 </div>
               </div>
               <p className="pid-editor-loading">Loading code editor…</p>
@@ -526,6 +627,7 @@ export default function PidSimApp() {
           onChangeCommit={handleElasticCommit}
           liveTuning={liveTuning}
           highlightedField={tuningElasticField}
+          mechanism={mechanism}
           onSliderFocus={() => {
             if (guideMode === 'tuning') setLiveTuning(true);
           }}
@@ -535,6 +637,7 @@ export default function PidSimApp() {
           setpoint={config.setpoint}
           paused={paused}
           onPausedChange={setPaused}
+          mechanism={mechanism}
           highlightMechanism={highlightMechanism}
           highlightGraph={highlightGraph}
         />

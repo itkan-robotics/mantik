@@ -1,12 +1,13 @@
 import { memo, useEffect, useRef } from 'react';
-import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
+import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 
 interface Props {
-  simRef: React.RefObject<ElevatorSim | null>;
+  simRef: React.RefObject<PidMechanismSim | null>;
   paused: boolean;
   onPausedChange: (paused: boolean) => void;
   windowSeconds?: number;
   highlight?: boolean;
+  yAxisLabel?: string;
 }
 
 function GraphPanel({
@@ -15,6 +16,7 @@ function GraphPanel({
   onPausedChange,
   windowSeconds = 2,
   highlight = false,
+  yAxisLabel = 'm / m/s',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<import('uplot').default | null>(null);
@@ -55,7 +57,7 @@ function GraphPanel({
           ],
           axes: [
             { stroke: '#888', grid: { stroke: '#333' } },
-            { stroke: '#888', grid: { stroke: '#333' }, label: 'm / m/s' },
+            { stroke: '#888', grid: { stroke: '#333' }, label: yAxisLabel },
           ],
           scales: { x: { time: false } },
           cursor: { drag: { x: true, y: false } },
@@ -83,7 +85,7 @@ function GraphPanel({
       chartRef.current?.destroy();
       chartRef.current = null;
     };
-  }, []);
+  }, [yAxisLabel]);
 
   useEffect(() => {
     const sim = simRef.current;

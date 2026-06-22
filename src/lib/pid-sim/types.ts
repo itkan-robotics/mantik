@@ -1,5 +1,7 @@
 export type Vendor = 'rev' | 'ctre';
 
+export type MechanismType = 'elevator' | 'arm';
+
 /**
  * Tuning constants parsed from Java templates and SpringTune sliders.
  * Setpoint and motion limits use **motor rotations** (SparkMax / Talon FX encoder units).
@@ -28,13 +30,25 @@ export interface PlantConfig {
   drumCircumferenceM: number;
 }
 
+/** Single-jointed arm plant — soft limits editable in PLANT block; hard ±90° fixed in physics. */
+export interface ArmPlantConfig {
+  massKg: number;
+  armLengthM: number;
+  gearRatio: number;
+  startAngleDeg: number;
+  softMinDeg: number;
+  softMaxDeg: number;
+  hardMinDeg: number;
+  hardMaxDeg: number;
+}
+
 export interface SimSample {
   time: number;
-  /** Carriage height in meters (display / TraceView). */
+  /** Display position (m for elevator, deg for arm). */
   position: number;
-  /** Carriage velocity in m/s. */
+  /** Display velocity (m/s or deg/s). */
   velocity: number;
-  /** Profile setpoint in meters. */
+  /** Profile setpoint in display units. */
   setpoint: number;
   output: number;
 }

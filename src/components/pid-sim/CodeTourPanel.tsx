@@ -8,6 +8,7 @@ interface Props {
   onComplete: () => void;
   highlightPulse?: boolean;
   prerequisiteState: PrerequisiteState;
+  steps?: CodeTourStep[];
 }
 
 export default function CodeTourPanel({
@@ -16,11 +17,12 @@ export default function CodeTourPanel({
   onComplete,
   highlightPulse = false,
   prerequisiteState,
+  steps = CODE_TOUR_STEPS,
 }: Props) {
-  const step = CODE_TOUR_STEPS[stepIndex];
-  const level = aidLevel(stepIndex, CODE_TOUR_STEPS.length);
+  const step = steps[stepIndex] ?? steps[0];
+  const level = aidLevel(stepIndex, steps.length);
   const tier = aidTier(level);
-  const isLast = stepIndex >= CODE_TOUR_STEPS.length - 1;
+  const isLast = stepIndex >= steps.length - 1;
   const unmet = unmetPrerequisites(step.advancePrerequisites, prerequisiteState);
   const canAdvance = unmet.length === 0;
 
@@ -29,7 +31,7 @@ export default function CodeTourPanel({
       <div className="pid-panel-header">
         <span>Code Tour</span>
         <span className="pid-panel-sub">
-          {stepIndex + 1} / {CODE_TOUR_STEPS.length}
+          {stepIndex + 1} / {steps.length}
         </span>
       </div>
       <div className={`pid-guide-content ${tier === 'full' && highlightPulse ? 'aid-pulse' : ''}`}>
@@ -84,8 +86,8 @@ export default function CodeTourPanel({
   );
 }
 
-export function getCodeTourStep(stepIndex: number): CodeTourStep {
-  return CODE_TOUR_STEPS[stepIndex] ?? CODE_TOUR_STEPS[0];
+export function getCodeTourStep(stepIndex: number, steps: CodeTourStep[] = CODE_TOUR_STEPS): CodeTourStep {
+  return steps[stepIndex] ?? steps[0];
 }
 
 export { CODE_TOUR_STEPS };

@@ -96,7 +96,7 @@ export function findPlantConstLine(source: string, javaName: string): number | n
 export function findPlantSectionLine(source: string): number | null {
   const lines = source.split('\n');
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes('PLANT')) return i + 1;
+    if (lines[i].includes('--- PLANT:') || lines[i].includes('kMassLbs')) return i + 1;
   }
   return null;
 }

@@ -1,18 +1,35 @@
-import type { Vendor } from '@/lib/pid-sim/types';
+import { useState } from 'react';
+import type { MechanismType, Vendor } from '@/lib/pid-sim/types';
 
 interface Props {
-  onSelectVendor: (vendor: Vendor) => void;
+  onStart: (mechanism: MechanismType, vendor: Vendor) => void;
 }
 
-export default function PidSimLanding({ onSelectVendor }: Props) {
+const MECHANISM_OPTIONS: { value: MechanismType; label: string; description: string }[] = [
+  { value: 'elevator', label: 'Elevator', description: 'Vertical lift — kG then kP' },
+  { value: 'arm', label: 'Single-jointed arm', description: 'kG·cos(θ) and motion profiling' },
+];
+
+const VENDOR_OPTIONS: { value: Vendor; label: string; description: string }[] = [
+  { value: 'rev', label: 'REV Spark MAX', description: 'On-controller PID via SparkMaxConfig' },
+  { value: 'ctre', label: 'CTRE Talon FX', description: 'On-controller PID via Slot0 config' },
+];
+
+export default function PidSimLanding({ onStart }: Props) {
+  const [mechanism, setMechanism] = useState<MechanismType>('elevator');
+  const [vendor, setVendor] = useState<Vendor>('rev');
+
+  const mechanismDesc = MECHANISM_OPTIONS.find((o) => o.value === mechanism)?.description ?? '';
+  const vendorDesc = VENDOR_OPTIONS.find((o) => o.value === vendor)?.description ?? '';
+
   return (
     <div className="pid-sim-app pid-sim-landing">
       <div className="lesson-content" data-pagefind-body>
         <h1>PID Simulation</h1>
 
         <p>
-          Practice elevator PID tuning in your browser. Choose a motor vendor, learn what each constant
-          in the code means, then tune kG and kP while watching a mechanism view and line graph.
+          Practice PID tuning in your browser. Choose a mechanism and motor vendor, learn what each
+          constant in the code means, then tune gains while watching a mechanism view and line graph.
         </p>
 
         <div className="rules-box">
@@ -20,51 +37,62 @@ export default function PidSimLanding({ onSelectVendor }: Props) {
           <ul>
             <li>
               <strong>Tier 1 — Browser (this page):</strong> Zero install. Works on school Chromebooks.
-              Edit boilerplate code, use SpringTune sliders, and read TraceView graphs. Best for whole-class
-              labs and first-time tuning.
+              Edit boilerplate code, use SpringTune sliders, and read TraceView graphs.
             </li>
             <li>
               <strong>Tier 2 — Local WPILib + YAMS:</strong> Clone{' '}
               <a href="https://github.com/itkan-robotics/mantik-pid-practice">mantik-pid-practice</a>,
               run <code>Simulate Robot Code</code> in VS Code, and tune with Elastic + AdvantageScope.
-              Same workflow as the FRC lesson videos; requires WPILib installed.
             </li>
           </ul>
         </div>
 
-        <div className="rules-box">
-          <h3>How this works</h3>
-          <ul>
-            <li>
-              <strong>Code Tour</strong> explains what each tuning constant does — no answers given.
-            </li>
-            <li>
-              <strong>Tuning Guide</strong> walks you through kG then kP tuning, like the FRC elevator
-              lesson.
-            </li>
-            <li>
-              <strong>SpringTune panel</strong> mirrors live tuning sliders on a real robot (like Elastic).
-            </li>
-            <li>
-              <strong>kG</strong> values match desktop sim closely. <strong>kP</strong> uses WPILib units
-              (V/m) — SparkMax and Phoenix tuner numbers differ; retune kP here even if you watched the
-              lesson video.
-            </li>
-            <li>
-              Use one browser tab during lab — Monaco editor is the main memory cost on low-RAM machines.
-            </li>
-          </ul>
-        </div>
-
-        <h3>Choose motor vendor</h3>
-        <div className="link-grid">
-          <button type="button" className="link-grid-button" onClick={() => onSelectVendor('rev')}>
-            REV Spark MAX
-            <span className="link-grid-description">On-controller PID via SparkMaxConfig</span>
-          </button>
-          <button type="button" className="link-grid-button" onClick={() => onSelectVendor('ctre')}>
-            CTRE Talon FX
-            <span className="link-grid-description">On-controller PID via Slot0 config</span>
+        <div className="rules-box pid-sim-picker">
+          <h3>Choose mechanism and vendor</h3>
+          <div className="pid-sim-picker-fields">
+            <label className="pid-sim-picker-field" htmlFor="pid-mechanism">
+              <span className="pid-sim-picker-label">Mechanism</span>
+              <select
+                id="pid-mechanism"
+                className="pid-sim-picker-select"
+                value={mechanism}
+                onChange={(e) => setMechanism(e.target.value as MechanismType)}
+              >
+                {MECHANISM_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <span className="pid-sim-picker-hint">{mechanismDesc}</span>
+            </label>
+            <label className="pid-sim-picker-field" htmlFor="pid-vendor">
+              <span className="pid-sim-picker-label">Motor vendor</span>
+              <select
+                id="pid-vendor"
+                className="pid-sim-picker-select"
+                value={vendor}
+                onChange={(e) => setVendor(e.target.value as Vendor)}
+              >
+                {VENDOR_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <span className="pid-sim-picker-hint">{vendorDesc}</span>
+            </label>
+          </div>
+          <button
+            type="button"
+            className="link-grid-button pid-sim-picker-start"
+            onClick={() => onStart(mechanism, vendor)}
+          >
+            Start simulation
+            <span className="link-grid-description">
+              {MECHANISM_OPTIONS.find((o) => o.value === mechanism)?.label} with{' '}
+              {VENDOR_OPTIONS.find((o) => o.value === vendor)?.label}
+            </span>
           </button>
         </div>
       </div>

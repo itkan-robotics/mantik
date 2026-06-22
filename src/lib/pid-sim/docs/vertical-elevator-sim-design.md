@@ -158,11 +158,60 @@ Converted to rot/s² before applying `kA` in `updateController`.
 - Removed: Java RKDP `LinearSystemSim` port, golden CSV traces, `simMetrics`, V/m kP, hardcoded `getNeo(1)` for all vendors
 - Added: controls_js_sim loop, dual timestep, rotation PID, vendor-specific motor
 
+## Single-jointed arm
+
+Reference: [`controls_js_sim` vertical-arm](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim) — `plant/vertical-arm-plant.js`, `sim/vertical-arm-sim.js`.
+
+### Plant state and gravity
+
+```text
+State: [angleRad, angularVelRadPerS]   // 0 rad = horizontal (+X), +θ = CCW (arm up)
+accel = -(kGVolts · cos(θ)) / kA + EMF + V/kA + hard-limit spring at ±90°
+```
+
+Default plant (controls_js_sim specs + Mantik angle limits):
+
+| Field | Value |
+|-------|--------|
+| Mass | 5 kg |
+| Arm length | 1 m (point mass at end) |
+| Gearing | 100:1 motor rot / mechanism rot |
+| Start | 0° horizontal |
+| Soft limits | ±60° (editable in Java PLANT) |
+| Hard limits | ±90° (fixed in physics) |
+
+Coefficients derived from `DCMotor` + `ArmPlantConfig` — not hardcoded ReCalc values.
+
+### Unit model
+
+| Layer | Position | Velocity | Profiling limits |
+|-------|----------|----------|------------------|
+| Plant internal | radians | rad/s | rad/s, rad/s² |
+| PID / templates / SpringTune | motor rotations | rot/s | rot/s, rot/s² |
+| Mechanism + TraceView | **degrees** | deg/s | — |
+
+```text
+angleDeg = motorRot × (360 / gearRatio)
+```
+
+### Controller vs elevator
+
+Arm feedforward: **`kG · cos(setpointRad)`** — not constant kG.
+
+Trapezoid profile uses WPILib incremental `calculate(dt, current, goal)` in rad/s internally; zero max vel **and** max accel bypasses profiling for kG/kP tuning.
+
+### Vendor motors
+
+Same as elevator: REV NEO, CTRE Kraken X60 via `motorForVendor()`.
+
+### Differences from mantik-pid-practice
+
+Local YAMS arm uses degrees in closed-loop config, 12:1 gearing, and different limits. Browser sim uses controls_js plant numbers and motor-rotation PID for vendor tuner parity.
+
 ## Future mechanisms
 
 Reuse: `utils/` (RK4, delay line, trapezoid profile), vendor motor selector, encoder unit helpers per mechanism.
 
-- **Arm:** `vertical-arm-plant.js` — gravity ∝ cos(angle)
 - **Flywheel:** velocity plant, no kG
 - **Shooter:** velocity PID in rotations/s or degrees/s per lesson
 

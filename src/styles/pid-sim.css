@@ -37,6 +37,57 @@ body:has(.pid-sim-workspace) .main .content {
   font-family: inherit;
 }
 
+.pid-sim-picker-fields {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .pid-sim-picker-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pid-sim-picker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pid-sim-picker-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pid-sim-picker-select {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-foreground-primary);
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-foreground-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pid-sim-picker-select:focus {
+  outline: 2px solid var(--color-accent, #ce1126);
+  outline-offset: 1px;
+}
+
+.pid-sim-picker-hint {
+  font-size: 0.85rem;
+  color: var(--color-foreground-secondary, #888);
+  line-height: 1.35;
+}
+
+.pid-sim-picker-start {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
 /* Toolbar */
 .pid-sim-toolbar {
   display: flex;

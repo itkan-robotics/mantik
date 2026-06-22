@@ -15,6 +15,8 @@ description: ""
 
 This lesson demonstrates PID tuning for an arm mechanism. Arms are more complex than elevators due to their rotational nature and varying gravity effects. You'll learn how to tune kG precisely, tune kP, and use motion profiling (trapezoidal profiles) to achieve smooth, accurate control.
 
+**Browser practice:** Open [PID Simulation](/pid-simulation) on Mantik and choose **Arm** plus your motor vendor. Setpoint and kP use motor rotations (V/rot); the Mechanism view and TraceView show degrees. The browser plant matches [controls_js_sim](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim) (5 kg, 1 m, 100:1). Gravity feedforward uses kG · cos(angle). Retune kP in the browser even if you watched the lesson video on YAMS hardware.
+
 ### Video Tutorial
 
 Watch this video for a complete walkthrough of arm PID tuning:
@@ -179,5 +181,5 @@ The complete arm tuning process involves:
 
 These skills apply to all mechanism tuning, whether using simulation tools or physical hardware tuning tools.
 
-<LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Trapezoidal Motion Profiling","id":"trapezoidal-motion-profiling"},{"label":"Feedforward Control","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward-control.html"}]} title="Resources" section="frc" />
+<LinkGrid links={[{"label":"Try in browser","url":"/pid-simulation"},{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Trapezoidal Motion Profiling","id":"trapezoidal-motion-profiling"},{"label":"Feedforward Control","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward-control.html"}]} title="Resources" section="frc" />
 

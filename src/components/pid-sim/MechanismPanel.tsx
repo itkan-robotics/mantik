@@ -2,10 +2,11 @@ import { memo, useEffect, useRef } from 'react';
 import { REFERENCE_PLANT } from '@/lib/pid-sim/reference/elevatorReference';
 import { motorRotationsToHeightM } from '@/lib/pid-sim/physics/units/encoderUnits';
 import type { PlantConfig } from '@/lib/pid-sim/types';
+import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
 
 interface Props {
-  simRef: React.RefObject<ElevatorSim | null>;
+  simRef: React.RefObject<PidMechanismSim | null>;
   setpoint: number;
   highlight?: boolean;
 }
@@ -27,8 +28,11 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const sim = simRef.current;
-      const plant: PlantConfig = sim?.getPlantConfig() ?? REFERENCE_PLANT;
+      const sim = simRef.current as ElevatorSim | null;
+      const plant: PlantConfig =
+        sim && 'getPlantConfig' in sim
+          ? (sim.getPlantConfig() as PlantConfig)
+          : REFERENCE_PLANT;
       const latest = sim?.getLatest();
       const pos = latest?.position ?? plant.startHeightM;
       const sp =

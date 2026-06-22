@@ -17,6 +17,7 @@ interface Props {
   errors: LintMessage[];
   highlightLine?: number | null;
   highlightPulse?: boolean;
+  subsystemFileName?: string;
 }
 
 export default function CodeEditorTabs({
@@ -28,9 +29,11 @@ export default function CodeEditorTabs({
   errors,
   highlightLine,
   highlightPulse = false,
+  subsystemFileName = 'ElevatorSubsystem.java',
 }: Props) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
+  const highlightDecorationIds = useRef<string[]>([]);
 
   const applyMarkers = useCallback(() => {
     const monaco = monacoRef.current;
@@ -63,7 +66,14 @@ export default function CodeEditorTabs({
   useEffect(() => {
     const ed = editorRef.current;
     const monaco = monacoRef.current;
-    if (!ed || !monaco || !highlightLine || activeTab !== 'subsystem') return;
+    if (!ed || !monaco || activeTab !== 'subsystem') return;
+
+    const shouldDecorate = highlightPulse && highlightLine != null;
+
+    if (!shouldDecorate) {
+      highlightDecorationIds.current = ed.deltaDecorations(highlightDecorationIds.current, []);
+      return;
+    }
 
     ed.revealLineInCenter(highlightLine);
     ed.setSelection({
@@ -73,20 +83,15 @@ export default function CodeEditorTabs({
       endColumn: 1,
     });
 
-    if (highlightPulse) {
-      ed.deltaDecorations(
-        [],
-        [
-          {
-            range: new monaco.Range(highlightLine, 1, highlightLine, 200),
-            options: {
-              isWholeLine: true,
-              className: 'pid-line-highlight',
-            },
-          },
-        ],
-      );
-    }
+    highlightDecorationIds.current = ed.deltaDecorations(highlightDecorationIds.current, [
+      {
+        range: new monaco.Range(highlightLine, 1, highlightLine, 200),
+        options: {
+          isWholeLine: true,
+          className: 'pid-line-highlight',
+        },
+      },
+    ]);
   }, [highlightLine, highlightPulse, activeTab]);
 
   const handleMount = (ed: editor.IStandaloneCodeEditor, monaco: Monaco) => {
@@ -106,7 +111,7 @@ export default function CodeEditorTabs({
             className={`pid-file-tab ${activeTab === 'subsystem' ? 'active' : ''}`}
             onClick={() => onTabChange('subsystem')}
           >
-            ElevatorSubsystem.java
+            {subsystemFileName}
           </button>
           <button
             type="button"

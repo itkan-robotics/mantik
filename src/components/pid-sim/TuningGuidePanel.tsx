@@ -1,6 +1,7 @@
 import { aidLevel, aidTier } from '@/lib/pid-sim/guides/aidLevel';
-import { TUNING_GUIDE_STEPS } from '@/lib/pid-sim/guides/tuningGuideSteps';
+import { TUNING_GUIDE_STEPS, type TuningGuideStep } from '@/lib/pid-sim/guides/tuningGuideSteps';
 import { unmetPrerequisites, type PrerequisiteState } from '@/lib/pid-sim/guides/prerequisites';
+import type { MechanismType } from '@/lib/pid-sim/types';
 
 interface Props {
   stepIndex: number;
@@ -8,6 +9,8 @@ interface Props {
   simRunning: boolean;
   highlightPulse?: boolean;
   prerequisiteState: PrerequisiteState;
+  steps?: TuningGuideStep[];
+  mechanism?: MechanismType;
 }
 
 export default function TuningGuidePanel({
@@ -16,11 +19,13 @@ export default function TuningGuidePanel({
   simRunning,
   highlightPulse = false,
   prerequisiteState,
+  steps = TUNING_GUIDE_STEPS,
+  mechanism = 'elevator',
 }: Props) {
-  const step = TUNING_GUIDE_STEPS[stepIndex];
-  const level = aidLevel(stepIndex, TUNING_GUIDE_STEPS.length);
+  const step = steps[stepIndex] ?? steps[0];
+  const level = aidLevel(stepIndex, steps.length);
   const tier = aidTier(level);
-  const isLast = stepIndex >= TUNING_GUIDE_STEPS.length - 1;
+  const isLast = stepIndex >= steps.length - 1;
   const unmet = unmetPrerequisites(step.advancePrerequisites, prerequisiteState);
   const canAdvance = unmet.length === 0;
 
@@ -29,7 +34,7 @@ export default function TuningGuidePanel({
       <div className="pid-panel-header">
         <span>Tuning Guide</span>
         <span className="pid-panel-sub">
-          {stepIndex + 1} / {TUNING_GUIDE_STEPS.length}
+          {stepIndex + 1} / {steps.length}
         </span>
       </div>
       <div className={`pid-guide-content ${tier === 'full' && highlightPulse ? 'aid-pulse' : ''}`}>
@@ -77,7 +82,15 @@ export default function TuningGuidePanel({
         {step.id === 'complete' && (
           <div className="pid-wizard-links">
             <a href="/frc/pid-tuning-practice-setup">Full setup guide</a>
-            <a href="/frc/pid-tuning-practice-elevator">Elevator tuning lesson</a>
+            <a
+              href={
+                mechanism === 'arm'
+                  ? '/frc/pid-tuning-practice-arm'
+                  : '/frc/pid-tuning-practice-elevator'
+              }
+            >
+              {mechanism === 'arm' ? 'Arm tuning lesson' : 'Elevator tuning lesson'}
+            </a>
             <a
               href="https://github.com/itkan-robotics/mantik-pid-practice"
               target="_blank"
@@ -100,4 +113,4 @@ export default function TuningGuidePanel({
   );
 }
 
-export { TUNING_GUIDE_STEPS };
+export { TUNING_GUIDE_STEPS, type TuningGuideStep };
