@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import MechanismPanel from './MechanismPanel';
 import ArmMechanismPanel from './ArmMechanismPanel';
+import FlywheelMechanismPanel from './FlywheelMechanismPanel';
 import GraphPanel from './GraphPanel';
 import type { PidMechanismSim } from '@/lib/pid-sim/physics/simTypes';
 import type { MechanismType } from '@/lib/pid-sim/types';
@@ -24,7 +25,8 @@ function SimulatorPanel({
   highlightMechanism = false,
   highlightGraph = false,
 }: Props) {
-  const yAxisLabel = mechanism === 'arm' ? 'deg / deg/s' : 'm / m/s';
+  const yAxisLabel =
+    mechanism === 'arm' ? 'deg / deg/s' : mechanism === 'flywheel' ? 'RPM' : 'm / m/s';
 
   return (
     <div className="pid-simulator-panel">
@@ -35,6 +37,12 @@ function SimulatorPanel({
       <div className="pid-simulator-split">
         {mechanism === 'arm' ? (
           <ArmMechanismPanel
+            simRef={simRef}
+            setpoint={setpoint}
+            highlight={highlightMechanism}
+          />
+        ) : mechanism === 'flywheel' ? (
+          <FlywheelMechanismPanel
             simRef={simRef}
             setpoint={setpoint}
             highlight={highlightMechanism}

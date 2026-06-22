@@ -208,11 +208,99 @@ Same as elevator: REV NEO, CTRE Kraken X60 via `motorForVendor()`.
 
 Local YAMS arm uses degrees in closed-loop config, 12:1 gearing, and different limits. Browser sim uses controls_js plant numbers and motor-rotation PID for vendor tuner parity.
 
+## Flywheel (velocity control)
+
+Reference: [`controls_js_sim` flywheel](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim) — `plant/flywheel-plant.js`, `sim/flywheel-sim.js`.
+
+FRC lesson: [`pid-tuning-practice-shooter.mdx`](../../../../content/frc/frc-pid-tuning-practice/pid-tuning-practice-shooter.mdx) (flywheel velocity tuning video).
+
+### Plant model (DC motor + wheel inertia — not RK4)
+
+Elevator and arm use RK4 on a second-order state. The flywheel uses **Euler integration @ 5 ms** of a DC-motor-driven wheel (controls_js mass/geometry; motor from `vendorMotor`):
+
+```text
+State: ω_wheel (rad/s), integrated wheel revolutions (viz only)
+Update @ PLANT_DT = 5 ms:
+  motor_ω = ω_wheel · gearRatio
+  I = (V − motor_ω/Kv) / R
+  τ_load = (Kt · I) / gearRatio − viscous friction (0.0005 · ω)
+  ω_new = ω + (τ_load / J) · Ts
+  clamp 0 ≤ ω ≤ maxRpm (wheel)
+J = mass · radius²
+Kt, Kv, R from DCMotor(vendor)
+Steady state (no friction): ω_wheel ≈ (Kv · V) / gearRatio
+```
+
+Default plant (controls_js_sim):
+
+| Field | Value |
+|-------|--------|
+| Mass | 0.55 kg |
+| Radius | 0.0762 m (3 in) |
+| Gearing | 5:1 motor rot / wheel rot |
+| Max wheel speed | 6000 RPM (clamp in plant) |
+
+### Unit model
+
+| Layer | Velocity | Position (viz) |
+|-------|----------|------------------|
+| Plant internal | wheel rad/s | wheel revolutions |
+| PID / Java / SpringTune | **motor rot/s** | N/A (velocity mode) |
+| Mechanism + TraceView | **wheel RPM** | wheel revs (spin angle) |
+
+```text
+wheelRpm = (motorRotPerSec / gearRatio) × 60
+motorRotPerSec = (wheelRpm / 60) × gearRatio
+```
+
+Setpoint in code is **motor rot/s** (SparkMax / Talon FX velocity mode). TraceView shows **wheel RPM** so students can compare to shooter lesson targets (e.g. 417 RPM).
+
+### Controller (@ 20 ms)
+
+```text
+FlywheelSim
+  ├── FlywheelPlant @ 5 ms
+  ├── DelayLine on measured motor rot/s (13 samples — same as elevator)
+  └── updateController:
+        goal = setpoint (motor rot/s), capped by maxVelocity and plant max RPM
+        error = goal − measured
+        FF = kS·sign(goal) + kV·goal   (no kG)
+        PID on velocity error
+        voltage clamp ±12 V
+```
+
+No trapezoid profile — setpoint steps immediately (kS → kV → target RPM → kP lesson flow). `maxVelocity` / `maxAccel` remain in Java template for vendor API parity; profiling is disabled in browser physics. `maxVelocity` optionally caps commanded setpoint.
+
+### Tuning order (shooter lesson)
+
+1. kS — static friction FF (small; sim has little friction)
+2. kV — setpoint **1 motor rot/s**, use kS-doubling trick, copy result to kV
+3. Target velocity — convert RPM → motor rot/s (`motorRotPerSec = wheelRpm / 60 × gearRatio`)
+4. kP — very small (≈0.001–0.01); helps rise time and disturbance recovery
+
+### Vendor motors
+
+| Vendor | Motor | Effect |
+|--------|-------|--------|
+| REV | `getNEO(1)` | Different C1/C2 → different kV feel |
+| CTRE | `getKrakenX60(1)` | Same inertia, different motor constants |
+
+### Differences from elevator / arm
+
+| | Elevator / arm | Flywheel |
+|--|----------------|----------|
+| Control | Position PID | **Velocity PID** |
+| kG | Yes (constant or cos θ) | **No** |
+| Profile | Trapezoid (optional) | **None** |
+| TraceView primary | Position | **Velocity (RPM)** |
+| Teleop presets | Travel height fractions | **Velocity fractions of max RPM** |
+
+### Differences from mantik-pid-practice
+
+Local YAMS `ShooterSubsystem` uses 4 in / 1 lb / 12:1 / NEO. Browser sim uses controls_js plant numbers and motor-rotation velocity PID for vendor tuner parity.
+
 ## Future mechanisms
 
-Reuse: `utils/` (RK4, delay line, trapezoid profile), vendor motor selector, encoder unit helpers per mechanism.
-
-- **Flywheel:** velocity plant, no kG
-- **Shooter:** velocity PID in rotations/s or degrees/s per lesson
+Reuse: `utils/` (delay line), vendor motor selector, unit helpers per mechanism.
 
 Each mechanism gets its own design section appended to this doc.

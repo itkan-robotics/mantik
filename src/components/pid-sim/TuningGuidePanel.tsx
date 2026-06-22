@@ -86,10 +86,16 @@ export default function TuningGuidePanel({
               href={
                 mechanism === 'arm'
                   ? '/frc/pid-tuning-practice-arm'
-                  : '/frc/pid-tuning-practice-elevator'
+                  : mechanism === 'flywheel'
+                    ? '/frc/pid-tuning-practice-shooter'
+                    : '/frc/pid-tuning-practice-elevator'
               }
             >
-              {mechanism === 'arm' ? 'Arm tuning lesson' : 'Elevator tuning lesson'}
+              {mechanism === 'arm'
+                ? 'Arm tuning lesson'
+                : mechanism === 'flywheel'
+                  ? 'Flywheel tuning lesson'
+                  : 'Elevator tuning lesson'}
             </a>
             <a
               href="https://github.com/itkan-robotics/mantik-pid-practice"

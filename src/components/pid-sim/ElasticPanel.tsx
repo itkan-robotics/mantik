@@ -2,6 +2,10 @@ import { memo } from 'react';
 import type { MechanismType, TuningConfig } from '@/lib/pid-sim/types';
 import { KP_SLIDER_MAX } from '@/lib/pid-sim/reference/elevatorReference';
 import { ARM_KP_SLIDER_MAX, ARM_SETPOINT_SLIDER_MAX } from '@/lib/pid-sim/reference/armReference';
+import {
+  FLYWHEEL_KP_SLIDER_MAX,
+  FLYWHEEL_SETPOINT_SLIDER_MAX,
+} from '@/lib/pid-sim/reference/flywheelReference';
 
 interface Props {
   config: TuningConfig;
@@ -14,6 +18,23 @@ interface Props {
 }
 
 function fieldsFor(mechanism: MechanismType) {
+  if (mechanism === 'flywheel') {
+    return [
+      { key: 'kP' as const, label: 'kP (V/(rot/s))', min: 0, max: FLYWHEEL_KP_SLIDER_MAX, step: 0.001 },
+      { key: 'kI' as const, label: 'kI (V·s/(rot/s))', min: 0, max: 1, step: 0.001 },
+      { key: 'kD' as const, label: 'kD (V/(rot/s²))', min: 0, max: 1, step: 0.001 },
+      { key: 'kS' as const, label: 'kS (static FF, V)', min: 0, max: 2, step: 0.01 },
+      { key: 'kV' as const, label: 'kV (V/(rot/s))', min: 0, max: 12, step: 0.01 },
+      {
+        key: 'setpoint' as const,
+        label: 'Setpoint (motor rot/s)',
+        min: 0,
+        max: FLYWHEEL_SETPOINT_SLIDER_MAX,
+        step: 0.5,
+      },
+    ];
+  }
+
   const kpMax = mechanism === 'arm' ? ARM_KP_SLIDER_MAX : KP_SLIDER_MAX;
   const setpointMax = mechanism === 'arm' ? ARM_SETPOINT_SLIDER_MAX : 260;
   return [

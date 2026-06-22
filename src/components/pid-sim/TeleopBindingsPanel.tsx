@@ -9,6 +9,7 @@ interface Props {
   captureIndex: number | null;
   active: boolean;
   rejectHint: string | null;
+  presetLabels?: readonly string[];
   onStartCapture: (index: number) => void;
   onCancelCapture: () => void;
 }
@@ -18,6 +19,7 @@ function TeleopBindingsPanel({
   captureIndex,
   active,
   rejectHint,
+  presetLabels,
   onStartCapture,
   onCancelCapture,
 }: Props) {
@@ -30,7 +32,7 @@ function TeleopBindingsPanel({
         </span>
       </div>
       <div className="pid-teleop-bindings-grid">
-        {TRAVEL_PRESET_LABELS.map((label, index) => {
+        {(presetLabels ?? TRAVEL_PRESET_LABELS).map((label, index) => {
           const keyCode = bindings[index] ?? '';
           const capturing = captureIndex === index;
           return (

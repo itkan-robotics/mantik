@@ -1,6 +1,6 @@
 export type Vendor = 'rev' | 'ctre';
 
-export type MechanismType = 'elevator' | 'arm';
+export type MechanismType = 'elevator' | 'arm' | 'flywheel';
 
 /**
  * Tuning constants parsed from Java templates and SpringTune sliders.
@@ -42,11 +42,19 @@ export interface ArmPlantConfig {
   hardMaxDeg: number;
 }
 
+/** Flywheel plant — editable in subsystem PLANT block; drives browser physics. */
+export interface FlywheelPlantConfig {
+  massKg: number;
+  radiusM: number;
+  gearRatio: number;
+  maxRpm: number;
+}
+
 export interface SimSample {
   time: number;
-  /** Display position (m for elevator, deg for arm). */
+  /** Display position (m elevator, deg arm, wheel revs flywheel). */
   position: number;
-  /** Display velocity (m/s or deg/s). */
+  /** Display velocity (m/s elevator, deg/s arm, wheel RPM flywheel). */
   velocity: number;
   /** Profile setpoint in display units. */
   setpoint: number;

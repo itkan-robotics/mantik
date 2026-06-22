@@ -19,7 +19,7 @@ import {
   normalizeKeyCode,
   saveTeleopBindings,
 } from '@/lib/pid-sim/teleop/travelPresets';
-import type { ArmPlantConfig, MechanismType, PlantConfig, TuningConfig, Vendor } from '@/lib/pid-sim/types';
+import type { ArmPlantConfig, FlywheelPlantConfig, MechanismType, PlantConfig, TuningConfig, Vendor } from '@/lib/pid-sim/types';
 import { DEFAULT_TUNING } from '@/lib/pid-sim/types';
 
 type GuideMode = 'codeTour' | 'tuning';
@@ -71,7 +71,7 @@ export default function PidSimWorkspace({ mechanism, vendor, onExit }: Props) {
   const lastAutoTabStep = useRef(-1);
   const codePatchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingPatch = useRef<{ key: keyof TuningConfig; value: number } | null>(null);
-  const lastPlantRef = useRef<PlantConfig | ArmPlantConfig | null>(null);
+  const lastPlantRef = useRef<PlantConfig | ArmPlantConfig | FlywheelPlantConfig | null>(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -171,6 +171,12 @@ export default function PidSimWorkspace({ mechanism, vendor, onExit }: Props) {
           const sim = new mod.ArmSim(vendor);
           sim.setPlant(bundle!.referencePlant as ArmPlantConfig);
           simRef.current = sim;
+        } else if (mechanism === 'flywheel') {
+          const mod = await import('@/lib/pid-sim/physics/flywheelSim');
+          if (cancelled) return;
+          const sim = new mod.FlywheelSim(vendor);
+          sim.setPlant(bundle!.referencePlant as FlywheelPlantConfig);
+          simRef.current = sim;
         } else {
           const mod = await import('@/lib/pid-sim/physics/elevatorSim');
           if (cancelled) return;
@@ -220,6 +226,10 @@ export default function PidSimWorkspace({ mechanism, vendor, onExit }: Props) {
     lastPlantRef.current = plantConfig;
     if (mechanism === 'arm') {
       (sim as import('@/lib/pid-sim/physics/armSim').ArmSim).setPlant(plantConfig as ArmPlantConfig);
+    } else if (mechanism === 'flywheel') {
+      (sim as import('@/lib/pid-sim/physics/flywheelSim').FlywheelSim).setPlant(
+        plantConfig as FlywheelPlantConfig,
+      );
     } else {
       (sim as import('@/lib/pid-sim/physics/elevatorSim').ElevatorSim).setPlant(
         plantConfig as PlantConfig,
@@ -404,8 +414,14 @@ export default function PidSimWorkspace({ mechanism, vendor, onExit }: Props) {
     !!codeTour?.highlight &&
     codeTour.highlight.constName !== 'elastic';
 
-  const subsystemFileName = mechanism === 'arm' ? 'ArmSubsystem.java' : 'ElevatorSubsystem.java';
-  const mechanismLabel = mechanism === 'arm' ? 'Arm' : 'Elevator';
+  const subsystemFileName =
+    mechanism === 'arm'
+      ? 'ArmSubsystem.java'
+      : mechanism === 'flywheel'
+        ? 'FlywheelSubsystem.java'
+        : 'ElevatorSubsystem.java';
+  const mechanismLabel =
+    mechanism === 'arm' ? 'Arm' : mechanism === 'flywheel' ? 'Flywheel' : 'Elevator';
 
   if (bundleError) {
     return (
@@ -470,6 +486,11 @@ export default function PidSimWorkspace({ mechanism, vendor, onExit }: Props) {
         captureIndex={bindingCaptureIndex}
         active={teleopEnabled && simRunning}
         rejectHint={bindingRejectHint}
+        presetLabels={
+          mechanism === 'flywheel'
+            ? ['Stop', '25% max', '50% max', '75% max', '100% max']
+            : undefined
+        }
         onStartCapture={(index) => {
           setBindingRejectHint(null);
           setBindingCaptureIndex(index);

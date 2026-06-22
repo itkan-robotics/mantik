@@ -1,0 +1,86 @@
+import type { CodeTourStep } from '../codeTourSteps';
+
+export const FLYWHEEL_CODE_TOUR_STEPS: CodeTourStep[] = [
+  {
+    id: 'overview',
+    title: 'What you are looking at',
+    body: 'This file defines a flywheel (shooter) subsystem. Flywheels use velocity control — the motor tries to reach and hold a target speed, not a position. There is no gravity feedforward (kG).',
+    bodyExtra:
+      'Constants marked with TUNING comments are the values you change during live tuning. On hardware, the same numbers appear in Phoenix Tuner, REV Hardware Client, or Elastic widgets.',
+    prompt: 'Scan the file. How is velocity control different from the elevator template?',
+    highlight: { file: 'subsystem', lineHint: 'TUNING' },
+    learnMore: [{ label: 'Shooter tuning practice', href: '/frc/pid-tuning-practice-shooter' }],
+  },
+  {
+    id: 'plant',
+    title: 'Simulation plant (optional)',
+    body: 'The PLANT block defines the simulated flywheel — mass, wheel radius, gearing, and max RPM. Only browser physics read these values.',
+    bodyExtra: 'Defaults match WPILib controls_js_sim (0.55 kg, 3 in radius, 5:1). Leave defaults until you have a baseline kV and kP tune.',
+    prompt: 'Find kMaxRpm. What happens if you lower it?',
+    highlight: { file: 'subsystem', constName: 'plant' },
+  },
+  {
+    id: 'pid',
+    title: 'PID gains (velocity)',
+    body: 'For velocity control, PID acts on speed error in motor rot/s. kP is in V/(rot/s) and is usually very small (three decimal places). kI and kD are often zero on flywheels.',
+    prompt: 'Find kP. Why is velocity kP smaller than position kP on an elevator?',
+    highlight: { file: 'subsystem', constName: 'kP' },
+    learnMore: [{ label: 'PID Control', href: '/frc/frc-pid-control' }],
+  },
+  {
+    id: 'feedforward',
+    title: 'Feedforward (no kG)',
+    body: 'kS helps overcome static friction at rest. kV is the main feedforward — volts per motor rot/s. kV should do most of the work once tuned. kG stays at zero for flywheels.',
+    prompt: 'Locate kS and kV. Which one does most of the work after tuning?',
+    highlight: { file: 'subsystem', constName: 'kV' },
+    learnMore: [
+      { label: 'Shooter tuning practice', href: '/frc/pid-tuning-practice-shooter' },
+      { label: 'Feedforward', href: 'https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward.html' },
+    ],
+  },
+  {
+    id: 'setpoint',
+    title: 'Velocity setpoint',
+    body: 'kSetpoint is target velocity in motor rot/s — the same unit SparkMax and Talon FX use for velocity closed loop. TraceView shows wheel RPM (motor rot/s ÷ gear ratio × 60).',
+    bodyExtra: 'The shooter lesson tunes kV at 1 motor rot/s, then sets a higher target (e.g. 417 wheel RPM).',
+    prompt: 'Find kSetpoint. If gear ratio is 5:1, what wheel RPM equals 1 motor rot/s?',
+    highlight: { file: 'subsystem', constName: 'setpoint' },
+  },
+  {
+    id: 'limits',
+    title: 'Motion limits',
+    body: 'kMaxVelocity and kMaxAccel configure vendor motion limits. The browser sim does not use trapezoid profiling for flywheels — setpoint steps immediately.',
+    prompt: 'Find kMaxVelocity. Is it used the same way as on an elevator?',
+    highlight: { file: 'subsystem', constName: 'maxVelocity' },
+  },
+  {
+    id: 'control-type',
+    title: 'Velocity closed loop',
+    body: 'runAtSetpoint() calls setReference with ControlType.kVelocity (REV) or VelocityVoltage (CTRE). The controller compares measured speed to kSetpoint.',
+    prompt: 'Find runAtSetpoint(). What control type does it use?',
+    highlight: { file: 'subsystem', lineHint: 'runAtSetpoint' },
+  },
+  {
+    id: 'robot',
+    title: 'Robot.java',
+    body: 'Robot.java calls the subsystem during teleop. In the browser sim, Teleop Presets map keys to velocity fractions of max RPM.',
+    prompt: 'Open the Robot tab. What does teleopPeriodic call?',
+    highlight: { file: 'robot' },
+    advancePrerequisites: ['teleop'],
+  },
+  {
+    id: 'elastic',
+    title: 'SpringTune sliders',
+    body: 'SpringTune mirrors tuning constants. Enable Live Tuning in Sim Controls to drag sliders. kG is hidden for flywheels. Setpoint is in motor rot/s.',
+    prompt: 'Enable Live Tuning. Which gain will you tune first — kG or kV?',
+    highlight: { constName: 'elastic' },
+    advancePrerequisites: ['liveTuning'],
+  },
+  {
+    id: 'ready',
+    title: 'Ready for tuning',
+    body: 'You have seen the flywheel code structure. Switch to the Tuning Guide and follow kS → kV → target RPM → kP. Watch the velocity trace (RPM), not wheel position.',
+    prompt: 'What is the tuning order for a flywheel?',
+    advancePrerequisites: ['teleop', 'liveTuning'],
+  },
+];

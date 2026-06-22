@@ -15,6 +15,12 @@ description: ""
 
 This lesson demonstrates PID tuning for a shooter mechanism using velocity control. Shooters differ from position-controlled mechanisms because they need to maintain a constant speed (RPM) rather than reach a specific position. You'll learn how to tune velocity feedforward (kV) by first using duty cycle mode (kS) to find the value that produces one rotation per second, then copy that to kV. You'll also learn about unit conversions and adding small proportional (kP) control to handle disturbances.
 
+<RulesBox title="Browser practice">
+
+Open [PID Simulation](/pid-simulation) on Mantik for a zero-install first pass. Choose **Flywheel**, pick REV or CTRE to match your hardware, and tune with SpringTune while watching wheel RPM on TraceView. Setpoint and gains use **motor rot/s** in code (same as SparkMax / Talon FX velocity mode); the graph shows **wheel RPM**.
+
+</RulesBox>
+
 ### Video Tutorial
 
 Watch this video for a complete walkthrough of shooter velocity control tuning:

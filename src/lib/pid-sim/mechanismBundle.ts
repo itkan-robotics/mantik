@@ -1,24 +1,30 @@
 import type { CodeTourStep } from './guides/codeTourSteps';
 import type { TuningGuideStep } from './guides/tuningGuideSteps';
-import type { ArmPlantConfig, MechanismType, ParseResult, PlantConfig, TuningConfig, Vendor } from './types';
+import type {
+  ArmPlantConfig,
+  FlywheelPlantConfig,
+  MechanismType,
+  ParseResult,
+  PlantConfig,
+  TuningConfig,
+  Vendor,
+} from './types';
+
+export type MechanismPlantConfig = PlantConfig | ArmPlantConfig | FlywheelPlantConfig;
 
 export interface MechanismBundle {
   parseCode: (source: string, vendor: Vendor) => ParseResult;
-  getSubsystemTemplate: (
-    vendor: Vendor,
-    config: TuningConfig,
-    plant: PlantConfig | ArmPlantConfig,
-  ) => string;
+  getSubsystemTemplate: (vendor: Vendor, config: TuningConfig, plant: MechanismPlantConfig) => string;
   getRobotTemplate: (vendor: Vendor) => string;
-  parsePlantFromCode: (source: string) => PlantConfig | ArmPlantConfig;
-  plantWarningsFor: (plant: PlantConfig | ArmPlantConfig, setpointRot?: number) => string[];
-  plantsEqual: (a: PlantConfig | ArmPlantConfig, b: PlantConfig | ArmPlantConfig) => boolean;
+  parsePlantFromCode: (source: string) => MechanismPlantConfig;
+  plantWarningsFor: (plant: MechanismPlantConfig, setpoint?: number) => string[];
+  plantsEqual: (a: MechanismPlantConfig, b: MechanismPlantConfig) => boolean;
   findPlantLine: (source: string) => number | null;
-  referencePlant: PlantConfig | ArmPlantConfig;
+  referencePlant: MechanismPlantConfig;
   defaultSetpointRot: number;
   codeTourSteps: CodeTourStep[];
   tuningGuideSteps: TuningGuideStep[];
-  travelFractionToSetpoint: (fraction: number, plant: PlantConfig | ArmPlantConfig) => number;
+  travelFractionToSetpoint: (fraction: number, plant: MechanismPlantConfig) => number;
   patchConstant: (source: string, name: string, value: number) => string;
   findConstLine: (source: string, constName: string) => number | null;
 }
@@ -40,14 +46,46 @@ export async function loadMechanismBundle(mechanism: MechanismType): Promise<Mec
       getSubsystemTemplate: armParser.getArmTemplateForVendor,
       getRobotTemplate: armParser.getArmRobotTemplateForVendor,
       parsePlantFromCode: armPlantParser.parseArmPlantConfig,
-      plantWarningsFor: armPlantParser.armPlantWarnings,
-      plantsEqual: armPlantParser.armPlantsEqual,
+      plantWarningsFor: (plant, setpointRot) =>
+        armPlantParser.armPlantWarnings(plant as ArmPlantConfig, setpointRot),
+      plantsEqual: (a, b) => armPlantParser.armPlantsEqual(a as ArmPlantConfig, b as ArmPlantConfig),
       findPlantLine: armPlantParser.findArmPlantSectionLine,
       referencePlant: reference.REFERENCE_ARM_PLANT,
       defaultSetpointRot: reference.DEFAULT_ARM_SETPOINT_ROT,
       codeTourSteps: codeTour.ARM_CODE_TOUR_STEPS,
       tuningGuideSteps: tuning.ARM_TUNING_GUIDE_STEPS,
-      travelFractionToSetpoint: units.travelFractionToSetpointRot,
+      travelFractionToSetpoint: (fraction, plant) =>
+        units.travelFractionToSetpointRot(fraction, plant as PlantConfig),
+      patchConstant,
+      findConstLine,
+    };
+  }
+
+  if (mechanism === 'flywheel') {
+    const [flyParser, flyPlantParser, codeTour, tuning, reference, teleop] = await Promise.all([
+      import('./parser/flywheelParser'),
+      import('./parser/flywheelPlantParser'),
+      import('./guides/flywheel/codeTourSteps'),
+      import('./guides/flywheel/tuningGuideSteps'),
+      import('./reference/flywheelReference'),
+      import('./teleop/velocityPresets'),
+    ]);
+    return {
+      parseCode: flyParser.parseFlywheelCode,
+      getSubsystemTemplate: flyParser.getFlywheelTemplateForVendor,
+      getRobotTemplate: flyParser.getFlywheelRobotTemplateForVendor,
+      parsePlantFromCode: flyPlantParser.parseFlywheelPlantConfig,
+      plantWarningsFor: (plant, setpoint) =>
+        flyPlantParser.flywheelPlantWarnings(plant as FlywheelPlantConfig, setpoint),
+      plantsEqual: (a, b) =>
+        flyPlantParser.flywheelPlantsEqual(a as FlywheelPlantConfig, b as FlywheelPlantConfig),
+      findPlantLine: flyPlantParser.findFlywheelPlantSectionLine,
+      referencePlant: reference.REFERENCE_FLYWHEEL_PLANT,
+      defaultSetpointRot: reference.DEFAULT_FLYWHEEL_SETPOINT_ROT_PER_SEC,
+      codeTourSteps: codeTour.FLYWHEEL_CODE_TOUR_STEPS,
+      tuningGuideSteps: tuning.FLYWHEEL_TUNING_GUIDE_STEPS,
+      travelFractionToSetpoint: (fraction, plant) =>
+        teleop.velocityFractionToSetpointRotPerSec(fraction, plant as FlywheelPlantConfig),
       patchConstant,
       findConstLine,
     };
@@ -67,14 +105,16 @@ export async function loadMechanismBundle(mechanism: MechanismType): Promise<Mec
     getSubsystemTemplate: elevatorParser.getTemplateForVendor,
     getRobotTemplate: elevatorParser.getRobotTemplateForVendor,
     parsePlantFromCode: plantParser.parsePlantConfig,
-    plantWarningsFor: plantParser.plantWarnings,
-    plantsEqual: plantParser.plantsEqual,
+    plantWarningsFor: (plant, setpointRot) =>
+      plantParser.plantWarnings(plant as PlantConfig, setpointRot),
+    plantsEqual: (a, b) => plantParser.plantsEqual(a as PlantConfig, b as PlantConfig),
     findPlantLine: plantParser.findPlantSectionLine,
     referencePlant: reference.REFERENCE_PLANT,
     defaultSetpointRot: reference.DEFAULT_SETPOINT_ROT,
     codeTourSteps: codeTourMod.CODE_TOUR_STEPS,
     tuningGuideSteps: tuningMod.TUNING_GUIDE_STEPS,
-    travelFractionToSetpoint: teleop.travelFractionToSetpointRot,
+    travelFractionToSetpoint: (fraction, plant) =>
+      teleop.travelFractionToSetpointRot(fraction, plant as PlantConfig),
     patchConstant,
     findConstLine,
   };

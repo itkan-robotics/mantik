@@ -8,6 +8,7 @@ interface Props {
 const MECHANISM_OPTIONS: { value: MechanismType; label: string; description: string }[] = [
   { value: 'elevator', label: 'Elevator', description: 'Vertical lift — kG then kP' },
   { value: 'arm', label: 'Single-jointed arm', description: 'kG·cos(θ) and motion profiling' },
+  { value: 'flywheel', label: 'Flywheel', description: 'Velocity control — kS, kV, then kP' },
 ];
 
 const VENDOR_OPTIONS: { value: Vendor; label: string; description: string }[] = [

@@ -38,6 +38,9 @@ export default defineConfig({
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    optimizeDeps: {
+      include: ['@monaco-editor/react', 'monaco-editor', 'uplot'],
+    },
     ssr: {
       noExternal: ['pagefind'],
     },
@@ -64,6 +67,7 @@ export default defineConfig({
             }
             if (
               id.includes('/lib/pid-sim/physics/elevatorSim') ||
+              id.includes('/lib/pid-sim/physics/flywheelSim') ||
               id.includes('/lib/pid-sim/physics/armSim') ||
               id.includes('/lib/pid-sim/physics/plant/') ||
               id.includes('/lib/pid-sim/physics/sim/')

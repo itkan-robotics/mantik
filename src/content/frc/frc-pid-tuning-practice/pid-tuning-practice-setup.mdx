@@ -19,7 +19,7 @@ This guide covers setting up the PID tuning practice repository using YAMS simul
 
 <RulesBox title="Choose your path">
 
-- **Tier 1 — Browser:** Open [PID Simulation](/pid-simulation) on Mantik. No install. Use for classroom labs, Chromebooks, or a first pass at kG/kP tuning. Pick REV or CTRE to match your hardware — physics uses NEO vs Kraken motors. Setpoint and kP use motor rotations (V/rot); Mechanism view shows meters.
+- **Tier 1 — Browser:** Open [PID Simulation](/pid-simulation) on Mantik. No install. Use for classroom labs, Chromebooks, or a first pass at tuning. Pick REV or CTRE and mechanism (**elevator**, **arm**, or **flywheel**) to match your hardware. Elevator/arm: setpoint and kP use motor rotations (V/rot). Flywheel: velocity setpoint in motor rot/s; graph shows wheel RPM.
 - **Tier 2 — Local (this lesson):** Clone [mantik-pid-practice](https://github.com/itkan-robotics/mantik-pid-practice), install WPILib, and run full YAMS simulation with Elastic and AdvantageScope. Use when your team has a dev machine and wants the same tools as the lesson videos.
 
 Both paths teach the same kG → kP workflow. Start in the browser if setup time or IT policy is a constraint; graduate to Tier 2 before tuning on a real robot.
