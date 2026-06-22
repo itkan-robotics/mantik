@@ -7,7 +7,7 @@ import { revRobotTemplate } from '../templates/revRobot';
 import { ctreRobotTemplate } from '../templates/ctreRobot';
 
 const CONST_PATTERN =
-  /private\s+static\s+final\s+double\s+(kP|kI|kD|kS|kG|kV|kMaxVelocity|kMaxAccel|kSetpoint)\s*=\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s*;/g;
+  /private\s+static\s+final\s+double\s+(kP|kI|kD|kS|kG|kV|kA|kMaxVelocity|kMaxAccel|kSetpoint)\s*=\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s*;/g;
 
 function findLineColumn(source: string, index: number): { line: number; column: number } {
   const before = source.slice(0, index);
@@ -44,6 +44,9 @@ function parseConstants(source: string): { config: Partial<TuningConfig>; missin
       case 'kV':
         partial.kV = value;
         break;
+      case 'kA':
+        partial.kA = value;
+        break;
       case 'kMaxVelocity':
         partial.maxVelocity = value;
         break;
@@ -56,7 +59,7 @@ function parseConstants(source: string): { config: Partial<TuningConfig>; missin
     }
   }
 
-  const required = ['kP', 'kI', 'kD', 'kS', 'kG', 'kV', 'kMaxVelocity', 'kMaxAccel', 'kSetpoint'];
+  const required = ['kP', 'kI', 'kD', 'kS', 'kG', 'kV', 'kA', 'kMaxVelocity', 'kMaxAccel', 'kSetpoint'];
   const missing = required.filter((key) => !found.has(key));
   return { config: partial, missing };
 }
@@ -92,7 +95,7 @@ function bracketBalanceErrors(source: string): LintMessage[] {
   return errors;
 }
 
-export function parseElevatorCode(source: string, _vendor: Vendor): ParseResult {
+export function parseElevatorCode(source: string, vendor: Vendor): ParseResult {
   const errors: LintMessage[] = [...bracketBalanceErrors(source)];
   const { config: partial, missing } = parseConstants(source);
 
@@ -105,11 +108,11 @@ export function parseElevatorCode(source: string, _vendor: Vendor): ParseResult 
     });
   }
 
-  if (partial.kP !== undefined && (partial.kP < 0 || partial.kP > 100)) {
+  if (partial.kP !== undefined && (partial.kP < 0 || partial.kP > 300)) {
     errors.push({
       line: 1,
       column: 1,
-      message: 'kP should be between 0 and 100 for this exercise',
+      message: 'kP should be between 0 and 300 V/rot for this exercise',
       severity: 'warning',
     });
   }
@@ -134,13 +137,14 @@ export function parseElevatorCode(source: string, _vendor: Vendor): ParseResult 
         kS: partial.kS ?? DEFAULT_TUNING.kS,
         kG: partial.kG ?? DEFAULT_TUNING.kG,
         kV: partial.kV ?? DEFAULT_TUNING.kV,
+        kA: partial.kA ?? DEFAULT_TUNING.kA,
         maxVelocity: partial.maxVelocity ?? DEFAULT_TUNING.maxVelocity,
         maxAccel: partial.maxAccel ?? DEFAULT_TUNING.maxAccel,
         setpoint: partial.setpoint ?? DEFAULT_TUNING.setpoint,
       };
 
   if (configForWarnings) {
-    for (const msg of tuningWarnings(configForWarnings)) {
+    for (const msg of tuningWarnings(configForWarnings, vendor)) {
       errors.push({ line: 1, column: 1, message: msg, severity: 'warning' });
     }
   }

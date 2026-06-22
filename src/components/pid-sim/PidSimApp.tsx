@@ -16,10 +16,16 @@ import {
 } from '@/lib/pid-sim/parser/elevatorParser';
 import { aidLevel, aidTier } from '@/lib/pid-sim/guides/aidLevel';
 import type { PrerequisiteState } from '@/lib/pid-sim/guides/prerequisites';
+import { DEFAULT_SETPOINT_ROT } from '@/lib/pid-sim/reference/elevatorReference';
 import type { TuningConfig, Vendor } from '@/lib/pid-sim/types';
 import { DEFAULT_TUNING } from '@/lib/pid-sim/types';
 
 type GuideMode = 'codeTour' | 'tuning';
+
+const DEFAULT_WORKSPACE_TUNING: TuningConfig = {
+  ...DEFAULT_TUNING,
+  setpoint: DEFAULT_SETPOINT_ROT,
+};
 
 const FIELD_TO_CONST: Record<keyof TuningConfig, string> = {
   kP: 'kP',
@@ -28,6 +34,7 @@ const FIELD_TO_CONST: Record<keyof TuningConfig, string> = {
   kS: 'kS',
   kG: 'kG',
   kV: 'kV',
+  kA: 'kA',
   maxVelocity: 'kMaxVelocity',
   maxAccel: 'kMaxAccel',
   setpoint: 'kSetpoint',
@@ -43,7 +50,7 @@ export default function PidSimApp() {
   const [editorTab, setEditorTab] = useState<EditorTab>('subsystem');
   const [code, setCode] = useState('');
   const [robotCode, setRobotCode] = useState('');
-  const [config, setConfig] = useState<TuningConfig>(DEFAULT_TUNING);
+  const [config, setConfig] = useState<TuningConfig>(DEFAULT_WORKSPACE_TUNING);
   const [liveTuning, setLiveTuning] = useState(false);
   const [teleopEnabled, setTeleopEnabled] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -90,18 +97,19 @@ export default function PidSimApp() {
   }, []);
 
   useEffect(() => {
+    if (!vendor) return;
+
     let cancelled = false;
 
     async function loadSim() {
       try {
+        simRef.current?.stop();
         const mod = await import('@/lib/pid-sim/physics/elevatorSim');
         if (cancelled) return;
         if (typeof mod.ElevatorSim !== 'function') {
           throw new Error('ElevatorSim export missing from physics module');
         }
-        if (!simRef.current) {
-          simRef.current = new mod.ElevatorSim();
-        }
+        simRef.current = new mod.ElevatorSim(vendor);
         setSimReady(true);
         setSimLoadError(null);
       } catch (err) {
@@ -109,13 +117,14 @@ export default function PidSimApp() {
       }
     }
 
+    setSimReady(false);
     loadSim();
     return () => {
       cancelled = true;
       flushCodePatch();
       simRef.current?.stop();
     };
-  }, [flushCodePatch]);
+  }, [vendor, flushCodePatch]);
 
   useEffect(() => {
     if (!vendor) {
@@ -141,9 +150,11 @@ export default function PidSimApp() {
   }, [vendor]);
 
   const initVendor = useCallback((v: Vendor) => {
+    const initial = { ...DEFAULT_WORKSPACE_TUNING };
     setVendor(v);
-    setCode(getTemplateForVendor(v, DEFAULT_TUNING));
+    setCode(getTemplateForVendor(v, initial));
     setRobotCode(getRobotTemplateForVendor(v));
+    setConfig(initial);
     setGuideMode('codeTour');
     setCodeTourStep(0);
     setTuningStep(0);

@@ -1,6 +1,11 @@
-import type { PlantConfig, TuningConfig } from '../types';
-import { getNeo } from '../physics/dcMotor';
-import { computeHoldVoltage, computeOptimalKpFromPlant, computeTheoreticalKA, computeTheoreticalKV } from '../physics/elevatorPlant';
+import type { PlantConfig, TuningConfig, Vendor } from '../types';
+import { motorForVendor } from '../physics/vendorMotor';
+import { VerticalElevatorPlant } from '../physics/plant/verticalElevatorPlant';
+import {
+  heightMToMotorRotations,
+  maxMotorRotations,
+  motorRotationsToHeightM,
+} from '../physics/units/encoderUnits';
 
 /** Plant parameters from mantik-pid-practice ElevatorSubsystem (YAMS reference repo). */
 export const REFERENCE_PLANT: PlantConfig = {
@@ -8,76 +13,64 @@ export const REFERENCE_PLANT: PlantConfig = {
   minHeightM: 0,
   maxHeightM: 3,
   startHeightM: 0.5,
-  gearRatio: 12, // 3:1 × 4:1
-  drumCircumferenceM: 0.25 * 22 * 0.0254, // inches per rotation → meters
+  gearRatio: 12,
+  drumCircumferenceM: 0.25 * 22 * 0.0254,
 };
 
-const REFERENCE_MOTOR = getNeo(1);
+export const DEFAULT_SETPOINT_ROT = heightMToMotorRotations(
+  REFERENCE_PLANT.startHeightM,
+  REFERENCE_PLANT,
+);
 
-/** SysId-style theoretical gains for this plant+motor (hints only). */
-export const THEORETICAL_KV = computeTheoreticalKV(REFERENCE_MOTOR, REFERENCE_PLANT);
-export const THEORETICAL_KA = computeTheoreticalKA(REFERENCE_MOTOR, REFERENCE_PLANT);
-export const THEORETICAL_KG = computeHoldVoltage(REFERENCE_MOTOR, REFERENCE_PLANT);
+export const MAX_SETPOINT_ROT = maxMotorRotations(REFERENCE_PLANT);
 
-/** Physics motor: WPILib DCMotor.getNEO(1) — matches mantik-pid-practice SparkWrapper. */
-export const SIM_MOTOR = 'NEO-1' as const;
-
-/** WPILib-native kP (V/m) for near-target ζ on this plant — derived from motor matrices. */
-export const OPTIMAL_KP = computeOptimalKpFromPlant(REFERENCE_MOTOR, REFERENCE_PLANT);
-
-/**
- * Well-tuned kP in SparkMax/Phoenix-like tuner units (lesson videos often ~12–32 on this plant).
- * User-facing kP in code and sliders uses this scale; physics converts internally.
- */
-export const TUNER_KP_OPTIMAL = 22;
-
-/** Multiply tuner kP by this to get WPILib V/m applied in the control loop. */
-export const TUNER_KP_FACTOR = OPTIMAL_KP / TUNER_KP_OPTIMAL;
-
-export function tunerKpToPhysics(tunerKp: number): number {
-  return tunerKp * TUNER_KP_FACTOR;
+function holdVoltageFor(vendor: Vendor): number {
+  const plant = new VerticalElevatorPlant(motorForVendor(vendor), REFERENCE_PLANT);
+  return plant.getHoldVoltage();
 }
 
-export function physicsKpToTuner(physicsKp: number): number {
-  return physicsKp / TUNER_KP_FACTOR;
-}
+export const REV_HOLD_KG = holdVoltageFor('rev');
+export const CTRE_HOLD_KG = holdVoltageFor('ctre');
 
 /** Soft reference ranges — hints only, not correct answers. */
 export const TUNING_REFERENCE = {
   kG: {
-    typicalMax: 1.5,
-    lessonExample: 0.61,
-    hint: 'Simulated elevators often need kG below ~1. The lesson binary-search example landed near 0.61.',
+    revHoldHint: REV_HOLD_KG,
+    ctreHoldHint: CTRE_HOLD_KG,
+    hint: 'kG depends on mass, gearing, and motor. Use binary search: increase until the carriage creeps up, then reduce until it holds still. Hold voltage differs between REV NEO and CTRE Kraken.',
   },
   kP: {
     start: 0.1,
-    optimal: TUNER_KP_OPTIMAL,
-    oscillationAbove: TUNER_KP_OPTIMAL * 1.5,
-    hint: 'Start low and double (0.1 → 0.2 → 0.4 … or 6 → 12 → 24 on tuners). A good kP for this plant is often in the 12–32 range — same scale as SparkMax/Phoenix sliders in the lesson videos.',
+    hint: 'kP is in volts per motor rotation (V/rot). Start at 0.1 and double until the position trace looks rectangular. Values align with SparkMax / Phoenix tuner scales more closely than the old meter-based sim.',
   },
   kI: { typical: 0, hint: 'Elevators usually keep kI at 0 unless you have steady-state error after kP tuning.' },
-  kD: { typical: 0, hint: 'Elevators usually keep kD at 0 unless you need extra damping after kP tuning.' },
+  kD: { typical: 0, hint: 'Start at 0 unless you need extra damping after kP tuning.' },
   kS: { hint: 'kS overcomes static friction. Tune after kG/kP if the mechanism sticks at rest.' },
   kV: {
-    hint: 'kV compensates for back-EMF during motion. WPILib SysId / ReCalc can estimate it from the plant. On this reference elevator, theoretical kV is often a few V·s/m — tune until cruise segments on TraceView match the profile slope.',
+    hint: 'kV is in V/(rot/s). Tune during motion profiling if you use non-zero max velocity.',
   },
   maxMotion: {
-    hint: 'WPILib elevator tuning starts around 0.3 m/s and 0.3 m/s² max motion for smooth profiling. Zero means no software cap (step setpoint for kG/kP tuning).',
+    hint: 'Max velocity and accel are in rot/s and rot/s². Zero means no profiling — step setpoint moves during kP tuning.',
   },
 } as const;
 
-export function tuningWarnings(config: TuningConfig): string[] {
+export function tuningWarnings(config: TuningConfig, vendor: Vendor = 'rev'): string[] {
   const warnings: string[] = [];
-  if (config.kG > TUNING_REFERENCE.kG.typicalMax * 2) {
-    warnings.push(`kG above ${TUNING_REFERENCE.kG.typicalMax * 2} is unusually high for this elevator plant`);
+  const holdHint = vendor === 'rev' ? REV_HOLD_KG : CTRE_HOLD_KG;
+  if (config.kG > holdHint * 2.5) {
+    warnings.push(`kG above ${(holdHint * 2.5).toFixed(2)} V is unusually high for this ${vendor.toUpperCase()} plant`);
   }
-  if (config.kP > TUNING_REFERENCE.kP.oscillationAbove) {
+  if (config.kP > 200) {
+    warnings.push('kP above 200 V/rot often causes heavy oscillation on this plant');
+  }
+  const setpointM = motorRotationsToHeightM(config.setpoint, REFERENCE_PLANT);
+  if (setpointM > REFERENCE_PLANT.maxHeightM || setpointM < REFERENCE_PLANT.minHeightM) {
     warnings.push(
-      `kP above ${TUNING_REFERENCE.kP.oscillationAbove} often causes oscillation on this plant`,
+      `Setpoint outside travel range (${REFERENCE_PLANT.minHeightM}–${REFERENCE_PLANT.maxHeightM} m in height)`,
     );
-  }
-  if (config.setpoint > REFERENCE_PLANT.maxHeightM || config.setpoint < REFERENCE_PLANT.minHeightM) {
-    warnings.push(`Setpoint outside travel range (${REFERENCE_PLANT.minHeightM}–${REFERENCE_PLANT.maxHeightM} m)`);
   }
   return warnings;
 }
+
+/** SpringTune kP slider max (V/rot). */
+export const KP_SLIDER_MAX = 150;

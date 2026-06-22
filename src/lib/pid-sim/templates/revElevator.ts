@@ -3,6 +3,7 @@ import type { TuningConfig } from '../types';
 export function revElevatorTemplate(config: TuningConfig): string {
   return `// REV Spark MAX elevator subsystem
 // Edit tuning constants below, then run the simulation.
+// Setpoint and motion limits are in MOTOR ROTATIONS (encoder units).
 
 package frc.robot.subsystems;
 
@@ -21,21 +22,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   // --- PLANT (future: editable) ---
   // massLbs = 16, travel 0–3 m, start 0.5 m, gearing 12:1, drum circ ≈ 0.14 m
 
-  // --- TUNING: closed-loop PID ---
+  // --- TUNING: closed-loop PID (V/rot, V·s/rot, V/(rot/s)) ---
   private static final double kP = ${config.kP};
   private static final double kI = ${config.kI};
   private static final double kD = ${config.kD};
 
-  // --- TUNING: feedforward (applied via WPILib-style constants) ---
+  // --- TUNING: feedforward ---
   private static final double kS = ${config.kS};
   private static final double kG = ${config.kG};
   private static final double kV = ${config.kV};
+  private static final double kA = ${config.kA};
 
-  // --- TUNING: motion limits ---
+  // --- TUNING: motion limits (motor rotations / rot/s / rot/s²) ---
   private static final double kMaxVelocity = ${config.maxVelocity};
   private static final double kMaxAccel = ${config.maxAccel};
 
-  // --- TUNING: setpoint (meters) ---
+  // --- TUNING: setpoint (motor rotations) ---
   private static final double kSetpoint = ${config.setpoint};
 
   private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless);
@@ -49,7 +51,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_motor.configure(cfg, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  /** Command elevator to the configured setpoint height. */
+  /** Command elevator to the configured setpoint (motor rotations). */
   public void goToSetpoint() {
     m_pid.setReference(kSetpoint, ControlType.kPosition);
   }

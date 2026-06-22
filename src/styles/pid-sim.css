@@ -187,12 +187,17 @@ body:has(.pid-sim-workspace) .main .content {
   min-height: 400px;
 }
 
-/* Bottom row: SpringTune + BenchScope side by side */
+/* Bottom row: SpringTune (full width when BenchScope removed) */
 .pid-bottom-row {
   display: grid;
   grid-template-columns: minmax(220px, 24%) 1fr;
   gap: 1rem;
   min-height: 320px;
+}
+
+.pid-bottom-row-elastic-only {
+  grid-template-columns: 1fr;
+  min-height: auto;
 }
 
 .pid-panel-header {

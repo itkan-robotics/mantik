@@ -28,7 +28,7 @@ export const CODE_TOUR_STEPS: CodeTourStep[] = [
   {
     id: 'pid',
     title: 'PID gains',
-    body: 'PID is feedback control. kP (proportional) reacts to how far you are from the target — larger error means more motor output. kI (integral) reacts to error that builds up over time and can fix small steady-state offsets. kD (derivative) reacts to how fast the error is changing and helps dampen oscillation.',
+    body: 'PID is feedback control in motor rotations. kP (proportional) is in V/rot — larger position error means more motor output. kI (integral) fixes steady-state error in V·s/rot. kD (derivative) in V/(rot/s) dampens oscillation.',
     bodyExtra:
       'On a real robot, PID can run on the roboRIO (WPILib PIDController) or on the motor controller itself. This template uses on-controller PID, which runs faster and frees roboRIO CPU.',
     prompt: 'Find kP, kI, and kD. What does each one respond to?',
@@ -51,9 +51,9 @@ export const CODE_TOUR_STEPS: CodeTourStep[] = [
   {
     id: 'setpoint',
     title: 'Setpoint',
-    body: 'The setpoint is the height the elevator tries to reach, in meters. When you command a position on a real robot, the controller compares setpoint to measured height and adjusts motor output.',
+    body: 'The setpoint is the target position in motor rotations — the same unit the SparkMax or Talon FX encoder reports. The browser sim converts to meters for the Mechanism view and TraceView.',
     bodyExtra:
-      'During kG tuning, teams often use an unreasonable setpoint — a height outside normal travel — so gravity dominates and you can see whether kG holds the carriage still. After kG is set, you move to a reachable setpoint to tune kP.',
+      'During kG tuning, teams often use an unreasonable setpoint — outside normal travel — so gravity dominates and you can see whether kG holds the carriage still. After kG is set, move to a reachable setpoint to tune kP.',
     prompt: 'Find where the target height is defined. What unit is it in?',
     highlight: { file: 'subsystem', constName: 'setpoint' },
     learnMore: [{ label: 'Elevator tuning practice', href: '/frc/pid-tuning-practice-elevator' }],
@@ -61,7 +61,7 @@ export const CODE_TOUR_STEPS: CodeTourStep[] = [
   {
     id: 'limits',
     title: 'Motion limits',
-    body: 'Max velocity and max acceleration cap how aggressively the mechanism moves. Without limits, a large kP can slam the elevator to the target and cause mechanical stress or oscillation.',
+    body: 'Max velocity and max acceleration cap how aggressively the mechanism moves. Values are in motor rotations per second and rotations per second squared — matching vendor tuner units.',
     bodyExtra:
       'Motion profiling (trapezoid or exponential) uses these limits to generate smooth paths. Even without profiling, setting reasonable caps protects your mechanism during tuning.',
     prompt: 'What do kMaxVelocity and kMaxAccel limit?',

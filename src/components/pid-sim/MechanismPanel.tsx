@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef } from 'react';
 import { REFERENCE_PLANT } from '@/lib/pid-sim/reference/elevatorReference';
+import { motorRotationsToHeightM } from '@/lib/pid-sim/physics/units/encoderUnits';
 import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
 
 interface Props {
@@ -28,7 +29,9 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       const sim = simRef.current;
       const latest = sim?.getLatest();
       const pos = latest?.position ?? REFERENCE_PLANT.startHeightM;
-      const sp = latest?.setpoint ?? setpointRef.current;
+      const sp =
+        latest?.setpoint ??
+        motorRotationsToHeightM(setpointRef.current, REFERENCE_PLANT);
 
       const dpr = window.devicePixelRatio || 1;
       const w = container.clientWidth;

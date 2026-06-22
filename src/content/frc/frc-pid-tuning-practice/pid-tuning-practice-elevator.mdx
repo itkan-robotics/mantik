@@ -63,14 +63,14 @@ Before starting this lesson, you should have:
    - Avoid slow curves or gradual taper
 7. Watch the mechanism's motion.
 8. Continue increasing P until the response is fast and clean.
-9. Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6–51.2 worked well for the YAMS simulated elevator on SparkMax tuners — those are vendor-scaled units, not WPILib V/m. The [browser PID Simulation](/pid-simulation) uses WPILib-native kP (often ~0.1–5 on this plant); your physical mechanism may need different values on each tool.
+9. Compare response times as you increase P. At low P, the mechanism reaches the target slowly. As P increases, it should reach the target faster with sharper transitions. The final P value depends on your mechanism's characteristics (gear ratio, weight, design). In the video example, a P value around 25.6–51.2 worked well for the YAMS simulated elevator on SparkMax tuners. The [browser PID Simulation](/pid-simulation) uses motor-rotation PID (V/rot) with REV NEO or CTRE Kraken physics — start at 0.1 and double. kP numbers from the video may transfer more closely than the old meter-based sim, but still retune on your setup.
 
 </StepsBox>
 
 <RulesBox title="Browser vs desktop tuning units">
 
-- **kG** (gravity feedforward) is in volts on both the browser sim and vendor tuners — values like ~0.61 transfer closely.
-- **kP** scale depends on the tool: browser sim and WPILib use volts per meter (V/m); SparkMax and Phoenix tuners use vendor-specific scales (lesson videos may show ~25–50).
+- **kG** (gravity feedforward) is in volts — the value depends on plant mass, gearing, and motor. Use binary search; one lesson video landed near ~0.61 V for a similar plant, but your sim may differ.
+- **kP** is in volts per motor rotation (V/rot) in the browser sim and in SparkMax / Phoenix tuners — same unit family. Start at 0.1 and double; lesson videos may show values in a similar range for this plant.
 - Use the same workflow (binary search kG, double kP) on every tool — do not copy kP numbers from the video into the browser sim without retuning.
 
 </RulesBox>

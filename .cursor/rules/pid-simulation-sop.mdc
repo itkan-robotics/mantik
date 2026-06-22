@@ -26,79 +26,60 @@ Link students to [mantik-pid-practice](https://github.com/itkan-robotics/mantik-
 
 ---
 
-## 2. Physics — do not skip calibration
+## 2. Physics — read design doc first
 
-### 2.1 Feedforward shape ≠ correct plant
+**Before any physics work:** read [`vertical-elevator-sim-design.md`](../../src/lib/pid-sim/docs/vertical-elevator-sim-design.md).
 
-**Mistake:** Used correct WPILib feedforward equation (`kG + kS·sgn(v) + kV·v + kA·a`) but ad-hoc plant constants. kG tuning was meaningless (needed ~7 V; lesson expects ~0.6 V).
+### 2.1 Reference stack
 
-**Rule:** Feedforward and plant must be calibrated **together**. A correct formula with a wrong plant still fails.
+Port from WPILib docs [controls_js_sim](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim), not a hand-rolled Java RKDP clone:
 
-### 2.2 Use WPILib motor + plant models
+- **Plant @ 5 ms:** `plant/verticalElevatorPlant.ts` (RK4, meters internal)
+- **Controller @ 20 ms:** `sim/verticalElevatorSim.ts` (PID + FF + trapezoid profile)
+- **Encoder delay:** `utils/delayLine.ts`
+- **Loop docs:** [Physics Simulation with WPILib](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html)
 
-**Mistake:** Invented `MOTOR_KT`, linear torque, fixed friction. Did not match `LinearSystemId` or lesson repo.
+### 2.2 Vendor-specific motors
 
-**Rule for any mechanism:**
+**Mistake:** Hardcoded `getNeo(1)` for all vendors.
 
-1. Port `DCMotor` constants from WPILib (`edu.wpi.first.math.system.plant.DCMotor`) — use the **same motor** as the reference repo (e.g. mantik-pid-practice elevator uses `getNEO(1)`, not Neo550).
-2. Build plant matrices from WPILib `LinearSystemId` for that mechanism type:
-   - **Linear (elevator):** `createElevatorSystem` — state `[position, velocity]`, gravity as `-g` on acceleration.
-   - **Rotational (arm, turret):** `createSingleJointedArmSystem` — gravity term scales with `cos(angle)`.
-   - **Velocity (flywheel, shooter):** no position PID / no kG; `kV` dominates; different state and tuning workflow.
-3. Integrate with **WPILib RKDP** (`NumericalIntegration.rkdp`) on the full `[position, velocity]` state — see [`numericalIntegration.ts`](../../src/lib/pid-sim/physics/numericalIntegration.ts) and [`linearSystemSim.ts`](../../src/lib/pid-sim/physics/linearSystemSim.ts). Gravity is added as `[0, -9.8]` on `xdot`, matching `ElevatorSim.updateX`. Do **not** use naive Euler on the plant.
+**Rule:** Use `motorForVendor(vendor)` — REV → NEO, CTRE → Kraken X60. Vendor choice on landing affects **physics motor**, not Java boilerplate only.
 
-**WPILib reference (authoritative):**
+### 2.3 Rotation-based PID (on-controller units)
 
-- [wpilibj.simulation package](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/package-summary.html)
-- [LinearSystemSim](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/LinearSystemSim.html)
-- [ElevatorSim](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/ElevatorSim.html)
-- [NumericalIntegration.rkdp](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/NumericalIntegration.html)
-- [Tuning a vertical elevator (WPILib docs)](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html)
-- Source: [LinearSystemSim.java](https://github.com/wpilibsuite/allwpilib/blob/main/wpilibj/src/main/java/edu/wpi/first/wpilibj/simulation/LinearSystemSim.java), [ElevatorSim.java](https://github.com/wpilibsuite/allwpilib/blob/main/wpilibj/src/main/java/edu/wpi/first/wpilibj/simulation/ElevatorSim.java)
-
-**Browser architecture (hybrid):**
-
-- **Plant:** `ElevatorSimPlant` — faithful WPILib plant (RKDP, gravity, limit snap, voltage clamp). No artificial damping, no plant-side motion caps.
-- **Wrapper:** `elevatorSim.ts` — PID + feedforward + trapezoid profile. kP is WPILib-native (V/m); `pidOutputScale = 1`. `OPTIMAL_KP` derived from plant matrices via `computeOptimalKpFromPlant()`.
-
-Do **not** return to forward Euler or ad-hoc discrete velocity formulas on the plant unless you re-validate against the WPILib reference.
-
-### 2.3 kG / gravity feedforward
-
-| Mechanism | kG behavior (WPILib) |
-|-----------|----------------------|
-| Elevator | Constant voltage `kG` |
-| Arm / turret | `kG · cos(position)` |
-| Flywheel | No kG (velocity plant) |
-
-**Rule:** `computeHoldVoltage()` (or mechanism equivalent) must match steady-state plant math. Assert in unit tests that `kG = holdVoltage` holds position and that `kG` slightly above causes creep in the direction the lesson describes.
-
-### 2.4 kP — WPILib-native units (V/m)
-
-**Mistake:** Scaling kP with `pidOutputScale` to match SparkMax lesson values (~42.5) artificially capped oscillation amplitude — 2× optimal looked like 1×.
+**Mistake:** PID in meters (V/m) while SparkMax/Talon FX encoders report motor rotations.
 
 **Rule:**
 
-1. Browser sim uses **WPILib-native kP** (V/m): `voltage += kP × error` with no wrapper scale.
-2. Derive **`OPTIMAL_KP`** from plant matrices: `computeOptimalKpFromPlant()` targets ζ ≈ 0.75 on the linearized plant.
-3. Higher kP → lower ζ → **naturally** larger overshoot and more setpoint crossings in TraceView. Do not add `loopKpFactor` or amplitude calibration hacks.
-4. FRC lesson MDX may still cite SparkMax tuner values (~42.5); browser sim and mantik-pid-practice use different kP ranges — document that in hints, not by rescaling physics.
+- Templates, SpringTune, and PID math use **motor rotations** (setpoint, kP in V/rot, kV in V/(rot/s)).
+- Mechanism view and TraceView display **meters** (convert via `encoderUnits.ts`).
+- WPILib docs JS sim uses meters in the controller — Mantik deliberately uses rotations to match vendor tuners.
 
-### 2.5 What not to put in the plant
+### 2.4 kG / feedforward
 
-**Mistake:** Fixed `FRICTION_N` in plant while also exposing `kS` in feedforward.
+| Mechanism | kG behavior |
+|-----------|-------------|
+| Elevator | Constant voltage `kG` |
+| Arm / turret | `kG · cos(position)` |
+| Flywheel | No kG |
 
-**Rule:** Friction belongs in feedforward (`kS`), not as a hidden plant constant. Hidden plant friction breaks kG/kS pedagogy.
+**Rule:** Plant `getHoldVoltage()` must match steady-state physics. Tests: kG = hold → stable; kG = 0 → falls; kG too high → creeps up.
 
-### 2.6 Unit tests required for every new mechanism
+### 2.5 What not to do
+
+- Do not hardcode `getNeo(1)` for CTRE paths
+- Do not use V/m kP or golden CSV JVM trace validation
+- Do not put hidden friction in the plant while exposing `kS` in FF
+- Do not add `pidOutputScale` hacks
+
+### 2.6 Unit tests required
 
 Add `*.test.ts` under `src/lib/pid-sim/physics/`:
 
-- Hold voltage / hold kG in lesson range for reference plant
-- kG = 0 → mechanism drifts/falls (or spins, for velocity plants)
-- kG too high → creeps wrong direction
-- kP at `OPTIMAL_KP` → settles faster than low kP, less oscillation than high kP
-- kP above oscillation threshold → more velocity zero-crossings or overshoot than optimal
+- REV vs CTRE hold voltage differs
+- kG hold / drift / creep
+- kP = 0 vs kP > 0 motion toward setpoint
+- Descent vs ascent distance (gravity assist)
 
 Run: `npm run test:physics`
 
@@ -134,7 +115,7 @@ Run: `npm run test:physics`
 
 - Browser REV template = **SparkMax + SparkMaxConfig** — **not YAMS** (YAMS only in mantik-pid-practice).
 - Robot tab = **Robot.java** (TimedRobot) — **not RobotContainer**.
-- Vendor choice affects Java boilerplate only unless you explicitly branch physics.
+- Vendor choice affects **physics motor** (NEO vs Kraken) **and** Java boilerplate.
 
 ### 4.3 UI naming
 
@@ -166,12 +147,13 @@ Use this for arm, shooter, flywheel, turret, or mechanisms not yet in Mantik les
 
 ### Phase B — Physics module
 
-- [ ] `dcMotor.ts` — already shared; pick correct `getNEO` / `getKrakenX60` / etc.
-- [ ] `{mechanism}Plant.ts` — WPILib matrices + gravity/model specific term
-- [ ] `{mechanism}Feedforward.ts` — correct WPILib FF class shape for that mechanism
-- [ ] `{mechanism}Sim.ts` — PID + FF + plant step; ring buffer; subscribe API
-- [ ] `{mechanism}Reference.ts` — plant defaults + `OPTIMAL_KP` + hint ranges
-- [ ] `{mechanism}Sim.test.ts` — hold, drift, creep, kP low/optimal/high
+- [ ] Read `docs/vertical-elevator-sim-design.md` (or mechanism-specific section)
+- [ ] `dcMotor.ts` + `vendorMotor.ts` — pick motor per vendor
+- [ ] `plant/{mechanism}Plant.ts` — port from controls_js_sim plant JS
+- [ ] `sim/{mechanism}Sim.ts` — rotation PID, subscribe API, ring buffer
+- [ ] `units/encoderUnits.ts` (or mechanism-specific units)
+- [ ] `{mechanism}Reference.ts` — plant defaults + hint ranges (no hard-coded answers)
+- [ ] `{mechanism}Sim.test.ts` — hold, drift, creep, kP motion
 
 ### Phase C — UI (reuse patterns)
 
@@ -212,9 +194,9 @@ Per-mechanism modules: `*Plant.ts`, `*Feedforward.ts`, `*Sim.ts`, `*Reference.ts
 
 ## 7. Anti-patterns (never again)
 
-1. **Ad-hoc physics constants** without WPILib source or lesson calibration
-2. **Euler integration** on stiff motor back-EMF without stability check
-3. **`pidOutputScale` or `loopKpFactor`** to fake kP oscillation amplitude — use WPILib-native kP and plant-derived `OPTIMAL_KP`
+1. **Ad-hoc physics** without controls_js_sim reference or design doc
+2. **Hardcoded `getNeo(1)`** for all vendors
+3. **V/m kP** or golden CSV trace validation
 4. **React state per sim tick** for samples
 5. **Monaco rewrite per slider mousemove**
 6. **50/50 layout** for tuning panel vs scope (scope should dominate)
@@ -239,10 +221,13 @@ Per-mechanism modules: `*Plant.ts`, `*Feedforward.ts`, `*Sim.ts`, `*Reference.ts
 
 | Area | Path |
 |------|------|
+| Design doc | `src/lib/pid-sim/docs/vertical-elevator-sim-design.md` |
 | App shell | `src/components/pid-sim/PidSimApp.tsx` |
-| Physics | `src/lib/pid-sim/physics/` |
-| WPILib plant | `elevatorPlant.ts` (`ElevatorSimPlant`), `linearSystemSim.ts`, `numericalIntegration.ts` |
-| Controller wrapper | `elevatorSim.ts` (PID + FF + profile; WPILib-native kP) |
+| Physics entry | `src/lib/pid-sim/physics/elevatorSim.ts` |
+| Plant | `physics/plant/verticalElevatorPlant.ts` |
+| Sim loop | `physics/sim/verticalElevatorSim.ts` |
+| Vendor motor | `physics/vendorMotor.ts` |
+| Encoder units | `physics/units/encoderUnits.ts` |
 | Reference plant | `src/lib/pid-sim/reference/elevatorReference.ts` |
 | Guides | `src/lib/pid-sim/guides/` |
 | Styles | `src/styles/pid-sim.css` |

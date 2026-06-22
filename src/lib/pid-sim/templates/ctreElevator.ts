@@ -7,12 +7,14 @@ export function ctreElevatorTemplate(config: TuningConfig = {
   kS: 0,
   kG: 0,
   kV: 0,
+  kA: 0,
   maxVelocity: 0,
   maxAccel: 0,
-  setpoint: 0.5,
+  setpoint: 0,
 }): string {
   return `// CTRE Talon FX on-controller PID elevator subsystem
 // Edit Slot0 gains and setpoint below, then run the simulation.
+// Setpoint and motion limits are in MOTOR ROTATIONS (encoder units).
 
 package frc.robot.subsystems;
 
@@ -37,12 +39,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private static final double kS = ${config.kS};
   private static final double kG = ${config.kG};
   private static final double kV = ${config.kV};
+  private static final double kA = ${config.kA};
 
-  // --- TUNING: motion limits ---
+  // --- TUNING: motion limits (rot/s, rot/s²) ---
   private static final double kMaxVelocity = ${config.maxVelocity};
   private static final double kMaxAccel = ${config.maxAccel};
 
-  // --- TUNING: setpoint (meters) ---
+  // --- TUNING: setpoint (motor rotations) ---
   private static final double kSetpoint = ${config.setpoint};
 
   private final TalonFX motor = new TalonFX(1);
@@ -57,6 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     slot0.kS = kS;
     slot0.kG = kG;
     slot0.kV = kV;
+    slot0.kA = kA;
     cfg.MotionMagic.MotionMagicCruiseVelocity = kMaxVelocity;
     cfg.MotionMagic.MotionMagicAcceleration = kMaxAccel;
     motor.getConfigurator().apply(cfg);
