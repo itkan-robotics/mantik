@@ -1,5 +1,5 @@
 import { aidLevel, aidTier } from '@/lib/pid-sim/guides/aidLevel';
-import { CODE_TOUR_STEPS, type CodeTourStep } from '@/lib/pid-sim/guides/codeTourSteps';
+import type { CodeTourStep } from '@/lib/pid-sim/guides/codeTourSteps';
 import { unmetPrerequisites, type PrerequisiteState } from '@/lib/pid-sim/guides/prerequisites';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   onComplete: () => void;
   highlightPulse?: boolean;
   prerequisiteState: PrerequisiteState;
-  steps?: CodeTourStep[];
+  steps: CodeTourStep[];
 }
 
 export default function CodeTourPanel({
@@ -17,9 +17,9 @@ export default function CodeTourPanel({
   onComplete,
   highlightPulse = false,
   prerequisiteState,
-  steps = CODE_TOUR_STEPS,
+  steps,
 }: Props) {
-  const step = steps[stepIndex] ?? steps[0];
+  const step = steps[stepIndex] ?? steps[0]!;
   const level = aidLevel(stepIndex, steps.length);
   const tier = aidTier(level);
   const isLast = stepIndex >= steps.length - 1;
@@ -86,8 +86,7 @@ export default function CodeTourPanel({
   );
 }
 
-export function getCodeTourStep(stepIndex: number, steps: CodeTourStep[] = CODE_TOUR_STEPS): CodeTourStep {
-  return steps[stepIndex] ?? steps[0];
+export function getCodeTourStep(stepIndex: number, steps: CodeTourStep[]): CodeTourStep {
+  const fallback: CodeTourStep = { id: 'loading', title: '', body: '' };
+  return steps[stepIndex] ?? steps[0] ?? fallback;
 }
-
-export { CODE_TOUR_STEPS };

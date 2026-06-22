@@ -8,6 +8,7 @@
     "dev:search": "npm run build && astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "build:analyze": "node scripts/build-analyze.mjs",
     "postbuild": "pagefind --site dist",
     "preview": "astro preview",
     "check": "astro check",
@@ -19,8 +20,8 @@
     "@astrojs/react": "^5.0.7",
     "@astrojs/sitemap": "^3.4.1",
     "@monaco-editor/react": "^4.7.0",
-    "monaco-editor": "^0.55.1",
     "astro": "^5.9.0",
+    "monaco-editor": "^0.55.1",
     "pagefind": "^1.3.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "^5.8.3",
     "vite-node": "^3.2.4",
     "vitest": "^3.2.4"

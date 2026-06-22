@@ -1,5 +1,5 @@
 import { aidLevel, aidTier } from '@/lib/pid-sim/guides/aidLevel';
-import { TUNING_GUIDE_STEPS, type TuningGuideStep } from '@/lib/pid-sim/guides/tuningGuideSteps';
+import type { TuningGuideStep } from '@/lib/pid-sim/guides/tuningGuideSteps';
 import { unmetPrerequisites, type PrerequisiteState } from '@/lib/pid-sim/guides/prerequisites';
 import type { MechanismType } from '@/lib/pid-sim/types';
 
@@ -9,7 +9,7 @@ interface Props {
   simRunning: boolean;
   highlightPulse?: boolean;
   prerequisiteState: PrerequisiteState;
-  steps?: TuningGuideStep[];
+  steps: TuningGuideStep[];
   mechanism?: MechanismType;
 }
 
@@ -19,10 +19,10 @@ export default function TuningGuidePanel({
   simRunning,
   highlightPulse = false,
   prerequisiteState,
-  steps = TUNING_GUIDE_STEPS,
+  steps,
   mechanism = 'elevator',
 }: Props) {
-  const step = steps[stepIndex] ?? steps[0];
+  const step = steps[stepIndex] ?? steps[0]!;
   const level = aidLevel(stepIndex, steps.length);
   const tier = aidTier(level);
   const isLast = stepIndex >= steps.length - 1;
@@ -112,5 +112,3 @@ export default function TuningGuidePanel({
     </div>
   );
 }
-
-export { TUNING_GUIDE_STEPS, type TuningGuideStep };
