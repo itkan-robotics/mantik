@@ -1,6 +1,7 @@
-import type { TuningConfig } from '../types';
+import type { PlantConfig, TuningConfig } from '../types';
+import { plantConstantsBlock } from './plantConstants';
 
-export function revElevatorTemplate(config: TuningConfig): string {
+export function revElevatorTemplate(config: TuningConfig, plant: PlantConfig): string {
   return `// REV Spark MAX elevator subsystem
 // Edit tuning constants below, then run the simulation.
 // Setpoint and motion limits are in MOTOR ROTATIONS (encoder units).
@@ -19,8 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  // --- PLANT (future: editable) ---
-  // massLbs = 16, travel 0–3 m, start 0.5 m, gearing 12:1, drum circ ≈ 0.14 m
+${plantConstantsBlock(plant)}
 
   // --- TUNING: closed-loop PID (V/rot, V·s/rot, V/(rot/s)) ---
   private static final double kP = ${config.kP};
@@ -54,6 +54,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Command elevator to the configured setpoint (motor rotations). */
   public void goToSetpoint() {
     m_pid.setReference(kSetpoint, ControlType.kPosition);
+  }
+
+  /** Move to a fraction of configured travel (0 = min height, 1 = max height). */
+  public void goToTravelFraction(double fraction) {
+    double heightM = kMinHeightM + fraction * (kMaxHeightM - kMinHeightM);
+    double rotations = heightM * kGearRatio / kDrumCircumferenceM;
+    m_pid.setReference(rotations, ControlType.kPosition);
   }
 
   @Override

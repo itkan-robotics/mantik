@@ -75,6 +75,10 @@ Ported from `vertical-elevator-plant.js`:
 
 User feedforward gains in `TuningConfig` are separate (controller side), matching real robot workflow.
 
+### Editable plant constants
+
+Students can edit `kMassLbs`, `kMinHeightM`, `kMaxHeightM`, `kStartHeightM`, `kGearRatio`, and `kDrumCircumferenceM` in the subsystem `PLANT` block. [`plantParser.ts`](../parser/plantParser.ts) parses them on every code edit; [`PidSimApp`](../../../components/pid-sim/PidSimApp.tsx) calls `ElevatorSim.setPlant()` when values change. Missing constants fall back to [`REFERENCE_PLANT`](../reference/elevatorReference.ts). Code Tour mentions the block in passing — defaults first, edit later.
+
 ## Trapezoidal motion profiling
 
 Authoritative reference: [Trapezoidal Motion Profiles in WPILib](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/trapezoidal-profiles.html) and [`TrapezoidProfile.java`](https://github.wpilib.org/allwpilib/docs/release/java/src-html/edu/wpi/first/math/trajectory/TrapezoidProfile.html).

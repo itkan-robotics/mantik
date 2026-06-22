@@ -1,4 +1,4 @@
-import type { LintMessage, ParseResult, TuningConfig, Vendor } from '../types';
+import type { LintMessage, ParseResult, PlantConfig, TuningConfig, Vendor } from '../types';
 import { DEFAULT_TUNING } from '../types';
 import { tuningWarnings } from '../reference/elevatorReference';
 import { revElevatorTemplate } from '../templates/revElevator';
@@ -164,8 +164,8 @@ export function patchConstant(source: string, name: string, value: number): stri
   return source.replace(pattern, `$1${value}$3`);
 }
 
-export function getTemplateForVendor(vendor: Vendor, config: TuningConfig): string {
-  return vendor === 'rev' ? revElevatorTemplate(config) : ctreElevatorTemplate(config);
+export function getTemplateForVendor(vendor: Vendor, config: TuningConfig, plant: PlantConfig): string {
+  return vendor === 'rev' ? revElevatorTemplate(config, plant) : ctreElevatorTemplate(config, plant);
 }
 
 export function getRobotTemplateForVendor(vendor: Vendor): string {

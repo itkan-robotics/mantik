@@ -1,6 +1,8 @@
-import type { TuningConfig } from '../types';
+import type { PlantConfig, TuningConfig } from '../types';
+import { plantConstantsBlock } from './plantConstants';
 
-export function ctreElevatorTemplate(config: TuningConfig = {
+export function ctreElevatorTemplate(
+  config: TuningConfig = {
   kP: 0,
   kI: 0,
   kD: 0,
@@ -11,7 +13,9 @@ export function ctreElevatorTemplate(config: TuningConfig = {
   maxVelocity: 0,
   maxAccel: 0,
   setpoint: 0,
-}): string {
+},
+  plant: PlantConfig,
+): string {
   return `// CTRE Talon FX on-controller PID elevator subsystem
 // Edit Slot0 gains and setpoint below, then run the simulation.
 // Setpoint and motion limits are in MOTOR ROTATIONS (encoder units).
@@ -29,8 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  // --- PLANT (future: editable) ---
-  // massLbs = 16, travel 0–3 m, start 0.5 m, gearing 12:1, drum circ ≈ 0.14 m
+${plantConstantsBlock(plant)}
 
   // --- TUNING: Slot0 PID + feedforward ---
   private static final double kP = ${config.kP};
@@ -68,6 +71,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command goToSetpoint() {
     return runOnce(() -> motor.setControl(positionRequest.withPosition(kSetpoint)));
+  }
+
+  /** Move to a fraction of configured travel (0 = min height, 1 = max height). */
+  public void goToTravelFraction(double fraction) {
+    double heightM = kMinHeightM + fraction * (kMaxHeightM - kMinHeightM);
+    double rotations = heightM * kGearRatio / kDrumCircumferenceM;
+    motor.setControl(positionRequest.withPosition(rotations));
   }
 
   @Override

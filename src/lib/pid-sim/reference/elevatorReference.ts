@@ -4,7 +4,6 @@ import { VerticalElevatorPlant } from '../physics/plant/verticalElevatorPlant';
 import {
   heightMToMotorRotations,
   maxMotorRotations,
-  motorRotationsToHeightM,
 } from '../physics/units/encoderUnits';
 
 /** Plant parameters from mantik-pid-practice ElevatorSubsystem (YAMS reference repo). */
@@ -65,12 +64,6 @@ export function tuningWarnings(config: TuningConfig, vendor: Vendor = 'rev'): st
   }
   if (config.kP > 200) {
     warnings.push('kP above 200 V/rot often causes heavy oscillation on this plant');
-  }
-  const setpointM = motorRotationsToHeightM(config.setpoint, REFERENCE_PLANT);
-  if (setpointM > REFERENCE_PLANT.maxHeightM || setpointM < REFERENCE_PLANT.minHeightM) {
-    warnings.push(
-      `Setpoint outside travel range (${REFERENCE_PLANT.minHeightM}–${REFERENCE_PLANT.maxHeightM} m in height)`,
-    );
   }
   return warnings;
 }

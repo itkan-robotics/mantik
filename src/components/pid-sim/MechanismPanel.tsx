@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef } from 'react';
 import { REFERENCE_PLANT } from '@/lib/pid-sim/reference/elevatorReference';
 import { motorRotationsToHeightM } from '@/lib/pid-sim/physics/units/encoderUnits';
+import type { PlantConfig } from '@/lib/pid-sim/types';
 import type { ElevatorSim } from '@/lib/pid-sim/physics/elevatorSim';
 
 interface Props {
@@ -27,11 +28,12 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       if (!ctx) return;
 
       const sim = simRef.current;
+      const plant: PlantConfig = sim?.getPlantConfig() ?? REFERENCE_PLANT;
       const latest = sim?.getLatest();
-      const pos = latest?.position ?? REFERENCE_PLANT.startHeightM;
+      const pos = latest?.position ?? plant.startHeightM;
       const sp =
         latest?.setpoint ??
-        motorRotationsToHeightM(setpointRef.current, REFERENCE_PLANT);
+        motorRotationsToHeightM(setpointRef.current, plant);
 
       const dpr = window.devicePixelRatio || 1;
       const w = container.clientWidth;
@@ -51,7 +53,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       const floorY = h - margin;
       const topY = margin;
       const travelH = floorY - topY;
-      const scale = travelH / REFERENCE_PLANT.maxHeightM;
+      const scale = travelH / plant.maxHeightM;
 
       ctx.strokeStyle = '#666';
       ctx.lineWidth = 3;
@@ -68,7 +70,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       ctx.stroke();
 
       const limit0Y = floorY;
-      const limitMaxY = floorY - REFERENCE_PLANT.maxHeightM * scale;
+      const limitMaxY = floorY - plant.maxHeightM * scale;
       ctx.strokeStyle = '#888';
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
@@ -108,7 +110,7 @@ function MechanismPanel({ simRef, setpoint, highlight }: Props) {
       ctx.fillStyle = '#ccc';
       ctx.font = '12px JetBrains Mono, monospace';
       ctx.fillText('0 m', shaftRight + 16, limit0Y + 4);
-      ctx.fillText(`${REFERENCE_PLANT.maxHeightM} m`, shaftRight + 16, limitMaxY + 4);
+      ctx.fillText(`${plant.maxHeightM} m`, shaftRight + 16, limitMaxY + 4);
       ctx.fillText(`pos ${pos.toFixed(2)} m`, shaftRight + 16, carriageY);
       ctx.fillStyle = '#ff8c42';
       ctx.fillText(`set ${sp.toFixed(2)} m`, shaftRight + 16, spY - 8);

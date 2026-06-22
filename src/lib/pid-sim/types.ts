@@ -18,7 +18,7 @@ export interface TuningConfig {
   setpoint: number;
 }
 
-/** Physical elevator parameters — scaffold for future editable plant dynamics. */
+/** Physical elevator parameters — editable in subsystem PLANT block; drives browser physics. */
 export interface PlantConfig {
   massLbs: number;
   minHeightM: number;

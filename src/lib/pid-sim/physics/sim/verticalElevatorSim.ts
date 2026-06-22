@@ -228,6 +228,10 @@ export class ElevatorSim {
     return this.samples;
   }
 
+  getPlantConfig(): PlantConfig {
+    return this.plantConfig;
+  }
+
   step(): SimSample | null {
     if (!this.config || !this.enabled) return null;
 
