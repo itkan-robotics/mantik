@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:netlify": "netlify dev",
     "dev:search": "npm run build && astro dev",
     "start": "astro dev",
     "build": "astro build",
@@ -44,6 +45,7 @@
     "@types/react-dom": "^19.2.3",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "^5.8.3",
+    "netlify-cli": "^23.0.0",
     "vite-node": "^6.0.0",
     "vitest": "^4.1.9"
   }

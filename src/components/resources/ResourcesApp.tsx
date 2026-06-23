@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import type { ResourceEntry, ResourceMajor } from '@/lib/resources/schema';
 import {
   RESOURCE_MAJOR_LABELS,
@@ -7,6 +15,7 @@ import {
 } from '@/lib/resources/schema';
 import ResourceCard from './ResourceCard';
 import ResourceFilters from './ResourceFilters';
+import { resolveTurnstileSiteKey, SUBMIT_ENDPOINT } from '@/lib/resources/submitEnv';
 
 declare global {
   interface Window {
@@ -27,7 +36,6 @@ declare global {
 }
 
 const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-const SUBMIT_ENDPOINT = '/.netlify/functions/submit-resource';
 
 interface Props {
   resources: ResourceEntry[];
@@ -106,9 +114,22 @@ export default function ResourcesApp({ resources, minorTags }: Props) {
     setQuery('');
   }, []);
 
+  const presetMinorOptions = useMemo(
+    () => [...RESOURCE_MINOR_OPTIONS].filter((o) => o !== 'Other'),
+    [],
+  );
+
   return (
     <div className="resources-app">
       <div className="resources-toolbar">
+        <button
+          type="button"
+          className="resources-submit-toggle"
+          aria-expanded={submitOpen}
+          onClick={() => setSubmitOpen((o) => !o)}
+        >
+          {submitOpen ? 'Hide form' : 'Submit resource'}
+        </button>
         <label className="resources-search-wrap">
           <span className="visually-hidden">Search resources</span>
           <input
@@ -123,6 +144,12 @@ export default function ResourcesApp({ resources, minorTags }: Props) {
           {filtered.length} of {resources.length} resources
         </p>
       </div>
+
+      {submitOpen && (
+        <div className="resources-submit-panel">
+          <SubmitResourceForm minorOptions={presetMinorOptions} />
+        </div>
+      )}
 
       <ResourceFilters
         majors={majors}
@@ -143,21 +170,30 @@ export default function ResourcesApp({ resources, minorTags }: Props) {
           ))}
         </div>
       )}
-
-      <section className="resources-submit-section">
-        <button
-          type="button"
-          className="resources-submit-toggle"
-          aria-expanded={submitOpen}
-          onClick={() => setSubmitOpen((o) => !o)}
-        >
-          {submitOpen ? 'Hide submission form' : 'Submit a resource'}
-        </button>
-        {submitOpen && (
-          <SubmitResourceForm minorOptions={[...RESOURCE_MINOR_OPTIONS]} />
-        )}
-      </section>
     </div>
+  );
+}
+
+function RequiredMark() {
+  return (
+    <span className="resources-required" aria-hidden="true">
+      *
+    </span>
+  );
+}
+
+function FieldLabel({
+  required,
+  children,
+}: {
+  required?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <span className="resources-field-label">
+      {children}
+      {required ? <RequiredMark /> : null}
+    </span>
   );
 }
 
@@ -170,8 +206,9 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
   const [major, setMajor] = useState<ResourceMajor>('frc');
-  const [minor, setMinor] = useState('Other');
-  const [minorOther, setMinorOther] = useState('');
+  const [minorPreset, setMinorPreset] = useState(minorOptions[0] ?? 'Environment Setup');
+  const [minorCustom, setMinorCustom] = useState('');
+  const [minorIsCustom, setMinorIsCustom] = useState(false);
   const [contact, setContact] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -180,7 +217,9 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+  const siteKey = resolveTurnstileSiteKey(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY, import.meta.env.DEV);
+  const usingDevTurnstile =
+    import.meta.env.DEV && !import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim();
 
   useEffect(() => {
     if (!siteKey || !turnstileRef.current) return;
@@ -220,11 +259,16 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
     };
   }, [siteKey]);
 
-  const resolvedMinor = minor === 'Other' ? minorOther.trim() : minor;
+  const resolvedMinor = minorIsCustom ? minorCustom.trim() : minorPreset;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setErrorMsg('');
+    if (minorIsCustom && !minorCustom.trim()) {
+      setErrorMsg('Enter a topic.');
+      setStatus('error');
+      return;
+    }
     if (!siteKey) {
       setErrorMsg('Submission is not configured on this environment.');
       setStatus('error');
@@ -260,12 +304,20 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
       setDescription('');
       setUrl('');
       setContact('');
+      setMinorCustom('');
+      setMinorIsCustom(false);
       setTurnstileToken('');
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.reset(widgetIdRef.current);
       }
     } catch (err) {
       setStatus('error');
+      if (import.meta.env.DEV && err instanceof TypeError) {
+        setErrorMsg(
+          'Submit endpoint unreachable. Run npm run dev:netlify (not npm run dev) to test submissions locally.',
+        );
+        return;
+      }
       setErrorMsg(err instanceof Error ? err.message : 'Submission failed.');
     }
   }
@@ -287,7 +339,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
 
       <div className="resources-form-row">
         <label>
-          Title
+          <FieldLabel required>Title</FieldLabel>
           <input
             type="text"
             required
@@ -300,7 +352,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
 
       <div className="resources-form-row">
         <label>
-          Short description
+          <FieldLabel required>Short description</FieldLabel>
           <textarea
             required
             maxLength={500}
@@ -313,7 +365,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
 
       <div className="resources-form-row">
         <label>
-          Link (URL or site path)
+          <FieldLabel required>Link (URL or site path)</FieldLabel>
           <input
             type="text"
             required
@@ -327,7 +379,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
 
       <div className="resources-form-row resources-form-row-split">
         <label>
-          Section
+          <FieldLabel required>Section</FieldLabel>
           <select value={major} onChange={(e) => setMajor(e.target.value as ResourceMajor)}>
             {(Object.keys(RESOURCE_MAJOR_LABELS) as ResourceMajor[]).map((m) => (
               <option key={m} value={m}>
@@ -337,35 +389,55 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
           </select>
         </label>
         <label>
-          Topic
-          <select value={minor} onChange={(e) => setMinor(e.target.value)}>
-            {minorOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <FieldLabel required>Topic</FieldLabel>
+          {minorIsCustom ? (
+            <>
+              <input
+                type="text"
+                required
+                maxLength={40}
+                placeholder="Enter topic"
+                value={minorCustom}
+                onChange={(e) => setMinorCustom(e.target.value)}
+              />
+              <button
+                type="button"
+                className="resources-topic-back"
+                onClick={() => {
+                  setMinorIsCustom(false);
+                  setMinorCustom('');
+                }}
+              >
+                Choose from list
+              </button>
+            </>
+          ) : (
+            <select
+              value={minorPreset}
+              onChange={(e) => {
+                if (e.target.value === '__other__') {
+                  setMinorIsCustom(true);
+                  setMinorCustom('');
+                } else {
+                  setMinorPreset(e.target.value);
+                }
+              }}
+            >
+              {minorOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+              <option value="__other__">Other…</option>
+            </select>
+          )}
         </label>
       </div>
 
-      {minor === 'Other' && (
-        <div className="resources-form-row">
-          <label>
-            Custom topic
-            <input
-              type="text"
-              required
-              maxLength={40}
-              value={minorOther}
-              onChange={(e) => setMinorOther(e.target.value)}
-            />
-          </label>
-        </div>
-      )}
-
       <div className="resources-form-row">
         <label>
-          Contact (optional — GitHub username or email)
+          <FieldLabel>Contact</FieldLabel>
+          <span className="resources-optional-hint">GitHub username or email</span>
           <input
             type="text"
             maxLength={120}
@@ -392,7 +464,14 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
         <div ref={turnstileRef} className="resources-turnstile" />
       ) : (
         <p className="resources-submit-note">
-          Submissions require Turnstile keys in the deploy environment.
+          Submissions require <code>PUBLIC_TURNSTILE_SITE_KEY</code> in the Netlify build environment.
+        </p>
+      )}
+
+      {usingDevTurnstile && (
+        <p className="resources-submit-note">
+          Local dev: Turnstile test key active. Full submit flow needs{' '}
+          <code>npm run dev:netlify</code> and <code>GITHUB_TOKEN</code> in <code>.env</code>.
         </p>
       )}
 

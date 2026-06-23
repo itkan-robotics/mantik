@@ -1,5 +1,10 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
 import { z } from 'zod';
+import {
+  corsAllowOrigin,
+  isAllowedSubmitOrigin,
+  resolveTurnstileSecretKey,
+} from '../../src/lib/resources/submitEnv';
 
 const submitSchema = z.object({
   title: z.string().trim().min(1).max(120),
@@ -12,24 +17,21 @@ const submitSchema = z.object({
   website: z.string().max(0).optional(),
 });
 
-const ALLOWED_ORIGINS = [
-  'https://mantik.netlify.app',
-  'http://localhost:4321',
-  'http://localhost:8888',
-  'http://127.0.0.1:4321',
-  'http://127.0.0.1:8888',
-];
-
 const rateBucket = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 15 * 60 * 1000;
 
-function json(statusCode: number, body: Record<string, unknown>) {
+function json(
+  statusCode: number,
+  body: Record<string, unknown>,
+  corsOrigin: string,
+) {
   return {
     statusCode,
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'no-store',
+      'Access-Control-Allow-Origin': corsOrigin,
     },
     body: JSON.stringify(body),
   };
@@ -56,20 +58,6 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-function isAllowedOrigin(origin: string | undefined, referer: string | undefined): boolean {
-  const candidate = origin ?? referer;
-  if (!candidate) return false;
-  try {
-    const url = new URL(candidate);
-    const originBase = `${url.protocol}//${url.host}`;
-    if (ALLOWED_ORIGINS.includes(originBase)) return true;
-    if (url.hostname.endsWith('.netlify.app') && url.hostname.includes('mantik')) return true;
-    return false;
-  } catch {
-    return false;
-  }
-}
-
 function validateUrl(raw: string): string | null {
   if (raw.startsWith('/') && !raw.startsWith('//')) {
     if (raw.includes('..') || raw.includes('\\')) return null;
@@ -86,7 +74,11 @@ function validateUrl(raw: string): string | null {
 }
 
 async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
+  const secret = resolveTurnstileSecretKey(process.env.TURNSTILE_SECRET_KEY, {
+    netlifyDev: process.env.NETLIFY_DEV === 'true',
+    context: process.env.CONTEXT,
+    allowTestKeys: process.env.ALLOW_TURNSTILE_TEST_KEYS === 'true',
+  });
   if (!secret) return false;
 
   const form = new URLSearchParams();
@@ -184,11 +176,15 @@ async function createGitHubIssue(payload: z.infer<typeof submitSchema>): Promise
 }
 
 export const handler: Handler = async (event) => {
+  const origin = event.headers.origin;
+  const referer = event.headers.referer;
+  const corsOrigin = corsAllowOrigin(origin, referer);
+
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://mantik.netlify.app',
+        'Access-Control-Allow-Origin': corsOrigin,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
@@ -197,53 +193,51 @@ export const handler: Handler = async (event) => {
   }
 
   if (event.httpMethod !== 'POST') {
-    return json(405, { error: 'Method not allowed.' });
+    return json(405, { error: 'Method not allowed.' }, corsOrigin);
   }
 
-  const origin = event.headers.origin;
-  const referer = event.headers.referer;
-  if (!isAllowedOrigin(origin, referer)) {
-    return json(403, { error: 'Forbidden.' });
+  if (!isAllowedSubmitOrigin(origin, referer)) {
+    return json(403, { error: 'Forbidden.' }, corsOrigin);
   }
 
   const ip = clientIp(event);
   if (!checkRateLimit(ip)) {
-    return json(429, { error: 'Too many submissions. Try again later.' });
+    return json(429, { error: 'Too many submissions. Try again later.' }, corsOrigin);
   }
 
   let body: unknown;
   try {
     body = JSON.parse(event.body ?? '{}');
   } catch {
-    return json(400, { error: 'Invalid JSON.' });
+    return json(400, { error: 'Invalid JSON.' }, corsOrigin);
   }
 
   const parsed = submitSchema.safeParse(body);
   if (!parsed.success) {
-    return json(400, { error: 'Invalid submission.' });
+    return json(400, { error: 'Invalid submission.' }, corsOrigin);
   }
 
   if (parsed.data.website) {
-    return json(400, { error: 'Invalid submission.' });
+    return json(400, { error: 'Invalid submission.' }, corsOrigin);
   }
 
   const safeUrl = validateUrl(parsed.data.url);
   if (!safeUrl) {
-    return json(400, { error: 'URL must use http or https.' });
+    return json(400, { error: 'URL must use http or https.' }, corsOrigin);
   }
 
   const payload = { ...parsed.data, url: safeUrl };
 
   const turnstileOk = await verifyTurnstile(payload.turnstileToken, ip);
   if (!turnstileOk) {
-    return json(400, { error: 'Verification failed. Try again.' });
+    return json(400, { error: 'Verification failed. Try again.' }, corsOrigin);
   }
 
   try {
     const issueNumber = await createGitHubIssue(payload);
-    return json(200, { ok: true, issue: issueNumber });
+    return json(200, { ok: true, issue: issueNumber }, corsOrigin);
   } catch (err) {
     console.error('submit-resource error:', err);
-    return json(500, { error: 'Could not submit. Try again later.' });
+    return json(500, { error: 'Could not submit. Try again later.' }, corsOrigin);
   }
 };
