@@ -15,27 +15,25 @@ import {
 } from '@/lib/resources/schema';
 import ResourceCard from './ResourceCard';
 import ResourceFilters from './ResourceFilters';
-import { resolveTurnstileSiteKey, SUBMIT_ENDPOINT } from '@/lib/resources/submitEnv';
+import { resolveRecaptchaSiteKey, RECAPTCHA_SCRIPT, SUBMIT_ENDPOINT } from '@/lib/resources/submitEnv';
 
 declare global {
   interface Window {
-    turnstile?: {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
       render: (
-        el: HTMLElement,
-        opts: {
+        container: HTMLElement,
+        params: {
           sitekey: string;
           callback: (token: string) => void;
           'expired-callback'?: () => void;
           'error-callback'?: () => void;
         },
-      ) => string;
-      reset: (widgetId: string) => void;
-      remove: (widgetId: string) => void;
+      ) => number;
+      reset: (widgetId?: number) => void;
     };
   }
 }
-
-const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
 interface Props {
   resources: ResourceEntry[];
@@ -211,49 +209,58 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
   const [minorIsCustom, setMinorIsCustom] = useState(false);
   const [contact, setContact] = useState('');
   const [honeypot, setHoneypot] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<number | null>(null);
 
-  const siteKey = resolveTurnstileSiteKey(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY, import.meta.env.DEV);
-  const usingDevTurnstile =
-    import.meta.env.DEV && !import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim();
+  const siteKey = resolveRecaptchaSiteKey(import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY, import.meta.env.DEV);
+  const usingDevRecaptcha =
+    import.meta.env.DEV && !import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY?.trim();
 
   useEffect(() => {
-    if (!siteKey || !turnstileRef.current) return;
+    if (!siteKey || !recaptchaRef.current) return;
 
     let cancelled = false;
 
     function renderWidget() {
-      if (cancelled || !turnstileRef.current || !window.turnstile) return;
-      if (widgetIdRef.current) {
-        window.turnstile.remove(widgetIdRef.current);
+      if (cancelled || !recaptchaRef.current || !window.grecaptcha) return;
+      if (widgetIdRef.current !== null) {
+        window.grecaptcha.reset(widgetIdRef.current);
         widgetIdRef.current = null;
       }
-      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-        sitekey: siteKey,
-        callback: (token) => setTurnstileToken(token),
-        'expired-callback': () => setTurnstileToken(''),
-        'error-callback': () => setTurnstileToken(''),
+      widgetIdRef.current = window.grecaptcha.render(recaptchaRef.current, {
+        sitekey: siteKey!,
+        callback: (token) => setRecaptchaToken(token),
+        'expired-callback': () => setRecaptchaToken(''),
+        'error-callback': () => setRecaptchaToken(''),
       });
     }
 
-    if (window.turnstile) {
-      renderWidget();
+    function initRecaptcha() {
+      if (cancelled || !window.grecaptcha) return;
+      window.grecaptcha.ready(renderWidget);
+    }
+
+    const existing = document.querySelector(`script[src^="${RECAPTCHA_SCRIPT.split('?')[0]}"]`);
+    if (window.grecaptcha) {
+      initRecaptcha();
+    } else if (existing) {
+      existing.addEventListener('load', initRecaptcha);
     } else {
       const script = document.createElement('script');
-      script.src = TURNSTILE_SCRIPT;
+      script.src = RECAPTCHA_SCRIPT;
       script.async = true;
-      script.onload = renderWidget;
+      script.defer = true;
+      script.onload = initRecaptcha;
       document.head.appendChild(script);
     }
 
     return () => {
       cancelled = true;
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.remove(widgetIdRef.current);
+      if (widgetIdRef.current !== null && window.grecaptcha) {
+        window.grecaptcha.reset(widgetIdRef.current);
         widgetIdRef.current = null;
       }
     };
@@ -274,29 +281,42 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
       setStatus('error');
       return;
     }
-    if (!turnstileToken) {
-      setErrorMsg('Complete the verification challenge first.');
+    if (!recaptchaToken) {
+      setErrorMsg('Complete the reCAPTCHA checkbox first.');
       setStatus('error');
       return;
     }
     setStatus('loading');
     try {
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        url: url.trim(),
+        major,
+        minor: resolvedMinor,
+        submitterContact: contact.trim() || undefined,
+        recaptchaToken,
+        website: honeypot,
+      };
+      // #region agent log
+      fetch('http://127.0.0.1:7713/ingest/0792fdda-7db2-40da-ac1d-efee5dfcc651',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'78ce2e'},body:JSON.stringify({sessionId:'78ce2e',location:'ResourcesApp.tsx:handleSubmit:pre-fetch',message:'submit request start',data:{endpoint:SUBMIT_ENDPOINT,origin:typeof window!=='undefined'?window.location.origin:null,isDev:import.meta.env.DEV,hasSiteKey:Boolean(siteKey),hasRecaptchaToken:Boolean(recaptchaToken),major,minorLen:resolvedMinor.length},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       const res = await fetch(SUBMIT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim(),
-          url: url.trim(),
-          major,
-          minor: resolvedMinor,
-          submitterContact: contact.trim() || undefined,
-          turnstileToken,
-          website: honeypot,
-        }),
+        body: JSON.stringify(payload),
       });
+      const rawText = await res.text();
+      let data: { error?: string; ok?: boolean } = {};
+      try {
+        data = JSON.parse(rawText) as { error?: string; ok?: boolean };
+      } catch {
+        data = {};
+      }
+      // #region agent log
+      fetch('http://127.0.0.1:7713/ingest/0792fdda-7db2-40da-ac1d-efee5dfcc651',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'78ce2e'},body:JSON.stringify({sessionId:'78ce2e',location:'ResourcesApp.tsx:handleSubmit:post-fetch',message:'submit response',data:{status:res.status,ok:res.ok,contentType:res.headers.get('content-type'),errorField:data.error??null,bodyPreview:rawText.slice(0,200)},timestamp:Date.now(),hypothesisId:'A,B,C,D,E'})}).catch(()=>{});
+      // #endregion
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error ?? 'Submission failed.');
       }
       setStatus('success');
@@ -306,9 +326,9 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
       setContact('');
       setMinorCustom('');
       setMinorIsCustom(false);
-      setTurnstileToken('');
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.reset(widgetIdRef.current);
+      setRecaptchaToken('');
+      if (widgetIdRef.current !== null && window.grecaptcha) {
+        window.grecaptcha.reset(widgetIdRef.current);
       }
     } catch (err) {
       setStatus('error');
@@ -461,16 +481,16 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
       </div>
 
       {siteKey ? (
-        <div ref={turnstileRef} className="resources-turnstile" />
+        <div ref={recaptchaRef} className="resources-recaptcha" />
       ) : (
         <p className="resources-submit-note">
-          Submissions require <code>PUBLIC_TURNSTILE_SITE_KEY</code> in the Netlify build environment.
+          Submissions require <code>PUBLIC_RECAPTCHA_SITE_KEY</code> in the Netlify build environment.
         </p>
       )}
 
-      {usingDevTurnstile && (
+      {usingDevRecaptcha && (
         <p className="resources-submit-note">
-          Local dev: Turnstile test key active. Full submit flow needs{' '}
+          Local dev: reCAPTCHA test key active. Full submit flow needs{' '}
           <code>npm run dev:netlify</code> and <code>GITHUB_TOKEN</code> in <code>.env</code>.
         </p>
       )}

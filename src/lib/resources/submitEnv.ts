@@ -1,25 +1,28 @@
-/** Cloudflare Turnstile always-pass test keys — local / non-prod only. */
-export const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
-export const TURNSTILE_TEST_SECRET_KEY = '1x0000000000000000000000000000000AA';
+/** Google reCAPTCHA v2 test keys — always pass; local / non-prod only. */
+export const RECAPTCHA_TEST_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+export const RECAPTCHA_TEST_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
+
+export const RECAPTCHA_SCRIPT = 'https://www.google.com/recaptcha/api.js?render=explicit';
+export const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
 export const SUBMIT_ENDPOINT = '/.netlify/functions/submit-resource';
 
-/** Site key for the browser widget. Production builds require PUBLIC_TURNSTILE_SITE_KEY. */
-export function resolveTurnstileSiteKey(publicKey: string | undefined, isDev: boolean): string | undefined {
+/** Site key for the browser widget. Production builds require PUBLIC_RECAPTCHA_SITE_KEY. */
+export function resolveRecaptchaSiteKey(publicKey: string | undefined, isDev: boolean): string | undefined {
   const trimmed = publicKey?.trim();
   if (trimmed) return trimmed;
-  if (isDev) return TURNSTILE_TEST_SITE_KEY;
+  if (isDev) return RECAPTCHA_TEST_SITE_KEY;
   return undefined;
 }
 
 /** Secret for server-side siteverify. Never expose to the client. */
-export function resolveTurnstileSecretKey(
+export function resolveRecaptchaSecretKey(
   secretKey: string | undefined,
   opts: { netlifyDev?: boolean; allowTestKeys?: boolean },
 ): string | undefined {
   const trimmed = secretKey?.trim();
   if (trimmed) return trimmed;
-  if (opts.netlifyDev || opts.allowTestKeys) return TURNSTILE_TEST_SECRET_KEY;
+  if (opts.netlifyDev || opts.allowTestKeys) return RECAPTCHA_TEST_SECRET_KEY;
   return undefined;
 }
 

@@ -1,0 +1,42 @@
+{
+  "version": "5",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "6a2ce0e544e15e8f8883a5c18da5948e37fd0f2619f68cb31f3af53c51817025",
+    "https://edge.netlify.com/bootstrap/context.ts": "e97240232121e2f369f6546ce961490f34d961ea1ea54be3ff09633e3f08373f",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "eaa6148ded3121d8dee62dd91c86e7fe76601df0f3ca8d7962243a30f4c8935f"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@astrojs/mdx@7",
+        "npm:@astrojs/react@6",
+        "npm:@astrojs/sitemap@^3.4.1",
+        "npm:@monaco-editor/react@^4.7.0",
+        "npm:@netlify/functions@^5.3.0",
+        "npm:@types/react-dom@^19.2.3",
+        "npm:@types/react@^19.2.17",
+        "npm:astro@7",
+        "npm:monaco-editor@~0.55.1",
+        "npm:netlify-cli@23",
+        "npm:pagefind@^1.3.0",
+        "npm:react-dom@^19.2.7",
+        "npm:react@^19.2.7",
+        "npm:rollup-plugin-visualizer@^7.0.1",
+        "npm:typescript@^5.8.3",
+        "npm:uplot@^1.6.32",
+        "npm:vite-node@6",
+        "npm:vitest@^4.1.9",
+        "npm:zod@^3.25.67"
+      ],
+      "overrides": {
+        "dompurify": "^3.4.11",
+        "monaco-editor": {
+          "dompurify": "^3.4.11"
+        }
+      }
+    }
+  }
+}

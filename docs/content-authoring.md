@@ -213,34 +213,34 @@ Curated external and internal links live in `src/data/resources.json` (validated
 
 ### Resource submission (Netlify)
 
-Public submissions POST to `/.netlify/functions/submit-resource`, which verifies Cloudflare Turnstile and opens a GitHub Issue for review.
+Public submissions POST to `/.netlify/functions/submit-resource`, which verifies Google reCAPTCHA v2 and opens a GitHub Issue for review.
 
 #### Environment variables (Netlify → Site configuration → Environment variables)
 
 | Variable | Netlify **Secret**? | Exposed in browser? | When needed |
 |----------|---------------------|---------------------|-------------|
-| `PUBLIC_TURNSTILE_SITE_KEY` | **No** | **Yes** (built into JS) | **Every build** — redeploy after change |
-| `TURNSTILE_SECRET_KEY` | **Yes** | No | Function runtime (production) |
+| `PUBLIC_RECAPTCHA_SITE_KEY` | **No** | **Yes** (built into JS) | **Every build** — redeploy after change |
+| `RECAPTCHA_SECRET_KEY` | **Yes** | No | Function runtime (production) |
 | `GITHUB_TOKEN` | **Yes** | No | Function runtime |
 | `GITHUB_REPO` | No | No | Optional; defaults to `itkan-robotics/mantik` |
-| `ALLOW_TURNSTILE_TEST_KEYS` | No | No | Optional; deploy previews only — uses Turnstile test secret when `TURNSTILE_SECRET_KEY` unset |
+| `ALLOW_RECAPTCHA_TEST_KEYS` | No | No | Optional; deploy previews — test secret when `RECAPTCHA_SECRET_KEY` unset |
 
-**Production:** set real Turnstile site + secret keys (Cloudflare dashboard → [Turnstile](https://dash.cloudflare.com/?to=/:account/turnstile)). Add hostname `mantik.netlify.app`. Scopes: **All contexts** for `PUBLIC_*`; secrets marked **Secret**.
+**Production:** register a **reCAPTCHA v2 Checkbox** site at [Google reCAPTCHA Admin](https://www.google.com/admin/recaptcha). Add domain `mantik.netlify.app`. Scopes: **All contexts** for `PUBLIC_*`; mark secrets **Secret**.
 
-**Deploy previews:** use the same production keys (recommended), or set `ALLOW_TURNSTILE_TEST_KEYS=true` and use test site key in preview builds only.
+**Deploy previews:** use production keys (recommended), or set `ALLOW_RECAPTCHA_TEST_KEYS=true` for Google test secret on previews.
 
 #### Local development
 
 | Command | URL | Submit flow |
 |---------|-----|-------------|
-| `npm run dev` | `http://localhost:4321` | Turnstile widget only (auto test site key). Submit needs `dev:netlify`. |
-| `npm run dev:netlify` | `http://localhost:8888` | Full flow: functions + Turnstile + GitHub issue |
+| `npm run dev` | `http://localhost:4321` | reCAPTCHA widget only (auto test site key). Submit needs `dev:netlify`. |
+| `npm run dev:netlify` | `http://localhost:8888` | Full flow: reCAPTCHA + function + GitHub issue |
 
 1. Copy `.env.example` → `.env` (gitignored).
 2. Set `GITHUB_TOKEN` (Issues write on the repo).
-3. Optional: real Turnstile keys; otherwise test keys apply automatically under `netlify dev`.
+3. Optional: real reCAPTCHA keys; otherwise Google test keys apply under `netlify dev`.
 
-Turnstile always-pass test keys (local / preview fallback): site `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`. See [Cloudflare testing docs](https://developers.cloudflare.com/turnstile/troubleshooting/testing/).
+Google reCAPTCHA test keys (local / preview fallback): site `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`, secret `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`. See [Google reCAPTCHA FAQ — automated tests](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do).
 
 Create GitHub labels `resource-submission` and `needs-review` on the repo, or the function retries without labels.
 

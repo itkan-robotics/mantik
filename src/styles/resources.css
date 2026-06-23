@@ -298,8 +298,8 @@
   overflow: hidden;
 }
 
-.resources-turnstile {
-  min-height: 65px;
+.resources-recaptcha {
+  min-height: 78px;
 }
 
 .resources-submit-btn {

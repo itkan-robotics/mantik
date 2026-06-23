@@ -15,32 +15,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-debugging-best-practices-advanced-debugging",
-      "title": "Advanced Debugging",
-      "description": "Advanced debugging in Android Studio is essential for FTC development.  When your robot doesn't behave as expected, you need powerful tools to identify and fix issues quickly.",
-      "url": "/ftc/advanced-debugging",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-advanced-movement-control-advanced-movement-control",
-      "title": "Advanced Movement Control",
-      "description": "FTC robots often need to move with precision, repeatability, and speed.  Simple power commands are not enough for tasks like driving straight, turning to a specific angle, or moving an arm to an exact position.",
-      "url": "/ftc/advanced-movement-control",
-      "major": "ftc",
-      "minor": "Advanced Movement Control",
-      "tags": [
-        "ftc",
-        "advanced-movement-control"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-getting-started-advanced-programming-notes",
       "title": "Advanced Programming Notes",
       "description": "Community FRC programming notes covering project structure, command-based patterns, control loops, and common subsystem implementations with worked examples.",
@@ -106,32 +80,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-autonomous-programming-basic-autonomous-programming",
-      "title": "Basic Autonomous Programming",
-      "description": "In FTC, autonomous mode is a period at the start of each match where the robot operates entirely based on pre-programmed instructions, without any driver input.  This is your opportunity to score points by having your robot perform tasks automatically.",
-      "url": "/ftc/basic-autonomous-programming",
-      "major": "ftc",
-      "minor": "Autonomous Programming",
-      "tags": [
-        "ftc",
-        "autonomous-programming"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-basic-debugging-techniques",
-      "title": "Basic Debugging Techniques",
-      "description": "Debugging is a critical skill for FTC programmers.  In this lesson, you'll learn how to use OnBot Java's tools and best practices to find and fix bugs in your robot code.",
-      "url": "/ftc/basic-debugging-techniques",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-command-based-bovlb-tips-commands",
       "title": "BoVLB Tips: Commands",
       "description": "Oblarg (BoVLB) command tips: default commands, requirement conflicts, parallel and sequential command groups, and common command-based pitfalls with concise examples.",
@@ -154,58 +102,6 @@
       "tags": [
         "frc",
         "control-theory"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-code-organization",
-      "title": "Code Organization",
-      "description": "Good code organization makes your programs easier to debug, maintain, and expand.  In FTC, it's especially important to avoid large, monolithic files.",
-      "url": "/ftc/code-organization",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-code-review",
-      "title": "Code Review",
-      "description": "Code review is a systematic process of examining code to find bugs, improve quality, and ensure consistency.  For FTC teams, code reviews help catch issues early and improve team collaboration.",
-      "url": "/ftc/code-review",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-setup-resources-code-version-control",
-      "title": "Code Version Control",
-      "description": "Version control is a system that tracks changes to your code over time.  It lets you save your work, collaborate with teammates, and revert to previous versions if something goes wrong.",
-      "url": "/ftc/code-version-control",
-      "major": "ftc",
-      "minor": "Setup & Resources",
-      "tags": [
-        "ftc",
-        "setup-resources"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-setup-topics-control-hub-expansion-hub",
-      "title": "Control Hub & Expansion Hub",
-      "description": "Mantik lesson on the REV Control Hub and Expansion Hub: USB/device naming, motor and servo ports, I2C sensors, configuration on Driver Hub, and wiring checks before running OpModes.",
-      "url": "/ftc/control-hub-expansion-hub",
-      "major": "ftc",
-      "minor": "Setup Topics",
-      "tags": [
-        "ftc",
-        "setup-topics"
       ],
       "source": "mantik"
     },
@@ -236,58 +132,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-path-planning-custom-path-following-algorithms",
-      "title": "Custom Path Following Algorithms",
-      "description": "While libraries like Road Runner and PedroPathing are powerful, building your own path following algorithm helps you understand the math and control theory behind autonomous navigation.  It also lets you customize behavior for your robot's unique needs.",
-      "url": "/ftc/custom-path-following",
-      "major": "ftc",
-      "minor": "Path Planning",
-      "tags": [
-        "ftc",
-        "path-planning"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-robot-hardware-dc-motors-and-motor-control",
-      "title": "DC Motors and Motor Control",
-      "description": "DC motors drive wheels, arms, and other moving parts.  Access motors through the `hardwareMap`—an FTC SDK object that provides references to configured devices.",
-      "url": "/ftc/motors",
-      "major": "ftc",
-      "minor": "Robot Hardware",
-      "tags": [
-        "ftc",
-        "robot-hardware"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-odometry-dead-wheel-encoders",
-      "title": "Dead Wheel Encoders",
-      "description": "Dead wheels are unpowered, free-spinning wheels equipped with encoders.  Unlike drive wheels, they are not affected by slippage from driving the robot, making them ideal for accurate position tracking in FTC robots.",
-      "url": "/ftc/dead-wheel-encoders",
-      "major": "ftc",
-      "minor": "Odometry",
-      "tags": [
-        "ftc",
-        "odometry"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-debugging-strategies",
-      "title": "Debugging Strategies",
-      "description": "Effective debugging is not just about finding bugs—it's about developing a systematic approach to problem-solving.  In FTC development, you need strategies that work both in the lab and under competition pressure.",
-      "url": "/ftc/debugging-strategies",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-training-tutorials-deep-blue-robotics",
       "title": "Deep Blue Robotics",
       "description": "Deep Blue (Team 384) training docs: swerve odometry, auto routines, command-based conventions, and advanced control topics used in their open-source projects.",
@@ -297,32 +141,6 @@
       "tags": [
         "frc",
         "training-tutorials"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-teleop-programming-drivebase-types",
-      "title": "Drivebase Types",
-      "description": "The drivebase is the foundation of your robot's movement.  Common FTC drivebases are tank, mecanum, and holonomic.",
-      "url": "/ftc/drivebase-types",
-      "major": "ftc",
-      "minor": "TeleOp Programming",
-      "tags": [
-        "ftc",
-        "teleop-programming"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-autonomous-programming-encoder-based-movement",
-      "title": "Encoder-Based Movement",
-      "description": "Motor encoders are sensors built into motors that measure rotation.  In FTC, encoders allow you to move your robot a precise distance by counting the number of rotations or partial rotations of the wheels.",
-      "url": "/ftc/encoder-based-movement",
-      "major": "ftc",
-      "minor": "Autonomous Programming",
-      "tags": [
-        "ftc",
-        "autonomous-programming"
       ],
       "source": "mantik"
     },
@@ -349,19 +167,6 @@
       "tags": [
         "frc",
         "advanced-tools"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-advanced-movement-control-external-libraries-in-ftc",
-      "title": "External Libraries in FTC",
-      "description": "FTC teams often use external libraries to simplify complex programming tasks and improve code organization.  These libraries provide pre-built solutions for common robotics problems, allowing teams to focus on strategy and robot-specific logic rather than reinventing basic functionality.",
-      "url": "/ftc/external-libraries",
-      "major": "ftc",
-      "minor": "Advanced Movement Control",
-      "tags": [
-        "ftc",
-        "advanced-movement-control"
       ],
       "source": "mantik"
     },
@@ -405,19 +210,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-setup-topics-ftc-sdk-basics",
-      "title": "FTC SDK Basics",
-      "description": "The FTC (FIRST Tech Challenge) Software Development Kit (SDK) is the foundation for programming FTC robots in Java.  It provides all the libraries, APIs, and tools needed to control robot hardware, manage OpModes, and interact with sensors and gamepads.",
-      "url": "/ftc/ftc-sdk-basics",
-      "major": "ftc",
-      "minor": "Setup Topics",
-      "tags": [
-        "ftc",
-        "setup-topics"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "ftc-setup-resources-ftc-sdk-github-repository",
       "title": "FTC SDK GitHub Repository",
       "description": "Official FTC SDK repository: FtcRobotController module (do not edit) and TeamCode template for season-specific OpModes, Gradle build, and OnBot Java compatibility.",
@@ -427,58 +219,6 @@
       "tags": [
         "ftc",
         "setup-resources"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-ftcdashboard-comprehensive-guid",
-      "title": "FTCDashboard Comprehensive Guide",
-      "description": "FTCDashboard is a powerful web-based dashboard that provides real-time robot monitoring and control capabilities for FTC teams.  Unlike basic telemetry that only shows text output, FTCDashboard offers a rich graphical interface with live data plotting, field visualization, configuration management, remote control features, and camera streaming.",
-      "url": "/ftc/ftc-dashboard-comprehensive",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-teleop-programming-gamepad-controls",
-      "title": "Gamepad Controls",
-      "description": "FTC robots are controlled using gamepads.  The `gamepad1` and `gamepad2` objects provide access to all the buttons, sticks, triggers, and dpad controls.",
-      "url": "/ftc/gamepad-controls",
-      "major": "ftc",
-      "minor": "TeleOp Programming",
-      "tags": [
-        "ftc",
-        "teleop-programming"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-odometry-gobilda-pinpoint",
-      "title": "Gobilda Pinpoint",
-      "description": "goBILDA Pinpoint is a commercial odometry solution designed for FTC robots.  It provides a ready-to-use hardware kit with three encoders and wheels, making it easier to implement accurate odometry without custom fabrication.",
-      "url": "/ftc/gobilda-pinpoint",
-      "major": "ftc",
-      "minor": "Odometry",
-      "tags": [
-        "ftc",
-        "odometry"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-odometry-introduction-to-odometry",
-      "title": "Introduction to Odometry",
-      "description": "Odometry is the process of tracking a robot’s position and orientation on the field using sensors, typically wheel encoders.  In FTC, odometry is essential for enabling your robot to navigate autonomously and perform tasks with precision.",
-      "url": "/ftc/intro-to-odometry",
-      "major": "ftc",
-      "minor": "Odometry",
-      "tags": [
-        "ftc",
-        "odometry"
       ],
       "source": "mantik"
     },
@@ -509,19 +249,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-setup-topics-linear-vs-iterative-opmodes",
-      "title": "Linear vs Iterative OpModes",
-      "description": "FTC supports two main OpMode types: LinearOpMode and Iterative OpMode.  Understanding the difference helps you choose the right structure for your code.",
-      "url": "/ftc/linear-vs-iterative-opmodes",
-      "major": "ftc",
-      "minor": "Setup Topics",
-      "tags": [
-        "ftc",
-        "setup-topics"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-control-theory-motion-magic",
       "title": "Motion Magic®",
       "description": "CTRE Motion Magic: trapezoidal motion profiling on Talon FX with cruise velocity, acceleration, and jerk limits for smooth mechanism moves without a separate profile generator.",
@@ -531,32 +258,6 @@
       "tags": [
         "frc",
         "control-theory"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-advanced-movement-control-motion-profiling",
-      "title": "Motion Profiling",
-      "description": "Motion profiling is a technique for planning smooth, efficient movements for your robot.  Instead of instantly commanding full speed or power, you generate a profile that gradually accelerates and decelerates, making your robot's motion faster, more accurate, and less likely to slip or tip.",
-      "url": "/ftc/motion-profiling",
-      "major": "ftc",
-      "minor": "Advanced Movement Control",
-      "tags": [
-        "ftc",
-        "advanced-movement-control"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-setup-topics-opmode-structure",
-      "title": "OpMode Structure",
-      "description": "An OpMode (Operation Mode) is a Java class that controls your robot during a match.  OpModes define the robot's behavior for autonomous or teleop periods and are selected and started from the Driver Station app.",
-      "url": "/ftc/opmode-structure",
-      "major": "ftc",
-      "minor": "Setup Topics",
-      "tags": [
-        "ftc",
-        "setup-topics"
       ],
       "source": "mantik"
     },
@@ -587,45 +288,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-path-planning-pedropathing-vs-road-runner",
-      "title": "PedroPathing vs. Road Runner",
-      "description": "FTC teams use path planning libraries to generate and follow complex autonomous paths.  Two popular options are PedroPathing and Road Runner.",
-      "url": "/ftc/path-planning-comparison",
-      "major": "ftc",
-      "minor": "Path Planning",
-      "tags": [
-        "ftc",
-        "path-planning"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-performance-optimization",
-      "title": "Performance Optimization",
-      "description": "Performance optimization is crucial for FTC robots.  Your code must run efficiently to maintain consistent control loop timing and prevent crashes.",
-      "url": "/ftc/performance-optimization",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-advanced-movement-control-pid-control",
-      "title": "PID Control",
-      "description": "PID stands for Proportional-Integral-Derivative.  It's a feedback control algorithm that helps your robot reach and maintain a target value (like position or speed) by adjusting motor power based on the error between the target and the actual value.",
-      "url": "/ftc/pid-control",
-      "major": "ftc",
-      "minor": "Advanced Movement Control",
-      "tags": [
-        "ftc",
-        "advanced-movement-control"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-control-theory-pid-simulation",
       "title": "PID Simulation",
       "description": "Hands-on PID simulation exercises using WPILib physics sim — tune elevator and arm gains with recorded plots before moving to hardware.",
@@ -635,19 +297,6 @@
       "tags": [
         "frc",
         "control-theory"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-path-planning-poses-paths-and-theory",
-      "title": "Poses, Paths, and Theory",
-      "description": "A pose describes a robot's position and orientation on the field.  In FTC, a pose is usually represented as (x, y, θ), where x and y are coordinates (in inches or meters) and θ (theta) is the heading (angle) in radians or degrees.",
-      "url": "/ftc/poses-paths-theory",
-      "major": "ftc",
-      "minor": "Path Planning",
-      "tags": [
-        "ftc",
-        "path-planning"
       ],
       "source": "mantik"
     },
@@ -691,45 +340,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-advanced-movement-control-robot-pid-control",
-      "title": "Robot PID Control",
-      "description": "Many FTC mechanisms require controlling more than one axis at a time, such as X/Y drive or multi-joint arms.  Each axis can have its own PID controller, and sometimes you need to coordinate them for smooth, accurate movement.",
-      "url": "/ftc/robot-pid-control",
-      "major": "ftc",
-      "minor": "Advanced Movement Control",
-      "tags": [
-        "ftc",
-        "advanced-movement-control"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-robot-hardware-sensors",
-      "title": "Sensors",
-      "description": "Sensors let the robot perceive its environment.  Configure each sensor in the robot's hardware configuration, then map it in code.",
-      "url": "/ftc/sensors",
-      "major": "ftc",
-      "minor": "Robot Hardware",
-      "tags": [
-        "ftc",
-        "robot-hardware"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-robot-hardware-servos",
-      "title": "Servos",
-      "description": "Servos provide precise, limited-range movement for arms, claws, and similar mechanisms.  Standard servos move to a position and hold it.",
-      "url": "/ftc/servos",
-      "major": "ftc",
-      "minor": "Robot Hardware",
-      "tags": [
-        "ftc",
-        "robot-hardware"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-vision-limelight-simple-limelight-tutorial",
       "title": "Simple Limelight Tutorial",
       "description": "Video walkthrough: Limelight pipeline setup, reading tx/ty/ ta in code, and driving rotation-to-target for vision-assisted teleop or auto.",
@@ -739,19 +349,6 @@
       "tags": [
         "frc",
         "vision-limelight"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-software-development-best-pract",
-      "title": "Software Development Best Practices",
-      "description": "Good software development practices are essential for FTC teams.  Well-organized, maintainable code is easier to debug, extend, and collaborate on.",
-      "url": "/ftc/software-development-best-practices",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
       ],
       "source": "mantik"
     },
@@ -769,19 +366,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-debugging-best-practices-state-machines",
-      "title": "State Machines",
-      "description": "State machines are a powerful way to organize your robot's logic, especially for complex tasks.  They help you avoid tangled code and make debugging much easier.",
-      "url": "/ftc/state-machines",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-advanced-tools-state-machines-intro",
       "title": "State Machines Intro",
       "description": "State machine concepts for FRC: states, transitions, entry/exit actions, and replacing nested if-chains in teleop and auto with explicit state charts.",
@@ -791,58 +375,6 @@
       "tags": [
         "frc",
         "advanced-tools"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-teleop-programming-telemetry-feedback",
-      "title": "Telemetry & Feedback",
-      "description": "This page covers advanced telemetry techniques for FTC robots.  If you are new to telemetry, start with the Telemetry Logging lesson for an introduction to basic telemetry concepts and usage.",
-      "url": "/ftc/telemetry-feedback",
-      "major": "ftc",
-      "minor": "TeleOp Programming",
-      "tags": [
-        "ftc",
-        "teleop-programming"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-setup-topics-telemetry-logging",
-      "title": "Telemetry Logging",
-      "description": "Mantik lesson on FTC telemetry: addLine, addData, update(), formatting driver feedback on the Driver Station, and debugging sensor values during teleop and auto.",
-      "url": "/ftc/telemetry-logging",
-      "major": "ftc",
-      "minor": "Setup Topics",
-      "tags": [
-        "ftc",
-        "setup-topics"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-teleop-programming-teleop-programming",
-      "title": "TeleOp Programming",
-      "description": "TeleOp programming is the process of writing code that allows drivers to control the robot in real time using gamepads.  In this lesson, you'll learn how to read gamepad input, map controls to robot actions, and use telemetry for feedback.",
-      "url": "/ftc/teleop-programming",
-      "major": "ftc",
-      "minor": "TeleOp Programming",
-      "tags": [
-        "ftc",
-        "teleop-programming"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-teleop-programming-teleop-programming-exercises",
-      "title": "TeleOp Programming Exercises",
-      "description": "Hands-on practice is essential for mastering TeleOp programming.  These exercises are designed to reinforce and apply the concepts you've learned in previous lessons.",
-      "url": "/ftc/teleop-exercises",
-      "major": "ftc",
-      "minor": "TeleOp Programming",
-      "tags": [
-        "ftc",
-        "teleop-programming"
       ],
       "source": "mantik"
     },
@@ -860,32 +392,6 @@
       "source": "mantik"
     },
     {
-      "id": "ftc-odometry-three-wheel-odometry",
-      "title": "Three-Wheel Odometry",
-      "description": "A three-wheel odometry setup allows your robot to track its position (X, Y) and heading (angle) on the field with high accuracy.  By using two parallel wheels and one perpendicular wheel, you can resolve both translational and rotational movement.",
-      "url": "/ftc/three-wheel-odometry",
-      "major": "ftc",
-      "minor": "Odometry",
-      "tags": [
-        "ftc",
-        "odometry"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-autonomous-programming-time-based-movement",
-      "title": "Time-Based Movement",
-      "description": "Time-based movement is the simplest way to make your robot move autonomously: you set the motor power, wait for a certain amount of time, then stop the motors.  This method does not use sensors or encoders, so it is easy to implement but not very precise.",
-      "url": "/ftc/time-based-movement",
-      "major": "ftc",
-      "minor": "Autonomous Programming",
-      "tags": [
-        "ftc",
-        "autonomous-programming"
-      ],
-      "source": "mantik"
-    },
-    {
       "id": "frc-vision-limelight-tracking-apriltags",
       "title": "Tracking AprilTags",
       "description": "Limelight AprilTag pipelines: family selection, multi-tag pose solve, field layout JSON, and tuning exposure for reliable FRC field localization.",
@@ -895,32 +401,6 @@
       "tags": [
         "frc",
         "vision-limelight"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-troubleshooting-common-issues",
-      "title": "Troubleshooting Common Issues",
-      "description": "Even experienced programmers run into common issues when working with FTC robots.  This lesson will help you quickly identify and fix the most frequent problems in OnBot Java.",
-      "url": "/ftc/troubleshooting-common-issues",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
-      ],
-      "source": "mantik"
-    },
-    {
-      "id": "ftc-debugging-best-practices-unit-testing",
-      "title": "Unit Testing",
-      "description": "Unit testing is a critical practice for ensuring your FTC robot code works correctly and reliably.  By writing tests for individual components and methods, you can catch bugs early, verify functionality, and make your code more maintainable.",
-      "url": "/ftc/unit-testing",
-      "major": "ftc",
-      "minor": "Debugging & Best Practices",
-      "tags": [
-        "ftc",
-        "debugging-best-practices"
       ],
       "source": "mantik"
     },

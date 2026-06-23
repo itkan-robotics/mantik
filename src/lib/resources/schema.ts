@@ -65,7 +65,7 @@ export const submitResourceSchema = z.object({
   major: resourceMajorSchema,
   minor: z.string().trim().min(1).max(80),
   submitterContact: z.string().trim().max(120).optional(),
-  turnstileToken: z.string().min(1),
+  recaptchaToken: z.string().min(1),
   website: z.string().max(0).optional(), // honeypot
 });
 
