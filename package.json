@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:netlify": "netlify dev",
     "dev:search": "npm run build && astro dev",
     "start": "astro dev",
     "build": "astro build",
@@ -16,7 +17,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:physics": "vitest run",
-    "migrate": "node scripts/migrate-json-to-mdx.mjs"
+    "migrate": "node scripts/migrate-json-to-mdx.mjs",
+    "seed:resources": "node scripts/seed-resources-from-mdx.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
@@ -38,10 +40,12 @@
     }
   },
   "devDependencies": {
+    "@netlify/functions": "^5.3.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "^5.8.3",
+    "netlify-cli": "^23.0.0",
     "vite-node": "^6.0.0",
     "vitest": "^4.1.9"
   }

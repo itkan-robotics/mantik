@@ -199,3 +199,49 @@ npm run dev       # dev server at :4321
 npm run build     # production build + Pagefind index
 npm run preview   # serve dist/ (search works here)
 ```
+
+## Programming Resources catalog
+
+Curated external and internal links live in `src/data/resources.json` (validated at build time with Zod in `src/lib/resources/schema.ts`).
+
+| Task | How |
+|------|-----|
+| Bulk import from MDX LinkGrids | `npm run seed:resources` (reads FRC hub + FTC setup pages) |
+| Add one approved link | Edit `src/data/resources.json` after reviewing a submission issue |
+| Rich descriptions on regen | Edit `scripts/resource-description-overlays.json` (official URLs) — seed also pulls Mantik lesson intros |
+| Browse UI | `/resources` — React island in `src/components/resources/` |
+
+### Resource submission (Netlify)
+
+Public submissions POST to `/.netlify/functions/submit-resource`, which verifies Google reCAPTCHA v2 and opens a GitHub Issue for review.
+
+#### Environment variables (Netlify → Site configuration → Environment variables)
+
+| Variable | Netlify **Secret**? | Exposed in browser? | When needed |
+|----------|---------------------|---------------------|-------------|
+| `PUBLIC_RECAPTCHA_SITE_KEY` | **No** | **Yes** (built into JS) | **Every build** — redeploy after change |
+| `RECAPTCHA_SECRET_KEY` | **Yes** | No | Function runtime (production) |
+| `GITHUB_TOKEN` | **Yes** | No | Function runtime |
+| `GITHUB_REPO` | No | No | Optional; defaults to `itkan-robotics/mantik` |
+| `ALLOW_RECAPTCHA_TEST_KEYS` | No | No | Optional legacy fallback when `RECAPTCHA_SECRET_KEY` unset |
+
+**Production:** register a **reCAPTCHA v2 Checkbox** site at [Google reCAPTCHA Admin](https://www.google.com/admin/recaptcha). Add domain `mantik.netlify.app`. Scopes: **All contexts** for `PUBLIC_*`; mark secrets **Secret**.
+
+**Deploy previews:** preview and branch deploy URLs (for example `deploy-preview-42--mantik.netlify.app`) automatically use Google test keys at runtime — no domain registration needed. Production keys apply only on `mantik.netlify.app`. To exercise real keys on a preview, add that preview hostname in Google reCAPTCHA Admin (not needed for routine PR review).
+
+#### Local development
+
+| Command | URL | Submit flow |
+|---------|-----|-------------|
+| `npm run dev` | `http://localhost:4321` | reCAPTCHA test key (hostname-based). Submit needs `dev:netlify`. |
+| `npm run dev:netlify` | `http://localhost:8888` | Full flow: reCAPTCHA test key + function + GitHub issue |
+
+1. Copy `.env.example` → `.env` (gitignored).
+2. Set `GITHUB_TOKEN` (Issues write on the repo).
+3. Optional: real reCAPTCHA keys in `.env`; local and preview hosts still use Google test keys automatically.
+
+Google reCAPTCHA test keys (local / preview fallback): site `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`, secret `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`. See [Google reCAPTCHA FAQ — automated tests](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do).
+
+Create GitHub labels `resource-submission` and `needs-review` on the repo, or the function retries without labels.
+
+After approval, add an entry to `resources.json` with a unique `id` slug, then run `npm run build` to validate.

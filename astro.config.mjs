@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { pagefindDevPlugin } from './scripts/pagefind-dev-plugin.mjs';
+import { normalizeWindowsDevPathsPlugin } from './scripts/normalize-windows-dev-paths.mjs';
 
 const SITE = 'https://mantik.netlify.app';
 const analyze = process.env.ANALYZE === '1';
@@ -32,7 +33,15 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [pagefindDevPlugin()],
+    plugins: [normalizeWindowsDevPathsPlugin(), pagefindDevPlugin()],
+    server: {
+      proxy: {
+        '/.netlify/functions': {
+          target: 'http://127.0.0.1:8888',
+          changeOrigin: true,
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

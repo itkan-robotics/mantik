@@ -16,3 +16,4 @@ out/
 /ftc/
 /frc/
 /comp/
+.env.example

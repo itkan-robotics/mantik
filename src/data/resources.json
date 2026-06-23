@@ -1,0 +1,460 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "id": "frc-training-tutorials-abdullah-s-tutorials",
+      "title": "Abdullah's Tutorials",
+      "description": "Video series on FRC Java programming: command-based structure, subsystem examples, control tuning, and competition code organization.",
+      "url": "https://www.youtube.com/playlist?list=PLXZmTommNXyXFZJGnoJt82-evVkSwn-f8",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-getting-started-advanced-programming-notes",
+      "title": "Advanced Programming Notes",
+      "description": "Community FRC programming notes covering project structure, command-based patterns, control loops, and common subsystem implementations with worked examples.",
+      "url": "https://docs.google.com/document/d/1qKTuPB7myu2Kce0LdjYmC6BKeGXBA_ozFjc9v1Wgyd4/edit?tab=t.0",
+      "major": "frc",
+      "minor": "Getting Started",
+      "tags": [
+        "frc",
+        "getting-started"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-advantagekit-swerve-template",
+      "title": "AdvantageKit Swerve Template",
+      "description": "AdvantageKit Talon FX swerve template: pre-wired odometry, module optimization, SysId hooks, and log replay for CTRE swerve drivetrains.",
+      "url": "https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template/",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-android-studio-official-site",
+      "title": "Android Studio Official Site",
+      "description": "Download Android Studio IDE, SDK Manager, and official guides for installing the Android SDK used to build and deploy FTC Robot Controller apps.",
+      "url": "https://developer.android.com/studio",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-auto-align-tutorial",
+      "title": "Auto Align Tutorial",
+      "description": "Step-by-step reef auto-align using Limelight target offsets, rotation-first alignment, and PID drive commands — includes code structure and tuning notes.",
+      "url": "https://www.chiefdelphi.com/t/from-zero-to-auto-align-to-reef-tutorial-how-to-simply-auto-align-to-the-reef/494478",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-autonomous-programming-video",
+      "title": "Autonomous Programming (Video)",
+      "description": "Video intro to FRC autonomous: timed sequences vs sensor-based moves, chooser setup, and when to add path following to a baseline auto.",
+      "url": "https://youtu.be/vPrRsnVQgf4",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-bovlb-tips-commands",
+      "title": "BoVLB Tips: Commands",
+      "description": "Oblarg (BoVLB) command tips: default commands, requirement conflicts, parallel and sequential command groups, and common command-based pitfalls with concise examples.",
+      "url": "https://bovlb.github.io/frc-tips/commands/",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-cd-tuning-guide",
+      "title": "CD Tuning Guide",
+      "description": "Chief Delphi PID tuning thread: practical kP/kI/kD workflow on real mechanisms, oscillation diagnosis, and when feedforward matters more than integral gain.",
+      "url": "https://www.chiefdelphi.com/t/is-this-really-how-we-tune-pids/496054/13",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-ctre-control-requests",
+      "title": "CTRE Control Requests",
+      "description": "Phoenix 6 control requests: DutyCycle, Velocity, Position, Motion Magic, and TorqueCurrent — how to replace legacy set() calls with explicit request objects.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/control-requests-guide.html",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-ctre-documentation",
+      "title": "CTRE Documentation",
+      "description": "CTRE Phoenix 6 documentation for Talon FX, CANcoder, and Pigeon — configuration, control requests, Motion Magic, telemetry, and migration from Phoenix 5.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-deep-blue-robotics",
+      "title": "Deep Blue Robotics",
+      "description": "Deep Blue (Team 384) training docs: swerve odometry, auto routines, command-based conventions, and advanced control topics used in their open-source projects.",
+      "url": "https://deep-blue-training.readthedocs.io/en/latest/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-everybot-commands-intro",
+      "title": "EveryBot Commands Intro",
+      "description": "EveryBot code manual: starter command-based project layout, intake and elevator examples, and patterns used in low-resource EveryBot build guides.",
+      "url": "https://robonauts-everybot.github.io/Everybot-Docs/manual/code/",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-exponential-profiles-yams",
+      "title": "Exponential Profiles (YAMS)",
+      "description": "YAMS exponential motion profiles: configure max velocity/acceleration and generate smooth setpoints for mechanisms that need curved velocity ramps.",
+      "url": "https://yagsl.gitbook.io/yams/documentation/how-to/how-do-i-use-exponential-profiles",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-frc-git-tutorial",
+      "title": "FRC Git Tutorial",
+      "description": "Slide deck on FRC Git workflow: branches, remotes, merge conflicts in robot projects, and coordinating code changes across subteams.",
+      "url": "https://docs.google.com/presentation/d/1u6U_jYswAvdTaLUHEQ-OCSHSVd32xVkV7TSDiXvAtFM/edit",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-android-studio-tutorial",
+      "title": "FTC Android Studio Tutorial",
+      "description": "FIRST FTC Android Studio tutorial: install SDK, clone FtcRobotController, open TeamCode, deploy OpModes, and connect to Control Hub over ADB/Wi‑Fi.",
+      "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/android_studio_java/Android-Studio-Tutorial.html",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-opmode-documentation",
+      "title": "FTC OpMode Documentation",
+      "description": "FTC OpMode reference: @TeleOp vs @Autonomous, linear vs iterative lifecycle, hardware map access, and gamepad/telemetry patterns in the SDK.",
+      "url": "https://ftc-docs.firstinspires.org/en/latest/programming_resources/opmodes/index.html",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "ftc-setup-resources-ftc-sdk-github-repository",
+      "title": "FTC SDK GitHub Repository",
+      "description": "Official FTC SDK repository: FtcRobotController module (do not edit) and TeamCode template for season-specific OpModes, Gradle build, and OnBot Java compatibility.",
+      "url": "https://github.com/FIRST-Tech-Challenge/FtcRobotController",
+      "major": "ftc",
+      "minor": "Setup & Resources",
+      "tags": [
+        "ftc",
+        "setup-resources"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-limelight-documentation",
+      "title": "Limelight Documentation",
+      "description": "Limelight 2+/3 docs: static IP setup, pipeline tuning, AprilTag and retroreflective tracking, robot pose estimation, and NetworkTables integration.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-limelight-lib",
+      "title": "Limelight Lib",
+      "description": "LimelightHelpers / LimelightLib: Java API for pose estimates, target alignment, and pipeline data over NetworkTables without writing raw HTTP or JSON parsers.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/apis/limelight-lib",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-motion-magic",
+      "title": "Motion Magic®",
+      "description": "CTRE Motion Magic: trapezoidal motion profiling on Talon FX with cruise velocity, acceleration, and jerk limits for smooth mechanism moves without a separate profile generator.",
+      "url": "https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-pathplanner-docs",
+      "title": "PathPlanner Docs",
+      "description": "PathPlanner hub: GUI path authoring, PathPlannerLib API for holonomic and differential autos, event markers, and integration with WPILib pose estimation.",
+      "url": "https://pathplanner.dev/home.html",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-autonomous-pathplanner-getting-started",
+      "title": "PathPlanner Getting Started",
+      "description": "PathPlanner GUI tutorial: draw paths and constraints, set ideal starting pose, export to deploy folder, and wire PathPlannerAuto in RobotContainer.",
+      "url": "https://pathplanner.dev/gui-getting-started.html",
+      "major": "frc",
+      "minor": "Autonomous",
+      "tags": [
+        "frc",
+        "autonomous"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-control-theory-pid-simulation",
+      "title": "PID Simulation",
+      "description": "Hands-on PID simulation exercises using WPILib physics sim — tune elevator and arm gains with recorded plots before moving to hardware.",
+      "url": "https://docs.google.com/document/d/13aGnRN9Ko_cBKw3Ya9WvrPnz8qgh_PAKr5CRwKrjZMM/edit?tab=t.0",
+      "major": "frc",
+      "minor": "Control Theory",
+      "tags": [
+        "frc",
+        "control-theory"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-getting-started-problem-solving-guide-frc-167",
+      "title": "Problem Solving Guide | FRC 167",
+      "description": "Team 167 Iowa City robotics programming guide: debugging workflow, Git usage, command-based structure, and subsystem design patterns for competition code.",
+      "url": "https://docs.iowacityrobotics.org/programming/frc-programming",
+      "major": "frc",
+      "minor": "Getting Started",
+      "tags": [
+        "frc",
+        "getting-started"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-pull-requests-overview",
+      "title": "Pull Requests Overview",
+      "description": "Pull request walkthrough: fork/branch workflow, opening a PR on GitHub, review comments, and merging safely into a shared robot repository.",
+      "url": "https://youtu.be/L_Ism2q3m6c",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-rev-robotics-api",
+      "title": "REV Robotics API",
+      "description": "REV Java API reference for Spark Max, Spark Flex, and REV sensors — motor configuration, closed-loop control, encoder interfaces, and CAN bus usage.",
+      "url": "https://codedocs.revrobotics.com/java/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-simple-limelight-tutorial",
+      "title": "Simple Limelight Tutorial",
+      "description": "Video walkthrough: Limelight pipeline setup, reading tx/ty/ ta in code, and driving rotation-to-target for vision-assisted teleop or auto.",
+      "url": "https://youtu.be/rKTio2rlF_o",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-spectrum-training",
+      "title": "Spectrum Training",
+      "description": "Spectrum 3847 team site: technical blog posts, CAD/software release notes, and links to their training materials and open repositories.",
+      "url": "https://www.spectrum3847.org/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-state-machines-intro",
+      "title": "State Machines Intro",
+      "description": "State machine concepts for FRC: states, transitions, entry/exit actions, and replacing nested if-chains in teleop and auto with explicit state charts.",
+      "url": "https://www.youtube.com/watch?v=Vr-79QyLZvI",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-training-tutorials-the-compass-alliance",
+      "title": "The Compass Alliance",
+      "description": "Compass Alliance curriculum: staged FRC learning paths from mechanical basics through programming, scouting, and team management resources.",
+      "url": "https://www.thecompassalliance.org/",
+      "major": "frc",
+      "minor": "Training & Tutorials",
+      "tags": [
+        "frc",
+        "training-tutorials"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-vision-limelight-tracking-apriltags",
+      "title": "Tracking AprilTags",
+      "description": "Limelight AprilTag pipelines: family selection, multi-tag pose solve, field layout JSON, and tuning exposure for reliable FRC field localization.",
+      "url": "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltags",
+      "major": "frc",
+      "minor": "Vision (Limelight)",
+      "tags": [
+        "frc",
+        "vision-limelight"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-official-documentation-wpilib-documentation",
+      "title": "WPILib Documentation",
+      "description": "Official WPILib docs: robot project setup, command-based framework, control theory, kinematics, vision, simulation, and hardware APIs for FRC Java/C++ teams.",
+      "url": "https://docs.wpilib.org/en/stable/",
+      "major": "frc",
+      "minor": "Official Documentation",
+      "tags": [
+        "frc",
+        "official-documentation"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-version-control-wpilib-git-intro",
+      "title": "WPILib: Git Intro",
+      "description": "WPILib Git intro: clone WPILib projects, commit workflow, .gitignore for build artifacts, and collaborating without breaking Gradle vendor deps.",
+      "url": "https://docs.wpilib.org/en/stable/docs/software/basic-programming/git-getting-started.html",
+      "major": "frc",
+      "minor": "Version Control",
+      "tags": [
+        "frc",
+        "version-control"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-command-based-wpilib-what-is-command-based",
+      "title": "WPILib: What Is Command-Based?",
+      "description": "WPILib explains command-based architecture — Subsystems, Commands, triggers, and RobotContainer — and why it separates robot logic from scheduling.",
+      "url": "https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html",
+      "major": "frc",
+      "minor": "Command-Based",
+      "tags": [
+        "frc",
+        "command-based"
+      ],
+      "source": "mantik"
+    },
+    {
+      "id": "frc-advanced-tools-yams-documentation",
+      "title": "YAMS Documentation",
+      "description": "YAMS (Yet Another Motor Simulator): WPILib mechanism sim for elevators, arms, and intakes — plant tuning, visualization, and validating gains before deploy.",
+      "url": "https://yagsl.gitbook.io/yams/documentation/",
+      "major": "frc",
+      "minor": "Advanced Tools",
+      "tags": [
+        "frc",
+        "advanced-tools"
+      ],
+      "source": "mantik"
+    }
+  ]
+}
