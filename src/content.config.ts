@@ -15,7 +15,7 @@ const lessonSchema = z.object({
   draft: z.boolean().optional().default(false),
   isOverview: z.boolean().optional().default(false),
 });
-
+ 
 const createLessonCollection = (section: 'java' | 'ftc' | 'frc' | 'comp') =>
   defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: `./src/content/${section}` }),
