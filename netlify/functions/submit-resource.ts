@@ -2,6 +2,7 @@ import type { Handler, HandlerEvent } from '@netlify/functions';
 import { z } from 'zod';
 import {
   corsAllowOrigin,
+  hostnameFromOrigin,
   isAllowedSubmitOrigin,
   RECAPTCHA_VERIFY_URL,
   resolveRecaptchaSecretKey,
@@ -74,10 +75,15 @@ function validateUrl(raw: string): string | null {
   return parsed.toString();
 }
 
-async function verifyRecaptcha(token: string, ip: string): Promise<boolean> {
+async function verifyRecaptcha(
+  token: string,
+  ip: string,
+  hostname: string | undefined,
+): Promise<boolean> {
   const secret = resolveRecaptchaSecretKey(process.env.RECAPTCHA_SECRET_KEY, {
     netlifyDev: process.env.NETLIFY_DEV === 'true',
     allowTestKeys: process.env.ALLOW_RECAPTCHA_TEST_KEYS === 'true',
+    hostname,
   });
   if (!secret) return false;
 
@@ -175,51 +181,11 @@ async function createGitHubIssue(payload: z.infer<typeof submitSchema>): Promise
   return issue.number;
 }
 
-function debugLog(
-  location: string,
-  message: string,
-  data: Record<string, unknown>,
-  hypothesisId: string,
-) {
-  fetch('http://127.0.0.1:7713/ingest/0792fdda-7db2-40da-ac1d-efee5dfcc651', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '78ce2e' },
-    body: JSON.stringify({
-      sessionId: '78ce2e',
-      location,
-      message,
-      data,
-      timestamp: Date.now(),
-      hypothesisId,
-    }),
-  }).catch(() => {});
-}
-
 export const handler: Handler = async (event) => {
   const origin = event.headers.origin;
   const referer = event.headers.referer;
   const corsOrigin = corsAllowOrigin(origin, referer);
-  // #region agent log
-  debugLog(
-    'submit-resource.ts:handler:entry',
-    'function invoked',
-    {
-      method: event.httpMethod,
-      origin: origin ?? null,
-      referer: referer ?? null,
-      originAllowed: isAllowedSubmitOrigin(origin, referer),
-      netlifyDev: process.env.NETLIFY_DEV === 'true',
-      hasGithubToken: Boolean(process.env.GITHUB_TOKEN?.trim()),
-      hasRecaptchaSecret: Boolean(
-        resolveRecaptchaSecretKey(process.env.RECAPTCHA_SECRET_KEY, {
-          netlifyDev: process.env.NETLIFY_DEV === 'true',
-          allowTestKeys: process.env.ALLOW_RECAPTCHA_TEST_KEYS === 'true',
-        }),
-      ),
-    },
-    'B,D',
-  );
-  // #endregion
+  const requestHostname = hostnameFromOrigin(origin, referer);
 
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -255,14 +221,6 @@ export const handler: Handler = async (event) => {
 
   const parsed = submitSchema.safeParse(body);
   if (!parsed.success) {
-    // #region agent log
-    debugLog(
-      'submit-resource.ts:handler:schema-fail',
-      'schema validation failed',
-      { issues: parsed.error.issues.map((i) => ({ path: i.path, code: i.code })) },
-      'E',
-    );
-    // #endregion
     return json(400, { error: 'Invalid submission.' }, corsOrigin);
   }
 
@@ -277,40 +235,16 @@ export const handler: Handler = async (event) => {
 
   const payload = { ...parsed.data, url: safeUrl };
 
-  const recaptchaOk = await verifyRecaptcha(payload.recaptchaToken, ip);
+  const recaptchaOk = await verifyRecaptcha(payload.recaptchaToken, ip, requestHostname);
   if (!recaptchaOk) {
-    // #region agent log
-    debugLog(
-      'submit-resource.ts:handler:recaptcha-fail',
-      'recaptcha verification failed',
-      { ip, tokenLen: payload.recaptchaToken.length },
-      'C',
-    );
-    // #endregion
     return json(400, { error: 'Verification failed. Try again.' }, corsOrigin);
   }
 
   try {
     const issueNumber = await createGitHubIssue(payload);
-    // #region agent log
-    debugLog(
-      'submit-resource.ts:handler:success',
-      'github issue created',
-      { issueNumber },
-      'B',
-    );
-    // #endregion
     return json(200, { ok: true, issue: issueNumber }, corsOrigin);
   } catch (err) {
     console.error('submit-resource error:', err);
-    // #region agent log
-    debugLog(
-      'submit-resource.ts:handler:github-fail',
-      'github issue creation failed',
-      { errMsg: err instanceof Error ? err.message : String(err) },
-      'B',
-    );
-    // #endregion
     return json(500, { error: 'Could not submit. Try again later.' }, corsOrigin);
   }
 };

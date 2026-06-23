@@ -223,22 +223,22 @@ Public submissions POST to `/.netlify/functions/submit-resource`, which verifies
 | `RECAPTCHA_SECRET_KEY` | **Yes** | No | Function runtime (production) |
 | `GITHUB_TOKEN` | **Yes** | No | Function runtime |
 | `GITHUB_REPO` | No | No | Optional; defaults to `itkan-robotics/mantik` |
-| `ALLOW_RECAPTCHA_TEST_KEYS` | No | No | Optional; deploy previews — test secret when `RECAPTCHA_SECRET_KEY` unset |
+| `ALLOW_RECAPTCHA_TEST_KEYS` | No | No | Optional legacy fallback when `RECAPTCHA_SECRET_KEY` unset |
 
 **Production:** register a **reCAPTCHA v2 Checkbox** site at [Google reCAPTCHA Admin](https://www.google.com/admin/recaptcha). Add domain `mantik.netlify.app`. Scopes: **All contexts** for `PUBLIC_*`; mark secrets **Secret**.
 
-**Deploy previews:** use production keys (recommended), or set `ALLOW_RECAPTCHA_TEST_KEYS=true` for Google test secret on previews.
+**Deploy previews:** preview and branch deploy URLs (for example `deploy-preview-42--mantik.netlify.app`) automatically use Google test keys at runtime — no domain registration needed. Production keys apply only on `mantik.netlify.app`. To exercise real keys on a preview, add that preview hostname in Google reCAPTCHA Admin (not needed for routine PR review).
 
 #### Local development
 
 | Command | URL | Submit flow |
 |---------|-----|-------------|
-| `npm run dev` | `http://localhost:4321` | reCAPTCHA widget only (auto test site key). Submit needs `dev:netlify`. |
-| `npm run dev:netlify` | `http://localhost:8888` | Full flow: reCAPTCHA + function + GitHub issue |
+| `npm run dev` | `http://localhost:4321` | reCAPTCHA test key (hostname-based). Submit needs `dev:netlify`. |
+| `npm run dev:netlify` | `http://localhost:8888` | Full flow: reCAPTCHA test key + function + GitHub issue |
 
 1. Copy `.env.example` → `.env` (gitignored).
 2. Set `GITHUB_TOKEN` (Issues write on the repo).
-3. Optional: real reCAPTCHA keys; otherwise Google test keys apply under `netlify dev`.
+3. Optional: real reCAPTCHA keys in `.env`; local and preview hosts still use Google test keys automatically.
 
 Google reCAPTCHA test keys (local / preview fallback): site `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`, secret `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`. See [Google reCAPTCHA FAQ — automated tests](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do).
 

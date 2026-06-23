@@ -15,7 +15,7 @@ import {
 } from '@/lib/resources/schema';
 import ResourceCard from './ResourceCard';
 import ResourceFilters from './ResourceFilters';
-import { resolveRecaptchaSiteKey, RECAPTCHA_SCRIPT, SUBMIT_ENDPOINT } from '@/lib/resources/submitEnv';
+import { resolveRecaptchaSiteKey, shouldUseRecaptchaTestKeys, RECAPTCHA_SCRIPT, SUBMIT_ENDPOINT } from '@/lib/resources/submitEnv';
 
 declare global {
   interface Window {
@@ -215,9 +215,16 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
   const recaptchaRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<number | null>(null);
 
-  const siteKey = resolveRecaptchaSiteKey(import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY, import.meta.env.DEV);
-  const usingDevRecaptcha =
-    import.meta.env.DEV && !import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY?.trim();
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : undefined;
+  const siteKey = resolveRecaptchaSiteKey(
+    import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY,
+    import.meta.env.DEV,
+    hostname,
+  );
+  const usingTestRecaptcha = shouldUseRecaptchaTestKeys({
+    isDev: import.meta.env.DEV,
+    hostname,
+  });
 
   useEffect(() => {
     if (!siteKey || !recaptchaRef.current) return;
@@ -288,35 +295,22 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
     }
     setStatus('loading');
     try {
-      const payload = {
-        title: title.trim(),
-        description: description.trim(),
-        url: url.trim(),
-        major,
-        minor: resolvedMinor,
-        submitterContact: contact.trim() || undefined,
-        recaptchaToken,
-        website: honeypot,
-      };
-      // #region agent log
-      fetch('http://127.0.0.1:7713/ingest/0792fdda-7db2-40da-ac1d-efee5dfcc651',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'78ce2e'},body:JSON.stringify({sessionId:'78ce2e',location:'ResourcesApp.tsx:handleSubmit:pre-fetch',message:'submit request start',data:{endpoint:SUBMIT_ENDPOINT,origin:typeof window!=='undefined'?window.location.origin:null,isDev:import.meta.env.DEV,hasSiteKey:Boolean(siteKey),hasRecaptchaToken:Boolean(recaptchaToken),major,minorLen:resolvedMinor.length},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       const res = await fetch(SUBMIT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+          url: url.trim(),
+          major,
+          minor: resolvedMinor,
+          submitterContact: contact.trim() || undefined,
+          recaptchaToken,
+          website: honeypot,
+        }),
       });
-      const rawText = await res.text();
-      let data: { error?: string; ok?: boolean } = {};
-      try {
-        data = JSON.parse(rawText) as { error?: string; ok?: boolean };
-      } catch {
-        data = {};
-      }
-      // #region agent log
-      fetch('http://127.0.0.1:7713/ingest/0792fdda-7db2-40da-ac1d-efee5dfcc651',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'78ce2e'},body:JSON.stringify({sessionId:'78ce2e',location:'ResourcesApp.tsx:handleSubmit:post-fetch',message:'submit response',data:{status:res.status,ok:res.ok,contentType:res.headers.get('content-type'),errorField:data.error??null,bodyPreview:rawText.slice(0,200)},timestamp:Date.now(),hypothesisId:'A,B,C,D,E'})}).catch(()=>{});
-      // #endregion
       if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error ?? 'Submission failed.');
       }
       setStatus('success');
@@ -488,7 +482,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
         </p>
       )}
 
-      {usingDevRecaptcha && (
+      {usingTestRecaptcha && import.meta.env.DEV && (
         <p className="resources-submit-note">
           Local dev: reCAPTCHA test key active. Full submit flow needs{' '}
           <code>npm run dev:netlify</code> and <code>GITHUB_TOKEN</code> in <code>.env</code>.
