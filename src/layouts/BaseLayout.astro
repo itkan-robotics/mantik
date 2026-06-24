@@ -37,7 +37,7 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#fafaf9" />
     <meta name="google-site-verification" content="ETN7XF-En_qRybmYUpnQmd8Emp5qYo2nkpsYSaBfWxs" />
 
     <title>{fullTitle}</title>
@@ -51,20 +51,21 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${siteConfig.url}/media/FRCCodeLab.png`} />
+    <meta property="og:image" content={`${siteConfig.url}${siteConfig.brand.ogImage}`} />
     <meta property="og:site_name" content="Mantik" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteConfig.url}/media/FRCCodeLab.png`} />
+    <meta name="twitter:image" content={`${siteConfig.url}${siteConfig.brand.ogImage}`} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -73,9 +74,7 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
       referrerpolicy="no-referrer"
     />
 
-    <link rel="icon" href="/media/FRCCodeLabDark.svg" type="image/svg+xml" />
-    <link rel="icon" href="/media/FRCCodeLabLight.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="/media/FRCCodeLab.png" type="image/png" sizes="any" />
+    <link rel="icon" href={siteConfig.brand.iconLight} type="image/svg+xml" />
 
     <script is:inline>
       (function () {
@@ -85,14 +84,13 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
       })();
     </script>
   </head>
-  <body>
+  <body class:list={[{ 'has-curriculum-sidebar': showSidebar && sidebarGroups.length > 0 }]}>
     <input
       type="checkbox"
       class="sidebar-toggle"
       name="__navigation"
       id="__navigation"
-      checked={false}
-      disabled={!showSidebar}
+      checked={showSidebar && sidebarGroups.length > 0}
     />
     <label class="overlay sidebar-overlay" for="__navigation">
       <div class="visually-hidden">Hide navigation sidebar</div>
@@ -118,6 +116,7 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
             <div class="bottom-of-page">
               <div class="left-details">
                 <div class="copyright">Copyright © 2026 Mantik</div>
+                <div class="footer-tagline">Built by students, for FIRST teams.</div>
               </div>
               <div class="right-details">
                 <a href="https://github.com/itkan-robotics/mantik" target="_blank" rel="noopener noreferrer">

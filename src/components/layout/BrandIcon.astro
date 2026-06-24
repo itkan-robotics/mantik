@@ -1,0 +1,45 @@
+---
+import { siteConfig } from '@/config/navigation';
+
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+}
+---
+
+<img
+  src={siteConfig.brand.iconLight}
+  alt=""
+  class:list={['brand-icon', 'brand-icon--light', Astro.props.class]}
+  width={Astro.props.width ?? 28}
+  height={Astro.props.height ?? 28}
+  decoding="async"
+/>
+<img
+  src={siteConfig.brand.iconDark}
+  alt=""
+  class:list={['brand-icon', 'brand-icon--dark', Astro.props.class]}
+  width={Astro.props.width ?? 28}
+  height={Astro.props.height ?? 28}
+  decoding="async"
+/>
+
+<style>
+  .brand-icon {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  html[data-theme='dark'] .brand-icon--light {
+    display: none;
+  }
+
+  html[data-theme='dark'] .brand-icon--dark {
+    display: block;
+  }
+
+  html:not([data-theme='dark']) .brand-icon--dark {
+    display: none;
+  }
+</style>

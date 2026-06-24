@@ -5,16 +5,24 @@ import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { pagefindDevPlugin } from './scripts/pagefind-dev-plugin.mjs';
+import { netlifyFunctionsDevPlugin } from './scripts/netlify-functions-dev-plugin.mjs';
 import { normalizeWindowsDevPathsPlugin } from './scripts/normalize-windows-dev-paths.mjs';
 
 const SITE = 'https://mantik.netlify.app';
 const analyze = process.env.ANALYZE === '1';
+// Astro default 4321 falls in Windows excluded range 4239–4338 (Hyper-V/WSL) → EACCES on bind.
+const DEV_PORT = 5173;
+const DEV_HOST = '127.0.0.1';
 
 export default defineConfig({
   devToolbar: { enabled: false },
   site: SITE,
   output: 'static',
   trailingSlash: 'never',
+  server: {
+    port: DEV_PORT,
+    host: DEV_HOST,
+  },
   integrations: [
     mdx(),
     react(),
@@ -33,14 +41,11 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [normalizeWindowsDevPathsPlugin(), pagefindDevPlugin()],
+    plugins: [normalizeWindowsDevPathsPlugin(), pagefindDevPlugin(), netlifyFunctionsDevPlugin()],
     server: {
-      proxy: {
-        '/.netlify/functions': {
-          target: 'http://127.0.0.1:8888',
-          changeOrigin: true,
-        },
-      },
+      host: DEV_HOST,
+      port: DEV_PORT,
+      strictPort: true,
     },
     resolve: {
       alias: {

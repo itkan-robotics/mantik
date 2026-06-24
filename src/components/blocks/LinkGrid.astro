@@ -46,9 +46,12 @@ function resolveHref(link: Link): string {
         target={isExternal ? '_blank' : undefined}
         rel={isExternal ? 'noopener noreferrer' : undefined}
       >
-        {link.label}
-        {link.underConstruction && <span class="under-construction-badge">Coming Soon</span>}
-        {link.description && <span class="link-grid-description">{link.description}</span>}
+        <span class="link-grid-accent" aria-hidden="true"></span>
+        <span class="link-grid-body">
+          <span class="link-grid-label">{link.label}</span>
+          {link.description && <span class="link-grid-description">{link.description}</span>}
+        </span>
+        {link.underConstruction && <span class="under-construction-badge">Coming soon</span>}
       </a>
     );
   })}

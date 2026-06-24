@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Mantik">
+  <title>Mantik</title>
+  <rect width="64" height="64" rx="8" fill="#fafaf9"/>
+  <path fill="#CE1126" d="M14 16H11a1 1 0 0 0-1 1v30a1 1 0 0 0 1 1h3V16z"/>
+  <rect x="14" y="16" width="36" height="8" rx="1" fill="#E4E4E7"/>
+  <rect x="14" y="28" width="36" height="8" rx="1" fill="#D4D4D8"/>
+  <rect x="14" y="40" width="36" height="8" rx="1" fill="#27272A"/>
+  <rect x="18" y="42" width="20" height="2" rx="1" fill="#CE1126"/>
+</svg>

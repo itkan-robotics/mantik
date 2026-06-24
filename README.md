@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:4321
+Open http://localhost:5173
 
 **Search in dev:** Pagefind indexes are created at build time. Run `npm run build` once (or use `npm run dev:search`), then restart `npm run dev` so `/pagefind/*` assets are available locally.
 

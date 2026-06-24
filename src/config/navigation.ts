@@ -41,6 +41,13 @@ export const siteConfig = {
   url: 'https://mantik.netlify.app',
   author: 'Abdullah Khaled',
   github: 'https://github.com/itkan-robotics/mantik',
+  brand: {
+    iconLight: '/media/mantik-icon.svg',
+    iconDark: '/media/mantik-icon-dark.svg',
+    lockupLight: '/media/logos/mantik-lockup-horizontal.svg',
+    lockupDark: '/media/logos/mantik-lockup-horizontal-dark.svg',
+    ogImage: '/media/mantik-icon.svg',
+  },
 };
 
 export function sectionFromPath(pathname: string): SectionId | null {

@@ -29,12 +29,12 @@
  *   Noscript & print      (~3249-end)
  */
 
-/* CSS Variables - Light Theme (Matching SWYFT Robotics Website) */
+/* CSS Variables - Editorial Pro + Palestine Crimson */
 :root {
-    /* Typography - Arabic-inspired fonts */
-    --font-stack: 'Cairo', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Typography — Source Sans 3 body, Source Serif 4 headings */
+    --font-stack: 'Source Sans 3', system-ui, sans-serif;
     --font-stack--monospace: 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', Menlo, Consolas, Monaco, 'Liberation Mono', 'Lucida Console', monospace;
-    --font-stack--headings: 'Cairo', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-stack--headings: 'Source Serif 4', Georgia, 'Times New Roman', serif;
     
     /* Font Sizes - Increased by 1-2px */
     --font-size--normal: 14px;
@@ -47,41 +47,56 @@
     --body-font-size: 14px;
     --body-line-height: 22px;
     --body-letter-spacing: 0.02em;
+
+    /* Heading style — Editorial Pro */
+    --heading-text-transform: none;
+    --heading-letter-spacing: 0.01em;
+
+    /* Header backdrop (semi-transparent on dark presets) */
+    --color-header-backdrop: transparent;
     
     --sidebar-caption-font-size: var(--font-size--normal);
     --sidebar-item-font-size: var(--font-size--normal);
     --code-font-size: var(--font-size--normal);
-    --header-height: 4rem;
+    --header-toolbar-height: 4rem;
+    --header-section-nav-height: 0rem;
+    --header-height: calc(var(--header-toolbar-height) + var(--header-section-nav-height));
     --sidebar-item-line-height: 1.2rem;
     --sidebar-item-spacing-vertical: 0.75rem;
     --sidebar-item-spacing-horizontal: 1.25rem;
     --sidebar-item-height: calc(var(--sidebar-item-line-height) + var(--sidebar-item-spacing-vertical) * 2);
+
+    /* Layout spacing — tighter vertical rhythm */
+    --space-section: 1.25rem;
+    --space-block: 1rem;
+    --content-max-width: min(72rem, 96%);
+    --prose-max-width: 42rem;
+    --accent-stripe-width: 3px;
     
-    /* Palestinian Flag Color Palette */
-    --color-foreground-primary: #000000; /* Black - Palestinian flag */
-    --color-foreground-secondary: #333333; /* Dark grey */
-    --color-foreground-muted: #666666;    /* Medium grey */
-    --color-foreground-border: #2D4A41;   /* Dark green/teal border */
-    --color-background-primary: #FFFFFF;  /* White */
-    --color-background-secondary: #F5F5F5; /* Light grey */
-    --color-background-hover: #E8F0ED;   /* Light teal hover */
-    --color-background-border: #2D4A41;  /* Dark green/teal border */
-    --color-brand-primary: #000000;      /* Black - Palestinian flag */
-    --color-brand-primary-rgb: 0, 0, 0; /* RGB values for #000000 */
-    --color-brand-content: #CE1126;      /* Red - Palestinian flag link color */
-    --color-accent: #CE1126;             /* Red - Palestinian flag */
-    --color-success: #2D4A41;            /* Dark green/teal */
-    --color-warning: #FFA500;            /* Orange warning */
-    --color-error: #CE1126;              /* Red - Palestinian flag */
-    --color-black: #000000;              /* Black - Palestinian flag */
+    /* Palestine Crimson — light */
+    --color-foreground-primary: #27272a;
+    --color-foreground-secondary: #52525b;
+    --color-foreground-muted: #71717a;
+    --color-foreground-border: rgba(206, 17, 38, 0.12);
+    --color-background-primary: #fafaf9;
+    --color-background-secondary: #ffffff;
+    --color-background-hover: #fce8eb;
+    --color-background-border: rgba(24, 24, 27, 0.08);
+    --color-brand-primary: #27272a;
+    --color-brand-primary-rgb: 39, 39, 42;
+    --color-brand-content: #ce1126;
+    --color-accent: #ce1126;
+    --color-success: #2d4a41;
+    --color-warning: #d97706;
+    --color-error: #ce1126;
+    --color-black: #27272a;
     
-    /* Button Colors - Palestinian Flag Style */
-    --btn-1-color: #FFFFFF;
-    --btn-1-bg: #000000;
-    --btn-1-border: #000000;
-    --btn-1-color-hover: #FFFFFF;
-    --btn-1-bg-hover: #CE1126;
-    --btn-1-border-hover: #CE1126;
+    --btn-1-color: #ffffff;
+    --btn-1-bg: #ce1126;
+    --btn-1-border: #ce1126;
+    --btn-1-color-hover: #ffffff;
+    --btn-1-bg-hover: #a50e1f;
+    --btn-1-border-hover: #a50e1f;
     
     --color-sidebar-background: var(--color-background-primary);
     --color-sidebar-background-border: var(--color-background-border);
@@ -95,17 +110,17 @@
     --color-header-border: var(--color-background-border);
     --color-header-text: var(--color-foreground-primary);
     
-    --color-code-background: #FFFFFF;
-    --color-code-foreground: #000000;
-    --color-inline-code-background: #E8F5E9;
+    --color-code-background: #ffffff;
+    --color-code-foreground: #27272a;
+    --color-inline-code-background: #fce8eb;
     
-    --color-link: #CE1126; /* Red - Palestinian flag link color */
+    --color-link: #ce1126;
     
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-sm: 0 1px 2px rgb(24 24 27 / 0.04);
+    --shadow-md: 0 4px 12px rgb(24 24 27 / 0.06);
+    --shadow-lg: 0 12px 24px rgb(24 24 27 / 0.08);
+    --shadow-xl: 0 20px 25px -5px rgb(24 24 27 / 0.1), 0 8px 10px -6px rgb(24 24 27 / 0.08);
     
     /* Border radius */
     --radius-sm: 0.375rem;
@@ -118,20 +133,20 @@
   @media (prefers-color-scheme: dark) {
     html:not([data-theme="dark"])[data-theme="light"],
       html:not([data-theme="dark"]):not([data-theme]) {
-      /* Palestinian Flag Color Theme (light) */
-    --color-background-primary: #FFFFFF; /* White - Palestinian flag */
-    --color-background-secondary: #F5F5F5; /* Light grey */
-    --color-background-hover: #E8F0ED;   /* Light teal hover */
-    --color-background-border: #2D4A41;  /* Dark green/teal */
-    --color-foreground-primary: #000000; /* Black - Palestinian flag */
-    --color-foreground-secondary: #333333; /* Dark grey */
-    --color-foreground-muted: #666666;    /* Medium grey */
-    --color-foreground-border: #2D4A41;
-    --color-brand-primary: #000000;      /* Black - Palestinian flag */
-    --color-brand-primary-rgb: 0, 0, 0; /* RGB values for #000000 */
-    --color-brand-content: #CE1126;      /* Red - Palestinian flag link color */
-    --color-code-background: #FFFFFF; /* White code background */
-    --color-code-foreground: #000000; /* Black code text */
+      /* Palestine Crimson — light (forced when OS prefers dark) */
+    --color-background-primary: #fafaf9;
+    --color-background-secondary: #ffffff;
+    --color-background-hover: #fce8eb;
+    --color-background-border: rgba(24, 24, 27, 0.08);
+    --color-foreground-primary: #27272a;
+    --color-foreground-secondary: #52525b;
+    --color-foreground-muted: #71717a;
+    --color-foreground-border: rgba(206, 17, 38, 0.12);
+    --color-brand-primary: #27272a;
+    --color-brand-primary-rgb: 39, 39, 42;
+    --color-brand-content: #ce1126;
+    --color-code-background: #ffffff;
+    --color-code-foreground: #27272a;
   
       
       /* Update derived sidebar colors for dark theme */
@@ -154,25 +169,32 @@
       }
   }
   
-  /* Dark Theme - Palestinian Flag Colors */
+  /* Dark Theme — Palestine Crimson */
   html[data-theme="dark"] {
-    --color-foreground-primary: #FFFFFF;
-    --color-foreground-secondary: #CCCCCC;
-    --color-foreground-muted: #999999;
-    --color-foreground-border: #2D4A41;
-    --color-background-primary: #000000;
-    --color-background-secondary: #1a1a1a;
-    --color-background-hover: #1a2e28;
-    --color-background-border: #2D4A41;
-    --color-brand-primary: #CE1126;
-    --color-brand-primary-rgb: 206, 17, 38; /* RGB values for #CE1126 */
-    --color-brand-content: #CE1126;
-    --color-accent: #CE1126;
-    --color-success: #2D4A41;
-    --color-warning: #FFA500;
-    --color-error: #CE1126;
-    --color-code-background: #000000;
-    --color-code-foreground: #FFFFFF;
+    --color-foreground-primary: #fafafa;
+    --color-foreground-secondary: #d4d4d8;
+    --color-foreground-muted: #a1a1aa;
+    --color-foreground-border: rgba(206, 17, 38, 0.25);
+    --color-background-primary: #161314;
+    --color-background-secondary: #211c1c;
+    --color-background-hover: #2a2224;
+    --color-background-border: rgba(255, 255, 255, 0.08);
+    --color-brand-primary: #fafafa;
+    --color-brand-primary-rgb: 250, 250, 250;
+    --color-brand-content: #ce1126;
+    --color-accent: #ce1126;
+    --color-success: #4ade80;
+    --color-warning: #fbbf24;
+    --color-error: #ce1126;
+    --color-code-background: #211c1c;
+    --color-code-foreground: #fafafa;
+
+    --btn-1-color: #ffffff;
+    --btn-1-bg: #ce1126;
+    --btn-1-border: #ce1126;
+    --btn-1-color-hover: #ffffff;
+    --btn-1-bg-hover: #a50e1f;
+    --btn-1-border-hover: #a50e1f;
     
     /* Update derived sidebar colors for dark theme */
     --color-sidebar-background: var(--color-background-secondary);
@@ -191,11 +213,16 @@
     /* Update other derived colors */
     --color-inline-code-background: var(--color-background-secondary);
     --color-link: var(--color-brand-content);
+
+    --color-header-backdrop: color-mix(in srgb, #161314 92%, transparent);
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.45);
+    --shadow-lg: 0 12px 28px rgb(0 0 0 / 0.5);
   }
   
   /* Dark theme header styling */
   html[data-theme="dark"] .mobile-header {
-    background-color: rgba(15, 23, 42, 0.95);
+    background-color: var(--color-header-backdrop, color-mix(in srgb, var(--color-header-background) 92%, transparent));
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-background-border);
   }
@@ -368,11 +395,12 @@ body {
     border-bottom: 1px solid var(--color-background-border);
     color: var(--color-header-text);
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
     height: var(--header-height);
     width: 100%;
     z-index: 1000;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     position: fixed;
     top: 0;
     left: 0;
@@ -380,6 +408,19 @@ body {
     box-shadow: none; /* SWYFT: no shadows */
     transition: transform 0.3s ease; /* SWYFT anchor-transition */
     transform: translateY(0); /* Default: visible */
+  }
+
+  .header-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: var(--header-toolbar-height);
+    width: 100%;
+  }
+
+  .mobile-section-nav {
+    display: none;
   }
   
   .mobile-header.visible {
@@ -426,25 +467,27 @@ body {
     color: var(--color-foreground-primary);
     text-decoration: none;
     padding: 0.75rem 1rem;
-    border-radius: 0; /* SWYFT uses no border radius */
-    font-size: 16px; /* SWYFT menu-lv1-size */
-    font-weight: 700; /* SWYFT menu-lv1-weight */
-    letter-spacing: 0.05em; /* SWYFT menu-lv1-letter-spacing */
-    text-transform: uppercase; /* SWYFT menu-lv1-text-transform */
-    line-height: 22px; /* SWYFT menu-lv1-line-height */
-    transition: all ease 0.3s; /* SWYFT anchor-transition */
+    border-radius: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    line-height: 1.4;
+    transition: color 0.2s ease;
     position: relative;
   }
   
   .header-nav-link:hover {
-    color: var(--color-foreground-primary);
-    text-decoration: underline; /* SWYFT style hover */
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   
   .header-nav-link.active {
-    color: var(--color-foreground-primary);
-    font-weight: 700;
+    color: var(--color-accent);
+    font-weight: 600;
     text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   
   /* Header Search Styles */
@@ -581,8 +624,8 @@ body {
   .link-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin: 1.5rem 0;
+    gap: 0.75rem;
+    margin: var(--space-block) 0;
   }
 
   @media (max-width: 63em) {
@@ -592,80 +635,115 @@ body {
   }
   
   .link-grid-button {
-    background-color: var(--color-background-primary);
+    background-color: var(--color-background-secondary);
     border: 1px solid var(--color-background-border);
-    border-radius: 0; /* SWYFT: no border radius */
+    border-radius: var(--radius-sm);
     color: var(--color-foreground-primary);
     cursor: pointer;
-    font-size: 14px; /* SWYFT menu font size */
-    font-weight: 400; /* SWYFT body weight */
-    letter-spacing: 0.02em; /* SWYFT body letter spacing */
-    padding: 1.5rem;
-    text-align: center;
-    transition: all ease 0.3s; /* SWYFT anchor-transition */
-    min-height: 80px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 1rem 1.25rem 1rem calc(1.25rem + var(--accent-stripe-width));
+    text-align: left;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    min-height: 3.5rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: none; /* SWYFT: no shadows */
+    align-items: stretch;
+    justify-content: flex-start;
+    box-shadow: none;
     position: relative;
     overflow: hidden;
+    flex-direction: row;
+    gap: 0;
+    text-decoration: none;
+  }
+
+  .link-grid-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--accent-stripe-width);
+    background: var(--color-accent);
+    transition: width 0.2s ease;
+  }
+
+  .link-grid-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .link-grid-label {
+    font-weight: 600;
+    color: var(--color-foreground-primary);
+    line-height: 1.3;
   }
   
-  /* Remove fancy gradient animation */
   .link-grid-button::before {
     display: none;
   }
   
   .link-grid-button:hover {
     background-color: var(--color-background-hover);
-    border-color: var(--color-background-border);
+    border-color: var(--color-foreground-border);
     color: var(--color-foreground-primary);
-    /* SWYFT: no transforms, just background change */
   }
-  
-  /* Link grid with descriptions */
-  .link-grid-button {
-    flex-direction: column;
-    gap: 0.5rem;
+
+  .link-grid-button:hover .link-grid-accent {
+    width: 5px;
+  }
+
+  .link-grid-button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
   
   .link-grid-description {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     color: var(--color-foreground-secondary);
     font-weight: 400;
     display: block;
-    margin-top: 0.25rem;
+    margin-top: 0;
+    line-height: 1.4;
   }
   
-  /* Under construction badge styles */
+  /* Under construction badge */
   .link-grid-button.under-construction {
     position: relative;
-    opacity: 0.8;
+    background-color: var(--color-background-secondary);
+    border-style: dashed;
+    border-color: var(--color-foreground-border);
   }
   
   .under-construction-badge {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    background-color: var(--color-background-border);
-    color: var(--color-background-primary);
-    font-size: 0.6rem;
-    font-weight: 700;
+    background-color: var(--color-accent);
+    color: #ffffff;
+    font-family: var(--font-stack);
+    font-size: var(--font-size--small--2);
+    font-weight: 600;
     padding: 0.2rem 0.5rem;
-    border-radius: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    border-radius: var(--radius-sm);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
   }
   
   .link-grid-button.under-construction:hover {
-    opacity: 1;
+    background-color: var(--color-background-hover);
+    border-color: var(--color-foreground-border);
   }
   
   
   .nav-overlay-icon {
     cursor: pointer;
-    /* display: none; */
+    display: none;
     align-items: center;
     justify-content: center;
   }
@@ -752,18 +830,6 @@ body {
   #__navigation:not(:checked) ~ .page .main {
     margin-left: 0 !important;
     max-width: 100% !important;
-  }
-  
-  /* Completely hide sidebar when checkbox is disabled (homepage) */
-  #__navigation:disabled ~ .page .sidebar-drawer {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-  }
-  
-  /* Hide sidebar toggle when checkbox is disabled (homepage) */
-  #__navigation:disabled ~ .page .nav-overlay-icon {
-    display: none !important;
   }
   
   /* Sidebar resize handle */
@@ -868,32 +934,26 @@ body {
   
   .sidebar-brand {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.625rem;
     flex-shrink: 0;
     padding: var(--sidebar-item-spacing-vertical) var(--sidebar-item-spacing-horizontal);
     text-decoration: none;
   }
-  
-  .git-logo {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-  }
-  
-  [data-theme="light"] #git-logo {
-    filter: invert(100%)
-  }
-  
-  [data-theme="dark"] #git-logo {
-    filter: invert(0%)
+
+  .sidebar-brand-logo {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
   }
   
   .sidebar-brand-text {
     color: var(--color-sidebar-brand-text);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     overflow-wrap: break-word;
-    margin: var(--sidebar-item-spacing-vertical) 0;
+    margin: 0;
   }
   
   .sidebar-tree {
@@ -1044,10 +1104,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 100%; /* Allow content to take full width */
-    max-width: 90%; /* Increase maximum width for better content display */
-    margin: 0 auto; /* Center the content horizontally */
-    overflow-x: clip; /* Clip horizontal overflow without trapping Chrome wheel scroll */
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    overflow-x: clip;
   }
   
   
@@ -1082,8 +1142,8 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-stack--headings);
     font-weight: 700;
     line-height: 1.25;
-    letter-spacing: 0.05em; /* SWYFT heading letter spacing */
-    text-transform: uppercase; /* SWYFT headings are uppercase */
+    letter-spacing: var(--heading-letter-spacing);
+    text-transform: var(--heading-text-transform);
     margin: 0.5rem -0.5rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -1091,17 +1151,19 @@ h1, h2, h3, h4, h5, h6 {
   
   h1 {
     font-size: 2.5em;
-    margin-bottom: 1rem;
-    margin-top: 1.75rem;
+    margin-bottom: var(--space-block);
+    margin-top: var(--space-section);
   }
   
   h2 {
     font-size: 2em;
-    margin-top: 1.75rem;
+    margin-top: var(--space-section);
   }
   
   h3 {
     font-size: 1.5em;
+    margin-top: var(--space-section);
+    margin-bottom: 0.5rem;
   }
   
   h4 {
@@ -1270,7 +1332,7 @@ a:hover {
   
   /* Java Syntax Highlighting - Light Theme (Palestinian Flag Colors) */
   .code-block code .java-keyword {
-    color: #000000;
+    color: #27272a;
     font-weight: 700;
   }
   
@@ -1656,10 +1718,11 @@ a:hover {
   .rules-box {
     background: var(--color-background-primary);
     border: 1px solid var(--color-background-border);
-    border-radius: 0; /* SWYFT: no border radius */
-    padding: 1.5rem;
-    margin: 2rem 0;
-    box-shadow: none; /* SWYFT: no shadows */
+    border-radius: 0;
+    border-left: var(--accent-stripe-width) solid var(--color-accent);
+    padding: 1.25rem;
+    margin: var(--space-section) 0;
+    box-shadow: none;
     position: relative;
     overflow: hidden;
   }
@@ -1842,6 +1905,11 @@ a:hover {
     font-size: var(--font-size--small);
   }
 
+  .footer-tagline {
+    margin-top: 0.25rem;
+    color: var(--color-foreground-muted);
+  }
+
   .bottom-of-page .right-details {
     font-size: var(--font-size--small);
   }
@@ -1921,11 +1989,35 @@ a:hover {
     transition: none; /* No animation - instant */
   }
   
-  /* Prevent homepage from resizing when sidebar appears */
-  #__navigation:disabled ~ .page .main {
-    max-width: 100% !important;
+  /* Non-curriculum pages: never show sidebar drawer even if checkbox is stale */
+  body:not(.has-curriculum-sidebar) .nav-overlay-icon {
+    display: none !important;
+  }
+
+  body:not(.has-curriculum-sidebar) #__navigation:checked ~ .page .sidebar-drawer {
+    transform: translateX(-100%) !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    box-shadow: none !important;
+  }
+
+  body:not(.has-curriculum-sidebar) #__navigation:checked ~ .sidebar-overlay.overlay {
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body:not(.has-curriculum-sidebar) #__navigation:checked ~ .page .main {
     margin-left: 0 !important;
-    transition: none !important;
+    max-width: 100% !important;
+  }
+
+  /* Shift main on desktop only when curriculum sidebar is present */
+  @media (min-width: 64em) {
+    body.has-curriculum-sidebar .nav-overlay-icon {
+      display: flex;
+    }
   }
   
   /* No transition on main content */
@@ -1950,6 +2042,10 @@ a:hover {
   }
   
   @media (max-width: 63em) {
+    :root {
+      --header-section-nav-height: 2.625rem;
+    }
+
     .nav-overlay-icon {
       display: flex;
     }
@@ -2001,19 +2097,77 @@ a:hover {
       margin: 0;
       padding: 0;
     }
+
+    .mobile-section-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      flex-shrink: 0;
+      width: 100%;
+      height: var(--header-section-nav-height);
+      padding: 0 0.75rem 0.375rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-top: 1px solid var(--color-background-border);
+      background: var(--color-background-primary);
+    }
+
+    .mobile-section-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-section-link {
+      flex: 0 0 auto;
+      color: var(--color-foreground-secondary);
+      text-decoration: none;
+      font-size: var(--font-size--small);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      padding: 0.5rem 0.375rem;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .mobile-section-link:hover {
+      color: var(--color-accent);
+      background: transparent;
+    }
+
+    .mobile-section-link.active {
+      color: var(--color-accent);
+      background: transparent;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
     
-    /* Show mobile sidebar navigation on small screens */
+    /* Show mobile sidebar search on small screens */
     .mobile-sidebar-nav {
       display: block;
-      padding: 1rem var(--sidebar-item-spacing-horizontal);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 0.75rem var(--sidebar-item-spacing-horizontal) 0.5rem;
       border-bottom: 1px solid var(--color-background-border);
       background: var(--color-sidebar-background);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-drawer[data-has-curriculum='true'] .sidebar-tree {
+      margin-top: 0.5rem;
     }
     
     /* Mobile sidebar search styles */
     .mobile-sidebar-search-container {
-      margin-bottom: 1rem;
+      margin-bottom: 0;
       position: relative;
       z-index: 1001; /* Ensure search results appear above other sidebar content */
     }
@@ -2076,58 +2230,9 @@ a:hover {
       border-bottom: none;
     }
     
-    /* Adjust sidebar scroll height to account for mobile navigation */
+    /* Adjust sidebar scroll height to account for mobile search */
     .sidebar-scroll {
-      max-height: calc(100vh - 200px); /* Account for brand area + mobile navigation */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      color: var(--color-sidebar-link-text);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .mobile-sidebar-nav .header-nav-link::before {
-      display: none; /* SWYFT: no decorative left border */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link:hover {
-      background-color: var(--color-sidebar-item-background--hover);
-      border-color: var(--color-background-border);
-      /* SWYFT: no transforms, just background change */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link:hover::before {
-      display: none; /* SWYFT: no decorative elements */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link.active {
-      background: var(--color-background-hover);
-      color: var(--color-sidebar-link-text--top-level);
-      border-color: var(--color-background-border);
-      /* SWYFT: no gradients or shadows */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link.active::before {
-      display: none; /* SWYFT: no decorative elements */
-    }
-    
-    .mobile-sidebar-nav .header-nav-link:last-child {
-      margin-bottom: 0;
-    }
-    
-    .mobile-sidebar-nav {
-      padding-bottom: 1rem; /* Add bottom padding to mobile navigation */
+      max-height: calc(100vh - 200px);
     }
     
     .page {
@@ -3561,16 +3666,29 @@ noscript .seo-content {
     flex-direction: column;
     text-decoration: none;
     color: var(--color-foreground-primary);
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1rem 0.75rem calc(1rem + var(--accent-stripe-width));
     border: 1px solid var(--color-background-border);
-    border-radius: 0;
+    border-radius: var(--radius-sm);
     max-width: 45%;
-    transition: all ease 0.3s;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.lesson-nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--accent-stripe-width);
+    background: var(--color-accent);
 }
 
 .lesson-nav-link:hover {
-    background: var(--color-background-secondary);
-    color: var(--color-brand-primary);
+    background: var(--color-background-hover);
+    color: var(--color-foreground-primary);
+    border-color: var(--color-foreground-border);
 }
 
 .lesson-nav-next {
@@ -3804,7 +3922,7 @@ a.link-grid-button {
 
 html[data-theme="dark"] .search-results-modal mark {
     background-color: var(--color-warning);
-    color: #000000;
+    color: #27272a;
 }
 
 .search-results-modal .pagefind-ui__button {
@@ -4002,9 +4120,86 @@ html[data-theme="dark"] .code-tabs-container pre.astro-code {
     .exercise-box-body > pre.astro-code,
     .code-tabs-container pre.astro-code,
     .lesson-content > pre:not(.astro-code),
-    .exercise-box-body > pre:not(.astro-code) {
+    .exercise-box-body pre:not(.astro-code) {
         font-size: 0.9rem;
         padding: 1rem 0.75rem;
     }
 }
-   
+
+/* ==================== Homepage ==================== */
+
+.home-page .home-hero {
+    margin-bottom: var(--space-section);
+    padding-bottom: var(--space-section);
+    border-bottom: 1px solid var(--color-background-border);
+}
+
+.home-page .home-hero h1 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.home-page .home-hero p {
+    margin-top: 0;
+    margin-bottom: 0;
+    color: var(--color-foreground-secondary);
+    line-height: 1.55;
+    max-width: var(--prose-max-width);
+}
+
+.home-page .home-sections {
+    margin-bottom: var(--space-section);
+}
+
+.home-page .home-sections .link-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.home-page .home-contributors {
+    margin-top: var(--space-section);
+    margin-bottom: 0;
+    font-size: var(--font-size--small);
+    color: var(--color-foreground-secondary);
+}
+
+.home-page .home-contributors a {
+    font-weight: 500;
+}
+
+@media (min-width: 48em) {
+    .home-page .home-sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-section) 2rem;
+        align-items: start;
+    }
+
+    .home-page .home-sections > h3:nth-of-type(1) {
+        grid-column: 1;
+        grid-row: 1;
+        margin-top: 0;
+    }
+
+    .home-page .home-sections > .link-grid:nth-of-type(1) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .home-page .home-sections > h3:nth-of-type(2) {
+        grid-column: 2;
+        grid-row: 1;
+        margin-top: 0;
+    }
+
+    .home-page .home-sections > .link-grid:nth-of-type(2) {
+        grid-column: 2;
+        grid-row: 2;
+    }
+}
+
+@media (min-width: 64em) {
+    .home-page .home-sections .link-grid {
+        grid-template-columns: 1fr;
+    }
+}
