@@ -6,6 +6,11 @@ import {
   isAllowedSubmitOrigin,
   RECAPTCHA_VERIFY_URL,
   resolveRecaptchaSecretKey,
+  resolveSubmitSource,
+  submitPageUrl,
+  submitSourceDisplayName,
+  submitSourceLabel,
+  type SubmitSource,
 } from '../../src/lib/resources/submitEnv';
 
 const submitSchema = z.object({
@@ -107,14 +112,25 @@ function escapeIssueText(text: string): string {
   return text.replace(/\r/g, '').slice(0, 4000);
 }
 
-async function createGitHubIssue(payload: z.infer<typeof submitSchema>): Promise<number> {
+async function createGitHubIssue(
+  payload: z.infer<typeof submitSchema>,
+  submitSource: SubmitSource,
+  pageUrl: string | undefined,
+): Promise<number> {
   const token = process.env.GITHUB_TOKEN;
   const repo = process.env.GITHUB_REPO ?? 'itkan-robotics/mantik';
   if (!token) throw new Error('missing_github_token');
 
+  const sourceLabel = submitSourceLabel(submitSource);
+  const labels = ['resource-submission', 'needs-review', sourceLabel].filter(
+    (label): label is string => Boolean(label),
+  );
+
   const body = [
     '## Resource submission',
     '',
+    `- **Submitted from:** ${submitSourceDisplayName(submitSource)}`,
+    ...(pageUrl ? [`- **Page URL:** ${pageUrl}`] : []),
     `- **Title:** ${payload.title}`,
     `- **URL:** ${payload.url}`,
     `- **Section:** ${payload.major}`,
@@ -145,7 +161,7 @@ async function createGitHubIssue(payload: z.infer<typeof submitSchema>): Promise
     body: JSON.stringify({
       title: `[Resource] ${payload.title}`.slice(0, 256),
       body: escapeIssueText(body),
-      labels: ['resource-submission', 'needs-review'],
+      labels,
     }),
   });
 
@@ -240,8 +256,11 @@ export const handler: Handler = async (event) => {
     return json(400, { error: 'Verification failed. Try again.' }, corsOrigin);
   }
 
+  const submitSource = resolveSubmitSource(origin, referer);
+  const pageUrl = submitPageUrl(origin, referer);
+
   try {
-    const issueNumber = await createGitHubIssue(payload);
+    const issueNumber = await createGitHubIssue(payload, submitSource, pageUrl);
     return json(200, { ok: true, issue: issueNumber }, corsOrigin);
   } catch (err) {
     console.error('submit-resource error:', err);

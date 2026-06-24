@@ -1,0 +1,54 @@
+name: Sync resources catalog to frc-aides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/resources.json'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mantik
+        uses: actions/checkout@v4
+
+      - name: Sync catalog to frc-aides
+        env:
+          FRC_AIDES_SYNC_TOKEN: ${{ secrets.FRC_AIDES_SYNC_TOKEN }}
+        run: |
+          if [ -z "$FRC_AIDES_SYNC_TOKEN" ]; then
+            echo "FRC_AIDES_SYNC_TOKEN secret is not set on this repository."
+            exit 1
+          fi
+
+          git clone --depth 1 \
+            "https://x-access-token:${FRC_AIDES_SYNC_TOKEN}@github.com/akhaled247/frc-aides.git" \
+            frc-aides
+
+          cp src/data/resources.json frc-aides/src/data/resources.json
+
+          cd frc-aides
+
+          README_NOTE='## Programming Resources catalog (synced from Mantik)
+
+The prog-collection data file `src/data/resources.json` is **copied automatically** from [itkan-robotics/mantik](https://github.com/itkan-robotics/mantik) when the catalog changes on mantik `main`. Do not edit that file in this repo — changes will be overwritten on the next sync.
+
+To add or update resources, approve a submission issue on mantik or edit `src/data/resources.json` in the mantik repo and merge to `main`.
+'
+          if ! grep -q 'synced from Mantik' README.md; then
+            printf '\n%s\n' "$README_NOTE" >> README.md
+          fi
+
+          git config user.name "mantik-sync[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- src/data/resources.json README.md; then
+            echo "frc-aides catalog already up to date."
+            exit 0
+          fi
+
+          git add src/data/resources.json README.md
+          git commit -m "Sync resources.json from itkan-robotics/mantik"
+          git push origin main

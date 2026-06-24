@@ -6,7 +6,11 @@ import {
   RECAPTCHA_TEST_SITE_KEY,
   resolveRecaptchaSecretKey,
   resolveRecaptchaSiteKey,
+  resolveSubmitSource,
   shouldUseRecaptchaTestKeys,
+  submitSourceDisplayName,
+  submitSourceLabel,
+  submitPageUrl,
 } from './submitEnv';
 
 describe('shouldUseRecaptchaTestKeys', () => {
@@ -47,6 +51,40 @@ describe('resolveRecaptchaSiteKey', () => {
     expect(resolveRecaptchaSiteKey('prod-site-key', false, PRODUCTION_HOSTNAME)).toBe(
       'prod-site-key',
     );
+  });
+});
+
+describe('resolveSubmitSource', () => {
+  it('maps FRC Aides origins to frc-aides', () => {
+    expect(resolveSubmitSource('https://www.aakhaled.com', undefined)).toBe('frc-aides');
+    expect(resolveSubmitSource('https://aakhaled.com', undefined)).toBe('frc-aides');
+    expect(resolveSubmitSource('https://akhaled247.github.io', undefined)).toBe('frc-aides');
+    expect(submitSourceLabel('frc-aides')).toBe('source-frc-aides');
+    expect(submitSourceDisplayName('frc-aides')).toBe('FRC Aides');
+  });
+
+  it('maps Mantik origins to mantik', () => {
+    expect(resolveSubmitSource('https://mantik.netlify.app', undefined)).toBe('mantik');
+    expect(
+      resolveSubmitSource('https://deploy-preview-42--mantik.netlify.app', undefined),
+    ).toBe('mantik');
+    expect(submitSourceLabel('mantik')).toBe('source-mantik');
+    expect(submitSourceDisplayName('mantik')).toBe('Mantik');
+  });
+
+  it('maps localhost to local without a source label', () => {
+    expect(resolveSubmitSource('http://localhost:4321', undefined)).toBe('local');
+    expect(submitSourceLabel('local')).toBeUndefined();
+    expect(submitSourceDisplayName('local')).toBe('Local dev');
+  });
+
+  it('prefers referer page URL when present', () => {
+    expect(
+      submitPageUrl(
+        'https://www.aakhaled.com',
+        'https://www.aakhaled.com/frc-aides/prog-collection/',
+      ),
+    ).toBe('https://www.aakhaled.com/frc-aides/prog-collection/');
   });
 });
 
