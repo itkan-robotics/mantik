@@ -29,18 +29,12 @@ jobs:
 
           cp src/data/resources.json frc-aides/src/data/resources.json
 
-          cd frc-aides
-
-          README_NOTE='## Programming Resources catalog (synced from Mantik)
-
-The prog-collection data file `src/data/resources.json` is **copied automatically** from [itkan-robotics/mantik](https://github.com/itkan-robotics/mantik) when the catalog changes on mantik `main`. Do not edit that file in this repo — changes will be overwritten on the next sync.
-
-To add or update resources, approve a submission issue on mantik or edit `src/data/resources.json` in the mantik repo and merge to `main`.
-'
-          if ! grep -q 'synced from Mantik' README.md; then
-            printf '\n%s\n' "$README_NOTE" >> README.md
+          if ! grep -q 'synced from Mantik' frc-aides/README.md; then
+            printf '\n' >> frc-aides/README.md
+            cat docs/frc-aides-readme-catalog-snippet.md >> frc-aides/README.md
           fi
 
+          cd frc-aides
           git config user.name "mantik-sync[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
