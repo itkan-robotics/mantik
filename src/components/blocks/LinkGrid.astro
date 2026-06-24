@@ -39,19 +39,33 @@ function resolveHref(link: Link): string {
   {links.map((link) => {
     const href = resolveHref(link);
     const isExternal = link.external || href.startsWith('http');
-    return (
-      <a
-        href={href}
-        class:list={['link-grid-button', { 'under-construction': link.underConstruction }]}
-        target={isExternal ? '_blank' : undefined}
-        rel={isExternal ? 'noopener noreferrer' : undefined}
-      >
+    const cardClass = ['link-grid-button', { 'under-construction': link.underConstruction }];
+    const cardBody = (
+      <>
         <span class="link-grid-accent" aria-hidden="true"></span>
         <span class="link-grid-body">
           <span class="link-grid-label">{link.label}</span>
           {link.description && <span class="link-grid-description">{link.description}</span>}
         </span>
-        {link.underConstruction && <span class="under-construction-badge">Coming soon</span>}
+      </>
+    );
+
+    if (link.underConstruction) {
+      return (
+        <span class:list={cardClass} aria-disabled="true">
+          {cardBody}
+        </span>
+      );
+    }
+
+    return (
+      <a
+        href={href}
+        class:list={cardClass}
+        target={isExternal ? '_blank' : undefined}
+        rel={isExternal ? 'noopener noreferrer' : undefined}
+      >
+        {cardBody}
       </a>
     );
   })}
