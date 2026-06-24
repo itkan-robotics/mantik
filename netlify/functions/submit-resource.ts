@@ -187,28 +187,6 @@ export const handler: Handler = async (event) => {
   const corsOrigin = corsAllowOrigin(origin, referer);
   const requestHostname = hostnameFromOrigin(origin, referer);
 
-  // #region agent log
-  fetch('http://127.0.0.1:7347/ingest/2e7e7dfa-a462-4784-9fb9-da6f06015ddd', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '2f79fa' },
-    body: JSON.stringify({
-      sessionId: '2f79fa',
-      hypothesisId: 'H1',
-      location: 'submit-resource.ts:handler',
-      message: 'CORS decision',
-      data: {
-        origin,
-        referer,
-        corsOrigin,
-        allowed: isAllowedSubmitOrigin(origin, referer),
-        method: event.httpMethod,
-      },
-      timestamp: Date.now(),
-      runId: 'post-fix-aakhaled',
-    }),
-  }).catch(() => {});
-  // #endregion
-
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
