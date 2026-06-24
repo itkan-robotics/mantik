@@ -9,7 +9,7 @@ public_folder: /media
 
 site_url: https://mantik.netlify.app
 display_url: https://mantik.netlify.app
-logo_url: /media/FRCCodeLab.png
+logo_url: /media/mantik-icon.svg
 
 collections:
   - name: homepage

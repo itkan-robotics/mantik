@@ -60,9 +60,14 @@ function parseInitialMinors(): Set<string> {
 
 export default function ResourcesApp({ resources, minorTags }: Props) {
   const [query, setQuery] = useState('');
-  const [selectedMajors, setSelectedMajors] = useState<Set<ResourceMajor>>(parseInitialMajors);
-  const [selectedMinors, setSelectedMinors] = useState<Set<string>>(parseInitialMinors);
+  const [selectedMajors, setSelectedMajors] = useState<Set<ResourceMajor>>(() => new Set());
+  const [selectedMinors, setSelectedMinors] = useState<Set<string>>(() => new Set());
   const [submitOpen, setSubmitOpen] = useState(false);
+
+  useEffect(() => {
+    setSelectedMajors(parseInitialMajors());
+    setSelectedMinors(parseInitialMinors());
+  }, []);
 
   const majors = useMemo(
     () => [...new Set(resources.map((r) => r.major))].sort() as ResourceMajor[],
@@ -327,9 +332,7 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
     } catch (err) {
       setStatus('error');
       if (import.meta.env.DEV && err instanceof TypeError) {
-        setErrorMsg(
-          'Submit endpoint unreachable. Run npm run dev:netlify (not npm run dev) to test submissions locally.',
-        );
+        setErrorMsg('Submit endpoint unreachable. Restart the dev server and try again.');
         return;
       }
       setErrorMsg(err instanceof Error ? err.message : 'Submission failed.');
@@ -484,8 +487,8 @@ function SubmitResourceForm({ minorOptions }: SubmitProps) {
 
       {usingTestRecaptcha && import.meta.env.DEV && (
         <p className="resources-submit-note">
-          Local dev: reCAPTCHA test key active. Full submit flow needs{' '}
-          <code>npm run dev:netlify</code> and <code>GITHUB_TOKEN</code> in <code>.env</code>.
+          Local dev: reCAPTCHA test key active. Add <code>GITHUB_TOKEN</code> to <code>.env</code>{' '}
+          to open GitHub issues on submit.
         </p>
       )}
 

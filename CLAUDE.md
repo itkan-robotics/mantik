@@ -160,7 +160,7 @@ Mechanism-agnostic checklist for physics, performance, pedagogy, new mechanisms.
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | http://localhost:4321/pid-simulation |
+| `npm run dev` | http://localhost:5173/pid-simulation |
 | `npm run build` | Astro + Pagefind |
 | `npm run test:physics` | Vitest — [`verticalElevatorSim.test.ts`](src/lib/pid-sim/physics/verticalElevatorSim.test.ts) (6 tests) |
 

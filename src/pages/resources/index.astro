@@ -20,6 +20,6 @@ const minorTags = getMinorTags(resources);
       Browse docs, tutorials, and tools for FIRST programming. Filter by section and topic, or
       submit a link for maintainer review.
     </p>
-    <ResourcesApp client:idle resources={resources} minorTags={minorTags} />
+    <ResourcesApp client:load resources={resources} minorTags={minorTags} />
   </div>
 </BaseLayout>

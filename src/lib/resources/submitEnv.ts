@@ -59,9 +59,11 @@ export function hostnameFromOrigin(origin: string | undefined, referer: string |
 }
 
 export const LOCAL_SUBMIT_ORIGINS = [
+  'http://localhost:5173',
   'http://localhost:4321',
   'http://localhost:4322',
   'http://localhost:8888',
+  'http://127.0.0.1:5173',
   'http://127.0.0.1:4321',
   'http://127.0.0.1:4322',
   'http://127.0.0.1:8888',

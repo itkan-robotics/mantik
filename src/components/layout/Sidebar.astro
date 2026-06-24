@@ -1,5 +1,5 @@
 ---
-import { sections, siteConfig, appRoutes } from '@/config/navigation';
+import BrandIcon from '@/components/layout/BrandIcon.astro';
 import type { SidebarGroup } from '@/lib/content';
 
 interface Props {
@@ -19,10 +19,14 @@ function groupHasActiveLesson(group: SidebarGroup): boolean {
 }
 ---
 
-<aside class="sidebar-drawer">
+<aside
+  class="sidebar-drawer"
+  data-has-curriculum={showSidebar && sidebarGroups.length > 0 ? 'true' : 'false'}
+>
   <div class="sidebar-container">
     <div class="sidebar-sticky">
-      <a class="sidebar-brand" href={siteConfig.github} target="_blank" rel="noopener noreferrer">
+      <a class="sidebar-brand" href="/">
+        <BrandIcon class="sidebar-brand-logo" width={28} height={28} />
         <span class="sidebar-brand-text">Mantik</span>
       </a>
 
@@ -39,23 +43,6 @@ function groupHasActiveLesson(group: SidebarGroup): boolean {
               data-pagefind-search
             />
           </div>
-          <a href="/" class:list={['header-nav-link', { active: currentPath === '/' }]}>Home</a>
-          {sections.map((section) => (
-            <a
-              href={section.path}
-              class:list={['header-nav-link', { active: currentPath.startsWith(section.path) }]}
-            >
-              {section.label} Training
-            </a>
-          ))}
-          {appRoutes.map((route) => (
-            <a
-              href={route.path}
-              class:list={['header-nav-link', { active: currentPath.startsWith(route.path) }]}
-            >
-              {route.label}
-            </a>
-          ))}
         </div>
 
         {showSidebar && sidebarGroups.length > 0 && (
