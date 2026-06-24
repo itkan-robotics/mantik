@@ -76,6 +76,60 @@ export const FRC_AIDES_ORIGINS = [
   'https://www.aakhaled.com',
 ] as const;
 
+export const FRC_AIDES_HOSTNAMES = [
+  'akhaled247.github.io',
+  'aakhaled.com',
+  'www.aakhaled.com',
+] as const;
+
+export type SubmitSource = 'frc-aides' | 'mantik' | 'local';
+
+function isFrcAidesHostname(hostname: string): boolean {
+  return (FRC_AIDES_HOSTNAMES as readonly string[]).includes(hostname.toLowerCase());
+}
+
+function isMantikHostname(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  if (host === PRODUCTION_HOSTNAME) return true;
+  return host.endsWith('.netlify.app') && host.includes('mantik');
+}
+
+/** Derive submit source from request Origin/Referer (never trust client body). */
+export function resolveSubmitSource(
+  origin: string | undefined,
+  referer: string | undefined,
+): SubmitSource {
+  const hostname = hostnameFromOrigin(origin, referer)?.toLowerCase();
+  if (!hostname) return 'mantik';
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return 'local';
+  if (isFrcAidesHostname(hostname)) return 'frc-aides';
+  if (isMantikHostname(hostname)) return 'mantik';
+  return 'mantik';
+}
+
+export function submitSourceLabel(source: SubmitSource): string | undefined {
+  if (source === 'frc-aides') return 'source-frc-aides';
+  if (source === 'mantik') return 'source-mantik';
+  return undefined;
+}
+
+export function submitSourceDisplayName(source: SubmitSource): string {
+  if (source === 'frc-aides') return 'FRC Aides';
+  if (source === 'mantik') return 'Mantik';
+  return 'Local dev';
+}
+
+/** Full page URL from Referer, or Origin when Referer absent. */
+export function submitPageUrl(origin: string | undefined, referer: string | undefined): string | undefined {
+  const candidate = referer ?? origin;
+  if (!candidate) return undefined;
+  try {
+    return new URL(candidate).href;
+  } catch {
+    return undefined;
+  }
+}
+
 export function isAllowedSubmitOrigin(origin: string | undefined, referer: string | undefined): boolean {
   const candidate = origin ?? referer;
   if (!candidate) return false;

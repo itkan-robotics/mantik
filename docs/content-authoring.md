@@ -242,6 +242,34 @@ Public submissions POST to `/.netlify/functions/submit-resource`, which verifies
 
 Google reCAPTCHA test keys (local / preview fallback): site `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`, secret `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`. See [Google reCAPTCHA FAQ — automated tests](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do).
 
-Create GitHub labels `resource-submission` and `needs-review` on the repo, or the function retries without labels.
+Create GitHub labels on `itkan-robotics/mantik` (or the function retries without labels if a label is missing):
 
-After approval, add an entry to `resources.json` with a unique `id` slug, then run `npm run build` to validate.
+| Label | Purpose |
+|-------|---------|
+| `resource-submission` | All public catalog submissions |
+| `needs-review` | Awaiting maintainer review |
+| `source-frc-aides` | Submitted from FRC Aides (aakhaled.com / akhaled247.github.io) |
+| `source-mantik` | Submitted from mantik.netlify.app |
+
+Issues include **Submitted from** and **Page URL** (from the browser `Origin` / `Referer` headers) so you can tell which site the submitter used.
+
+After approval, add an entry to `resources.json` with a unique `id` slug, then run `npm run build` to validate. Pushing catalog changes to `main` syncs the file to [akhaled247/frc-aides](https://github.com/akhaled247/frc-aides) via GitHub Actions (see below).
+
+### FRC Aides catalog sync
+
+[FRC Aides](https://github.com/akhaled247/frc-aides) mirrors the prog-collection UI and reads its own copy of `src/data/resources.json`. **Edit the catalog only in this repo** — do not edit the JSON directly in frc-aides (CI overwrites it).
+
+Workflow: [`.github/workflows/sync-frc-aides-catalog.yml`](../.github/workflows/sync-frc-aides-catalog.yml)
+
+| Trigger | Action |
+|---------|--------|
+| Push to `main` changing `src/data/resources.json` | Copy JSON to frc-aides and push |
+| Manual `workflow_dispatch` | Same (use for initial backfill) |
+
+**One-time setup on `itkan-robotics/mantik`:**
+
+1. Create a fine-grained PAT on the `akhaled247` account with **Contents: Read and write** on `akhaled247/frc-aides` (branch: `main` only).
+2. Add repo secret `FRC_AIDES_SYNC_TOKEN` with that PAT.
+3. Run **Sync resources catalog to frc-aides** once from the Actions tab to align frc-aides with mantik.
+
+frc-aides deploys to GitHub Pages on every push to `main`, so synced catalog changes go live after that workflow finishes.
