@@ -711,33 +711,24 @@ body {
     line-height: 1.4;
   }
   
-  /* Under construction badge */
+  /* Under construction — greyed out, not clickable */
   .link-grid-button.under-construction {
-    position: relative;
     background-color: var(--color-background-secondary);
     border-style: dashed;
     border-color: var(--color-foreground-border);
+    color: var(--color-foreground-muted);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.65;
   }
-  
-  .under-construction-badge {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background-color: var(--color-accent);
-    color: #ffffff;
-    font-family: var(--font-stack);
-    font-size: var(--font-size--small--2);
-    font-weight: 600;
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
-    text-transform: none;
-    letter-spacing: 0.02em;
-    line-height: 1.2;
+
+  .link-grid-button.under-construction .link-grid-label,
+  .link-grid-button.under-construction .link-grid-description {
+    color: var(--color-foreground-muted);
   }
-  
-  .link-grid-button.under-construction:hover {
-    background-color: var(--color-background-hover);
-    border-color: var(--color-foreground-border);
+
+  .link-grid-button.under-construction .link-grid-accent {
+    background: var(--color-foreground-border);
   }
   
   
