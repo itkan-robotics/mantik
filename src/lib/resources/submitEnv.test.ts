@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  isAllowedSubmitOrigin,
   PRODUCTION_HOSTNAME,
   RECAPTCHA_TEST_SECRET_KEY,
   RECAPTCHA_TEST_SITE_KEY,
@@ -24,6 +25,14 @@ describe('shouldUseRecaptchaTestKeys', () => {
 
   it('uses production keys only on canonical hostname', () => {
     expect(shouldUseRecaptchaTestKeys({ hostname: PRODUCTION_HOSTNAME })).toBe(false);
+  });
+});
+
+describe('isAllowedSubmitOrigin', () => {
+  it('allows FRC Aides production domains', () => {
+    expect(isAllowedSubmitOrigin('https://aakhaled.com', undefined)).toBe(true);
+    expect(isAllowedSubmitOrigin('https://www.aakhaled.com', undefined)).toBe(true);
+    expect(isAllowedSubmitOrigin('https://akhaled247.github.io', undefined)).toBe(true);
   });
 });
 

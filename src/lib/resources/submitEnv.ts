@@ -69,6 +69,13 @@ export const LOCAL_SUBMIT_ORIGINS = [
 
 export const PRODUCTION_ORIGIN = 'https://mantik.netlify.app';
 
+/** Custom domains that host the FRC Aides GitHub Pages app. */
+export const FRC_AIDES_ORIGINS = [
+  'https://akhaled247.github.io',
+  'https://aakhaled.com',
+  'https://www.aakhaled.com',
+] as const;
+
 export function isAllowedSubmitOrigin(origin: string | undefined, referer: string | undefined): boolean {
   const candidate = origin ?? referer;
   if (!candidate) return false;
@@ -76,7 +83,7 @@ export function isAllowedSubmitOrigin(origin: string | undefined, referer: strin
     const url = new URL(candidate);
     const originBase = `${url.protocol}//${url.host}`;
     if (originBase === PRODUCTION_ORIGIN) return true;
-    if (originBase === 'https://akhaled247.github.io') return true;
+    if ((FRC_AIDES_ORIGINS as readonly string[]).includes(originBase)) return true;
     if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return true;
     if ((LOCAL_SUBMIT_ORIGINS as readonly string[]).includes(originBase)) return true;
     if (url.hostname.endsWith('.netlify.app') && url.hostname.includes('mantik')) return true;
