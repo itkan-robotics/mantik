@@ -76,6 +76,7 @@ export function isAllowedSubmitOrigin(origin: string | undefined, referer: strin
     const url = new URL(candidate);
     const originBase = `${url.protocol}//${url.host}`;
     if (originBase === PRODUCTION_ORIGIN) return true;
+    if (originBase === 'https://akhaled247.github.io') return true;
     if ((LOCAL_SUBMIT_ORIGINS as readonly string[]).includes(originBase)) return true;
     if (url.hostname.endsWith('.netlify.app') && url.hostname.includes('mantik')) return true;
     return false;
