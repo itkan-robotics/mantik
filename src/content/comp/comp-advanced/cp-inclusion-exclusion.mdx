@@ -21,7 +21,7 @@ To count the elements in either of two sets, add their sizes and subtract the ov
 
 *How many integers from 1 to N are divisible by 3 or 5?*
 
-```java
+```java norun
 long countDivisible(long n, long a, long b) {
     return n / a + n / b - n / lcm(a, b);
 }
@@ -45,7 +45,7 @@ The pattern continues: add the single sets, subtract pairs, add triples, subtrac
 
 For `k` sets, enumerate all 2<sup>k</sup> subsets with a bitmask and let the popcount decide the sign.
 
-```java
+```java norun
 static long unionSize(long n, long[] values) {
     int k = values.length;
     long total = 0;
@@ -84,7 +84,7 @@ Often easier than the alternating sum: count what you do **not** want and subtra
 
 Counting them directly is awkward. Counting those sharing a factor with `M` is inclusion-exclusion over `M`'s distinct prime factors — and the complement gives the answer.
 
-```java
+```java norun
 static long countCoprime(long n, long m) {
     List<Long> primes = distinctPrimeFactors(m);
     int k = primes.size();
@@ -123,7 +123,7 @@ Complementary counting is often a single subtraction where the direct count woul
 
 The 2D prefix-sum query is inclusion-exclusion on rectangles:
 
-```java
+```java norun
 long sum = pre[r2 + 1][c2 + 1]
          - pre[r1][c2 + 1]
          - pre[r2 + 1][c1]

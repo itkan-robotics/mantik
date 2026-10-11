@@ -112,7 +112,10 @@ export default function JavaExamplesApp() {
   }, []);
 
   useEffect(() => {
-    const apply = () => setItems(scanExamples());
+    const apply = () => {
+      pageFencesCache = null;
+      setItems(scanExamples());
+    };
     apply();
     document.addEventListener('astro:page-load', apply);
     return () => document.removeEventListener('astro:page-load', apply);

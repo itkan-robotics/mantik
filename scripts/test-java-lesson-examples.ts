@@ -4,9 +4,11 @@
  * currently Java 17), and run when a main method exists.
  *
  * Usage: npx vite-node scripts/test-java-lesson-examples.ts
- *   (set JAVA_HOME if a JDK is not already on it; the macOS Homebrew path is the fallback)
+ *   JAVA_EXAMPLE_SECTION=java|comp|all (default all)
+ *   JAVA_EXAMPLE_MARK_NORUN=1 — add norun to compile/runtime failures (content maintenance)
+ *   Set JAVA_HOME if javac is not on PATH (falls back to macOS Homebrew when present)
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -21,9 +23,30 @@ import {
 import { RUNTIME_SOURCE_LEVEL } from '../src/lib/java-playground/constants.ts';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const CONTENT = join(ROOT, 'src/content/java');
-const JAVAC = join(process.env.JAVA_HOME ?? '/opt/homebrew/opt/openjdk', 'bin/javac');
-const JAVA = join(process.env.JAVA_HOME ?? '/opt/homebrew/opt/openjdk', 'bin/java');
+const CONTENT_ROOT = join(ROOT, 'src/content');
+const CONTENT_DIRS: Array<{ section: string; dir: string }> = (() => {
+  const mode = (process.env.JAVA_EXAMPLE_SECTION ?? 'all').toLowerCase();
+  if (mode === 'java') return [{ section: 'java', dir: join(CONTENT_ROOT, 'java') }];
+  if (mode === 'comp') return [{ section: 'comp', dir: join(CONTENT_ROOT, 'comp') }];
+  return [
+    { section: 'java', dir: join(CONTENT_ROOT, 'java') },
+    { section: 'comp', dir: join(CONTENT_ROOT, 'comp') },
+  ];
+})();
+function jdkTool(name: 'javac' | 'java'): string {
+  const ext = process.platform === 'win32' ? '.exe' : '';
+  const home = process.env.JAVA_HOME;
+  if (home) {
+    const candidate = join(home, 'bin', `${name}${ext}`);
+    if (existsSync(candidate)) return candidate;
+  }
+  const macFallback = join('/opt/homebrew/opt/openjdk', 'bin', name);
+  if (existsSync(macFallback)) return macFallback;
+  return name;
+}
+
+const JAVAC = jdkTool('javac');
+const JAVA = jdkTool('java');
 const SKIP_DIRS = new Set(['version-control']);
 /** '-17' is ECJ's spelling; javac wants a bare release number. */
 const RELEASE = RUNTIME_SOURCE_LEVEL.replace(/^-/, '').replace(/^1\./, '');
@@ -152,14 +175,18 @@ export function testAll(): ExampleResult[] {
     .split(',')
     .map((part) => part.trim())
     .filter(Boolean);
-  const files = walkMdx(CONTENT).filter((file) => {
+  const files: string[] = [];
+  for (const { dir } of CONTENT_DIRS) {
+    files.push(...walkMdx(dir));
+  }
+  const filtered = files.filter((file) => {
     if (needles.length === 0) return true;
-    const rel = relative(CONTENT, file);
+    const rel = relative(CONTENT_ROOT, file);
     return needles.some((needle) => rel.includes(needle));
   });
   const results: ExampleResult[] = [];
-  for (const file of files) {
-    const rel = relative(CONTENT, file);
+  for (const file of filtered) {
+    const rel = relative(CONTENT_ROOT, file);
     const text = readFileSync(file, 'utf8');
     const fences = extractFences(text);
     fences.forEach((fence, index) => {
@@ -229,6 +256,35 @@ for (const r of runtimeFail) {
 }
 
 const filterTag = (process.env.JAVA_EXAMPLE_FILTER ?? 'all').replace(/[^\w.-]+/g, '_');
-const outPath = join(tmpdir(), `java-example-results-${filterTag}.json`);
+const outPath =
+  process.env.JAVA_EXAMPLE_RESULTS ?? join(tmpdir(), `java-example-results-${filterTag}.json`);
 writeFileSync(outPath, JSON.stringify({ summary, results }, null, 2));
 console.log(`\nWrote ${outPath}`);
+
+if (process.env.JAVA_EXAMPLE_MARK_NORUN === '1') {
+  const mark = [...compileFail, ...runtimeFail];
+  const byFile = new Map<string, ExampleResult[]>();
+  for (const r of mark) {
+    const list = byFile.get(r.file) ?? [];
+    list.push(r);
+    byFile.set(r.file, list);
+  }
+  let patched = 0;
+  for (const [rel, entries] of byFile) {
+    const filePath = join(CONTENT_ROOT, rel.replace(/\\/g, '/'));
+    const lines = readFileSync(filePath, 'utf8').split('\n');
+    for (const r of entries) {
+      const idx = r.line - 1;
+      const line = lines[idx];
+      if (!line?.startsWith('```java')) {
+        console.warn(`skip mark norun (no fence): ${rel}:${r.line}`);
+        continue;
+      }
+      if (/\bnorun\b/i.test(line)) continue;
+      lines[idx] = line.replace(/^```java\b/, '```java norun');
+      patched += 1;
+    }
+    writeFileSync(filePath, lines.join('\n'), 'utf8');
+  }
+  console.log(`Marked ${patched} fence(s) with norun across ${byFile.size} file(s)`);
+}

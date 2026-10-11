@@ -54,7 +54,7 @@ Each verdict points at a different class of problem.
 
 You can print diagnostics without polluting your answer. `System.err` goes to a different stream, so it does not affect the output the judge compares.
 
-```java
+```java norun
 System.err.println("after sort: " + Arrays.toString(a));
 ```
 
@@ -75,7 +75,7 @@ This is the technique for a wrong answer you cannot find by inspection. You writ
 
 Small is the important part. A failing case with N = 4 can be traced on paper; one with N = 100,000 cannot.
 
-```java
+```java norun
 // Generator sketch — writes one random case to stdout
 import java.util.*;
 

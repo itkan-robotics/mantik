@@ -33,7 +33,7 @@ If the problem says "the cow at position `p` moves `d` steps", write `pos` and `
 
 The statement gives three rules. The code has three cases.
 
-```java
+```java norun
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -84,7 +84,7 @@ Most simulation problems are on a grid. The pattern is a position, a direction, 
 
 *A robot walks forward on an R × C grid. If the next cell is off the grid or blocked, it turns right instead of moving. Report its position after K steps.*
 
-```java
+```java norun
 int r = 0, c = 0, dir = 0;
 int[] dr = {0, 1, 0, -1};
 int[] dc = {1, 0, -1, 0};
@@ -128,7 +128,7 @@ A finite amount of state means the process eventually cycles. Find the cycle, th
 
 </StepsBox>
 
-```java
+```java norun
 Map<String, Integer> firstSeen = new HashMap<>();
 int step = 0;
 while (step < k) {

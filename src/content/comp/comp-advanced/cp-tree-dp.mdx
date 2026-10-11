@@ -17,7 +17,7 @@ A tree has no cycles, so every node's subtree is independent of everything outsi
 
 The general shape:
 
-```java
+```java norun
 static void dfs(int u, int parent) {
     // initialise dp[u] for a node with no children
     for (int v : adj.get(u)) {
@@ -34,7 +34,7 @@ The `if (v == parent) continue;` line is what keeps an undirected tree from bein
 
 The simplest useful case.
 
-```java
+```java norun
 static int[] size;
 static long[] sum;
 
@@ -58,7 +58,7 @@ static void dfs(int u, int parent) {
 
 Each node has two states: selected or not. If a node is selected, none of its children may be; if it is not, each child is free to choose whichever is better.
 
-```java
+```java norun
 static long[][] dp;                     // dp[u][0] = u not taken, dp[u][1] = u taken
 
 static void dfs(int u, int parent) {
@@ -94,7 +94,7 @@ If the state needs the whole subtree's shape, the problem is not a straightforwa
 
 The longest path between any two nodes. For each node, the two deepest downward paths through it combine into a candidate.
 
-```java
+```java norun
 static int best = 0;
 
 static int depth(int u, int parent) {
@@ -120,7 +120,7 @@ Sometimes the question must be answered for every node as the root — for examp
 
 Rerooting computes it in O(N) with two passes. The first collects information from below; the second pushes down what each node's parent contributes from above.
 
-```java
+```java norun
 static long[] below;                    // sum of distances within u's subtree
 static long[] answer;                   // sum of distances to all nodes
 static int[] size;
@@ -167,7 +167,7 @@ Deriving this on a small tree by hand is worth doing — the pattern transfers t
 
 A tree with 200,000 nodes shaped like a path gives a recursion 200,000 deep, which overflows Java's default stack. Either rewrite the traversal iteratively, or run the solution on a thread with a larger stack:
 
-```java
+```java norun
 public static void main(String[] args) {
     new Thread(null, Main::solve, "main", 1 << 26).start();
 }

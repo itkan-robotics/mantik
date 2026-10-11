@@ -53,7 +53,7 @@ For an **undirected** edge, give the reverse edge capacity `c` instead of 0.
 
 Repeatedly build a level graph by BFS, then push flow along shortest augmenting paths by DFS. Faster and more predictable than pushing one path at a time.
 
-```java
+```java norun
 static int[] level, iter;
 static int source, sink;
 
@@ -124,7 +124,7 @@ Complexity is O(V<sup>2</sup>E) in general, but O(E√V) on unit-capacity graphs
 
 Build a source connected to every left node with capacity 1, every compatible pair as capacity 1, and every right node to a sink with capacity 1. The maximum flow is the maximum matching.
 
-```java
+```java norun
 // nodes: 0 = source, 1..L = left, L+1..L+R = right, L+R+1 = sink
 init(L + R + 2, L + R + pairs.length);
 source = 0;
@@ -145,7 +145,7 @@ The maximum flow equals the minimum total capacity of edges whose removal discon
 
 To recover which edges form the cut, run the flow, then BFS from the source using only edges with remaining capacity. Reachable nodes form one side; edges crossing to unreachable nodes are the cut.
 
-```java
+```java norun
 boolean[] reachable = new boolean[n + 1];
 // BFS from source over edges with cap[e] > 0, marking reachable
 // then any original edge u -> v with reachable[u] && !reachable[v] is in the cut

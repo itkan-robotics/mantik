@@ -50,7 +50,7 @@ Do the small cases:
 
 The pattern is immediate: possible only when N is even, and the answer is N/2. The invariant is that each move changes the number of heads by 0 or 2, so the parity of the head count never changes — and going from 0 heads to N heads requires N to be even.
 
-```java
+```java norun
 if (n % 2 != 0) {
     System.out.println(-1);
 } else {
@@ -84,7 +84,7 @@ Some processes are much easier to reverse.
 
 Forwards, each state branches two ways and the search grows exponentially. Backwards from N, the move is forced: if N is even it must have come from halving, and if odd it must have come from subtracting 1.
 
-```java
+```java norun
 int steps = 0;
 long v = n;
 while (v > 1) {

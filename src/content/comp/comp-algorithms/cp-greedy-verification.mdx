@@ -23,7 +23,7 @@ When it works, it is short and fast. The danger is that it is also short and fas
 
 Take as many of the largest coin as possible, then the next largest, and so on.
 
-```java
+```java norun
 int[] coins = {25, 10, 5, 1};
 int remaining = target;
 int used = 0;
@@ -52,7 +52,7 @@ When the problem gives you arbitrary values from the input, assume greedy is wro
 
 Sort by **end** time, then repeatedly take the first interval that starts after the last one you took.
 
-```java
+```java norun
 static class Interval {
     int start, end;
 }
@@ -123,7 +123,7 @@ The last row has an important caveat. Taking the best value-per-unit ratio is co
 
 The answer is the maximum number of intervals overlapping at any single moment. Sweep through events rather than reasoning about assignments:
 
-```java
+```java norun
 int[] starts = new int[n];
 int[] ends = new int[n];
 // ... read, then sort each array independently ...

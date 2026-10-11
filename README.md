@@ -24,13 +24,17 @@ npm run preview  # Preview production build locally
 
 ## Java Playground
 
-Java Training lessons compile and run **in the browser** (CheerpJ + ECJ, Java 17). Most ` ```java ` fences on `/java/*` lessons get a **Run** control automatically; opt out with ` ```java norun ` ``.
+Java Training and Competitive (`/java/*`, `/comp/*`) lessons compile and run **in the browser** (CheerpJ + ECJ, Java 17). Most ` ```java ` fences get a **Run** control automatically; opt out with ` ```java norun ` ``.
 
 `predev` / `prebuild` download ECJ into `public/java-playground/` (gitignored) and build the launcher JAR (committed; rebuild when `scripts/java/*.java` changes). First run in a tab can take ~30s while the runtime warms up.
 
 ```bash
 npm run test:java-examples   # compile-check lesson fences for the browser runtime
 ```
+
+**CheerpJ preload map (optional, faster first compile):** After a warm run on a Java lesson, open the browser console and run `await __jpDumpResources()`, then paste the JSON into [`src/lib/java-playground/cheerpjPreload.json`](src/lib/java-playground/cheerpjPreload.json). Paths must be for Java **17** (`/lt/17/...`), not Java 8. Commit the file once generated.
+
+Lesson-to-lesson navigation uses Astro View Transitions (`transition:animate="none"`) so the Java worker stays warm without a visible SPA animation.
 
 Reader preferences (theme, text size, spacing, contrast, motion) live in the header **Aa** drawer (`src/lib/prefs.ts`).
 

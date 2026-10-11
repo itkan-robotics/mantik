@@ -5,15 +5,19 @@ function classList(node) {
   return [];
 }
 
+/** Keep in sync with JAVA_PLAYGROUND_SECTIONS in src/lib/java-playground/playgroundSections.ts */
+const JAVA_PLAYGROUND_SECTIONS = new Set(['java', 'comp']);
+
 function isJavaLessonFile(file) {
   const fm = file?.data?.astro?.frontmatter || file?.data?.frontmatter || {};
   if (fm.group === 'version-control') return false;
-  if (fm.section && fm.section !== 'java') return false;
-  if (fm.section === 'java') return true;
+  if (fm.section && !JAVA_PLAYGROUND_SECTIONS.has(fm.section)) return false;
+  if (fm.section && JAVA_PLAYGROUND_SECTIONS.has(fm.section)) return true;
   const normalized = String(file?.path || file?.history?.[0] || '').replace(/\\/g, '/');
-  if (!normalized.includes('/content/java/')) return false;
   if (normalized.includes('/version-control/')) return false;
-  return true;
+  if (normalized.includes('/content/java/')) return true;
+  if (normalized.includes('/content/comp/')) return true;
+  return false;
 }
 
 function isJavaPre(node) {
@@ -73,12 +77,23 @@ function looksLikeRunnableJava(source) {
   return /\w+\s*\(.*\)\s*;/.test(body);
 }
 
-function walk(node, parent, index, visit) {
-  visit(node, parent, index);
+function walk(node, ancestors, visit) {
+  visit(node, ancestors);
   const children = node.children || [];
   for (let i = 0; i < children.length; i += 1) {
-    walk(children[i], node, i, visit);
+    walk(children[i], [...ancestors, node], visit);
   }
+}
+
+function inExerciseBox(ancestors) {
+  return ancestors.some((node) => {
+    const cls = classList(node);
+    return cls.includes('exercise-box') || cls.includes('exercise-box-body');
+  });
+}
+
+function exerciseBoxRunnable(code) {
+  return /\bpublic\s+(?:static\s+)?(?:class|void\s+main)\b/.test(code);
 }
 
 /**
@@ -94,8 +109,10 @@ export function rehypeRunnableJava() {
     // and splices in what it needs (see selectPageContext in exampleSource.ts).
     const fences = [];
     const targets = [];
-    walk(tree, null, 0, (node, parent, index) => {
+    walk(tree, [], (node, ancestors) => {
+      const parent = ancestors[ancestors.length - 1];
       if (!parent) return;
+      const index = (parent.children || []).indexOf(node);
       const isNorun =
         node?.type === 'element' &&
         node.tagName === 'pre' &&
@@ -103,10 +120,13 @@ export function rehypeRunnableJava() {
       if (!isJavaPre(node) && !isNorun) return;
       if (classList(parent).includes('jp-example')) return;
       const fenceIndex = fences.length;
+      const code = isNorun ? '' : extractPreCode(node);
       // A norun fence is often a deliberately broken illustration ("does not
       // compile"), so it keeps its slot but contributes nothing to the context.
-      fences.push(isNorun ? '' : extractPreCode(node));
-      if (!isNorun) targets.push({ node, parent, index, fenceIndex });
+      fences.push(code);
+      if (isNorun) return;
+      if (inExerciseBox(ancestors) && !exerciseBoxRunnable(code)) return;
+      targets.push({ node, parent, index, fenceIndex });
     });
     let wrappedAny = false;
     for (let i = targets.length - 1; i >= 0; i -= 1) {

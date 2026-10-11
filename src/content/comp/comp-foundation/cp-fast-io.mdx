@@ -105,7 +105,7 @@ Output has the same problem in reverse. `System.out.println` flushes on every ca
 
 Wrap it, write everything, then flush once:
 
-```java
+```java norun
 import java.io.*;
 
 public class Main {
@@ -126,7 +126,7 @@ Forgetting `flush()` produces no output at all, which looks like a crash. If you
 
 For very large outputs, building a `StringBuilder` and printing it once is faster still:
 
-```java
+```java norun
 StringBuilder sb = new StringBuilder();
 for (int i = 1; i <= 200000; i++) {
     sb.append(i).append('\n');

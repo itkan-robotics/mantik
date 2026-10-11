@@ -43,7 +43,7 @@ The most common form. Fix each combination and evaluate it.
 
 *Given N integers, find the largest sum of two distinct elements.*
 
-```java
+```java norun
 int best = Integer.MIN_VALUE;
 for (int i = 0; i < n; i++) {
     for (int j = i + 1; j < n; j++) {
@@ -73,7 +73,7 @@ When each of N items is either chosen or not, there are 2<sup>N</sup> combinatio
 
 *Given N ≤ 20 weights, is there a subset summing to exactly `target`?*
 
-```java
+```java norun
 boolean possible = false;
 for (int mask = 0; mask < (1 << n); mask++) {
     long sum = 0;
@@ -108,7 +108,7 @@ Sometimes the thing to enumerate is not a subset of the input but the answer its
 
 If coordinates go up to 1,000, try every one:
 
-```java
+```java norun
 int answer = -1;
 for (int p = 0; p <= 1000; p++) {
     long total = 0;
@@ -128,7 +128,7 @@ This is O(range · N). It works because the coordinate range is small. When the 
 
 When you need every ordering of N ≤ 10 items, generate permutations recursively. The general technique is covered in [Recursive Complete Search](/java/java-algo-backtracking); for small fixed sizes, nested loops with distinctness checks are simpler:
 
-```java
+```java norun
 // every ordered triple of distinct indices
 for (int i = 0; i < n; i++)
     for (int j = 0; j < n; j++)
@@ -142,7 +142,7 @@ for (int i = 0; i < n; i++)
 
 Stopping early when a partial choice already cannot work often turns an infeasible search into a fast one. The complexity does not change on paper, but the practical runtime can drop by orders of magnitude.
 
-```java
+```java norun
 for (int mask = 0; mask < (1 << n); mask++) {
     long sum = 0;
     boolean over = false;
