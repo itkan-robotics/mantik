@@ -42,6 +42,7 @@ const currentPath = `/${section}/${lessonId}`;
   difficulty={lesson.data.difficulty}
   duration={lesson.data.duration}
   unlisted={lesson.data.unlisted}
+  javaExamples={section === 'java'}
 >
   <Content components={components} />
 </LessonLayout>

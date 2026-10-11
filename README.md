@@ -22,6 +22,18 @@ npm run build    # Astro build + Pagefind search index
 npm run preview  # Preview production build locally
 ```
 
+## Java Playground
+
+Java Training lessons compile and run **in the browser** (CheerpJ + ECJ, Java 17). Most ` ```java ` fences on `/java/*` lessons get a **Run** control automatically; opt out with ` ```java norun ` ``.
+
+`predev` / `prebuild` download ECJ into `public/java-playground/` (gitignored) and build the launcher JAR (committed; rebuild when `scripts/java/*.java` changes). First run in a tab can take ~30s while the runtime warms up.
+
+```bash
+npm run test:java-examples   # compile-check lesson fences for the browser runtime
+```
+
+Reader preferences (theme, text size, spacing, contrast, motion) live in the header **Aa** drawer (`src/lib/prefs.ts`).
+
 ## Project Structure
 
 ```
@@ -129,4 +141,18 @@ Configured for **Netlify** via `netlify.toml`:
 
 ## License
 
-Copyright © 2026 Mantik
+Mantik uses a **split license** so teams can reuse lessons and code clearly.
+
+| Material | License | File |
+|----------|---------|------|
+| Software (site, PID sim, scripts, components) | [BSD-3-Clause](LICENSE) | `LICENSE` |
+| Lesson text and MDX in `src/content/` | [CC BY 4.0](LICENSE-CONTENT) | `LICENSE-CONTENT` |
+| Third-party ports (WPILib controls examples) | Attribution | `NOTICE` |
+
+**Forks** (for example team deployments) may keep customizing and hosting the
+site if they retain the BSD-3 copyright and license notice for Mantik code,
+follow CC BY 4.0 when redistributing lesson prose, and keep `NOTICE` for
+WPILib-derived physics. Team-specific additions are yours; document your
+copyright in your README.
+
+Copyright © 2026 Itkan Robotics (project: Mantik).

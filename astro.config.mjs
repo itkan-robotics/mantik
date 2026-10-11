@@ -7,6 +7,8 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { pagefindDevPlugin } from './scripts/pagefind-dev-plugin.mjs';
 import { netlifyFunctionsDevPlugin } from './scripts/netlify-functions-dev-plugin.mjs';
 import { normalizeWindowsDevPathsPlugin } from './scripts/normalize-windows-dev-paths.mjs';
+import { rehypeRunnableJava } from './scripts/rehype-runnable-java.mjs';
+import { remarkJavaNorun } from './scripts/remark-java-norun.mjs';
 
 const SITE = 'https://mantik.netlify.app';
 const analyze = process.env.ANALYZE === '1';
@@ -31,6 +33,8 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    remarkPlugins: [remarkJavaNorun],
+    rehypePlugins: [rehypeRunnableJava],
     shikiConfig: {
       theme: 'github-light',
       themes: {
@@ -38,6 +42,16 @@ export default defineConfig({
         dark: 'github-dark',
       },
       wrap: true,
+      transformers: [
+        {
+          name: 'java-fence-meta',
+          pre(node) {
+            const meta = this.options?.meta?.__raw ?? '';
+            if (/(^|\s)norun(\s|$)/i.test(meta)) node.properties['data-java-norun'] = '';
+            if (/(^|\s)racy(\s|$)/i.test(meta)) node.properties['data-java-racy'] = '';
+          },
+        },
+      ],
     },
   },
   vite: {
@@ -53,7 +67,19 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      include: ['@monaco-editor/react', 'monaco-editor', 'uplot'],
+      include: [
+        '@monaco-editor/react',
+        'monaco-editor',
+        'uplot',
+        '@codemirror/state',
+        '@codemirror/view',
+        '@codemirror/language',
+        '@codemirror/commands',
+        '@codemirror/lang-java',
+      ],
+    },
+    worker: {
+      format: 'iife',
     },
     ssr: {
       noExternal: ['pagefind'],
@@ -78,6 +104,15 @@ export default defineConfig({
             }
             if (id.includes('node_modules/monaco-editor') || id.includes('node_modules/@monaco-editor')) {
               return 'pid-monaco';
+            }
+            if (id.includes('node_modules/@codemirror') || id.includes('node_modules/@lezer')) {
+              return 'codemirror';
+            }
+            if (id.includes('/lib/java-playground/worker/')) {
+              return;
+            }
+            if (id.includes('/lib/java-playground/')) {
+              return 'java-playground';
             }
             if (
               id.includes('/lib/pid-sim/physics/elevatorSim') ||

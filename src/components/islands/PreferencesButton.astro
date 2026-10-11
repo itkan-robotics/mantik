@@ -1,0 +1,21 @@
+---
+/**
+ * The "Aa" button in the header. The drawer it opens is PreferencesDrawer.astro,
+ * rendered by BaseLayout outside the header — the header is position: fixed with
+ * a transform (and backdrop-filter in dark mode), so anything positioned inside
+ * it is clipped to the header's height.
+ */
+---
+
+<button
+  class="prefs-toggle"
+  type="button"
+  data-prefs-toggle
+  aria-haspopup="dialog"
+  aria-expanded="false"
+  aria-controls="prefs-drawer"
+  aria-label="Reading preferences"
+  title="Reading preferences"
+>
+  <span class="prefs-toggle-glyph" aria-hidden="true">Aa</span>
+</button>

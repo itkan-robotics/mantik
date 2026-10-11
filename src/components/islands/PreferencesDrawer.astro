@@ -1,0 +1,160 @@
+---
+/**
+ * Reader preferences drawer: theme, text size, line spacing, contrast, motion.
+ * Slides in from the right edge, mirroring the navigation sidebar on the left.
+ * State lives in src/lib/prefs.ts; PreferencesButton.astro (in the header)
+ * toggles it. Rendered once by BaseLayout, as a sibling of .page.
+ */
+const groups = [
+  {
+    key: 'theme',
+    label: 'Theme',
+    options: [
+      { value: 'system', label: 'System' },
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' },
+    ],
+  },
+  {
+    key: 'text',
+    label: 'Text size',
+    options: [
+      { value: 'sm', label: 'Small' },
+      { value: 'md', label: 'Medium' },
+      { value: 'lg', label: 'Large' },
+      { value: 'xl', label: 'X-Large' },
+    ],
+  },
+  {
+    key: 'spacing',
+    label: 'Line spacing',
+    options: [
+      { value: 'normal', label: 'Normal' },
+      { value: 'relaxed', label: 'Relaxed' },
+    ],
+  },
+  {
+    key: 'contrast',
+    label: 'Contrast',
+    options: [
+      { value: 'normal', label: 'Normal' },
+      { value: 'high', label: 'High' },
+    ],
+  },
+  {
+    key: 'motion',
+    label: 'Motion',
+    options: [
+      { value: 'system', label: 'System' },
+      { value: 'reduce', label: 'Reduce' },
+    ],
+  },
+] as const;
+---
+
+<div class="prefs-overlay" data-prefs-overlay hidden></div>
+<aside
+  class="prefs-drawer"
+  id="prefs-drawer"
+  role="dialog"
+  aria-modal="false"
+  aria-label="Reading preferences"
+  aria-hidden="true"
+  data-prefs-drawer
+>
+  <div class="prefs-drawer-head">
+    <span class="prefs-drawer-title">Reading preferences</span>
+    <button class="prefs-close" type="button" data-prefs-close aria-label="Close preferences">×</button>
+  </div>
+
+  <div class="prefs-drawer-body">
+    {groups.map((g) => (
+      <fieldset class="prefs-group" data-prefs-group={g.key}>
+        <legend class="prefs-legend">{g.label}</legend>
+        <div class="prefs-options" role="radiogroup" aria-label={g.label}>
+          {g.options.map((o) => (
+            <label class="prefs-option">
+              <input type="radio" name={`prefs-${g.key}`} value={o.value} />
+              <span>{o.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    ))}
+
+    <p class="prefs-note">Saved in this browser. Applies to every page on this site.</p>
+    <button class="prefs-reset" type="button" data-prefs-reset>Reset to defaults</button>
+  </div>
+</aside>
+
+<script>
+  import { loadPrefs, updatePrefs, savePrefs, applyPrefs, DEFAULT_PREFS, type Prefs } from '@/lib/prefs';
+
+  function reflect(drawer: Element) {
+    const prefs = loadPrefs();
+    drawer.querySelectorAll<HTMLInputElement>('input[type=radio]').forEach((input) => {
+      const key = input.name.replace('prefs-', '') as keyof Prefs;
+      input.checked = prefs[key] === input.value;
+    });
+  }
+
+  function init() {
+    const drawer = document.querySelector<HTMLElement>('[data-prefs-drawer]');
+    const overlay = document.querySelector<HTMLElement>('[data-prefs-overlay]');
+    if (!drawer || !overlay || drawer.dataset.initialized) return;
+    drawer.dataset.initialized = 'true';
+
+    const toggles = () => document.querySelectorAll<HTMLButtonElement>('[data-prefs-toggle]');
+    const isOpen = () => drawer.classList.contains('open');
+
+    const open = () => {
+      reflect(drawer);
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      overlay.hidden = false;
+      toggles().forEach((b) => b.setAttribute('aria-expanded', 'true'));
+      drawer.querySelector<HTMLInputElement>('input:checked')?.focus({ preventScroll: true });
+    };
+    const close = (refocus = true) => {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      overlay.hidden = true;
+      toggles().forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      if (refocus) toggles()[0]?.focus();
+    };
+
+    document.addEventListener('click', (e) => {
+      const t = (e.target as Element).closest('[data-prefs-toggle]');
+      if (t) (isOpen() ? close() : open());
+    });
+    drawer.querySelector('[data-prefs-close]')?.addEventListener('click', () => close());
+    overlay.addEventListener('click', () => close(false));
+
+    drawer.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      if (input.type !== 'radio') return;
+      const key = input.name.replace('prefs-', '') as keyof Prefs;
+      updatePrefs({ [key]: input.value } as Partial<Prefs>);
+    });
+
+    drawer.querySelector('[data-prefs-reset]')?.addEventListener('click', () => {
+      savePrefs({ ...DEFAULT_PREFS });
+      applyPrefs({ ...DEFAULT_PREFS });
+      reflect(drawer);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) close();
+    });
+    // Another control (the header theme toggle) changed a preference while open.
+    document.addEventListener('mantik:prefs', () => isOpen() && reflect(drawer));
+  }
+
+  function boot() {
+    applyPrefs(loadPrefs());
+    init();
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyPrefs(loadPrefs()));
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>
