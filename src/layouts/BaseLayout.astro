@@ -102,13 +102,26 @@ const launcherHref = playgroundPublicUrl(LAUNCHER_FILENAME);
         } catch (e) {}
         var ok = function (v, list, d) { return list.indexOf(v) >= 0 ? v : d; };
         var theme = ok(p.theme, ['system', 'light', 'dark'], 'system');
-        if (theme === 'system') theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (p.teamColors && (p.teamSiteTheme === 'light' || p.teamSiteTheme === 'dark')) {
+          theme = p.teamSiteTheme;
+        } else if (theme === 'system') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
         h.setAttribute('data-theme', theme);
         h.style.colorScheme = theme;
         h.setAttribute('data-text', ok(p.text, ['sm', 'md', 'lg', 'xl'], 'md'));
         h.setAttribute('data-spacing', ok(p.spacing, ['normal', 'relaxed'], 'normal'));
         h.setAttribute('data-contrast', ok(p.contrast, ['normal', 'high'], 'normal'));
         h.setAttribute('data-motion', ok(p.motion, ['system', 'reduce'], 'system'));
+        var vars = p.teamStyleVars;
+        if (p.teamColors && vars && typeof vars === 'object') {
+          h.setAttribute('data-team-colors', '');
+          for (var ck in vars) {
+            if (Object.prototype.hasOwnProperty.call(vars, ck) && typeof vars[ck] === 'string') {
+              h.style.setProperty(ck, vars[ck]);
+            }
+          }
+        }
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute('content', theme === 'dark' ? '#161314' : '#fafaf9');
       })();

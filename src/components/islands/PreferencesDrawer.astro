@@ -82,20 +82,101 @@ const groups = [
       </fieldset>
     ))}
 
+    <fieldset class="prefs-group prefs-team" data-prefs-team>
+      <legend class="prefs-legend">Team colors</legend>
+      <p class="prefs-team-hint">
+        Enter your FRC team number. Colors come from <a href="https://frc-colors.com/" target="_blank" rel="noopener noreferrer">FRC Colors</a> and are not modified. The site switches to light or dark mode automatically so those colors stay readable.
+      </p>
+      <div class="prefs-team-row">
+        <label class="prefs-team-label">
+          <span class="visually-hidden">FRC team number</span>
+          <input
+            type="number"
+            class="prefs-team-input"
+            inputmode="numeric"
+            min="1"
+            max="99999"
+            step="1"
+            placeholder="e.g. 254"
+            data-prefs-team-input
+            aria-describedby="prefs-team-status"
+          />
+        </label>
+        <button class="prefs-team-apply" type="button" data-prefs-team-apply>Apply</button>
+      </div>
+      <div class="prefs-team-swatch" data-prefs-team-swatch hidden>
+        <span class="prefs-swatch" data-prefs-swatch-primary aria-hidden="true"></span>
+        <span class="prefs-swatch" data-prefs-swatch-secondary aria-hidden="true"></span>
+        <span class="prefs-team-swatch-label" data-prefs-team-label></span>
+      </div>
+      <p class="prefs-team-status" id="prefs-team-status" data-prefs-team-status role="status"></p>
+      <button class="prefs-team-clear" type="button" data-prefs-team-clear hidden>Use default colors</button>
+    </fieldset>
+
     <p class="prefs-note">Saved in this browser. Applies to every page on this site.</p>
     <button class="prefs-reset" type="button" data-prefs-reset>Reset to defaults</button>
   </div>
 </aside>
 
 <script>
-  import { loadPrefs, updatePrefs, savePrefs, applyPrefs, DEFAULT_PREFS, type Prefs } from '@/lib/prefs';
+  import {
+    loadPrefs,
+    updatePrefs,
+    savePrefs,
+    applyPrefs,
+    DEFAULT_PREFS,
+    setTeamColorsPrefs,
+    clearTeamColorsPrefs,
+    hasActiveTeamColors,
+    type Prefs,
+  } from '@/lib/prefs';
+  import { fetchTeamColors, isValidTeamNumber } from '@/lib/teamColors';
+
+  function reflectTeam(drawer: Element) {
+    const prefs = loadPrefs();
+    const input = drawer.querySelector<HTMLInputElement>('[data-prefs-team-input]');
+    const swatch = drawer.querySelector<HTMLElement>('[data-prefs-team-swatch]');
+    const label = drawer.querySelector<HTMLElement>('[data-prefs-team-label]');
+    const clearBtn = drawer.querySelector<HTMLButtonElement>('[data-prefs-team-clear]');
+    const status = drawer.querySelector<HTMLElement>('[data-prefs-team-status]');
+    const primary = drawer.querySelector<HTMLElement>('[data-prefs-swatch-primary]');
+    const secondary = drawer.querySelector<HTMLElement>('[data-prefs-swatch-secondary]');
+
+    if (input) input.value = prefs.teamNumber != null ? String(prefs.teamNumber) : '';
+    const active = prefs.teamColors != null && prefs.teamNumber != null;
+    if (swatch) swatch.hidden = !active;
+    if (clearBtn) clearBtn.hidden = !active;
+    if (status && !status.dataset.pending) status.textContent = '';
+    if (active && prefs.teamColors && primary && secondary && label) {
+      primary.style.background = prefs.teamColors.primaryHex;
+      secondary.style.background = prefs.teamColors.secondaryHex;
+      const modeLabel = prefs.teamSiteTheme === 'dark' ? 'Dark' : 'Light';
+      label.textContent = `Team ${prefs.teamNumber} · ${modeLabel} mode`;
+    }
+  }
 
   function reflect(drawer: Element) {
     const prefs = loadPrefs();
+    const teamActive = hasActiveTeamColors(prefs);
     drawer.querySelectorAll<HTMLInputElement>('input[type=radio]').forEach((input) => {
       const key = input.name.replace('prefs-', '') as keyof Prefs;
-      input.checked = prefs[key] === input.value;
+      if (key in prefs && typeof prefs[key] === 'string') {
+        input.checked = prefs[key] === input.value;
+      }
+      if (key === 'theme') {
+        input.disabled = teamActive;
+        input.closest('.prefs-option')?.classList.toggle('prefs-option--disabled', teamActive);
+      }
     });
+    const themeGroup = drawer.querySelector('[data-prefs-group="theme"]');
+    themeGroup?.querySelector('.prefs-theme-team-note')?.remove();
+    if (teamActive && themeGroup) {
+      const note = document.createElement('p');
+      note.className = 'prefs-theme-team-note';
+      note.textContent = 'Theme is set from your team colors. Clear team colors to change it.';
+      themeGroup.appendChild(note);
+    }
+    reflectTeam(drawer);
   }
 
   function init() {
@@ -140,6 +221,42 @@ const groups = [
     drawer.querySelector('[data-prefs-reset]')?.addEventListener('click', () => {
       savePrefs({ ...DEFAULT_PREFS });
       applyPrefs({ ...DEFAULT_PREFS });
+      reflect(drawer);
+    });
+
+    const teamStatus = drawer.querySelector<HTMLElement>('[data-prefs-team-status]');
+    const teamApply = drawer.querySelector<HTMLButtonElement>('[data-prefs-team-apply]');
+    const setTeamStatus = (msg: string, pending = false) => {
+      if (!teamStatus) return;
+      if (pending) teamStatus.dataset.pending = 'true';
+      else delete teamStatus.dataset.pending;
+      teamStatus.textContent = msg;
+    };
+
+    teamApply?.addEventListener('click', async () => {
+      const input = drawer.querySelector<HTMLInputElement>('[data-prefs-team-input]');
+      const raw = input?.value.trim() ?? '';
+      const n = Number(raw);
+      if (!isValidTeamNumber(n)) {
+        setTeamStatus('Enter a team number from 1 to 99999.');
+        return;
+      }
+      teamApply.disabled = true;
+      setTeamStatus('Loading team colors…', true);
+      try {
+        const colors = await fetchTeamColors(n);
+        setTeamColorsPrefs(n, colors);
+        setTeamStatus('');
+        reflect(drawer);
+      } catch (e) {
+        setTeamStatus(e instanceof Error ? e.message : 'Could not load team colors.');
+      } finally {
+        teamApply.disabled = false;
+      }
+    });
+
+    drawer.querySelector('[data-prefs-team-clear]')?.addEventListener('click', () => {
+      clearTeamColorsPrefs();
       reflect(drawer);
     });
 

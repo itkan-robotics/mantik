@@ -269,7 +269,9 @@
   }
   html[data-contrast="high"] a { text-decoration-thickness: 2px; }
   html[data-contrast="high"] :focus-visible { outline: 3px solid var(--color-link); outline-offset: 2px; }
-  
+
+  /* FRC team colors: tokens applied inline on <html> (src/lib/teamColorsResolve.ts) */
+
   /* Dark theme header styling */
   html[data-theme="dark"] .mobile-header {
     background-color: var(--color-header-backdrop, color-mix(in srgb, var(--color-header-background) 92%, transparent));
@@ -953,6 +955,92 @@ body {
     padding: 0.35rem 0.8rem;
   }
   .prefs-reset:hover { background: var(--color-background-hover); color: var(--color-foreground-primary); }
+
+  .prefs-team-hint {
+    font-size: var(--font-size--small--2);
+    color: var(--color-foreground-muted);
+    margin: 0 0 0.5rem;
+    line-height: 1.45;
+  }
+  .prefs-team-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: stretch;
+  }
+  .prefs-team-input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    font-size: var(--font-size--small);
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--color-background-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-background-primary);
+    color: var(--color-foreground-primary);
+  }
+  .prefs-team-apply,
+  .prefs-team-clear {
+    font: inherit;
+    font-size: var(--font-size--small);
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .prefs-team-apply {
+    border: 1px solid var(--color-brand-content);
+    background: var(--color-brand-content);
+    color: var(--btn-1-color);
+    flex-shrink: 0;
+  }
+  .prefs-team-apply:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
+  .prefs-team-clear {
+    margin-top: 0.35rem;
+    background: transparent;
+    border: 1px solid var(--color-background-border);
+    color: var(--color-foreground-secondary);
+  }
+  .prefs-team-clear:hover,
+  .prefs-team-apply:not(:disabled):hover {
+    filter: brightness(0.95);
+  }
+  .prefs-team-status {
+    font-size: var(--font-size--small--2);
+    color: var(--color-foreground-muted);
+    margin: 0.35rem 0 0;
+    min-height: 1.2em;
+  }
+  .prefs-team-status:not(:empty) {
+    color: var(--color-foreground-secondary);
+  }
+  .prefs-team-swatch {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+  .prefs-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-background-border);
+  }
+  .prefs-team-swatch-label {
+    font-size: var(--font-size--small--2);
+    color: var(--color-foreground-secondary);
+  }
+  .prefs-option--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .prefs-theme-team-note {
+    font-size: var(--font-size--small--2);
+    color: var(--color-foreground-muted);
+    margin: 0.35rem 0 0;
+    line-height: 1.45;
+  }
   
   /* Sidebar */
   .sidebar-drawer {
