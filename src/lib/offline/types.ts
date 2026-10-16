@@ -8,6 +8,9 @@ export interface ModuleManifest {
   generatedAt: string;
   pages: string[];
   assets: string[];
+  /** Present after production build (offline ZIP packs). */
+  bundleZip?: string;
+  bundleSizeBytes?: number;
 }
 
 export interface StoredModuleStatus {

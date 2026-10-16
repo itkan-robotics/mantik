@@ -22,17 +22,33 @@ npm run build    # Astro build + Pagefind search index
 npm run preview  # Preview production build locally
 ```
 
-## Offline learning (PWA)
+## Offline learning
 
-Mantik can be **installed** from Chrome/Edge (Install app / Add to Home Screen).
+### ZIP packs (recommended for schools)
 
-**Download full tracks:** open **Aa → Offline lessons** and choose **Download** for Java, FTC, FRC, or Competitive. Each pack saves every lesson in that track plus the scripts and styles those pages need. Navigate with the **lesson sidebar** and **prev/next** — search is not required offline.
+Open **Aa → Offline lessons** and download the **ZIP** for Java, FTC, FRC, or Competitive (one track per file). Build output also lives at `dist/offline/downloads/mantik-{track}.zip` after `npm run build`.
 
+1. Unzip on a mentor or teacher laptop (Windows, Mac, or Linux).
+2. In the folder that contains the track directory (`java`, `ftc`, etc.), start a local server, for example:
+   - `python -m http.server 8080 --bind 0.0.0.0`
+   - or `npx --yes serve -l 8080`
+3. On student **Chromebooks** on the same Wi‑Fi (or a classroom hotspot), open Chrome to `http://<laptop-ip>:8080/java` (or `/ftc`, `/frc`, `/comp`).
+
+Do not open lesson HTML by double-clicking — browsers block that. Student Chromebooks do not need extensions; they only visit the mentor laptop’s address.
+
+Full steps are in `README-OFFLINE.txt` inside each ZIP.
+
+### Save in Chrome (PWA)
+
+Mantik can be **installed** from Chrome/Edge (Install app / Add to Home Screen). In **Offline lessons**, **Download** saves a track into the browser cache when your school allows service workers.
+
+- Use the **lesson sidebar** and **prev/next** offline — search is not required.
 - **PID Simulation**, **Resources**, and **in-browser Java Run** still need a network connection.
-- Track packs are tens of MB; allow time on slow school Wi‑Fi.
 - After a site update, use **Update** in Offline lessons when shown.
 
-Test locally: `npm run build && npm run preview`, then DevTools → Application → Cache storage (`mantik-java`, etc.) and Offline mode.
+Test cache mode: `npm run build && npm run preview`, then DevTools → Application → Cache storage (`mantik-java`, etc.) and Offline mode.
+
+ZIP links in `npm run dev` are served from `dist/offline/downloads/` after a build (same as offline manifests). Use `npm run preview` to test the full production layout.
 
 ## Java Playground
 

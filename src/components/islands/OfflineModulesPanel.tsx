@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sections } from '@/config/navigation';
 import { downloadModule, fetchModuleManifest } from '@/lib/offline/downloadModule';
 import { getModuleUiStatus, loadStoredModules } from '@/lib/offline/moduleStatus';
+import { formatBundleSize, trackBundleZipUrl } from '@/lib/offline/trackBundle';
 import type { ModuleDownloadProgress, ModuleId, ModuleManifest } from '@/lib/offline/types';
 
 type RowState = {
@@ -164,8 +165,13 @@ export default function OfflineModulesPanel() {
     <fieldset className="prefs-group prefs-offline-modules">
       <legend className="prefs-legend">Offline lessons</legend>
       <p className="prefs-offline-hint">
-        Download a full track for offline reading. Use the lesson sidebar and prev/next buttons — search
-        is not required. Stay online for in-browser Java Run.
+        <strong>ZIP file (recommended for classrooms):</strong> download a track, unzip on a mentor laptop,
+        run a local web server, and open the track URL from student Chromebooks on the same Wi‑Fi. See
+        README inside the ZIP. Double‑clicking lesson HTML does not work.
+      </p>
+      <p className="prefs-offline-hint">
+        <strong>Save in this browser:</strong> uses Chrome&apos;s cache when your school allows it. Use the
+        lesson sidebar and prev/next — not search. In-browser Java Run still needs internet.
       </p>
       {!online && (
         <p className="prefs-offline-hint prefs-offline-hint--warn" role="status">
@@ -176,20 +182,37 @@ export default function OfflineModulesPanel() {
         {sections.map((s) => {
           const row = rows[s.id];
           const disabled = row.downloading || (!online && !row.error);
+          const manifest = manifests[s.id];
+          const zipHref = manifest?.bundleZip ?? trackBundleZipUrl(s.id);
+          const zipSize = formatBundleSize(manifest?.bundleSizeBytes);
           return (
             <li key={s.id} className="prefs-offline-row">
               <div className="prefs-offline-row-main">
                 <span className="prefs-offline-label">{s.label}</span>
                 <span className="prefs-offline-status" role="status">{statusLabel(s.id)}</span>
               </div>
-              <button
-                type="button"
-                className="prefs-offline-download"
-                disabled={disabled}
-                onClick={() => void runDownload(s.id)}
-              >
-                {buttonLabel(s.id)}
-              </button>
+              <div className="prefs-offline-actions">
+                <a
+                  className="prefs-offline-zip"
+                  href={zipHref}
+                  download
+                  aria-disabled={!online ? true : undefined}
+                  tabIndex={!online ? -1 : undefined}
+                  onClick={(e) => {
+                    if (!online) e.preventDefault();
+                  }}
+                >
+                  ZIP{zipSize ? ` (${zipSize})` : ''}
+                </a>
+                <button
+                  type="button"
+                  className="prefs-offline-download"
+                  disabled={disabled}
+                  onClick={() => void runDownload(s.id)}
+                >
+                  {buttonLabel(s.id)}
+                </button>
+              </div>
               {stored[s.id]?.completedAt && row.uiStatus === 'ready' && !row.downloading && (
                 <span className="prefs-offline-meta">
                   Saved {new Date(stored[s.id]!.completedAt).toLocaleDateString()}
