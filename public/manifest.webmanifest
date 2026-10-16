@@ -1,0 +1,31 @@
+{
+  "name": "Mantik — FIRST Programming",
+  "short_name": "Mantik",
+  "description": "Programming documentation and interactive learning for Java, FTC, FRC, and competitive coding.",
+  "start_url": "/java",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#fafaf9",
+  "background_color": "#fafaf9",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

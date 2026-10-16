@@ -8,12 +8,12 @@ groupOrder: 13
 order: 5
 difficulty: advanced
 duration: 120 min
-description: ""
+description: Run JUnit tests in Android Studio to verify math and control logic without powering motors on the robot.
 ---
 
-### Introduction to Unit Testing in FTC
+### Unit testing in FTC projects
 
-Unit testing is a critical practice for ensuring your FTC robot code works correctly and reliably. By writing tests for individual components and methods, you can catch bugs early, verify functionality, and make your code more maintainable. This lesson covers how to implement unit testing in Android Studio for FTC projects.
+Not everything needs the robot connected. Pure Java helpers, state logic, and autonomous steps can run on your laptop with JUnit and Mockito. This lesson wires up dependencies and walks through tests from simple math to mocked hardware.
 
 <RulesBox title="Why Unit Testing Matters for FTC">
 
@@ -25,13 +25,13 @@ Unit testing is a critical practice for ensuring your FTC robot code works corre
 
 </RulesBox>
 
-### Setting Up Testing Framework
+### Gradle setup
 
-Android Studio uses JUnit for unit testing. You'll need to set up your project to include test dependencies and create test classes that can run independently of the robot hardware.
+Add JUnit and Mockito to `app/build.gradle`, then enable unit test options so Android stubs do not crash pure Java tests.
 
 ### Project Testing Configuration - Dependencies
 
-First, ensure your project has the proper testing dependencies configured in your build.gradle file. These dependencies provide the testing framework and mocking capabilities:
+Add these `testImplementation` lines (instrumented tests use `androidTestImplementation`):
 
 
 
@@ -52,13 +52,10 @@ dependencies {
 }
 ```
 
-### Understanding Testing Dependencies
-
-The testing dependencies provide essential tools for unit testing. JUnit provides the testing framework, while Mockito allows you to create mock objects that simulate hardware components. This is crucial for testing robot code without requiring actual hardware.
 
 ### Project Testing Configuration - Test Options
 
-Configure test options in your build.gradle file to ensure proper test execution. These options enable Android resources in tests and provide default values for Android framework calls:
+These `testOptions` let unit tests load resources and return default values for Android APIs that are not on the JVM:
 
 
 
@@ -76,17 +73,13 @@ android {
 }
 ```
 
-### Test Configuration Explanation
-
-The test options configure how your tests run. 'includeAndroidResources' allows tests to access Android resources, while 'returnDefaultValues' provides default return values for Android framework methods that aren't available in unit tests.
-
 ### Creating Your First Test
 
-Let's start with a simple test for a utility class that performs calculations. This demonstrates the basic structure of unit tests and shows how to test mathematical operations that are common in FTC programming.
+Begin with encoder math: one `@Test` method per behavior, using `assertEquals` with a small delta for doubles.
 
 ### Basic Utility Class - Encoder Conversions
 
-First, create a simple utility class to test. This class handles common FTC calculations like encoder conversions. These methods are essential for converting between encoder ticks and real-world distances:
+Start with a small utility class for encoder math—easy to test without mocks:
 
 
 
@@ -128,7 +121,7 @@ public class RobotUtils {
 
 ### Basic Utility Class - Power Calculations
 
-Add power calculation methods to the utility class. These methods help determine appropriate motor power for different movements. Power calculations are crucial for smooth robot motion:
+Add a simple power helper to the same class so you can test limiting and edge cases:
 
 
 
@@ -152,9 +145,6 @@ Add power calculation methods to the utility class. These methods help determine
 }
 ```
 
-### Understanding Power Calculations
-
-Power calculations determine how much motor power is needed to achieve a desired movement. This method uses a simplified linear model, but in practice, you might use more complex physics calculations that account for robot mass, friction, and acceleration.
 
 ### Writing Tests for Encoder Conversions
 
@@ -191,9 +181,6 @@ public class RobotUtilsTest {
     }
 ```
 
-### Understanding Basic Conversion Tests
-
-The basic conversion test verifies that the mathematical formula works correctly. It tests normal cases, edge cases (zero ticks), and large values to ensure the calculation remains accurate across different input ranges.
 
 ### Inches to Ticks Tests
 
@@ -220,9 +207,6 @@ Add tests for the inchesToTicks method. These tests verify the reverse conversio
     }
 ```
 
-### Understanding Reverse Conversion Tests
-
-The inches to ticks tests verify the reverse conversion works correctly. They test the rounding behavior since the result must be an integer, and ensure that zero distance returns zero ticks.
 
 ### Power Calculation Tests
 
@@ -249,9 +233,6 @@ Add tests for the power calculation method. These tests verify power calculation
     }
 ```
 
-### Understanding Power Calculation Tests
-
-The power calculation tests verify that the method correctly calculates required power and respects the maximum power limit. They test normal cases, power limiting behavior, and edge cases like zero distance.
 
 ### Error Handling Tests
 
@@ -277,13 +258,10 @@ Add tests to verify that the methods properly handle invalid input parameters:
 }
 ```
 
-### Understanding Error Handling Tests
-
-Error handling tests use the @Test(expected = ...) annotation to verify that methods throw appropriate exceptions when given invalid parameters. This ensures your code fails gracefully with meaningful error messages.
 
 ### Testing Robot Components with Mocking
 
-Since you can't always test with real hardware, mocking allows you to simulate hardware components and test your control logic independently. Mocking is essential for testing robot controllers without requiring actual hardware.
+Mock hardware when you need to verify calls to `setPower` or sensor reads without a robot on the table.
 
 ### Robot Controller Class - Basic Structure
 
@@ -314,9 +292,6 @@ public class RobotController {
     }
 ```
 
-### Understanding Robot Controller Design
-
-The robot controller class encapsulates hardware interactions, making it easier to test. By accepting hardware components as constructor parameters, we can inject mock objects during testing instead of requiring real hardware.
 
 ### Robot Controller Class - Additional Methods
 
@@ -358,9 +333,6 @@ Add more methods to the robot controller for turning, stopping, and sensor opera
 }
 ```
 
-### Understanding Robot Controller Methods
-
-The additional methods provide a complete interface for robot control. The turn method allows differential drive, the color detection method processes sensor data, and the getter methods allow testing to verify motor states.
 
 ### Setting Up Mocked Hardware Tests
 
@@ -425,9 +397,6 @@ public class RobotControllerTest {
     }
 ```
 
-### Understanding Mockito Test Setup
-
-The @RunWith(MockitoJUnitRunner.class) annotation tells JUnit to use Mockito for test execution. The @Mock annotations create mock objects that simulate hardware components, and the @Before method sets up the test environment before each test.
 
 ### Turn and Stop Tests
 
@@ -459,9 +428,6 @@ Add tests for turning and stopping operations:
     }
 ```
 
-### Understanding Turn and Stop Tests
-
-The turn test verifies that the robot controller correctly sets different powers for left and right motors to achieve turning. The stop test ensures both motors are set to zero power when stopping.
 
 ### Color Sensor Tests
 
@@ -495,9 +461,6 @@ Add tests for the color sensor detection logic:
     }
 ```
 
-### Understanding Color Sensor Tests
-
-The color sensor tests use Mockito's when().thenReturn() to simulate different sensor readings. This allows testing the color detection logic with various scenarios without needing a real color sensor.
 
 ### Motor Power Retrieval Tests
 
@@ -517,9 +480,6 @@ Add tests for getting motor power values:
 }
 ```
 
-### Understanding Motor Power Tests
-
-The motor power retrieval tests verify that the controller correctly returns the current motor power values. These tests ensure that the getter methods properly delegate to the underlying motor objects.
 
 ### Testing Autonomous Sequences
 
@@ -571,9 +531,6 @@ public class AutonomousSequence {
 }
 ```
 
-### Understanding Autonomous Sequence Design
-
-The autonomous sequence class encapsulates the timing and state management of an autonomous routine. It uses dependency injection to accept a robot controller, making it testable with mocked components.
 
 ### Testing Autonomous Sequence Behavior
 
@@ -617,9 +574,6 @@ public class AutonomousSequenceTest {
     }
 ```
 
-### Understanding Sequence Start Tests
-
-The sequence start test verifies that the autonomous sequence initializes correctly. It checks that the sequence is not complete at the start and that elapsed time calculation works properly.
 
 ### Driving Phase Tests
 
@@ -646,9 +600,6 @@ Add tests for the driving phase of the autonomous sequence:
     }
 ```
 
-### Understanding Driving Phase Tests
-
-The driving phase tests verify that the sequence correctly drives forward during the first 2 seconds. The times(2) verification ensures that driveForward was called exactly twice during the test.
 
 ### Completion Tests
 
@@ -704,9 +655,6 @@ Add tests for sequence completion and post-completion behavior:
 }
 ```
 
-### Understanding Completion Tests
-
-The completion tests verify that the sequence properly stops and marks itself as complete after 2 seconds. They also ensure that once complete, the sequence doesn't continue calling robot controller methods.
 
 ### Integration Testing
 
@@ -780,9 +728,6 @@ public class RobotIntegrationTest {
     }
 ```
 
-### Understanding Integration Test Setup
-
-The integration test sets up a complete system with mocked hardware components. It tests the interaction between the autonomous sequence and the robot controller, ensuring they work together correctly.
 
 ### Integration Test with Real Calculations
 
@@ -822,9 +767,6 @@ Add an integration test that combines utility functions with robot controller op
 }
 ```
 
-### Understanding Integration with Real Calculations
-
-This integration test combines utility functions with robot controller operations, testing that calculated values are reasonable and that the robot controller correctly uses them.
 
 ### Complete Unit Testing Example
 
@@ -1070,9 +1012,9 @@ Organizing your tests properly and following best practices makes them more main
 
 </RulesBox>
 
-### Comprehensive Test Organization
+### Organizing a full test class
 
-Let's create a comprehensive test class that demonstrates proper test organization with clear naming conventions and thorough coverage.
+The next example groups drive, error, and sensor tests in one class with shared setup.
 
 ### Comprehensive Test Class - Setup and Drive Tests
 

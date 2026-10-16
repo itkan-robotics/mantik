@@ -22,6 +22,18 @@ npm run build    # Astro build + Pagefind search index
 npm run preview  # Preview production build locally
 ```
 
+## Offline learning (PWA)
+
+Mantik can be **installed** from Chrome/Edge (Install app / Add to Home Screen).
+
+**Download full tracks:** open **Aa → Offline lessons** and choose **Download** for Java, FTC, FRC, or Competitive. Each pack saves every lesson in that track plus the scripts and styles those pages need. Navigate with the **lesson sidebar** and **prev/next** — search is not required offline.
+
+- **PID Simulation**, **Resources**, and **in-browser Java Run** still need a network connection.
+- Track packs are tens of MB; allow time on slow school Wi‑Fi.
+- After a site update, use **Update** in Offline lessons when shown.
+
+Test locally: `npm run build && npm run preview`, then DevTools → Application → Cache storage (`mantik-java`, etc.) and Offline mode.
+
 ## Java Playground
 
 Java Training and Competitive (`/java/*`, `/comp/*`) lessons compile and run **in the browser** (CheerpJ + ECJ, Java 17). Most ` ```java ` fences get a **Run** control automatically; opt out with ` ```java norun ` ``.

@@ -8,20 +8,18 @@ groupOrder: 6
 order: 2
 difficulty: intermediate
 duration: 40 min
-description: ""
+description: "Moves the robot with setPower and sleep, plus limits and safety habits."
 ---
 
-### What is Time-Based Movement?
+### Time-based movement
 
-Time-based movement is the simplest way to make your robot move autonomously: you set the motor power, wait for a certain amount of time, then stop the motors. This method does not use sensors or encoders, so it is easy to implement but not very precise.
+Set motor power, call `sleep(milliseconds)`, then stop. No encoders—distance varies with battery and floor.
 
-### Implementing Time-Based Movement
+### Implementation steps
 
-To implement time-based movement in OnBot Java, you use the `setPower()` method to start the motors, then `sleep()` to wait for a set duration, and finally stop the motors. Always use `waitForStart()` before starting any movement.
+After `waitForStart()`, call `setPower()`, `sleep()`, then set power to zero.
 
-### Time-Based Movement Example
-
-This example shows how to drive a robot forward for 1 second using time-based movement.
+### Forward for one second
 
 
 
@@ -49,11 +47,11 @@ public class TimeBasedMove extends LinearOpMode {
 }
 ```
 
-### Limitations and Use Cases
+### When to use it
 
-Time-based movement is easy to implement but not very accurate. The robot's movement can vary due to battery voltage, floor friction, or motor inconsistencies. Use this method for simple tasks or when precision is not critical. For more reliable movement, consider using encoders or sensors.
+Fine for first prototypes. For repeatable distance, switch to encoders or sensors.
 
-### Safety and Best Practices
+### Safety habits
 
 - Always stop your motors after movement to prevent damage.
 - Use telemetry to monitor robot status.

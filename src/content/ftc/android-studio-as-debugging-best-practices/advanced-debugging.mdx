@@ -8,12 +8,12 @@ groupOrder: 13
 order: 1
 difficulty: advanced
 duration: 120 min
-description: ""
+description: Use Android Studio breakpoints, watches, and logging to debug OpModes on the Control Hub.
 ---
 
-### Introduction to Advanced Debugging
+### Advanced debugging in Android Studio
 
-Advanced debugging in Android Studio is essential for FTC development. When your robot doesn't behave as expected, you need powerful tools to identify and fix issues quickly. This lesson covers professional debugging techniques that will help you troubleshoot complex robot behaviors efficiently.
+When the robot misbehaves, you need a repeatable way to see what the code is doing. This lesson covers Logcat, breakpoints, watch expressions, and remote debugging on FTC hardware.
 
 <RulesBox title="Why Advanced Debugging Matters">
 
@@ -24,9 +24,9 @@ Advanced debugging in Android Studio is essential for FTC development. When your
 
 </RulesBox>
 
-### Android Studio Debugger Setup for FTC
+### Android Studio debugger setup
 
-Setting up the Android Studio debugger for FTC projects requires a specific configuration to work with the Control Hub and Expansion Hub. The debugger allows you to pause execution, inspect variables, and step through code line by line.
+Connect the Control Hub over USB or Wi‑Fi debugging, deploy from Android Studio, then use breakpoints and stepping like any Android app.
 
 ### Basic Debug Logging Setup
 
@@ -41,9 +41,6 @@ private static final String TAG = "MyDebugOpMode";
 // This TAG will be used in all log statements to identify your OpMode's logs
 ```
 
-### Understanding the TAG Constant
-
-The `TAG` constant is a string identifier that appears in all log messages from this OpMode. It helps you filter and organize logs when debugging. Choose a descriptive name that clearly identifies your OpMode.
 
 ### Adding Debug Logging to Init Method
 
@@ -64,9 +61,6 @@ public void init() {
 }
 ```
 
-### Understanding Log Levels
-
-Android provides different log levels for different types of messages:`Log.d()` - Debug messages for development`Log.i()` - Information messages for general status`Log.w()` - Warning messages for potential issues`Log.e()` - Error messages for actual problems
 
 ### Error Handling with Logging
 
@@ -93,9 +87,6 @@ public void init() {
 }
 ```
 
-### Understanding Try-Catch for Debugging
-
-The `try-catch` block allows you to catch exceptions and handle them gracefully. The `Log.e()` call includes the exception object, which provides the full stack trace for debugging.
 
 ### Complete Debug OpMode Example
 
@@ -172,7 +163,7 @@ Breakpoints are the foundation of debugging. They allow you to pause execution a
 
 ### Conditional Breakpoints and Watch Expressions
 
-Conditional breakpoints are powerful tools for debugging complex robot behaviors. They only pause execution when specific conditions are met, making it easier to debug rare or specific scenarios.
+Conditional breakpoints pause only when an expression is true—useful when a bug appears after the tenth loop or only in one autonomous state.
 
 ### State Machine Setup
 
@@ -195,9 +186,6 @@ public class StateMachineOpMode extends OpMode {
 }
 ```
 
-### Understanding State Machines
-
-A state machine is a programming pattern where your robot can be in one of several defined states at any time. Each state represents a different behavior or phase of operation. The robot transitions between states based on conditions or events.
 
 ### Adding the Main Loop with State Logic
 
@@ -230,9 +218,6 @@ public void loop() {
 }
 ```
 
-### Understanding the Switch Statement
-
-The `switch` statement checks the current state and calls the appropriate handler method. This makes the code more organized and easier to debug. Each case represents a different state of the robot.
 
 ### Implementing State Handler Methods
 
@@ -264,9 +249,6 @@ private void handleCompleteState() {
 }
 ```
 
-### Understanding Conditional Breakpoints
-
-Conditional breakpoints only pause execution when a specific condition is true. This is useful for debugging rare events or specific scenarios without stopping on every loop iteration.`loopCount > 100` - Only breaks when the robot has been idle for 100 loops`getRuntime() > 5.0` - Only breaks when the robot has been moving for 5 seconds`true` - Always breaks (useful for debugging the complete state)
 
 ### Complete State Machine Example
 
@@ -373,9 +355,6 @@ public class WatchExpressionsExample extends OpMode {
     // These variables will be monitored in the debugger
 ```
 
-### Understanding Watch Expressions
-
-Watch expressions allow you to monitor specific variables or expressions in real-time during debugging. They appear in the debug window and update as your program runs, making it easy to track how values change over time.
 
 ### Initializing Hardware Components
 
@@ -400,9 +379,6 @@ public void init() {
 }
 ```
 
-### Understanding Method Calls in Watch Expressions
-
-You can watch method calls like `leftMotor.getPower()` to see the actual power being sent to the motor. This is useful for verifying that your commands are being executed correctly.
 
 ### Implementing Gamepad Control Logic
 
@@ -430,9 +406,6 @@ public void loop() {
 }
 ```
 
-### Understanding the Control Logic
-
-The control logic checks if the left stick Y-axis is pressed beyond a small threshold (0.1) to avoid accidental movement. When pressed, it calculates the power as a percentage of the target power. When released, it stops the robot.
 
 ### Adding Telemetry for Debugging
 
@@ -451,9 +424,6 @@ telemetry.addData("Right Motor Power", rightMotor.getPower());
 telemetry.addData("Runtime", "%.2f", getRuntime());
 ```
 
-### Understanding Telemetry vs Watch Expressions
-
-Telemetry displays information on the driver station screen, while watch expressions are only visible in the debugger. Use telemetry for information the driver needs, and watch expressions for detailed debugging information.
 
 ### Complete Watch Expressions Example
 
@@ -519,7 +489,7 @@ public class WatchExpressionsExample extends OpMode {
 
 ### Logging Strategies for Robot State
 
-Effective logging is crucial for debugging robot behavior. You need to log enough information to understand what's happening without overwhelming the system or making logs unreadable.
+Log enough to reconstruct decisions (state, sensor values, motor commands) without printing every loop iteration.
 
 ### Setting Up Logging Configuration
 
@@ -540,9 +510,6 @@ public class StructuredLoggingOpMode extends OpMode {
 }
 ```
 
-### Understanding Logging Configuration
-
-The boolean constants control which logging levels are active. You can change these values to enable or disable different levels of logging without modifying the code. This is useful for performance tuning and debugging different scenarios.
 
 ### Creating Custom Logging Methods
 
@@ -576,9 +543,6 @@ private void logError(String message, Exception e) {
 }
 ```
 
-### Understanding Logging Levels
-
-Each logging method serves a different purpose:`logInfo()` - Always logs important information to both logcat and telemetry`logDebug()` - Only logs when DEBUG_MODE is true, useful for development`logVerbose()` - Only logs when VERBOSE_LOGGING is true, for detailed debugging`logError()` - Always logs errors with full exception details
 
 ### Initializing Hardware with Logging
 
@@ -604,9 +568,6 @@ public void init() {
 }
 ```
 
-### Understanding Hardware Logging
-
-The initialization logs help you verify that all hardware components are properly connected and accessible. The debug-level logs provide detailed information about each device, which is useful for troubleshooting hardware issues.
 
 ### Adding Event-Based Logging
 
@@ -637,9 +598,6 @@ public void loop() {
 }
 ```
 
-### Understanding Event-Based Logging
-
-Different types of events are logged at different levels:**Info level** - Important user actions (button presses, mode changes)**Debug level** - Periodic sensor readings and system status**Verbose level** - Frequent motor commands and detailed behavior
 
 ### Creating Sequence Logging
 
@@ -662,9 +620,6 @@ private void startAutonomousSequence() {
 }
 ```
 
-### Understanding Sequence Logging
-
-Sequence logging helps you track the progress of complex operations. Each step is logged at the debug level, while the start and completion are logged at the info level. This makes it easy to see where a sequence might be failing or taking too long.
 
 ### Complete Structured Logging Example
 
@@ -769,7 +724,7 @@ public class StructuredLoggingOpMode extends OpMode {
 
 ### Remote Debugging on Control Hub
 
-Remote debugging allows you to debug code running on the actual Control Hub hardware. This is essential for debugging issues that only occur on the real robot.
+Remote debugging attaches the IDE to code running on the Control Hub—needed when timing or hardware differs from the emulator.
 
 ### ADB Connection Setup
 

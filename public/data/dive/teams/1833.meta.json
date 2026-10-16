@@ -1,0 +1,16 @@
+{
+  "teamNumber": 1833,
+  "teamName": "Team BEAN",
+  "normEpa": 1798,
+  "linkToCodebases": "team1833/2026-public",
+  "chosenFile": "src/main/java/frc/robot/Robot.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 393,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 20,
+  "lineCount": 393,
+  "sha": "d4f19fc00fe2733053162772ad8871d15b77d746",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/team1833/2026-public/blob/main/src/main/java/frc/robot/Robot.java",
+  "fetchedAt": "2026-10-16T20:58:21.323Z"
+}

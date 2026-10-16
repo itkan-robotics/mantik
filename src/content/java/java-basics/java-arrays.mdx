@@ -8,14 +8,14 @@ groupOrder: 1
 order: 6
 difficulty: beginner
 duration: 60 min
-description: ""
+description: Fixed-size lists of primitives or objects, indexing from zero, and looping over elements.
 ---
 
-### What are Arrays?
+### What arrays are
 
-An array contains a limited amount of numbered spots (indices) for values. The length (or size) of an array is the amount of these spots - how many values you can place in the array. The values in an array are called **elements**. Arrays can store primitive types (int, double, boolean) or objects (String, custom classes).
+An array is a fixed number of slots, each addressed by an index starting at 0. The **length** is how many slots exist. Each stored value is an **element**. Arrays can hold primitives (`int`, `double`, `boolean`) or references (`String`, your own classes).
 
-### Creating Arrays - Basic Types:
+### Creating arrays — basic types
 
 ```java
 // Arrays of primitive types
@@ -35,11 +35,11 @@ System.out.println("Array length: " + sensorReadings.length);
 System.out.println("First reading: " + sensorReadings[0]);
 ```
 
-### Arrays of Objects
+### Arrays of objects
 
-Just like primitive types, arrays can store objects. String arrays are a common example, but you can create arrays of any object type, including custom classes. This is where arrays become really powerful for robotics applications.
+Object arrays work the same way. Each slot holds a reference (or `null` until you assign one).
 
-### String Arrays Example:
+### String arrays example
 
 ```java
 // Create an array of strings
@@ -67,11 +67,11 @@ for (String system : robotSystems) {
 }
 ```
 
-### Adding Objects to Arrays
+### Putting objects in arrays
 
-Objects can be added to arrays just like primitive values. You can create objects first and then add them, or create objects directly when assigning to array positions. Let's use a Robot class example.
+You can assign an existing object or construct one in place.
 
-### Robot Objects in Arrays:
+### Robot objects in arrays
 
 ```java
 // Assume we have a Robot class
@@ -115,11 +115,11 @@ for (int i = 0; i < competition.length; i++) {
 }
 ```
 
-### User Input for Object Arrays
+### User input for object arrays
 
-You can collect user input to populate arrays with objects. This is useful for creating team rosters, robot configurations, or competition data from user input.
+Scanner input can fill an array when the size is not known until runtime.
 
-### Building Object Arrays from User Input:
+### Building object arrays from user input
 
 ```java
 import java.util.Scanner;
@@ -164,14 +164,14 @@ public class RobotTeamBuilder {
 }
 ```
 
-<RulesBox title="Object Array Best Practices:" subtitle="Guidelines for Working with Object Arrays:">
+<RulesBox title="Object array habits">
 
-- **Null Checks:** Always check if array elements are null before using them
-- **Bounds Checking:** Validate array indices before access
-- **Initialization:** Remember that object arrays start with null values
-- **Enhanced Loops:** Use for-each loops when you don't need the index
-- **Array Length:** Use .length property (not .length() method) for arrays
-- **Meaningful Names:** Use descriptive names for arrays and their elements
+- **Null checks:** Test elements before calling methods on them.
+- **Bounds:** Valid indices are `0` through `length - 1`.
+- **Initialization:** `new Robot[n]` fills slots with `null` until you assign.
+- **For-each:** Use when you do not need the index.
+- **Length:** Arrays use `.length`; `ArrayList` uses `.size()`.
+- **Names:** Name arrays after what they store (`motorPowers`, not `arr`).
 
 </RulesBox>
 
@@ -182,8 +182,7 @@ public class RobotTeamBuilder {
 - Create filtering system to find competitions by criteria
 
 ```java
-Build a comprehensive FRC competition management system using object arrays:
+Build an FRC competition management system using object arrays:
 ```
 
 </ExerciseBox>
-

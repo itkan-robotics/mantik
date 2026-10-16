@@ -10,6 +10,12 @@ import { isRunPhaseStatus } from './protocol';
 import { assertPublicMain } from './sourceChecks';
 import { logJpTimings } from './timing';
 import type { RunResult, StatusFn } from './types';
+import {
+  assertJavaRuntimeOnlineAsync,
+  JAVA_RUNTIME_OFFLINE_MESSAGE,
+  maybeNotifyJavaRuntimeUnavailable,
+  wrapJavaRuntimeStatus,
+} from './javaRuntimeToast';
 
 const ENTRY_CLASS_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -69,7 +75,9 @@ function spawnWorker(): Worker {
     pending.delete(data.id);
     clearTimers(item);
     if (data.type === 'error') {
-      item.reject(new Error(data.message));
+      const error = new Error(data.message);
+      maybeNotifyJavaRuntimeUnavailable(error);
+      item.reject(error);
       return;
     }
     logJpTimings(data.timings);
@@ -174,8 +182,13 @@ async function compileThenRunOnBackend(options: {
   runMain: boolean;
   onStatus?: StatusFn;
 }): Promise<RunResult> {
+  if (!(await assertJavaRuntimeOnlineAsync())) {
+    return compileFail(JAVA_RUNTIME_OFFLINE_MESSAGE);
+  }
+  const status = wrapJavaRuntimeStatus(options.onStatus);
+  const runOptions = { ...options, onStatus: status };
   if (workerFailed) {
-    return fallbackCompileRun(options);
+    return fallbackCompileRun(runOptions);
   }
   try {
     return await request<RunResult>(
@@ -186,32 +199,36 @@ async function compileThenRunOnBackend(options: {
         stdin: options.stdin,
         runMain: options.runMain,
       },
-      options.onStatus,
+      status,
     );
   } catch (err) {
     if (err instanceof JavaRunCancelledError) throw err;
-    if (workerFailed) return fallbackCompileRun(options);
+    if (workerFailed) return fallbackCompileRun(runOptions);
     throw err;
   }
 }
 
 /** Start CheerpJ without compiling student code. Safe to call from page load. */
 export function preloadJavaRuntime(onStatus?: StatusFn): Promise<void> {
+  const status = wrapJavaRuntimeStatus(onStatus);
   return enqueue(async () => {
+    if (!(await assertJavaRuntimeOnlineAsync())) {
+      throw new Error(JAVA_RUNTIME_OFFLINE_MESSAGE);
+    }
     if (workerFailed) {
       const runtime = await import('./cheerpjRuntime');
-      await runtime.ensureRuntime(onStatus);
+      await runtime.ensureRuntime(status);
       return;
     }
     try {
-      await request<null>({ type: 'init' }, onStatus, INIT_TIMEOUT_MS);
+      await request<null>({ type: 'init' }, status, INIT_TIMEOUT_MS);
     } catch (err) {
       if (err instanceof JavaRunCancelledError) throw err;
       workerFailed = true;
       worker?.terminate();
       worker = null;
       const runtime = await import('./cheerpjRuntime');
-      await runtime.ensureRuntime(onStatus);
+      await runtime.ensureRuntime(status);
     }
   });
 }
@@ -280,18 +297,23 @@ export async function compileAndRunCases(
   const classError = assertPublicMain(source, entryClass);
   if (classError) return stdins.map(() => compileFail(classError));
   return enqueue(async () => {
+    if (!(await assertJavaRuntimeOnlineAsync())) {
+      const fail = compileFail(JAVA_RUNTIME_OFFLINE_MESSAGE);
+      return stdins.map(() => fail);
+    }
+    const status = wrapJavaRuntimeStatus(onStatus);
     if (workerFailed) {
-      return fallbackCompileCases({ source, entryClass, stdins, onStatus });
+      return fallbackCompileCases({ source, entryClass, stdins, onStatus: status });
     }
     try {
       return await request<RunResult[]>(
         { type: 'compile-run-cases', source, entryClass, stdins },
-        onStatus,
+        status,
       );
     } catch (err) {
       if (err instanceof JavaRunCancelledError) throw err;
       if (workerFailed) {
-        return fallbackCompileCases({ source, entryClass, stdins, onStatus });
+        return fallbackCompileCases({ source, entryClass, stdins, onStatus: status });
       }
       throw err;
     }

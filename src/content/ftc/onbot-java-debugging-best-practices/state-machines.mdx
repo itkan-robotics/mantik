@@ -8,24 +8,20 @@ groupOrder: 7
 order: 2
 difficulty: intermediate
 duration: 65 min
-description: ""
+description: "Uses enums and switch statements to run multi-step autonomous and teleop sequences."
 ---
 
-### Introduction to State Machines
+### Why state machines
 
-State machines are a powerful way to organize your robot's logic, especially for complex tasks. They help you avoid tangled code and make debugging much easier. In FTC, state machines are often used to control sequences of actions in both autonomous and teleop modes.
+Long `if` chains are hard to follow. A state machine keeps one active step (drive, turn, place) and moves to the next when a condition is met.
 
-### What is a State Machine?
+### What is a state machine?
 
-A state machine is a programming pattern where your code is always in one of several defined 'states.' Each state represents a specific behavior or phase of your robot's operation. The robot transitions between states based on events or conditions. 
+Your code tracks a `currentState` enum. Each loop runs the logic for that state and updates the enum when sensors, timers, or buttons say to advance.
 
+See [gm0: Finite State Machines](https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html).
 
-
-For a general introduction, see [gm0: Finite State Machines](https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html).
-
-### Simple State Machine Example
-
-This example shows a basic state machine for a robot that drives forward, then turns, then stops:
+### Simple drive–turn–stop example
 
 
 
@@ -68,11 +64,11 @@ public class StateMachineOpMode extends LinearOpMode {
 }
 ```
 
-### State Machines with Multiple Subsystems
+### Multiple subsystems
 
-State machines are especially powerful when you need to coordinate multiple subsystems, such as a lift and a pivot, or an intake and a drive. Each subsystem can have its own state, or you can use a single state machine to manage the sequence of actions across subsystems. This approach helps prevent conflicts and ensures that each part of the robot acts at the right time.
+One state machine can sequence lift, pivot, and place steps so mechanisms do not fight each other.
 
-### Example: Coordinating a Lift and a Pivot with a State Machine
+### Lift and pivot example
 
 ```java
 @TeleOp
@@ -136,11 +132,11 @@ public class MultiSubsystemStateMachineOpMode extends LinearOpMode {
 }
 ```
 
-### Debugging with State Machines
+### Debugging with states
 
-State machines make it easier to pinpoint where logic fails. By reporting the current state with telemetry, you can quickly see what your robot is doing and why. If something goes wrong, you know which state to investigate.
+Log `currentState` on telemetry every loop. When behavior stalls, you know which case to inspect.
 
-### Telemetry for State Debugging
+### State telemetry
 
 ```java
 telemetry.addData("Current State", currentState);
@@ -148,7 +144,7 @@ telemetry.addData("Left Encoder", leftMotor.getCurrentPosition());
 telemetry.update();
 ```
 
-### Best Practices for State Machine Design
+### State machine tips
 
 - Keep each state simple and focused on one task.
 - Use enums for state names to avoid typos and improve readability.

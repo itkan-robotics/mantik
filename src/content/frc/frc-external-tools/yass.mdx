@@ -8,14 +8,12 @@ groupOrder: 9
 order: 5
 difficulty: intermediate
 duration: 30 min
-description: ""
+description: YASS utilities for mechanism control—when teams use them alongside WPILib and how to adopt pieces safely.
 ---
 
 ### What is YASS?
 
-YASS (Yet Another Software Suite) is a collection of libraries designed to simplify FRC robot programming. Its goal is to make advanced features like swerve drive, mechanism control, and vision integration accessible to all teams, regardless of experience level. YASS promotes a philosophy of "mastering robot programming in days, not years."
-
-
+YASS (Yet Another Software Suite) bundles libraries for swerve, mechanisms, and vision so teams can adopt common patterns without writing everything from scratch.
 
 The suite includes:
 
@@ -33,9 +31,7 @@ Learn more: [YASS Official Website](https://yetanothersoftwaresuite.com/)
 
 ### YAGSL: Swerve Made Easy
 
-YAGSL is a comprehensive swerve drive library that handles the complex math and hardware abstraction for you. It supports nearly every combination of motor controllers, encoders, and gyros via JSON configuration files.
-
-
+YAGSL is a swerve library with JSON configuration for motors, encoders, and gyros.
 
 **Key Features:**
 
@@ -53,9 +49,7 @@ Learn more: [YAGSL Documentation](https://yagsl.gitbook.io/yagsl/) | [YAGSL Exam
 
 ### YAMG: Mechanism Generator
 
-YAMG (Yet Another Mechanism Generator) is a web-based tool that generates production-ready Java code for common mechanisms like elevators, arms, and pivots. You configure your mechanism visually (motor types, gear ratios, limits) and YAMG produces the code for you.
-
-
+YAMG is a web tool that generates command-based Java for elevators, arms, pivots, and similar mechanisms from motor type, gearing, and limits.
 
 **Features:**
 
@@ -73,15 +67,9 @@ Try it: [YAMG Website](https://www.yamgen.com/)
 
 ### YAMS: Mechanism System
 
-YAMS provides a high-level abstraction for mechanisms, making it easy to create complex systems that work in both reality and simulation. It standardizes motor control and sensor feedback.
+YAMS standardizes mechanism control and sensor reads so the same subsystem code can target hardware or simulation with small changes (often a `.simIterate()` call in sim).
 
-
-
-**Key Benefit:** Simulation parity. YAMS allows your code to run in simulation almost exactly as it does on the real robot, often with just a single line of code difference (".simIterate()").
-
-
-
-Learn more: [YAMS Documentation](https://yetanothersoftwaresuite.com/) | [YAMS API](https://yetanothersoftwaresuite.com/)
+[YAMS documentation](https://yetanothersoftwaresuite.com/) | [API](https://yetanothersoftwaresuite.com/)
 
 <RulesBox title="YASS Best Practices" subtitle="Getting the most out of the suite:">
 

@@ -8,14 +8,14 @@ groupOrder: 2
 order: 1
 difficulty: beginner
 duration: 75 min
-description: ""
+description: if, else if, and else; comparing numbers and strings; and combining tests with &&, ||, and !.
 ---
 
-### Introduction to Conditional Statements
+### Conditional statements
 
-Programs often need to make decisions based on conditions. Conditional statements allow your program to execute different code paths depending on whether certain conditions are true or false.
+When a condition is true, Java runs one block of code; when it is false, it can run another. That is how programs react to sensor values, gamepad input, and mode flags.
 
-### Basic If Statement:
+### Basic if statement
 
 ```java
 // Simple conditional statement
@@ -34,9 +34,9 @@ if (batteryLevel > 50) {
 
 ### Code Blocks and Indentation
 
-Conditional statements create **code blocks** enclosed by curly brackets `\{\}`. Code inside blocks should be indented 4 spaces or 1 tab to improve readability.
+The body of an `if` sits inside curly braces `{ }`. Indent the body by four spaces so the structure is easy to read.
 
-### Proper Indentation:
+### Indentation
 
 ```java
 int motorSpeed = 75;
@@ -53,18 +53,18 @@ motorSpeed = 100;
 }
 ```
 
-<RulesBox title="Comparison Operators:" subtitle="Essential Operators for Conditions:">
+<RulesBox title="Comparison operators">
 
-- `&gt;` - Greater than
-- `&gt;=` - Greater than or equal to
-- `&lt;` - Less than
-- `&lt;=` - Less than or equal to
+- `>` - Greater than
+- `>=` - Greater than or equal to
+- `<` - Less than
+- `<=` - Less than or equal to
 - `==` - Equal to
 - `!=` - Not equal to
 
 </RulesBox>
 
-### Comparison Examples:
+### Comparison examples
 
 ```java
 int sensorReading = 255;
@@ -84,9 +84,9 @@ if (sensorReading < 50) {
 
 ### Else Statements
 
-The `else` statement provides an alternative code path when the if condition evaluates to false.
+`else` runs when the `if` condition is false.
 
-### If-Else Example:
+### If-else example
 
 ```java
 int robotPosition = 45;
@@ -107,11 +107,11 @@ if (batteryVoltage >= 12.0) {
 }
 ```
 
-### Multiple Conditions: else if
+### else if
 
-Use `else if` to check multiple conditions in sequence. The first condition that evaluates to true will execute, and the rest will be skipped.
+Chain `else if` to test several conditions in order. The first true branch runs; the rest are skipped.
 
-### Multiple Conditions:
+### Multiple conditions
 
 ```java
 int gameScore = 85;
@@ -129,16 +129,15 @@ if (gameScore == 100) {
 }
 ```
 
-<RulesBox title="Order of Execution:" subtitle="Important Rules:">
+<RulesBox title="Order of execution">
 
-- Conditions are checked from **top to bottom**
-- Only the **first true condition** executes
-- Once a condition is true, **remaining conditions are skipped**
-- Place **most specific conditions first**
+- Conditions are checked from top to bottom.
+- Only the first true branch runs.
+- Put more specific tests before general ones (see FizzBuzz example below).
 
 </RulesBox>
 
-### Execution Order Example:
+### Execution order example
 
 ```java
 int number = 15;
@@ -160,9 +159,9 @@ if (number % 3 == 0 && number % 5 == 0) {
 
 ### Comparing Strings
 
-Strings must be compared using the `.equals()` method, not the `==` operator. The `==` operator compares object references, not the actual text content.
+For `String` values, use `.equals()` to compare characters. `==` checks whether two references point to the same object, which is not what you want for user input or telemetry text.
 
-### String Comparison:
+### String comparison
 
 ```java
 String robotStatus = "active";
@@ -196,9 +195,9 @@ if (robotStatus == "active") {
 
 ### Logical Operators
 
-Combine multiple conditions using logical operators: `&&` (AND), `||` (OR), and `!` (NOT).
+Use `&&` (AND), `||` (OR), and `!` (NOT) to combine boolean expressions.
 
-<LogicalOperators title="Logical Operators:" subtitle="Combining Conditions:">
+<LogicalOperators title="Logical operators">
 
 - `&&` - AND (both conditions must be true)
 - `||` - OR (at least one condition must be true)
@@ -233,7 +232,7 @@ if (!emergencyStop) {
 
 </LogicalOperators>
 
-### Logical Operator Truth Table:
+### Logical operator truth table
 
 ```java
 // Truth table examples

@@ -1,0 +1,269 @@
+package frc.robot;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.FERRYING;
+import frc.robot.commands.ROTATEDRIVETRAIN;
+import frc.robot.commands.SHOOTONTHEFLY;
+import frc.robot.commands.ShooterCommands;
+import frc.robot.commands.TrenchAssistCommand;
+import frc.robot.lib.controller.LogitechController;
+import frc.robot.lib.controller.ThrustmasterJoystick;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
+import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.DriveConstants;
+import frc.robot.subsystems.drive.TunerConstants;
+import frc.robot.subsystems.indexer.IndexerIOTalonFX;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.input.InputSubsystem;
+import frc.robot.subsystems.lights.LightsSubsystem;
+import frc.robot.subsystems.raspberry.PneumaticsConstants;
+import frc.robot.subsystems.raspberry.PneumaticsIORevPH;
+import frc.robot.subsystems.raspberry.PneumaticsSubsystem;
+import frc.robot.subsystems.raspberry.PneumaticsSubsystem.PneumaticPosition;
+import frc.robot.subsystems.roller.IntakeConstants;
+import frc.robot.subsystems.roller.RollerIOTalonFXS;
+import frc.robot.subsystems.roller.RollerSubsystem;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.flywheel.FlywheelSubsystem;
+import frc.robot.subsystems.shooter.hood.HoodIOTalonFXS;
+import frc.robot.subsystems.shooter.hood.HoodSubsystem;
+import frc.robot.subsystems.shooter.targeting.TargetingSubsystem;
+import frc.robot.subsystems.shooter.turret.TurretIOTalonFX;
+import frc.robot.subsystems.shooter.turret.TurretSubsystem;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
+
+public class RobotContainer {
+
+  private final double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
+  private final double maxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+
+  private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(0);
+
+  private final ThrustmasterJoystick rightDriveController = new ThrustmasterJoystick(1);
+
+  private final LogitechController operatorController = new LogitechController(2);
+
+  private final SwerveRequest.FieldCentric driveRequest =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(maxSpeed * 0.05)
+          .withRotationalDeadband(maxAngularRate * 0.025)
+          .withDriveRequestType(DriveRequestType.Velocity);
+
+  // subsystems
+
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  public final ClimberSubsystem climber = new ClimberSubsystem(new ClimberIOTalonFX());
+
+  public final RollerSubsystem roller = new RollerSubsystem(new RollerIOTalonFXS());
+
+  public final IndexerSubsystem indexer = new IndexerSubsystem(new IndexerIOTalonFX());
+
+  public final PneumaticsSubsystem pneumatics = new PneumaticsSubsystem(new PneumaticsIORevPH());
+
+  public final TurretSubsystem turret = new TurretSubsystem(new TurretIOTalonFX());
+
+  public final HoodSubsystem hood = new HoodSubsystem(new HoodIOTalonFXS());
+
+  public final FlywheelSubsystem flywheel = new FlywheelSubsystem(new FlywheelIOTalonFX());
+
+  public final TargetingSubsystem targeting = new TargetingSubsystem(drivetrain);
+
+  public final InputSubsystem input = new InputSubsystem();
+  public final LightsSubsystem lights = new LightsSubsystem();
+
+  public final Auto auto;
+
+  public final VisionSubsystem vision =
+      new VisionSubsystem(
+          drivetrain::filterAndAddMeasurements,
+          new VisionIOLimelight("limelight-climber", drivetrain::getHeading),
+          new VisionIOLimelight("limelight-turret", drivetrain::getHeading),
+          new VisionIOLimelight("limelight-right", drivetrain::getHeading),
+          new VisionIOLimelight("limelight-left", drivetrain::getHeading));
+
+  PneumaticHub pneumaticHub;
+  Compressor compressor;
+
+  public RobotContainer() {
+
+    configureBindings();
+
+    auto = new Auto(this);
+
+    drivetrain.setDefaultCommand(
+        drivetrain.applyRequest(
+            () -> {
+              ChassisSpeeds speeds = getDriverChassisSpeeds();
+
+              return driveRequest
+                  .withVelocityX(speeds.vxMetersPerSecond)
+                  .withVelocityY(speeds.vyMetersPerSecond)
+                  .withRotationalRate(speeds.omegaRadiansPerSecond);
+            }));
+
+    pneumaticHub = new PneumaticHub(PneumaticsConstants.pneumaticHubId);
+    compressor = new Compressor(9, PneumaticsModuleType.REVPH);
+
+    pneumaticHub.enableCompressorAnalog(
+        PneumaticsConstants.minPressure, PneumaticsConstants.maxPressure);
+
+    compressor.enableAnalog(PneumaticsConstants.minPressure, PneumaticsConstants.maxPressure);
+    // turret.setDefaultCommand(turret.goToAngleCommand(targeting.getIdealTurretAngle()));
+
+    // turret.setDefaultCommand(turret.setVoltage(0));
+  }
+
+  private void configureBindings() {
+
+    rightDriveController
+        .getLeftTopLeft()
+        .onTrue(
+            Commands.runOnce(
+                () ->
+                    drivetrain.resetPose(
+                        new Pose2d(
+                            drivetrain.getRobotPose().getX(),
+                            drivetrain.getRobotPose().getY(),
+                            drivetrain.getOperatorForwardDirection())),
+                drivetrain));
+
+    // operatorController
+    //     .getLeftTrigger()
+    //     .whileTrue(climber.setVoltage(ClimberConstants.climberUpVoltage));
+    // operatorController
+    //     .
+
+    //     .whileTrue(climber.setVoltage(ClimberConstants.climberDownVoltage));
+
+    // operatorController.getDPadUp().onTrue(pneumatics.toggleRaspberry()); // v (its a secret)
+
+    // rightDriveController.getTrigger().whileTrue(roller.setVoltage(8));
+
+    // // operatorController.getB().onTrue(pneumatics.toggleRaspberry2());
+
+    // operatorController.getX().whileTrue(roller.setVoltage(-12.0));
+
+    // operatorController.getLeftBumper().whileTrue(indexer.setVoltages(6, -6));
+
+    // operatorController.getY().whileTrue(indexer.indexToShooter());
+
+    // operatorController
+    //     .getDPadLeft()
+    //     .onTrue(pneumatics.setIntakePosition(PneumaticsSubsystem.PneumaticPosition.FORWARD));
+
+    // operatorController
+    //     .getDPadRight()
+    //     .onTrue(pneumatics.setIntakePosition(PneumaticsSubsystem.PneumaticPosition.REVERSE));
+
+    // operatorController
+    //     .getRightTrigger()
+    //     .whileTrue(ShooterCommands.HubShot(flywheel, indexer, turret, hood, 65));
+
+    operatorController
+        .getLeftTrigger()
+        .whileTrue(new ROTATEDRIVETRAIN(hood, targeting, flywheel, indexer, drivetrain));
+
+    // operatorController
+    //     .getA()
+    //     .whileTrue(ShooterCommands.holdToShoot(flywheel, hood, indexer, targeting));
+
+    // operatorController.getA().onTrue(hood.setHoodAngle(Rotation2d.fromRotations(0.025)));
+    // operatorController.getB().onTrue(hood.setHoodAngle(Rotation2d.fromRotations(-0.064)));
+    // operatorController.getLeftBumper().onTrue(turret.goToAngleCommand(() ->
+    // Rotation2d.fromRotations(0)));
+
+    // operatorController
+    //     .getRightBumper()
+    //     .onTrue(turret.goToAngleCommand(() -> Rotation2d.fromRotations(-0.1)));
+    // operatorController.getStart().whileTrue(flywheel.setShooterRPMCommand(2000));
+
+    // comp controls - driver
+    rightDriveController.getTrigger().whileTrue(roller.setVoltage(8));
+    leftDriveController.getTrigger().onTrue(pneumatics.toggleIntake());
+
+    operatorController
+        .getLeftBumper()
+        .whileTrue(ShooterCommands.EvilFeed(flywheel, indexer, hood, maxAngularRate));
+    operatorController
+        .getRightBumper()
+        .whileTrue(ShooterCommands.EvilFeed(flywheel, indexer, hood, maxAngularRate));
+
+    leftDriveController
+        .getBottomThumb()
+        .whileTrue(
+            new TrenchAssistCommand(
+                () -> getXVelocity(), () -> getYVelocity(), () -> getThetaVelocity(), drivetrain));
+    // comp controls - operator
+    // operatorController
+    //     .getLeftTrigger()
+    //     .whileTrue(new SHOOTONTHEFLY(turret, hood, targeting, flywheel, indexer));
+    operatorController
+        .getRightTrigger()
+        .whileTrue(ShooterCommands.HubShot(flywheel, indexer, turret, hood, 65));
+    // operatorController
+
+    // operatorController.getLeftBumper().onTrue(Commands.runOnce(() -> targeting.isFerrying(true),
+    // targeting));
+    // operatorController.getRightBumper().onTrue(Commands.runOnce(() ->
+    // targeting.isFerrying(false), targeting));
+
+    // operatorController.getDPadUp().onTrue(getAutonomousCommand()); //move shot up
+    // operatorController.getDPadLeft().onTrue(getAutonomousCommand()); //move shot left
+    // operatorController.getDPadRight().onTrue(getAutonomousCommand()); //move shot right
+    // operatorController.getDPadDown().onTrue(getAutonomousCommand()); //move shot down
+
+    operatorController.getY().onTrue(pneumatics.toggleIntake());
+    operatorController.getX().onTrue(Commands.sequence(
+            pneumatics.setIntakePosition(PneumaticPosition.FORWARD),
+            Commands.waitSeconds(0.75),
+            roller.setVoltage(IntakeConstants.dropvoltage)));
+            
+    operatorController.getB().whileTrue(indexer.setVoltages(4, -4)); // in case
+    operatorController.getA().whileTrue(roller.setVoltage(-12.0)); // in case
+
+    // #region Lights Suppliers
+    lights.isAiming = () -> operatorController.getA().getAsBoolean();
+    lights.isShooting = () -> operatorController.getBack().getAsBoolean();
+    lights.isIntaking = () -> pneumatics.getIntakeState() == Value.kForward;
+  }
+
+  private ChassisSpeeds getDriverChassisSpeeds() {
+    return new ChassisSpeeds(getXVelocity(), getYVelocity(), getThetaVelocity());
+  }
+
+  private double getXVelocity() {
+    return DriveConstants.MAX_TRANSLATIONAL_SPEED.in(MetersPerSecond)
+        * -Math.pow(leftDriveController.getYAxis().get(), 3);
+  }
+
+  private double getYVelocity() {
+    return DriveConstants.MAX_TRANSLATIONAL_SPEED.in(MetersPerSecond)
+        * -Math.pow(leftDriveController.getXAxis().get(), 3);
+  }
+
+  private double getThetaVelocity() {
+    return DriveConstants.MAX_ROTATIONAL_SPEED.in(RadiansPerSecond)
+        * -Math.pow(rightDriveController.getXAxis().get(), 3);
+  }
+
+  public Command getAutonomousCommand() {
+    return auto.getAutoCommand();
+  }
+}

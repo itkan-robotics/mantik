@@ -8,16 +8,16 @@ groupOrder: 12
 order: 3
 difficulty: advanced
 duration: 30 min
-description: ""
+description: Waypoint following with pose error, separate translation and heading PID, and practical tuning tips.
 ---
 
 ### Why Build Your Own Path Follower?
 
-While libraries like Road Runner and PedroPathing are powerful, building your own path following algorithm helps you understand the math and control theory behind autonomous navigation. It also lets you customize behavior for your robot's unique needs.
+Libraries hide a lot of detail. A small custom follower teaches how pose error turns into motor power and makes it easier to debug when auto drifts off the path.
 
 ### Core Concepts: Poses, Paths, and Controllers
 
-A path follower works by generating a sequence of target poses (x, y, heading) along a path. At each control loop, the robot calculates the error between its current pose and the target pose, then uses PIDF controllers to generate motor commands that minimize this error. Typically, you use one PIDF controller for translation (distance) and one for rotation (heading).
+Store waypoints as target poses. Each loop, compare the robot pose from odometry to the active waypoint. Use one PID (or PIDF) on distance to the target and one on heading error, then mix outputs into drive commands. Advance to the next waypoint when both errors fall below thresholds.
 
 ### Basic Structure of a Custom Path Follower
 
@@ -51,9 +51,9 @@ public double angleWrap(double angle) {
 
 ### Tuning and Practical Tips
 
-- Tune your PIDF controllers for smooth, accurate following.
-- Use odometry or localization for accurate pose estimation.
-- Test with simple paths before trying complex trajectories.
-- Add feedforward terms for better performance at high speeds.
-- Visualize your robot's path and errors using telemetry or FTC Dashboard.
+- Tune translation and heading PID separately on a single waypoint before chaining many points.
+- Good pose estimates require calibrated odometry (or fusion); fix localization before chasing follower gains.
+- Start with a straight line and a 90° turn, then add curves.
+- At higher speeds, add velocity feedforward so PID does less work.
+- Plot error and pose on telemetry or FTC Dashboard while testing.
 

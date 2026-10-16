@@ -1,0 +1,102 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Frc2026PublicReposTable from '@/components/islands/Frc2026PublicReposTable';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const dataPath = join(process.cwd(), 'public', 'data', 'frc-2026-public-repositories.json');
+
+type Row = {
+  teamName: string;
+  teamNumber: number;
+  normEpa: number | null;
+  language: string;
+  linkToCodebases: string;
+};
+
+let rows: Row[] = [];
+let meta = {
+  generatedAt: '',
+  rowCount: 0,
+  repoCount: 0,
+  methodology: '',
+  referenceSpreadsheet: '',
+  chiefDelphiThread: '',
+};
+
+try {
+  const raw = await readFile(dataPath, 'utf8');
+  const data = JSON.parse(raw) as {
+    generatedAt: string;
+    rowCount: number;
+    repoCount: number;
+    methodology?: string;
+    referenceSpreadsheet?: string;
+    chiefDelphiThread?: string;
+    rows: Row[];
+  };
+  rows = data.rows ?? [];
+  meta = {
+    generatedAt: data.generatedAt,
+    rowCount: data.rowCount ?? rows.length,
+    repoCount: data.repoCount ?? 0,
+    methodology: data.methodology,
+    referenceSpreadsheet: data.referenceSpreadsheet,
+    chiefDelphiThread: data.chiefDelphiThread,
+  };
+} catch {
+  /* build without data file — run npm run fetch:frc-2026-repos */
+}
+
+const csvUrl = '/data/frc-2026-public-repositories.csv';
+const currentPath = '/frc/2026-public-repositories';
+---
+
+<BaseLayout
+  title="2026 FRC public code repositories"
+  description="Searchable list of public 2026 FRC robot code on GitHub, with Statbotics norm EPA and download as CSV."
+  currentPath={currentPath}
+  showSidebar={false}
+>
+  <article class="lesson-content frc-repos-page" data-pagefind-body>
+    <h1>2026 FRC public code repositories</h1>
+    <p>
+      Community index of public <strong>2026</strong> robot codebases on GitHub, built with the same
+      idea as
+      <a
+        href="https://www.chiefdelphi.com/t/i-actually-scraped-github-to-get-3310-public-2025-code-repos/505706"
+        >Gavin0&apos;s 2025 repo scrape</a
+      >: GitHub code search on <code>.wpilib/wpilib_preferences.json</code> (
+      <code>projectYear: &quot;2026&quot;</code>), per-team supplemental searches, and Chief Delphi
+      release threads. Each team has one primary 2026 robot repo (name heuristics; org/description
+      checked so wpilib <code>teamNumber</code> jokes and minibot repos do not attach to the wrong
+      team; 2025 and non-robot repos removed). Team nicknames and <strong>norm EPA</strong> come from Statbotics (
+      <a href="https://api-statbotics.popcornpenguins.com/docs">API mirror</a> when
+      <code>api.statbotics.io</code> is down). Refresh with{' '}
+      <code>npm run fetch:frc-2026-repos:statbotics</code>. For
+      coverage beyond GitHub&apos;s first 1,000 code-search hits, run the full fetch (includes
+      per-team supplemental search).
+    </p>
+    <p>
+      <a href="/trenches">The Trenches</a> — general FRC programming trivia; today&apos;s run uses one cached{' '}
+      <code>RobotContainer.java</code> or <code>Robot.java</code> from this list as a scroll backdrop only (
+      <code>npm run fetch:dive-teams</code> to refresh snapshots).
+    </p>
+    <p>
+      Reference sheet:
+      <a
+        href="https://docs.google.com/spreadsheets/d/1ZOaepojGhez6A-37ZMln_O9KbCgQb--DadE6ziMTAzM/edit?gid=408396042"
+        >2025 public repositories (Google Sheets)</a
+      >.
+    </p>
+    {rows.length === 0 ? (
+      <p class="rules-box">
+        Dataset not built yet. Run <code>npm run fetch:frc-2026-repos</code> locally (requires{' '}
+        <code>gh</code> auth), then rebuild the site.
+      </p>
+    ) : (
+      <Frc2026PublicReposTable client:load rows={rows} meta={meta} csvUrl={csvUrl} />
+    )}
+  </article>
+</BaseLayout>
+

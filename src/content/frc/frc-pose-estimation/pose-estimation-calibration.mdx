@@ -8,20 +8,16 @@ groupOrder: 8
 order: 5
 difficulty: advanced
 duration: 65 min
-description: ""
+description: Wheel diameter, track width, camera calibration, and std dev tuning for pose estimators.
 ---
 
 ### Calibration: The Foundation of Accuracy
 
-Even the best fusion algorithm can't overcome poor sensor calibration. Your pose estimation is only as good as your sensor measurements. Calibration ensures your sensors report accurate values, which directly translates to accurate pose estimation.
-
-
-
-Think of calibration as teaching your robot to measure correctly. If your encoders think the wheels are a different size than they actually are, every distance calculation will be wrong. If your gyro has an offset, every heading will be wrong. These errors compound over time, making accurate pose estimation impossible.
+Fusion cannot fix wrong wheel diameter, swapped module offsets, or a camera mount measured with a tape measure on carpet. Calibrate hardware constants before chasing filter math.
 
 ### Calibrating Wheel Diameters
 
-Wheel diameter directly affects distance calculations. A small error in diameter measurement creates a systematic error in every distance measurement. Use calipers to measure the actual wheel diameter precisely—don't rely on manufacturer specifications, as wheels can compress or wear over time.
+Measure compressed wheel diameter on the robot (calipers), not only the part number on the box. Wrong diameter scales every odometry distance.
 
 ### Configuring Encoder Distance Per Pulse
 
@@ -42,7 +38,7 @@ m_encoder.setDistancePerPulse(kDistancePerPulse);
 
 ### Calibrating Track Width
 
-Track width (the distance between left and right wheels) affects rotation calculations. For swerve drives, you need both track width and wheelbase. Measure these carefully using precise tools—even a small error causes significant heading errors over time.
+Track width and wheelbase set how turns translate to X/Y. Measure center-to-center in meters on the real chassis.
 
 ### Testing Calibration Accuracy
 
@@ -62,7 +58,7 @@ public void testCalibration(double knownDistanceMeters) {
 
 ### Vision System Calibration
 
-Vision systems require camera calibration to correct for lens distortion and measure accurate distances. This is typically done using calibration tools provided by your vision library (PhotonVision, Limelight, etc.). The calibration process captures images of a known pattern and calculates the camera's intrinsic parameters.
+Run the camera calibration workflow in PhotonVision, Limelight, or WPILib tools so focal length and distortion match your lens. Bad intrinsics make range and pose wrong even when tags detect cleanly.
 
 ### Validating Vision Measurements
 
@@ -94,7 +90,7 @@ public void testVisionAccuracy(Pose2d knownActualPose) {
 
 ### Tuning Fusion Parameters
 
-The standard deviation parameters in your PoseEstimator control how much weight each measurement type receives. These are tuning parameters that you adjust based on your sensor accuracy and field conditions.
+`stateStdDevs` and `visionStdDevs` (and runtime `setVisionMeasurementStdDevs`) encode how much you trust odometry vs vision. Lower numbers mean more trust.
 
 ### Adjusting Standard Deviations
 
@@ -110,7 +106,7 @@ var visionStdDevs = VecBuilder.fill(0.3, 0.3, 0.3);
 
 ### Testing and Validation
 
-Regular testing is essential to ensure your pose estimation remains accurate. Test at multiple field positions, under different conditions, and monitor for drift or errors. Use SmartDashboard to visualize your pose estimate and compare it to known positions.
+Drive known distances and compare odometry to a tape measure. Park on a tag and compare vision pose to the layout. Log X, Y, and heading on SmartDashboard during practice.
 
 ### Pose Accuracy Testing
 

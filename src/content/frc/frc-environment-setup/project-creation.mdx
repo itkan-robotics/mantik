@@ -8,12 +8,12 @@ groupOrder: 1
 order: 4
 difficulty: beginner
 duration: 30 min
-description: ""
+description: Create a new WPILib project in VS Code with the Timed Robot or Command Robot template.
 ---
 
 ### Overview
 
-This guide covers creating a new WPILib project in VS Code. WPILib projects can use two main templates: **Timed Robot** and **Command Robot**. Timed Robot is simpler and uses periodic methods that run at fixed intervals. Command Robot uses a command-based architecture that organizes code into reusable commands and subsystems.
+Use the WPILib project wizard in VS Code to generate a **Timed Robot** or **Command Robot** project. Timed Robot uses periodic methods in `Robot.java`. Command Robot adds folders for commands and subsystems.
 
 ### Prerequisites
 
@@ -31,7 +31,7 @@ Before creating a project, ensure you have:
 
 ### Creating a Timed Robot Project
 
-The Timed Robot template provides a simple structure with periodic methods that run at fixed intervals. This template is good for beginners and simpler robots. The template includes a `Robot.java` file with all lifecycle methods pre-defined.
+Timed Robot fits simpler robots and early lessons. The template ships with a `Robot.java` file that already defines the lifecycle methods.
 
 ### Timed Robot Video Tutorial
 
@@ -106,7 +106,7 @@ Open `Robot.java` to see the template structure. The Timed Robot template includ
 
 ### Creating a Command Robot Project
 
-The Command Robot template uses a command-based architecture. This organizes code into reusable commands and subsystems, making it easier to manage complex robots. The Command Robot framework builds upon the TimedRobot base class by introducing a structure that allows for modular and reusable code.
+Command Robot organizes code into subsystems and commands. It still extends `TimedRobot`, but most logic lives outside `Robot.java`.
 
 ### Command Robot Video Tutorial
 
@@ -177,9 +177,9 @@ The Command Robot template uses a different architecture:
 
 ### Choosing Between Templates
 
-Choose **Timed Robot** if you're new to FRC programming or building a simple robot. Choose **Command Robot** if you're building a complex robot with multiple mechanisms that need to work together, or if you want better code organization and reusability.
+Use **Timed Robot** for a first project or a small mechanism count. Use **Command Robot** when several mechanisms must run at once or you want reusable commands.
 
 ### Next Steps
 
-After creating your project, you can start adding hardware configuration, writing code for your mechanisms, and testing your robot. Make sure to configure your team number in `wpilib.json` if you haven't already.
+Set your team number in `wpilib.json`, then add hardware configuration and mechanism code.
 

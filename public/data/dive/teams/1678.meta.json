@@ -1,0 +1,16 @@
+{
+  "teamNumber": 1678,
+  "teamName": "Citrus Circuits",
+  "normEpa": 1872,
+  "linkToCodebases": "frc1678/C2026-Public",
+  "chosenFile": "src/main/java/frc/robot/Robot.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 309,
+  "containerFile": null,
+  "containerLineCount": 0,
+  "lineCount": 309,
+  "sha": "1adf479d96cd2ee42f370739e4e8d71a9f0554b5",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/frc1678/C2026-Public/blob/main/src/main/java/frc/robot/Robot.java",
+  "fetchedAt": "2026-10-16T20:57:40.800Z"
+}

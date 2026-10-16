@@ -6,6 +6,7 @@ import CodeTab from '@/components/blocks/CodeTab.astro';
 import CodeTabs from '@/components/blocks/CodeTabs.astro';
 import ExerciseBox from '@/components/blocks/ExerciseBox.astro';
 import LinkGrid from '@/components/blocks/LinkGrid.astro';
+import HomeContributors from '@/components/blocks/HomeContributors.astro';
 import DataTypesGrid from '@/components/blocks/DataTypesGrid.astro';
 import LogicalOperators from '@/components/blocks/LogicalOperators.astro';
 import ContentTable from '@/components/blocks/ContentTable.astro';
@@ -24,6 +25,7 @@ export const components: MDXComponents = {
   ExerciseBox,
   JavaPlayground,
   LinkGrid,
+  HomeContributors,
   DataTypesGrid,
   LogicalOperators,
   ContentTable,

@@ -16,6 +16,10 @@ import {
 import type { JpTimings } from './timing';
 import { nowMs } from './timing';
 import type { RunResult, StatusFn } from './types';
+import {
+  JAVA_RUNTIME_OFFLINE_MESSAGE,
+  maybeNotifyJavaRuntimeUnavailable,
+} from './javaRuntimeToast';
 
 /**
  * Browser Java, built around one long-lived compiler process.
@@ -73,7 +77,11 @@ function loadScript(src: string): Promise<void> {
     script.src = src;
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Could not load the Java runtime from the CheerpJ CDN.'));
+    script.onerror = () => {
+      const err = new Error('Could not load the Java runtime from the CheerpJ CDN.');
+      maybeNotifyJavaRuntimeUnavailable(err);
+      reject(err);
+    };
     document.head.appendChild(script);
   });
 }
@@ -234,7 +242,9 @@ export async function ensureRuntime(onStatus?: StatusFn): Promise<void> {
 
         const g = globals();
         if (typeof g.cheerpjInit !== 'function') {
-          throw new Error('CheerpJ loaded, but cheerpjInit is missing.');
+          const err = new Error('CheerpJ loaded, but cheerpjInit is missing.');
+          maybeNotifyJavaRuntimeUnavailable(err);
+          throw new Error(JAVA_RUNTIME_OFFLINE_MESSAGE);
         }
         const initStarted = nowMs();
         const preload = preloadOption();

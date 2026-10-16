@@ -8,26 +8,32 @@ groupOrder: 10
 order: 1
 difficulty: beginner
 duration: 10 min
-description: ""
+description: What version control does, why teams use it, and how Git snapshots fit into robot software.
 ---
 
-### What is Version Control?
+### What version control is
 
-Version control is a system that tracks changes to files over time, allowing you to recall specific versions later. Think of it as a time machine for your code that saves snapshots of your work at different points.
+Version control records changes to files over time. You can return to an older snapshot, see who changed what, and work in parallel without copying folders by hand.
 
-### Key Concepts
+### What you get from it
 
-Version control tracks file changes and maintains a history of all modifications. It enables collaboration between multiple developers by allowing them to work on the same project simultaneously. The system allows you to undo mistakes and revert to previous versions when something goes wrong. It also provides a backup system for your code, ensuring that your work is never lost. Version control is essential for team-based software development and is used by virtually every professional development team.
+- History of every committed change
+- Branches for experiments without breaking main
+- Undo and compare when something stops working
+- A shared remote (GitHub) so the whole team uses one source of truth
 
-<RulesBox title="Why Version Control Matters for FTC">
+<RulesBox title="Why FTC and FRC teams use it">
 
-Version control is especially important for FTC teams because it enables multiple team members to work on robot code simultaneously, track changes to autonomous routines and teleop programs, revert to working code if new changes break functionality, maintain a history of robot improvements over the season, and collaborate on code reviews and improvements.
+- Several students can edit robot code without emailing zip files
+- Autonomous and teleop changes stay traceable through the season
+- You can roll back to code that worked at the last event
+- Pull requests give mentors a place to review before merge
 
 </RulesBox>
 
-### Understanding Version Control Systems
+### How Git fits in
 
-Version control systems work by creating a complete history of changes to your files. Every time you make a change and commit it, the system stores a snapshot of your entire project at that moment. This creates a timeline of your development process, allowing you to see exactly what changed, when it changed, and who made the changes. Modern version control systems like Git are distributed, meaning every team member has a complete copy of the project history, making collaboration much more efficient and reliable.
+Each **commit** is a snapshot of the project. Git stores the full history locally. When you add a **remote** on GitHub, you push and pull those snapshots so everyone stays aligned. Git is the tool; GitHub is hosting and collaboration on top of Git.
 
 <LinkGrid links={[
     {"label":"GitHub Guides: Getting Started","url":"https://guides.github.com/activities/hello-world/"},

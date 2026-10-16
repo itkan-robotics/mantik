@@ -1,0 +1,16 @@
+{
+  "teamNumber": 9128,
+  "teamName": "ITKAN Robotics",
+  "normEpa": 1849,
+  "linkToCodebases": "itkan-robotics/RobotCode2026Public",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 158,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 329,
+  "lineCount": 329,
+  "sha": "5bdb0516b32a3830576695ccfe98a18a094b008e",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/itkan-robotics/RobotCode2026Public/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:57:45.837Z"
+}

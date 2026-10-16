@@ -8,18 +8,16 @@ groupOrder: 2
 order: 4
 difficulty: intermediate
 duration: 70 min
-description: ""
+description: Catching exceptions with try/catch/finally so bad input or hardware glitches do not end the whole program.
 ---
 
-### What are Exceptions?
+### Exceptions
 
-Exceptions are errors that occur during program execution that can disrupt the normal flow of your program. In robotics, exceptions might happen when sensors fail, motors disconnect, or invalid data is received. Java provides try-catch blocks to handle these errors gracefully instead of crashing your robot program.
+An exception is a runtime problem that stops normal control flow: bad input, an out-of-range index, division by zero, and similar cases. On a robot, that might mean a disconnected sensor or malformed network data.
 
-### Why Use Try-Catch?
+`try` / `catch` lets you handle the problem in place instead of letting the whole program stop.
 
-In FRC robotics, your program must be robust and handle unexpected situations. Without proper exception handling, a single sensor failure could crash your entire autonomous routine. Try-catch blocks allow your robot to continue operating even when errors occur, providing fallback behavior and error recovery.
-
-### Basic Try-Catch Structure:
+### Basic try-catch
 
 ```java
 // Basic try-catch syntax
@@ -45,9 +43,9 @@ System.out.println("Program continues...");
 
 ### Common Java Exceptions
 
-Understanding common exceptions helps you write better error handling code. Here are the most frequent exceptions you'll encounter in robot programming:
+These types show up often in robot and lesson code:
 
-### Common Exception Examples:
+### Common exception examples
 
 ```java
 // 1. NumberFormatException - Invalid string to number conversion
@@ -77,9 +75,9 @@ try {
 
 ### Multiple Catch Blocks
 
-You can have multiple catch blocks to handle different types of exceptions differently. This allows for specific error handling based on the type of problem that occurred.
+You can list several `catch` blocks so each exception type gets its own response.
 
-### Multiple Catch Example:
+### Multiple catch blocks
 
 ```java
 import java.util.Scanner;
@@ -121,9 +119,9 @@ public class RobotSensorReader {
 
 ### The Finally Block
 
-The `finally` block contains code that always executes, whether an exception occurs or not. This is perfect for cleanup operations like stopping motors, closing files, or releasing resources.
+`finally` runs after the `try` / `catch`, whether or not an exception occurred. Use it for cleanup such as stopping motors or closing a file.
 
-### Finally Block Example:
+### Finally example
 
 ```java
 public class RobotMotorTest {
@@ -171,14 +169,13 @@ public class RobotMotorTest {
 }
 ```
 
-<RulesBox title="Exception Handling Best Practices:" subtitle="Guidelines for Robust Robot Code:">
+<RulesBox title="Exception handling habits">
 
-- **Be Specific:** Catch specific exception types rather than generic Exception
-- **Log Useful Information:** Include context about what the robot was doing
-- **Provide Fallbacks:** Have backup plans when primary systems fail
-- **Don't Ignore Exceptions:** Always handle or log exceptions appropriately
-- **Use Finally for Cleanup:** Stop motors and release resources in finally blocks
-- **Fail Gracefully:** Allow robot to continue operating when possible
+- Catch specific types before a broad `Exception` when you can.
+- Log or print enough context to reproduce the failure.
+- Prefer a safe fallback (last good sensor value, zero motor output) over an empty catch.
+- Use `finally` for cleanup that must run every time.
+- On the robot, decide whether to retry, disable a subsystem, or stop entirely.
 
 </RulesBox>
 

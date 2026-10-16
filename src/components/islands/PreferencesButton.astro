@@ -19,3 +19,28 @@
 >
   <span class="prefs-toggle-glyph" aria-hidden="true">Aa</span>
 </button>
+
+<script>
+  import { hasActiveTeamColors, loadPrefs, type Prefs } from '@/lib/prefs';
+
+  function reflectToggleTeam(prefs: Prefs) {
+    document.querySelectorAll<HTMLButtonElement>('[data-prefs-toggle]').forEach((btn) => {
+      const active = hasActiveTeamColors(prefs) && prefs.teamNumber != null;
+      if (active && prefs.teamNumber != null) {
+        btn.setAttribute('aria-label', `Reading preferences, team ${prefs.teamNumber} colors active`);
+        btn.setAttribute('title', `Reading preferences (Team ${prefs.teamNumber})`);
+      } else {
+        btn.setAttribute('aria-label', 'Reading preferences');
+        btn.setAttribute('title', 'Reading preferences');
+      }
+    });
+  }
+
+  function boot() {
+    reflectToggleTeam(loadPrefs());
+  }
+
+  document.addEventListener('mantik:prefs', (e) => reflectToggleTeam((e as CustomEvent<Prefs>).detail));
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>

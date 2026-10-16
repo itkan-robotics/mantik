@@ -8,16 +8,14 @@ groupOrder: 10
 order: 2
 difficulty: intermediate
 duration: 35 min
-description: ""
+description: Test subsystem logic and commands with JUnit and mocks on your development machine.
 ---
 
 ### What is Unit Testing?
 
-Unit testing is the practice of testing individual units of source code to determine if they are fit for use. In the context of FRC, a 'unit' is typically a class, a method, or a subsystem. Unlike integration tests or full robot tests, unit tests run on your development machine (not the roboRIO) and execute in milliseconds.
+A unit test checks one class or method in isolation. Tests run on your laptop—not the roboRIO—and finish in milliseconds.
 
-
-
-Unit testing allows you to verify logic, math, and state transitions without needing a physical robot. This is crucial for catching bugs early, documenting expected behavior, and allowing for safe refactoring. For FRC, it enables testing complex logic like kinematics, state machines, and autonomous sequences before you even have a drivetrain built.
+Use them to verify math, state machines, and command logic without a robot on the field. Passing tests also document expected behavior when you refactor later.
 
 
 
@@ -25,31 +23,21 @@ Learn more: [WPILib: Unit Testing](https://docs.wpilib.org/en/stable/docs/softwa
 
 ### Why Unit Testing is Important
 
-**1. Early Bug Detection:** Catch logic errors, off-by-one errors, and edge cases before deploying code to the robot. This saves valuable battery/practice time.
+**Early bugs:** Catch logic and edge-case errors before deploy.
 
+**Refactoring:** Tests flag behavior that changed when you clean up code.
 
+**Documentation:** A test class shows how a subsystem should respond.
 
-**2. Safe Refactoring:** When you clean up or optimize code, unit tests act as a safety net, ensuring you haven't broken existing functionality.
+**Speed:** `gradlew test` finishes in seconds; deploy takes minutes.
 
-
-
-**3. Documentation:** Tests serve as live documentation. A new member can look at "DrivetrainTest" to understand how the "Drivetrain" class is supposed to behave.
-
-
-
-**4. Faster Feedback Loop:** deploying code takes minutes; running tests takes seconds. This encourages more frequent testing and iteration.
-
-
-
-**5. Testing Hard-to-Reach States:** You can simulate rare error conditions (like a sensor disconnect or max current draw) that are dangerous or difficult to reproduce on a real robot.
+**Rare states:** Mock a disconnected sensor or stalled motor without risking hardware.
 
 ### Testing Frameworks
 
-WPILib projects use **JUnit 5** as the standard testing framework. It provides the structure for writing tests (assertions, test lifecycle methods).
+WPILib projects use **JUnit 5** for assertions and test lifecycle hooks.
 
-
-
-**Mockito** is typically used alongside JUnit. It allows you to create 'mock' objects—fake versions of complex dependencies like motor controllers or sensors. This lets you test your logic in isolation without needing the actual hardware libraries to be active or connected.
+**Mockito** builds fake motor and sensor objects so subsystem tests do not need real hardware.
 
 ### Basic Unit Test Example
 
@@ -79,11 +67,7 @@ public class MathUtilsTest {
 
 ### Testing Subsystems with Mocks
 
-Subsystems often depend on hardware (TalonFX, SparkMax, etc.). To test subsystem logic without hardware, use **Mockito** to mock these dependencies.
-
-
-
-By mocking, you can verify that your subsystem calls the correct methods on the hardware (e.g., "did we tell the motor to set voltage to 12V?") without actually having a motor connected.
+Subsystems depend on hardware types such as `TalonFX` or `SparkMax`. Inject mocks so tests can verify the subsystem called `set` with the expected value without a motor on the bus.
 
 ### Subsystem Test with Mockito
 
@@ -126,11 +110,7 @@ public class IntakeTest {
 
 ### Testing Commands and Time
 
-Commands often involve timing (e.g., "WaitCommand", running for a duration). WPILib's "SimHooks" allows you to control the robot's simulated time, letting you test time-dependent logic instantly.
-
-
-
-You can also simulate the "CommandScheduler" to verify that commands finish when expected or are interrupted correctly.
+Commands that wait on time need simulated clocks. WPILib `SimHooks` advances robot time so a two-second `WaitCommand` can be tested in one test method. Schedule commands through `CommandScheduler` and assert when they finish or cancel.
 
 ### Command and Time Simulation
 

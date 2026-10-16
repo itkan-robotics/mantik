@@ -8,50 +8,50 @@ groupOrder: 10
 order: 10
 difficulty: advanced
 duration: 30 min
-description: ""
+description: reset, revert, stash, rebase, and tags — when to use each and how to avoid losing work.
 ---
 
-### Advanced Version Control Techniques
+### Advanced commands
 
-Advanced Git concepts help teams maintain clean history and handle complex scenarios. This lesson covers undoing changes, stashing, rebasing, and other advanced techniques useful for experienced users.
+These tools fix mistakes, pause work, or tidy history. Use them on branches you own or after the team agrees on policy.
 
-### Key Concepts
+### Undoing commits
 
-Git reset allows you to undo commits and changes at different levels, from keeping changes staged to completely discarding them. Git revert creates new commits that undo previous changes, which is safer for shared repositories. Stashing temporarily saves work without committing, allowing you to switch contexts quickly. Rebasing rewrites commit history for cleaner logs by moving commits to a new base. These advanced techniques require careful use to avoid data loss, so it's important to understand when and how to use them properly.
-
-### Undoing Changes
-
-Use these commands to undo changes safely:
-
-
-
-```java
+```bash
 git reset --soft HEAD~1    # Undo commit, keep changes staged
 git reset --mixed HEAD~1   # Undo commit, unstage changes
 git reset --hard HEAD~1     # Undo commit, discard all changes
-git revert HEAD            # Create new commit that undoes previous
+git revert HEAD            # New commit that undoes previous
 git checkout -- filename   # Discard changes in working directory
 ```
 
-### Stashing Work
+`reset --hard` deletes uncommitted work on those commits. On shared branches, prefer **revert** so history stays safe for everyone.
 
-`Git stash` allows you to save work without committing, which is useful when you need to switch to a different task temporarily. Use `git stash` to save your current work, `git stash pop` to apply and remove the most recent stash, and `git stash list` to view all your stashes. You can apply a specific stash without removing it using `git stash apply`, and remove individual stashes with `git stash drop`. Stashing is particularly useful when you need to pull the latest changes but have uncommitted work that isn't ready to commit yet.
+### Stash
 
-### Rebasing for Clean History
+Save uncommitted work without committing:
 
-Git rebase rewrites commit history by moving commits to a new base, creating a linear history that's easier to follow. Interactive rebasing with `git rebase -i` allows you to squash commits, reorder them, or edit commit messages during the rebase process. Squashing commits combines multiple small commits into one larger commit, while reordering allows you to organize your commit history logically. You can also edit commit messages during rebase to improve clarity and consistency.
+```bash
+git stash
+git stash pop
+git stash list
+```
 
-### Tags and Releases
+Useful when you need to pull but are not ready to commit.
 
-Git tags mark important commits such as competition versions or major milestones in your robot's development. Annotated tags created with `git tag -a v1.0 -m "Competition ready"` include additional metadata and are recommended for important releases. GitHub releases can be created from tags, providing a way to package and distribute specific versions of your robot code. Version your robot code for different competitions to maintain clear separation between competition-ready code and development work. Document release notes for each version to help team members understand what changed and why.
+### Rebase
 
-### Advanced Branching Strategies
+`git rebase` replays your commits on top of another branch for a linear history. `git rebase -i` can squash or reorder commits. Do not rebase commits others already pulled unless the team uses that workflow.
 
-Git flow is a branching strategy that uses feature, develop, release, and hotfix branches to organize development work systematically. Trunk-based development works directly on the main branch, which is simpler but requires more discipline. Feature flags allow for gradual rollouts of new features by enabling or disabling code paths without deploying new versions. Environment-specific branches like dev, staging, and prod help manage code across different deployment environments. Choose your branching strategy based on team size, experience level, and the complexity of your project.
+### Tags
 
-### Mastering Advanced Git for Robotics Teams
+Mark releases or event-ready code:
 
-Advanced Git techniques become valuable as robotics teams grow more experienced and their projects become more complex. Understanding when to use reset versus revert, how to manage work with stashing, and when to rebase versus merge helps teams maintain clean, professional repositories. These skills are particularly important for teams that work on multiple features simultaneously or need to maintain different versions of their robot code for different competitions. The key is to choose the right tool for each situation while always prioritizing code safety and team collaboration.
+```bash
+git tag -a v1.0 -m "Competition ready"
+```
+
+Push tags with `git push --tags`. GitHub **Releases** can attach notes and artifacts.
 
 <LinkGrid links={[
     {"label":"Git Documentation: Advanced Topics","url":"https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified"},

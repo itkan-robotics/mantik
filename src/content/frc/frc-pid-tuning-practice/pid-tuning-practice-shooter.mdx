@@ -8,12 +8,12 @@ groupOrder: 6
 order: 4
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Velocity PID on a flywheel—find kV at 1 r/s, convert units, then add a small kP for disturbances.
 ---
 
 ### Overview
 
-This lesson demonstrates PID tuning for a shooter mechanism using velocity control. Shooters differ from position-controlled mechanisms because they need to maintain a constant speed (RPM) rather than reach a specific position. You'll learn how to tune velocity feedforward (kV) by first using duty cycle mode (kS) to find the value that produces one rotation per second, then copy that to kV. You'll also learn about unit conversions and adding small proportional (kP) control to handle disturbances.
+Shooters run in velocity mode: hold a spin rate, not a position. This lesson finds **kV** (volts per rotation per second) by temporarily tuning **kS** at a 1 r/s setpoint, copies that into kV, converts graph units, sets a match RPM target, and adds a small **kP** when balls or load disturb the wheel.
 
 <RulesBox title="Browser practice">
 
@@ -23,17 +23,17 @@ Open [PID Simulation](/pid-simulation) on Mantik for a zero-install first pass. 
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of shooter velocity control tuning:
+Flywheel velocity tuning:
 
 <YouTubeEmbed id="guKZn1h-oeI" title="PID Practice: Flywheel" />
 
 ### Prerequisites
 
-Ensure AdvantageScope 2026 is installed. If it isn't, download it. Simulation should already be running.
+AdvantageScope 2026 installed; simulation running from the setup lesson.
 
 ### Initial Setup
 
-Enable teleoperated mode (teleop). Turn on live tuning. Open AdvantageScope 2026. Graph velocity (do not graph position, as it interferes with the display). Turn on the tunable numbers button.
+Enable teleop and live tuning. In AdvantageScope, graph **velocity** only (position clutters a flywheel tune). Turn on editable tunables (slider icon by the search bar).
 
 <StepsBox title="Tuning Steps">
 

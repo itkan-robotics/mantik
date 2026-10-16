@@ -8,48 +8,28 @@ groupOrder: 8
 order: 4
 difficulty: advanced
 duration: 70 min
-description: ""
+description: Wire WPILib SwerveDrivePoseEstimator—odometry every loop, vision when tags are valid.
 ---
 
 ### Introduction to Sensor Fusion
 
-Sensor fusion combines odometry and vision-based pose estimation to create a robust, accurate localization system. This lesson covers how to use WPILib's PoseEstimator to fuse odometry measurements with vision corrections.
+Fusion keeps odometry running fast and pulls pose toward vision when a measurement is trustworthy. This lesson uses WPILib `SwerveDrivePoseEstimator`; tank templates use `DifferentialDrivePoseEstimator` the same way.
 
+Examples show structure only—your drivetrain template fills in hardware.
 
+[WPILib: Pose Estimator Documentation](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators)
 
-The code examples below show the general structure and flow for integrating vision with pose estimation. Your team's drivetrain template will have the complete, hardware-specific implementation with all the details needed for your specific robot configuration.
+### Why Fuse?
 
-
-
-Learn more: [WPILib: Pose Estimator Documentation](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#pose-estimators)
-
-### The Power of Sensor Fusion
-
-Vision provides excellent absolute positioning, but it has limitations. Cameras can't always see tags—other robots might block them, lighting might be poor, or the camera might be looking in the wrong direction. Meanwhile, odometry provides continuous updates at 50 Hz, but it drifts over time.
-
-
-
-Sensor fusion combines these complementary strengths. Think of it as having two navigation systems: odometry is your speedometer and compass (always working, but accumulating error), while vision is your GPS (occasionally available, but always accurate when it works). By intelligently combining both, you get continuous, accurate pose estimation that works in all conditions.
+Odometry updates every loop but drifts. Vision is absolute when tags are in view but can drop out behind robots or glare. A pose estimator blends both instead of snapping or ignoring either source.
 
 ### How Fusion Works
 
-WPILib's PoseEstimator uses Kalman filtering principles to optimally combine measurements. Here's the concept:
-
-
-
-**Continuous Odometry Updates** - Every robot loop (50 times per second), odometry provides a pose update based on wheel movement and gyro readings. The estimator uses these for continuous tracking.
-
-
-
-**Periodic Vision Corrections** - When vision detects a tag (10-30 times per second), it provides an absolute pose measurement. The estimator compares this to the current odometry-based estimate and smoothly incorporates the correction.
-
-
-
-**Intelligent Weighting** - The estimator automatically weights measurements based on their uncertainty. High-confidence vision measurements have more influence than low-confidence ones. Odometry confidence decreases over time since the last vision update, naturally giving more weight to fresh vision corrections.
+Each loop: `update()` with gyro and wheel/module data. When vision returns a pose and timestamp, `addVisionMeasurement()`. Standard deviations (`stateStdDevs`, `visionStdDevs`, and per-measurement overrides) tell the filter how much to trust each source.
 
 ### Setting Up the Pose Estimator
 
-The PoseEstimator needs kinematics, sensor readings, and uncertainty parameters. Let's set it up step by step. The kinematics define your robot's geometry, the sensor readings provide initial state, and the uncertainty parameters control how much weight each measurement type receives.
+You need swerve (or diff) kinematics, initial module positions and heading, starting pose, and std dev vectors for state and vision.
 
 ### Defining Kinematics
 
@@ -113,7 +93,7 @@ m_poseEstimator = new SwerveDrivePoseEstimator(
 
 ### Updating with Odometry
 
-Odometry updates happen continuously—every robot loop. This provides the fast, continuous tracking that keeps your pose estimate current even when vision isn't available.
+Call `update` in `periodic()` with fresh gyro heading and module positions.
 
 ### Getting Module Positions
 
@@ -149,11 +129,7 @@ public void updateOdometry() {
 
 ### Adding Vision Measurements
 
-Vision updates are asynchronous—they arrive when tags are detected, not on a fixed schedule. The pose estimator handles this automatically, incorporating vision measurements whenever they're available to correct any drift that has accumulated.
-
-
-
-It's important to validate vision measurements before adding them to the pose estimator. Reject measurements with high ambiguity, measurements from tags that are too far away, or measurements that don't have enough tags detected. This prevents bad measurements from corrupting your pose estimate.
+Vision arrives when the pipeline sees tags—not necessarily every loop. Validate before `addVisionMeasurement`: skip high ambiguity, single tags at long range, or zero-tag estimates.
 
 ### Integrating Vision with Pose Estimator
 
@@ -218,7 +194,7 @@ public void updateVision() {
 
 ### Putting It All Together
 
-In your subsystem's periodic method, you'll update both odometry and vision. The pose estimator automatically handles the fusion, giving you the best possible pose estimate at any moment.
+In `periodic()`, update odometry, then vision if present. Read fused pose from `getEstimatedPosition()`.
 
 ### Complete Periodic Update
 

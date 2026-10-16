@@ -10,6 +10,7 @@
 
 import {
   applyTeamColors,
+  fetchTeamColors,
   isValidTeamNumber,
   sanitizeTeamColors,
   sanitizeTeamStyleVars,
@@ -159,6 +160,15 @@ export function applyPrefs(prefs: Prefs): void {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', theme === 'dark' ? '#161314' : '#fafaf9');
   document.dispatchEvent(new CustomEvent('mantik:prefs', { detail: prefs }));
+}
+
+/** Fetch from FRC Colors API and apply site-wide team theme (prefs drawer + localStorage). */
+export async function applyTeamColorsByNumber(teamNumber: number): Promise<Prefs> {
+  if (!isValidTeamNumber(teamNumber)) {
+    throw new Error('Enter a team number from 1 to 99999.');
+  }
+  const colors = await fetchTeamColors(teamNumber);
+  return setTeamColorsPrefs(teamNumber, colors);
 }
 
 export function setTeamColorsPrefs(teamNumber: number, teamColors: TeamColorCache): Prefs {

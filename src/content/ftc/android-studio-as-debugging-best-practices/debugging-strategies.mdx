@@ -8,12 +8,12 @@ groupOrder: 13
 order: 6
 difficulty: advanced
 duration: 120 min
-description: ""
+description: Debug robot issues with observations, hypotheses, and targeted tests in the shop and at events.
 ---
 
-### Introduction to Systematic Debugging
+### Systematic debugging
 
-Effective debugging is not just about finding bugs—it's about developing a systematic approach to problem-solving. In FTC development, you need strategies that work both in the lab and under competition pressure. This lesson teaches you how to approach debugging methodically and efficiently.
+Random tweaks waste pit time. A short cycle—observe, guess, test, record—works for hardware glitches and autonomous logic. This lesson builds that habit into examples you can copy into your own OpModes.
 
 <RulesBox title="Why Systematic Debugging Matters">
 
@@ -25,13 +25,13 @@ Effective debugging is not just about finding bugs—it's about developing a sys
 
 </RulesBox>
 
-### The Scientific Method of Debugging
+### Observe, hypothesize, test
 
-Apply the scientific method to debugging: observe the problem, form a hypothesis, test it, and refine your understanding. This systematic approach helps you avoid random trial-and-error debugging.
+Write down what you saw, what you think is wrong, and what you tried. The pattern matches lab science and keeps the pit from repeating the same guess.
 
 ### Debugging Framework - Core Structure
 
-Implement a structured debugging process in your code. This framework provides a systematic approach to debugging by following the scientific method. The framework tracks observations, hypotheses, tests, and conclusions:
+This helper appends labeled lines to a log for each step:
 
 
 
@@ -64,9 +64,6 @@ public class DebuggingFramework {
     }
 ```
 
-### Understanding the Scientific Method in Debugging
-
-The scientific method provides a systematic approach to debugging. First, you observe and document the problem with specific data. Then you form a hypothesis about what might be causing the issue. This structured approach prevents random trial-and-error debugging.
 
 ### Debugging Framework - Testing and Conclusion Methods
 
@@ -176,9 +173,6 @@ public class HardwareDebugger {
     }
 ```
 
-### Understanding Hardware Debugging
-
-The hardware debugger systematically tests each component of the motor connection. First, it checks if the motor exists in the hardware map. Then it tests if the motor responds to basic commands. This helps identify whether the issue is configuration, wiring, or software-related.
 
 ### Hardware Debugger - Sensor Connection Methods
 
@@ -211,9 +205,6 @@ Add methods for debugging sensor connections. These methods handle different typ
     }
 ```
 
-### Understanding Sensor Debugging
-
-The sensor debugging method first checks if the sensor exists in the hardware map, then calls specific debugging methods based on the sensor type. This allows for customized testing for each type of sensor.
 
 ### Hardware Debugger - Specific Sensor Debug Methods
 
@@ -271,9 +262,6 @@ Add specific debugging methods for different sensor types. Each method tests the
 }
 ```
 
-### Understanding Sensor-Specific Debugging
-
-Each sensor type has different testing requirements. Color sensors need to read RGB values, and distance sensors need to return distance measurements. These specific methods ensure each sensor type is tested appropriately.
 
 ### State Machine Debugging
 
@@ -281,7 +269,7 @@ State machines are common in FTC autonomous programs but can be difficult to deb
 
 ### Debuggable State Machine - Core Structure
 
-Create a debuggable state machine that tracks transitions and conditions. This class provides comprehensive debugging information for state machines:
+This state machine logs each transition so you can replay why it entered a given state:
 
 
 
@@ -314,9 +302,6 @@ public class DebuggableStateMachine<T extends Enum<T>> {
     }
 ```
 
-### Understanding State Machine Debugging
-
-The debuggable state machine tracks the current state, previous state, and how long each state has been active. It automatically detects when a state has been active too long, which often indicates a bug in the transition logic.
 
 ### Debuggable State Machine - Transition and History Methods
 
@@ -361,9 +346,6 @@ Add methods for managing state transitions and tracking history:
     }
 ```
 
-### Understanding State Transitions
-
-The transitionTo method records every state change with the reason for the transition and how long the previous state was active. This creates a complete history that helps identify patterns in state machine behavior.
 
 ### Debuggable State Machine - Debug Display and Helper Class
 
@@ -406,9 +388,6 @@ Add debug display methods and the StateTransition helper class:
 }
 ```
 
-### Understanding State Machine Display
-
-The debugStateMachine method displays comprehensive information about the state machine's current status and recent history. The StateTransition helper class stores all the details about each state change for analysis.
 
 ### Using the Debuggable State Machine
 
@@ -462,13 +441,10 @@ public class DebuggableAutonomousOpMode extends OpMode {
     }
 ```
 
-### Understanding Autonomous Setup
-
-The initialization method sets up all the debugging components and tests hardware connections before starting the autonomous sequence. This ensures that any hardware issues are identified early.
 
 ### Debuggable Autonomous OpMode - Main Loop and State Handling
 
-Add the main loop and state handling logic with comprehensive debugging:
+Add the main loop and state handlers with logging at each branch:
 
 
 
@@ -551,9 +527,6 @@ Add the main loop and state handling logic with comprehensive debugging:
 }
 ```
 
-### Understanding State Machine Logic
-
-Each state in the autonomous sequence has specific logic and transition conditions. The debugging framework tracks all state changes and provides detailed information about what's happening at each step.
 
 ### Complete Debugging Framework Example
 
@@ -958,9 +931,6 @@ public class PerformanceMonitor {
     }
 ```
 
-### Understanding Performance Monitoring
-
-The performance monitor tracks how long each loop takes to execute. It calculates the average and maximum loop times, and alerts you when loops take too long. This helps identify performance bottlenecks in your code.
 
 ### Performance Monitor - Operation Tracking Methods
 
@@ -990,9 +960,6 @@ Add methods for tracking individual operation performance:
     }
 ```
 
-### Understanding Operation Tracking
-
-The operation tracking methods allow you to measure how long specific operations take. You can wrap any code section with startOperation() and endOperation() calls to identify which parts of your code are causing performance issues.
 
 ### Performance Monitor - Analysis and Reporting
 
@@ -1038,9 +1005,6 @@ Add methods for analyzing and reporting performance data:
 }
 ```
 
-### Understanding Performance Analysis
-
-The analyzePerformance method provides detailed statistics about your code's performance. It shows average and maximum loop times, and breaks down the performance of individual operations. This helps you identify which parts of your code need optimization.
 
 ### Competition Debugging Strategies
 
@@ -1110,9 +1074,6 @@ public class CompetitionDebugger {
     }
 ```
 
-### Understanding Competition Debugging
-
-The competition debugger provides quick, essential diagnostics that can be run rapidly during competition. It focuses on the most critical hardware components and provides immediate feedback about their status.
 
 ### Competition Debugger - Monitoring and Display Methods
 
@@ -1166,9 +1127,6 @@ Add methods for monitoring values and displaying competition status:
 }
 ```
 
-### Understanding Competition Monitoring
-
-The monitoring methods help track critical values during competition. The monitorValue method highlights when values change, making it easy to spot unexpected behavior. The displayState method provides a clean competition status display, and emergencyStop provides a safe way to stop the robot with debugging information.
 
 ### Complete Performance and Competition Debugging Example
 

@@ -1,0 +1,16 @@
+{
+  "teamNumber": 5907,
+  "teamName": "CC Shambots",
+  "normEpa": 1782,
+  "linkToCodebases": "GrahamL03/Shambots5907_26CompBot-dev-main-graham",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 114,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 254,
+  "lineCount": 254,
+  "sha": "a5b2b9da2cb221c6155782fbe4b343e1e3c0428b",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/GrahamL03/Shambots5907_26CompBot-dev-main-graham/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:58:26.428Z"
+}

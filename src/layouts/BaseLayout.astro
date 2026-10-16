@@ -7,6 +7,7 @@ import Sidebar from '@/components/layout/Sidebar.astro';
 import SidebarBehavior from '@/components/layout/SidebarBehavior.astro';
 import KeyboardShortcuts from '@/components/layout/KeyboardShortcuts.astro';
 import PreferencesDrawer from '@/components/islands/PreferencesDrawer.astro';
+import PwaUpdatePrompt from '@/components/islands/PwaUpdatePrompt';
 import Search from '@/components/layout/Search.astro';
 import { siteConfig } from '@/config/navigation';
 import { CHEERPJ_LOADER, ECJ_FILENAME } from '@/lib/java-playground/constants';
@@ -85,6 +86,8 @@ const launcherHref = playgroundPublicUrl(LAUNCHER_FILENAME);
     />
 
     <link rel="icon" href={siteConfig.brand.iconLight} type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
     {javaExamples && <link rel="preconnect" href="https://cjrtnc.leaningtech.com" />}
     {javaExamples && <link rel="preload" as="script" href={CHEERPJ_LOADER} crossorigin="anonymous" />}
@@ -142,6 +145,7 @@ const launcherHref = playgroundPublicUrl(LAUNCHER_FILENAME);
     <KeyboardShortcuts />
     <Search />
     <PreferencesDrawer />
+    <PwaUpdatePrompt client:only="react" />
     <HeaderBehavior />
     <SidebarBehavior />
 

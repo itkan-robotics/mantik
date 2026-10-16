@@ -1,4 +1,6 @@
 ---
+import OfflineModulesPanel from '@/components/islands/OfflineModulesPanel';
+
 /**
  * Reader preferences drawer: theme, text size, line spacing, contrast, motion.
  * Slides in from the right edge, mirroring the navigation sidebar on the left.
@@ -82,6 +84,8 @@ const groups = [
       </fieldset>
     ))}
 
+    <OfflineModulesPanel client:only="react" />
+
     <fieldset class="prefs-group prefs-team" data-prefs-team>
       <legend class="prefs-legend">Team colors</legend>
       <p class="prefs-team-hint">
@@ -125,12 +129,12 @@ const groups = [
     savePrefs,
     applyPrefs,
     DEFAULT_PREFS,
-    setTeamColorsPrefs,
+    applyTeamColorsByNumber,
     clearTeamColorsPrefs,
     hasActiveTeamColors,
     type Prefs,
   } from '@/lib/prefs';
-  import { fetchTeamColors, isValidTeamNumber } from '@/lib/teamColors';
+  import { isValidTeamNumber } from '@/lib/teamColors';
 
   function reflectTeam(drawer: Element) {
     const prefs = loadPrefs();
@@ -244,8 +248,7 @@ const groups = [
       teamApply.disabled = true;
       setTeamStatus('Loading team colors…', true);
       try {
-        const colors = await fetchTeamColors(n);
-        setTeamColorsPrefs(n, colors);
+        await applyTeamColorsByNumber(n);
         setTeamStatus('');
         reflect(drawer);
       } catch (e) {
@@ -264,7 +267,7 @@ const groups = [
       if (e.key === 'Escape' && isOpen()) close();
     });
     // Another control (the header theme toggle) changed a preference while open.
-    document.addEventListener('mantik:prefs', () => isOpen() && reflect(drawer));
+    document.addEventListener('mantik:prefs', () => (isOpen() ? reflect(drawer) : reflectTeam(drawer)));
   }
 
   function boot() {

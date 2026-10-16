@@ -8,18 +8,16 @@ groupOrder: 2
 order: 3
 difficulty: beginner
 duration: 45 min
-description: ""
+description: "Covers OpMode types, annotations, lifecycle, and how to organize initialization and telemetry."
 ---
 
 ### What is an OpMode?
 
-An OpMode (Operation Mode) is a Java class that controls your robot during a match. OpModes define the robot's behavior for autonomous or teleop periods and are selected and started from the Driver Station app.
-
-
+An OpMode (operation mode) is a Java class that runs during autonomous or teleop. You pick one from the Driver Station and press Start.
 
 See: [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28OnBot-Java%29.html)
 
-<RulesBox title="Types of OpModes" subtitle="OpModes can be:">
+<RulesBox title="Types of OpModes" subtitle="Common patterns">
 
 - `@TeleOp`: For driver-controlled periods (TeleOp)
 - `@Autonomous`: For autonomous periods (Autonomous)
@@ -28,9 +26,9 @@ See: [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.f
 
 </RulesBox>
 
-### OpMode Annotations
+### OpMode annotations
 
-Annotations tell the SDK how to display your OpMode in the Driver Station.
+Annotations control how the Driver Station lists your OpMode.
 
 
 
@@ -80,17 +78,13 @@ private void initHardware() {
 // Call this method at the start of runOpMode() for clarity.
 ```
 
-### Organizing Your OpModes
+### Organizing your OpModes
 
-- Use clear method names for hardware initialization, input processing, and telemetry.
+- Use separate methods for init, inputs, and telemetry.
+- Map hardware before `waitForStart()`.
+- Keep each OpMode focused on one job.
 
-- Separate hardware mapping from robot logic.
-
-- Use comments to explain each section.
-
-- Keep OpModes focused on a single purpose.
-
-<RulesBox title="Best Practices" subtitle="For clean, reliable OpModes:">
+<RulesBox title="Best Practices" subtitle="Reliable OpModes">
 
 - Initialize hardware in a dedicated method.
 - Use meaningful variable and method names.
@@ -100,7 +94,7 @@ private void initHardware() {
 
 </RulesBox>
 
-### Further Reading & Resources
+### Further reading
 
 - [FTC Docs: Creating an OpMode](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-(OnBot-Java).html)
 

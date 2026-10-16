@@ -8,14 +8,14 @@ groupOrder: 3
 order: 2
 difficulty: beginner
 duration: 45 min
-description: ""
+description: The for loop header (init, condition, update) and using it to walk arrays and counted work.
 ---
 
-### Introduction to For Loops
+### For loops
 
-For loops are ideal when you know exactly how many times to repeat something. They combine initialization, condition, and increment in one compact statement.
+Use a `for` loop when you know how many iterations you need. Initialization, condition, and update sit in the header.
 
-### For Loop Structure:
+### For loop structure
 
 ```java
 // Basic for loop structure
@@ -36,7 +36,7 @@ for (int i = 0; i < 10; i++) {
 // }
 ```
 
-### For Loop Examples:
+### Examples
 
 ```java
 // Count with variables
@@ -58,7 +58,7 @@ for (int i = 0; i < motorNames.length; i++) {
 }
 ```
 
-### Calculating with For Loops:
+### Calculations inside a for loop
 
 ```java
 // Calculate 4 * 3 as repeated addition (3 + 3 + 3 + 3)
@@ -85,12 +85,11 @@ double average = (double) sensorSum / readings;
 System.out.println("Average sensor value: " + average);
 ```
 
-<RulesBox title="When to Use For Loops:" subtitle="Perfect For:">
+<RulesBox title="When a for loop fits">
 
-- **Known iterations:** When you know exactly how many times to loop
-- **Array processing:** Iterating through arrays or collections
-- **Counting operations:** Incrementing or decrementing by fixed amounts
-- **Mathematical calculations:** Repeated calculations with counters
+- Fixed iteration count (array length, number of samples)
+- Index-based array access
+- Accumulators updated each pass (sum, average)
 
 </RulesBox>
 

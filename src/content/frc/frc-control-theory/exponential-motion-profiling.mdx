@@ -8,20 +8,20 @@ groupOrder: 5
 order: 3
 difficulty: intermediate
 duration: 80 min
-description: ""
+description: Smooth acceleration with WPILib ExponentialProfile or Talon FX Motion Magic Expo, and how to tune kV, kA, kP, and kD.
 ---
 
 ### Template Project
 
-Start with the **Command Robot** template project. Motion profiling is typically implemented in subsystems, so the command-based structure works well. Create a new subsystem class in the `subsystems` package.
+Start with the **Command Robot** template. Motion profiling lives in subsystems; add a new class under `subsystems`.
 
 ### Overview
 
-Exponential motion profiling uses smooth, continuous acceleration changes instead of constant acceleration. This creates natural-feeling movement that's ideal for elevators and arms. The profile continuously adjusts acceleration, eliminating sudden changes that cause mechanical stress.
+Exponential profiling ramps acceleration gradually instead of stepping it at fixed rates. Velocity follows a smooth curve rather than the flat-top trapezoid you get from constant-accel segments. That reduces jerk on elevators and arms when you care about smooth motion.
 
 ### What is Exponential Profiling?
 
-Exponential profiles change acceleration smoothly over time, creating a velocity curve that looks like an exponential function. Unlike trapezoidal profiles with sharp corners, exponential profiles have smooth transitions, making them feel more natural and reducing wear on mechanisms.
+Acceleration changes continuously, so the velocity plot curves instead of meeting sharp corners at cruise speed. CTRE implements this as Motion Magic Expo on Talon FX; REV teams often use WPILib’s `ExponentialProfile` with on-controller PID.
 
 <RulesBox title="Hardware Support" subtitle="Built-in controller features:">
 
@@ -32,11 +32,11 @@ Exponential profiles change acceleration smoothly over time, creating a velocity
 
 ### Step 1: Understand Exponential Profile Parameters
 
-Exponential profiles require feedforward constants: **kV** (velocity feedforward) compensates for velocity-dependent forces. **kA** (acceleration feedforward) compensates for inertia during acceleration. **kMaxV** (max velocity) limits the top speed.
+You need feedforward and a speed cap: **kV** (volts per unit velocity), **kA** (volts per unit acceleration), and **kMaxV** (maximum velocity for the profile).
 
 ### Step 2: Configure Exponential Profile (Talon FX)
 
-For Talon FX, configure the exponential profile constants in the Motion Magic® configuration. These values work with the PID gains to create smooth motion.
+Set Motion Magic Expo constants on the Talon FX. They work together with slot PID gains.
 
 Configure exponential profile for Talon FX:
 
@@ -54,7 +54,7 @@ public void configureExponentialProfile() {
 
 ### Step 3: Use Exponential Profile Control (Talon FX)
 
-Once configured, use `MotionMagicExpoVoltage` control request when setting positions. The controller automatically generates the exponential profile.
+After configuration, command position with `MotionMagicExpoVoltage`. The controller generates the profile.
 
 Set position using exponential profile:
 
@@ -69,11 +69,11 @@ public void setPosition(double target) {
 
 ### Step 4: Configure Exponential Profile (SPARK MAX with WPILib)
 
-For SPARK MAX, use WPILib's `ExponentialProfile` class. Create profile constraints from system characteristics, then calculate setpoints each loop cycle.
+On SPARK MAX, run WPILib `ExponentialProfile` in your subsystem `periodic()` and feed each setpoint to closed-loop position control.
 
 ### Step 4a: Create Profile Constraints
 
-Define constants and create profile constraints:
+Define kMaxV, kV, kA and build constraints:
 
 
 
@@ -90,7 +90,7 @@ private ExponentialProfile profile = new ExponentialProfile(constraints);
 
 ### Step 4b: Calculate Profile Setpoints
 
-In `periodic()`, calculate the next setpoint from the profile each loop cycle. The profile takes the current position and goal position, returning the target position and velocity for this timestep.
+Each loop, call `profile.calculate` with timestep, current position, and goal. Apply the returned position setpoint to the motor controller.
 
 Calculate profile setpoint each loop:
 
@@ -112,7 +112,7 @@ public void periodic() {
 
 ### Tuning Exponential Profiles
 
-Tune feedforward first (kG, kV, kA), then feedback (kP, kD). Use simulation and dashboard tools like Elastic for live tuning. Log position and velocity graphs to observe behavior.
+Tune feedforward (kG, kV, kA), then kP and kD. Use simulation, Elastic, or AdvantageScope and graph position and velocity together.
 
 <RulesBox title="Feedforward Tuning" subtitle="Physical forces:">
 
@@ -131,7 +131,7 @@ Tune feedforward first (kG, kV, kA), then feedback (kP, kD). Use simulation and 
 
 ### Tuning Goals
 
-Position graph should look like a square wave: sharp rise, flat top, sharp drop without wobbling at corners. Ensure no oscillation causing mechanism to slam into limits. Simulation provides baseline values; physical robots may need slight adjustments for friction and gravity.
+On the position graph you want a fast rise, a steady hold, and a fast return without ringing at the corners. If the mechanism hits hard stops or oscillates, back off kP or kD. Sim values are a starting point; friction and load on the real robot will differ.
 
 ### Full Code Example
 

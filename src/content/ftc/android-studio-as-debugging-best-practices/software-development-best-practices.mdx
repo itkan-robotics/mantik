@@ -8,12 +8,12 @@ groupOrder: 13
 order: 3
 difficulty: advanced
 duration: 100 min
-description: ""
+description: Organize OpModes, name things consistently, document intent, and use Git so the whole team can change code safely.
 ---
 
-### Introduction to Software Development Best Practices
+### Software practices for FTC teams
 
-Good software development practices are essential for FTC teams. Well-organized, maintainable code is easier to debug, extend, and collaborate on. This lesson covers professional development practices that will improve your team's productivity and code quality.
+Season code grows fast. Clear structure, naming, comments, and version control make bugs easier to find and merges less painful. This lesson applies those habits to typical FTC OpModes.
 
 <RulesBox title="Why Best Practices Matter">
 
@@ -24,13 +24,13 @@ Good software development practices are essential for FTC teams. Well-organized,
 
 </RulesBox>
 
-### Code Organization and Structure
+### Code organization
 
-Organizing your code into logical, focused methods and classes makes it easier to understand, debug, and maintain. Break large OpModes into smaller, well-defined components.
+Split `init`, input handling, hardware updates, and telemetry into methods so you can test and review one concern at a time.
 
 ### Well-Organized OpMode - Basic Structure
 
-Organize your OpMode into clear, focused methods with single responsibilities. This example shows proper code organization. Each method has a specific purpose and the code is easy to understand:
+Fields grouped by role, constants at the top, and thin `init` / `loop` methods:
 
 
 
@@ -69,9 +69,6 @@ public class WellOrganizedOpMode extends OpMode {
     }
 ```
 
-### Understanding Code Organization
-
-Good code organization makes your OpMode easier to understand, debug, and maintain. By grouping related variables together and breaking functionality into focused methods, you create a clear structure that other team members can easily follow.
 
 ### Well-Organized OpMode - Hardware Methods
 
@@ -178,7 +175,7 @@ Add input processing methods that handle one concern at a time:
 
 ### Naming Conventions and Documentation
 
-Consistent naming conventions and clear documentation help team members understand and maintain code. Follow established patterns and document complex logic thoroughly.
+Use names that match what the hardware or state does, and add JavaDoc where the behavior is not obvious from the method name alone.
 
 <RulesBox title="Naming Convention Guidelines">
 
@@ -192,7 +189,7 @@ Consistent naming conventions and clear documentation help team members understa
 
 ### Good Documentation Practices - Class Header
 
-Document your code with clear comments and JavaDoc. This example shows comprehensive documentation:
+Document your code with clear comments and JavaDoc. This example shows a typical class header and field grouping:
 
 
 
@@ -229,7 +226,7 @@ public class AutonomousCollectorOpMode extends OpMode {
 
 ### Good Documentation Practices - Method Documentation
 
-Add comprehensive JavaDoc for methods with clear parameter and return value descriptions:
+Add JavaDoc on public methods when parameters or return values need explanation:
 
 
 
@@ -278,7 +275,7 @@ Add comprehensive JavaDoc for methods with clear parameter and return value desc
 
 ### Version Control with Git for FTC Projects
 
-Version control is essential for team collaboration and safe experimentation. Git allows you to track changes, collaborate with teammates, and roll back to previous versions when needed.
+Git tracks who changed what and lets you revert a bad merge before it reaches the competition robot.
 
 ### Git Workflow for FTC Teams
 

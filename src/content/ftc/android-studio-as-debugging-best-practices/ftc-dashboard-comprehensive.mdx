@@ -8,12 +8,12 @@ groupOrder: 13
 order: 7
 difficulty: advanced
 duration: 105 min
-description: ""
+description: Add FTCDashboard to an Android Studio project and use plots, field view, runtime config, and camera streaming.
 ---
 
 ### What is FTCDashboard?
 
-FTCDashboard is a powerful web-based dashboard that provides real-time robot monitoring and control capabilities for FTC teams. Unlike basic telemetry that only shows text output, FTCDashboard offers a rich graphical interface with live data plotting, field visualization, configuration management, remote control features, and camera streaming.
+FTCDashboard is a web UI that runs on the robot phone or Control Hub. Driver Station telemetry stays text-based; Dashboard adds live graphs, a field view, tunable `@Config` values, optional OpMode controls, and camera streams on the same Wi‑Fi network.
 
 <RulesBox title="Key Benefits of FTCDashboard">
 
@@ -28,7 +28,7 @@ FTCDashboard is a powerful web-based dashboard that provides real-time robot mon
 
 ### Installation and Setup
 
-FTCDashboard is installed as a Gradle dependency in your Android Studio project. The library automatically sets up a web server on your robot that can be accessed from any device on the same network.
+Add the Maven dependency, sync Gradle, and initialize `FtcDashboard` in `init()`. Open the URL shown in telemetry from a browser on the same network as the robot.
 
 ### Step 1: Add Gradle Dependency
 
@@ -150,7 +150,7 @@ public class ComprehensiveDashboardOpMode extends OpMode {
 
 ### Telemetry and Plotting
 
-FTCDashboard transforms basic telemetry into a powerful visualization tool. While traditional telemetry only displays text data, FTCDashboard provides real-time plotting capabilities that make it much easier to understand robot behavior, tune PID controllers, and debug autonomous programs.
+Plots show how values change over time, which is often faster than reading scrolling numbers when you tune PID or chase drift in autonomous.
 
 ### Real-time Data Plotting
 
@@ -290,7 +290,7 @@ public static class CameraConfig {
 
 ### Field View Visualization
 
-FTCDashboard's field view provides a powerful way to visualize your robot's position and movement on the game field. This feature is essential for autonomous programming, path planning, and debugging robot navigation.
+The field view draws pose and path history so you can see whether odometry or autonomous waypoints match what you expect on the mat.
 
 ### Field View Setup
 
@@ -413,7 +413,7 @@ private void drawGameElements() {
 
 ### OpMode Controls
 
-FTCDashboard provides powerful remote control capabilities that allow you to start, stop, and control OpModes from the web interface. This is particularly useful for autonomous testing, debugging, and competition scenarios.
+Dashboard can expose buttons to start or stop OpModes from a laptop browser—handy when the Driver Station is not at the practice field.
 
 ### Custom Button Actions
 
@@ -520,7 +520,7 @@ private void stopAllActions() {
 
 ### Camera Streaming
 
-FTCDashboard provides powerful camera streaming capabilities that allow you to view live video feeds from your robot's cameras directly in the web interface. This is essential for vision-based autonomous programming and real-time robot monitoring.
+Camera streaming shows the same frames your vision pipeline sees, which speeds up alignment and exposure checks without passing the phone around.
 
 ### Camera Integration
 
@@ -588,7 +588,7 @@ public void stop() {
 
 ### Complete Integration Example
 
-Here's how to integrate all dashboard features into a single comprehensive OpMode:
+This OpMode wires plotting, field view, config, and camera into one place:
 
 ### Complete Dashboard Integration
 

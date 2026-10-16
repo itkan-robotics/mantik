@@ -1,0 +1,16 @@
+{
+  "teamNumber": 841,
+  "teamName": "The BioMechs",
+  "normEpa": 1728,
+  "linkToCodebases": "Team841/2026-comp",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 266,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 384,
+  "lineCount": 384,
+  "sha": "148a69d768bc7582609c1bf6ec5da8d523d5cfb7",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/Team841/2026-comp/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T21:01:08.139Z"
+}

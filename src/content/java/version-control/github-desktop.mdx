@@ -8,50 +8,43 @@ groupOrder: 10
 order: 7
 difficulty: beginner
 duration: 10 min
-description: ""
+description: Cloning, committing, branching, and pushing with GitHub Desktop instead of the terminal.
 ---
 
-### Graphical Git Interface
+### GitHub Desktop
 
-GitHub Desktop provides a user-friendly graphical interface for Git operations. This lesson covers using GitHub Desktop for common Git tasks, making version control more accessible for beginners.
+GitHub Desktop is a graphical client for Git. It runs the same commands as the terminal; the UI shows status, diffs, and history.
 
-### Key Concepts
+### Setup
 
-GitHub Desktop is a GUI for Git operations that simplifies complex Git commands through a visual interface. It provides real-time status of repository changes, showing you exactly what files have been modified, staged, or committed. The interface is integrated with GitHub for seamless workflow, allowing you to push, pull, and create pull requests directly from the application. GitHub Desktop is ideal for beginners learning version control as it makes Git concepts more approachable and reduces the learning curve.
+- Install from [desktop.github.com](https://desktop.github.com/)
+- Sign in with your GitHub account
+- Set your Git name and email in preferences
+- Clone a team repo or create a new one
 
-### Setting Up GitHub Desktop
+### Daily use
 
-- Download GitHub Desktop from desktop.github.com
-- Sign in with GitHub account
-- Configure Git identity in preferences
-- Clone existing repositories or create new ones
-- Set up default editor and shell preferences
+- **Changes** tab lists modified files
+- Check files to stage them
+- Write a commit summary and commit
+- **Push origin** / **Pull origin** sync with GitHub
 
-### Basic Operations
+### Branches in the app
 
-GitHub Desktop makes basic Git operations intuitive through its visual interface. You can clone repositories from GitHub with a simple click, and view changes in the Changes tab which shows exactly what files have been modified. Staging files is as easy as checking boxes next to the files you want to include in your commit. Writing commit messages and committing changes is straightforward, and you can push and pull changes using buttons instead of remembering command syntax.
+Create or switch branches from the branch dropdown. Open a pull request from the app when your branch is pushed. Delete merged branches from the branch menu.
 
-### Branching with GitHub Desktop
+<RulesBox title="Robotics team workflow">
 
-Creating and managing branches is simplified in GitHub Desktop. You can create new branches from the current branch with a dropdown menu, and switch between branches using the same interface. Merging branches is done through pull requests, which GitHub Desktop can help you create and manage. You can view branch history and commits through the visual interface, and delete branches after merging to keep your repository organized.
-
-<RulesBox title="Robotics Team Workflow">
-
-For robotics teams using GitHub Desktop, you would clone the team repository to your local machine, create a feature branch for robot improvements, commit changes with descriptive messages, push changes and create pull requests, and review and merge team member changes.
+Clone the team repo once per machine. Branch for each feature. Commit with messages a mentor can understand. Push and open a PR for review before merging to main.
 
 </RulesBox>
 
-### Advanced Features
+### GUI vs terminal
 
-GitHub Desktop includes several advanced features that make Git more accessible. You can view commit history and diffs through a visual interface, making it easier to understand what changed between commits. If you need to undo a commit, GitHub Desktop provides a simple way to revert changes. The application can help resolve merge conflicts visually, and you can stash changes for temporary storage when you need to switch tasks quickly. You can also open the repository in your preferred external editor for more advanced editing.
-
-### Understanding GUI vs Command Line
-
-GitHub Desktop provides a visual approach to version control that complements command line Git. The GUI makes common operations more accessible by hiding the complexity of Git commands behind intuitive buttons and menus. However, command line Git offers more power and flexibility for advanced operations. Many developers use both tools: GitHub Desktop for daily workflow tasks like committing and pushing, and command line Git for more complex operations like rebasing or resolving difficult conflicts. Understanding when to use each tool helps you work more efficiently.
+Desktop covers most day-to-day work. The terminal is still useful for odd merges, scripting, and CI. Many developers use both.
 
 <LinkGrid links={[
     {"label":"GitHub Desktop Documentation","url":"https://docs.github.com/en/desktop"},
-    {"label":"GitHub Desktop Download","url":"https://desktop.github.com/"},
-    {"label":"GitHub Guides: Getting Started with GitHub Desktop","url":"https://guides.github.com/activities/desktop-flow/"}
+    {"label":"GitHub Desktop Download","url":"https://desktop.github.com/"}
   ]} title="Further Reading Resources" section="java" />
 
