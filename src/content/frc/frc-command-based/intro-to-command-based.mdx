@@ -15,6 +15,13 @@ description: How the WPILib command scheduler, subsystems, and default commands 
 
 Command-based code splits **hardware** (subsystems) from **behavior** (commands). The scheduler runs commands, tracks subsystem ownership, and lets teleop and auto share the same command objects. It is the default layout for new WPILib projects.
 
+If the lifecycle methods and “actions as objects” idea feel unfamiliar, read the Java lessons below first. They cover the command pattern and deferred execution without mixing in WPILib APIs.
+
+<LinkGrid links={[
+    {"label":"The Command Pattern","id":"java-dp-command","description":"Scheduler, lifecycle, and why commands are objects"},
+    {"label":"Passing Functions as Data","id":"java-fn-functions-as-data","description":"Callbacks and storing behaviour for later"}
+  ]} title="Java background" section="java" />
+
 ### Setting Up Your Project
 
 Create a WPILib project with the **Command Robot** template. You get `Robot.java`, `RobotContainer.java`, and starter subsystem/command examples.

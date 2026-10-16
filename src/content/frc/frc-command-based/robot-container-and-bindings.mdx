@@ -134,6 +134,8 @@ Without one, the last value stays applied and the roller keeps spinning. Every m
 
 Note the joystick axes are passed as **suppliers**, not values. A value read once at binding time would be frozen forever; the supplier is read fresh every loop. The negations are because joysticks report forward as negative.
 
+See [Supplier and the Functional Interfaces](/java/java-fn-supplier) and [Lambda Expressions](/java/java-fn-lambdas) for the Java side of `() -> …`. Method references such as `intake::hasGamePiece` are covered in [Method References](/java/java-fn-method-references).
+
 </RulesBox>
 
 ### Constructing Subsystems
@@ -190,4 +192,16 @@ Adding characterization routines as chooser options is a convenient way to run t
 
 </RulesBox>
 
-<LinkGrid links={[{"label":"Commands","id":"commands"},{"label":"Command Groups","id":"command-groups"},{"label":"Controllers & Inputs","id":"controllers-and-bindings"},{"label":"WPILib RobotContainer Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/structuring-command-based-project.html"},{"label":"WPILib Binding Commands to Triggers","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html"}]} title="Resources" section="frc" />
+<LinkGrid links={[
+    {"label":"Commands","id":"commands"},
+    {"label":"Command Groups","id":"command-groups"},
+    {"label":"Controllers & Inputs","id":"controllers-and-bindings"},
+    {"label":"WPILib RobotContainer Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/structuring-command-based-project.html"},
+    {"label":"WPILib Binding Commands to Triggers","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html"}
+  ]} title="Resources" section="frc" />
+
+<LinkGrid links={[
+    {"label":"Supplier and the Functional Interfaces","id":"java-fn-supplier"},
+    {"label":"Lambda Expressions","id":"java-fn-lambdas"},
+    {"label":"Method References","id":"java-fn-method-references"}
+  ]} title="Java background" section="java" />
