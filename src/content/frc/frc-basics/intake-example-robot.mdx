@@ -8,16 +8,16 @@ groupOrder: 2
 order: 5
 difficulty: beginner
 duration: 70 min
-description: ""
+description: Build a complete Timed Robot intake with motor config and button control.
 ---
 
 ### Template Project
 
-Start with the **Timed Robot** template project. In VS Code, create a new WPILib project and select "Timed Robot" from the template list. This template provides the basic `Robot.java` structure with all lifecycle methods.
+Use the **Timed Robot** WPILib template so `Robot.java` already defines the lifecycle methods.
 
 ### Overview
 
-This lesson demonstrates building a complete intake mechanism in `Robot.java`. We will configure a motor and control it with buttons (A to collect, B to eject).
+Configure one intake motor in `Robot.java` and run it forward on A, reverse on B, and stop when neither is pressed.
 
 <RulesBox title="Requirements" subtitle="The intake must:">
 
@@ -30,11 +30,7 @@ This lesson demonstrates building a complete intake mechanism in `Robot.java`. W
 
 ### Step 1: Imports and Class Setup
 
-We start by creating the basic structure. Import the necessary classes for robot control, motor hardware, and configuration.
-
-The Timed Robot template provides a `Robot` class that extends `TimedRobot`. Add the necessary imports for motor control. The template already includes the class structure with all lifecycle methods.
-
-
+Add imports for `TimedRobot`, the gamepad, and your motor vendor classes. The template already declares `public class Robot extends TimedRobot`.
 
 ```java
 package frc.robot;
@@ -55,11 +51,7 @@ public class Robot extends TimedRobot {
 
 ### Step 2: Declare Hardware
 
-Create instances for the controller and motor. The controller is on USB port 1, and the motor is on CAN ID 5.
-
-Add fields for the controller, motor, and control request:
-
-
+Declare the controller on USB port 1 and the intake motor on CAN ID 5.
 
 ```java
 public class Robot extends TimedRobot {
@@ -73,23 +65,23 @@ public class Robot extends TimedRobot {
 
 ### Step 3: Configure Motor in robotInit()
 
-In `robotInit()`, we configure the motor. This runs once at startup. We set the inversion direction, idle mode to Coast (allows free spinning when stopped), and enable current limiting to protect the motor from damage.
+In `robotInit()`, set inversion, Coast idle mode (free spin at zero output), and a 30 A current limit.
 
 <CodeTabs tabs={[{"label":"Talon FX","code":"@Override\npublic void robotInit() {\n    // Configure motor settings\n    TalonFXConfiguration config = new TalonFXConfiguration();\n    // Set motor direction (adjust if needed for your mechanism)\n    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;\n    // Coast mode allows free spinning when stopped (good for intakes)\n    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;\n    // Enable current limiting to protect motor (30A limit)\n    config.CurrentLimits.StatorCurrentLimitEnable = true;\n    config.CurrentLimits.StatorCurrentLimit = 30.0;\n    m_motor.getConfigurator().apply(config);\n}","language":"java"},{"label":"SPARK MAX","code":"@Override\npublic void robotInit() {\n    // Configure motor settings\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Set motor direction (adjust if needed for your mechanism)\n    config.inverted(false);\n    // Coast mode allows free spinning when stopped (good for intakes)\n    config.idleMode(IdleMode.kCoast);\n    // Enable current limiting to protect motor (30A limit)\n    config.smartCurrentLimit(30);\n    m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}","language":"java"}]} />
 
 ### Step 4: Add Button Control Logic
 
-In `teleopPeriodic()`, we read button presses and control the motor. This method runs repeatedly (every 20ms) during teleoperated mode. We check if button A is pressed to collect, button B to eject, or no button to stop.
+In `teleopPeriodic()`, read A and B and set motor output for collect, eject, or stop.
 
 <CodeTabs tabs={[{"label":"Talon FX","code":"@Override\npublic void teleopPeriodic() {\n    // Button A: Run intake forward (collect)\n    if (m_controller.getAButton()) {\n        m_motor.setControl(m_out.withOutput(0.6));\n    }\n    // Button B: Run intake reverse (eject)\n    else if (m_controller.getBButton()) {\n        m_motor.setControl(m_out.withOutput(-0.4));\n    }\n    // No button: Stop motor\n    else {\n        m_motor.setControl(m_out.withOutput(0.0));\n    }\n}","language":"java"},{"label":"SPARK MAX","code":"@Override\npublic void teleopPeriodic() {\n    // Button A: Run intake forward (collect)\n    if (m_controller.getAButton()) {\n        m_motor.set(0.6);\n    }\n    // Button B: Run intake reverse (eject)\n    else if (m_controller.getBButton()) {\n        m_motor.set(-0.4);\n    }\n    // No button: Stop motor\n    else {\n        m_motor.set(0.0);\n    }\n}","language":"java"}]} />
 
 ### Understanding the Control Logic
 
-The `if-else if-else` structure ensures only one action happens at a time. Button A runs the motor forward at 60% power to collect game pieces. Button B runs reverse at 40% power to eject. The final `else` ensures the motor stops when no button is pressed.
+Only one branch runs at a time. Forward uses 60% output; reverse uses 40%. Tune both on your mechanism.
 
 ### Power Values
 
-The values 0.6 (60%) forward and -0.4 (40%) reverse are starting points. 60% forward is usually enough to grab game pieces. 40% reverse is enough to eject without being too aggressive. Test and adjust these values for your specific mechanism.
+0.6 and -0.4 are starting points—adjust after testing on the real intake.
 
 ### Full Code
 

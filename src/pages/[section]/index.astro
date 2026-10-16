@@ -5,6 +5,7 @@ import { sections } from '@/config/navigation';
 import { render } from 'astro:content';
 import { components } from '@/mdx-components';
 import type { SectionId } from '@/config/navigation';
+import { sectionHasJavaPlayground } from '@/lib/java-playground/playgroundSections';
 
 export async function getStaticPaths() {
   return sections.map((section) => ({
@@ -27,6 +28,7 @@ const currentPath = `/${section}`;
   description={overview.data.description}
   currentPath={currentPath}
   sidebarGroups={sidebarGroups}
+  javaExamples={sectionHasJavaPlayground(section)}
 >
   <Content components={components} />
 </LessonLayout>

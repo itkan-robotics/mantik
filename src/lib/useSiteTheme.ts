@@ -7,7 +7,7 @@ export function getSiteTheme(): SiteTheme {
   return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 }
 
-/** Subscribes to `html[data-theme]` changes from the global theme toggle. */
+/** Subscribes to theme changes from reader preferences (`mantik:prefs` + `data-theme`). */
 export function useSiteTheme(): SiteTheme {
   const [theme, setTheme] = useState<SiteTheme>(getSiteTheme);
 
@@ -16,7 +16,11 @@ export function useSiteTheme(): SiteTheme {
     const sync = () => setTheme(getSiteTheme());
     const observer = new MutationObserver(sync);
     observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
+    document.addEventListener('mantik:prefs', sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('mantik:prefs', sync);
+    };
   }, []);
 
   return theme;

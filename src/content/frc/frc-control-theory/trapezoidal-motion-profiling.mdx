@@ -8,20 +8,20 @@ groupOrder: 5
 order: 2
 difficulty: intermediate
 duration: 75 min
-description: ""
+description: Constant-accel motion with MAXMotion or Motion Magic—max velocity, acceleration, and basic tuning.
 ---
 
 ### Template Project
 
-Start with the **Command Robot** template project. Motion profiling is typically implemented in subsystems, so the command-based structure works well. Create a new subsystem class in the `subsystems` package.
+Start with the **Command Robot** template and add a subsystem under `subsystems`.
 
 ### Overview
 
-Trapezoidal motion profiling creates smooth movement using constant acceleration to reach maximum velocity, then constant deceleration to stop. This profile has three phases: acceleration, cruise (constant speed), and deceleration. It's fast, predictable, and reduces mechanical stress compared to instant speed changes.
+Trapezoidal profiling moves in three phases: accelerate at a fixed rate, cruise at max velocity, then decelerate at a fixed rate. It is faster than commanding a bare position setpoint and easier to reason about than exponential curves.
 
 ### What is Trapezoidal Profiling?
 
-A trapezoidal profile accelerates at a constant rate until reaching maximum velocity, maintains that speed, then decelerates at a constant rate to stop. The name comes from the velocity graph: it looks like a trapezoid when plotted over time.
+Velocity vs time forms a trapezoid: ramps up, flat top, ramps down. Acceleration is piecewise constant (not smooth at the phase boundaries unless you add jerk limits on Talon FX).
 
 <RulesBox title="Hardware Support" subtitle="Built-in controller features:">
 
@@ -32,23 +32,23 @@ A trapezoidal profile accelerates at a constant rate until reaching maximum velo
 
 ### Step 1: Understand Configuration Parameters
 
-Two main parameters control the profile: **Max Velocity** sets the top speed during the cruise phase. **Max Acceleration** determines how quickly the mechanism speeds up and slows down. Optional **Jerk** (for Talon FX) smooths the acceleration transitions.
+**Max velocity** caps cruise speed. **Max acceleration** sets how quickly you enter and leave cruise. On Talon FX, optional **jerk** limits how abruptly acceleration can change.
 
 ### Step 2: Configure Motion Profile Constraints
 
-We configure the motion profile constraints in the motor configuration. These values are typically set in rotations per second (RPS) for velocity and rotations per second squared (RPS²) for acceleration. Start with conservative values and tune based on your mechanism's capabilities.
+Set limits in motor config. Talon FX often uses rotations per second (RPS) and RPS²; SPARK MAX MAXMotion may use RPM and RPM/s in the config API. Start conservative and increase while watching the graph.
 
 <CodeTabs tabs={[{"label":"Talon FX (Motion Magic®)","code":"public void configureMotionProfile() {\n    MotionMagicConfigs mm = new MotionMagicConfigs();\n    // Max velocity in rotations/sec\n    mm.MotionMagicCruiseVelocity = 10;\n    // Max acceleration in rotations/sec²\n    mm.MotionMagicAcceleration = 20;\n    // Optional: Jerk limit for smoothing (rotations/sec³)\n    mm.MotionMagicJerk = 100;\n    motor.getConfigurator().apply(mm);\n}","language":"java"},{"label":"SPARK MAX (MAXMotion)","code":"public void configureMotionProfile() {\n    SparkMaxConfig config = new SparkMaxConfig();\n    // Configure motion profile constraints for Slot 0\n    // Max velocity in RPM (adjust based on your mechanism)\n    config.closedLoop.maxMotion\n        .maxVelocity(3000, ClosedLoopSlot.kSlot0)\n        // Max acceleration in RPM/s\n        .maxAcceleration(2000, ClosedLoopSlot.kSlot0);\n    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);\n}","language":"java"}]} />
 
 ### Step 3: Use Motion Profile Control
 
-Once configured, use the motion profile control mode when setting positions. The controller automatically generates the trapezoidal profile based on your constraints and the current position.
+Command position with Motion Magic or MAXMotion position mode. The controller plans the trapezoid from current position to the target.
 
 <CodeTabs tabs={[{"label":"Talon FX","code":"private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);\n\npublic void setPosition(double target) {\n    // Use Motion Magic® position control\n    motor.setControl(m_request.withPosition(target));\n}","language":"java"},{"label":"SPARK MAX","code":"public void setPosition(double target) {\n    // Use MAXMotion position control (trapezoidal profile)\n    controller.setReference(target, ControlType.kMAXMotionPositionControl);\n}","language":"java"}]} />
 
 ### Tuning Trapezoidal Profiles
 
-Tuning a trapezoidal profile requires balancing speed and smoothness. Start by determining your mechanism's maximum safe speed and acceleration, then adjust based on performance.
+Find the fastest profile that still looks clean on the velocity graph. Raise limits until you see overshoot, vibration, or brownouts, then back off.
 
 <RulesBox title="Tuning Process" subtitle="Follow this order:">
 
@@ -60,11 +60,11 @@ Tuning a trapezoidal profile requires balancing speed and smoothness. Start by d
 
 ### Tuning Tips
 
-Use dashboard tools to monitor position, velocity, and current draw during motion. The velocity graph should form a clean trapezoid: sharp ramp up, flat top, sharp ramp down. Oscillation or overshoot indicates acceleration is too high. Slow, sluggish movement means values are too conservative.
+Plot position, velocity, and current while the mechanism moves. Velocity should look like a trapezoid. Overshoot at the end often means acceleration or kP is high. Sluggish motion means limits are low or PID is weak.
 
 ### Common Issues and Solutions
 
-**Overshoot at end:** Reduce acceleration, increase PID derivative gain, or add jerk smoothing (Talon FX). **Too slow:** Increase velocity and acceleration together, but verify mechanism can handle it. **Vibration during motion:** Reduce acceleration significantly, check for mechanical issues. **Can't reach target:** Increase max velocity, check if distance is achievable with current constraints.
+**Overshoot at end:** Lower acceleration, add kD, or enable jerk on Talon FX. **Too slow:** Raise velocity and acceleration together if mechanics and current draw allow. **Vibration:** Lower acceleration; check loose mechanisms. **Never reaches target:** Raise max velocity or shorten the move so the profile can finish in time.
 
 ### Full Code Example
 

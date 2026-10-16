@@ -13,7 +13,7 @@ description: Encapsulating hardware in a subsystem — configuration that cannot
 
 ### Overview
 
-Subsystems encapsulate hardware (motors, sensors) and provide methods to control them. They extend `SubsystemBase` and should contain minimal logic—just the 'how' to control hardware.
+Subsystems wrap hardware (motors, sensors) and expose simple control methods. They extend `SubsystemBase` and hold the *how*; commands hold the *when* and *why*.
 
 <RulesBox title="Subsystem Principles" subtitle="Best practices:">
 

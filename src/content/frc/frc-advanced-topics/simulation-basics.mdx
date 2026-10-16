@@ -8,16 +8,14 @@ groupOrder: 10
 order: 1
 difficulty: intermediate
 duration: 45 min
-description: ""
+description: Run robot code on your laptop with WPILib physics sim, Field2d, and log replay.
 ---
 
 ### Introduction to Robot Simulation
 
-Simulation allows you to run your robot code on a computer without a physical robot. This is incredibly powerful for testing logic, debugging, and developing autonomous routines before the robot is built. WPILib provides a robust simulation framework that mimics the behavior of hardware components like motors, sensors, and the driver station.
+Simulation runs your robot program on a laptop without hardware. Use it to test teleop logic, autonomous paths, and subsystem code before the robot is on the field.
 
-
-
-Simulation works by creating a virtual environment where hardware inputs (voltage to motors) are processed by physics models, which then update virtual sensor outputs (encoder values, gyro angles). Your code interacts with these simulated sensors just as it would with real ones.
+WPILib feeds motor outputs through physics models and writes the results back to simulated encoders and gyros. Your code reads those values the same way it reads real sensors.
 
 
 
@@ -205,15 +203,13 @@ WPILib provides several pre-built simulation classes for common mechanisms:
 
 
 
-These classes handle the complex physics equations (gravity, inertia, friction, voltage-to-torque) so you don't have to.
+These classes model gravity, inertia, friction, and voltage-to-torque for common mechanisms.
 
 ### Visualizing Simulation with Field2d
 
-The "Field2d" class is essential for visualizing where your robot thinks it is. By updating the "Field2d" object with your robot's odometry (or simulation pose), you can see a virtual robot moving on a virtual field in Glass, Shuffleboard, or AdvantageScope.
+`Field2d` shows where the robot thinks it is on the field. Update it from odometry or simulation pose to watch motion in Glass, Shuffleboard, Elastic, or AdvantageScope.
 
-
-
-This is critical for testing autonomous paths. If the robot follows the path on the "Field2d" view, your path following logic is likely correct.
+If the virtual robot follows your planned path on Field2d, path-following logic is probably wired correctly.
 
 <RulesBox title="Simulation Best Practices" subtitle="Get the most out of simulation:">
 

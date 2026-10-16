@@ -8,22 +8,22 @@ groupOrder: 5
 order: 4
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: "Groups telemetry, logs events, shows warnings, and supports PID tuning readouts."
 ---
 
-### Introduction: What is Telemetry?
+### Before you start
 
-This page covers advanced telemetry techniques for FTC robots. If you are new to telemetry, start with the [Telemetry Logging](../environment-setup/telemetry-logging.json) lesson for an introduction to basic telemetry concepts and usage.
+New to telemetry? Read [Telemetry Logging](../environment-setup/telemetry-logging.json) first.
 
-### Why Use Advanced Telemetry?
+### Why organize telemetry?
 
-Advanced telemetry lets you provide rich, organized, and actionable feedback to drivers and programmers. It helps with debugging, monitoring robot health, and making real-time decisions during matches. Well-structured telemetry can display warnings, highlight important states, and even help tune mechanisms on the fly.
+Drivers scan the Driver Station under time pressure. Section headers, formatted numbers, and warnings reduce mistakes during matches and tuning.
 
-### Grouping and Formatting Telemetry Data
+### Grouping and formatting
 
-Use clear labels and group related data together. Format values for readability (e.g., use `"%.2f"` for decimals). Consider using `addLine()` for section headers or summaries.
+Use `addLine()` for sections and `"%.2f"` for decimals.
 
-### Example: Grouped and Formatted Telemetry
+### Grouped telemetry example
 
 ```java
 telemetry.addLine("=== Drive ===");
@@ -35,11 +35,11 @@ telemetry.addData("Limit", armAtLimit ? "YES" : "NO");
 telemetry.update();
 ```
 
-### Persistent and Event-Based Telemetry
+### Persistent messages
 
-Use `telemetry.log()` to display persistent messages (such as warnings or important events) that remain visible for longer. This is useful for debugging or alerting drivers to critical issues.
+`telemetry.log()` keeps warnings and events on screen longer than a single `addData` line.
 
-### Example: Persistent Event Logging
+### Event logging example
 
 ```java
 if (Math.abs(leftDrive.getPower()) > 0.9) {
@@ -51,11 +51,11 @@ if (armAtLimit) {
 telemetry.update();
 ```
 
-### Dynamic Telemetry: Real-Time Feedback and Warnings
+### Warnings and mode indicators
 
-Advanced telemetry can provide real-time feedback, such as mode indicators (e.g., slow mode enabled), sensor health, or warnings if a mechanism is stuck. Use conditional logic to highlight important states.
+Use `if` checks to flag slow mode, limits, or disconnected sensors.
 
-### Example: Real-Time Warnings and Mode Indicators
+### Warnings example
 
 ```java
 if (slowMode) {
@@ -70,11 +70,11 @@ if (!sensor.isConnected()) {
 telemetry.update();
 ```
 
-### Telemetry for Tuning and Autonomous Debugging
+### Telemetry for tuning
 
-Advanced teams use telemetry to tune PID coefficients, monitor sensor values, and debug autonomous routines. Display setpoints, errors, and control outputs to help with tuning and troubleshooting. For more information on PID tuning, see [PID Control](../advanced-movement-control/pid-control.json).
+Show target, measured value, error, and output while tuning PID. See [PID Control](../advanced-movement-control/pid-control.json).
 
-### Example: Telemetry for PID Tuning
+### PID telemetry example
 
 ```java
 telemetry.addData("Target", targetPosition);
@@ -84,7 +84,7 @@ telemetry.addData("Output", pidOutput);
 telemetry.update();
 ```
 
-<RulesBox title="Best Practices for Advanced Telemetry" subtitle="Tips for effective advanced telemetry:">
+<RulesBox title="Best Practices for Advanced Telemetry" subtitle="Keep the screen useful">
 
 - Call `telemetry.update()` once per loop.
 - Use clear, descriptive labels and group related data.

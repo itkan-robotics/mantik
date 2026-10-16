@@ -1,6 +1,6 @@
 export type SectionId = 'java' | 'ftc' | 'frc' | 'comp';
 
-export type AppRouteId = 'resources' | 'pid-simulation';
+export type AppRouteId = 'resources' | 'pid-simulation' | 'trenches';
 
 export interface NavSection {
   id: SectionId;
@@ -26,6 +26,7 @@ export const sections: NavSection[] = [
 export const appRoutes: AppRoute[] = [
   { id: 'resources', label: 'Resources', path: '/resources' },
   { id: 'pid-simulation', label: 'PID Sim', path: '/pid-simulation' },
+  { id: 'trenches', label: 'The Trenches', path: '/trenches' },
 ];
 
 export const siteConfig = {

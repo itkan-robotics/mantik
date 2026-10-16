@@ -61,7 +61,7 @@ The multiplication `a * b` happens in `int` arithmetic **before** the result is 
 
 Fix it by making one operand a `long`, which promotes the whole expression:
 
-```java
+```java norun
 long product = (long) a * b;   // correct: 10000000000
 ```
 
@@ -77,7 +77,7 @@ Suppose a problem says: *N ≤ 200,000, and each value is at most 10<sup>9</sup>
 
 The largest possible sum is 200,000 × 10<sup>9</sup> = 2 × 10<sup>14</sup>. That is well past the `int` limit of about 2 × 10<sup>9</sup>, so the accumulator must be a `long`.
 
-```java
+```java norun
 int[] a = new int[n];          // values fit in int
 // ...
 long sum = 0;                  // the sum does not

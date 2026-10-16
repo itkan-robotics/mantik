@@ -13,7 +13,7 @@ description: Subsystem command factories for single-mechanism actions, and full 
 
 ### Overview
 
-Commands define robot actions. They use subsystem methods to perform tasks, and the scheduler decides which ones run.
+Commands are units of robot behavior. They call subsystem methods; the scheduler decides which run and which subsystems they own.
 
 <RulesBox title="Command Lifecycle" subtitle="Four key methods:">
 
@@ -41,6 +41,8 @@ public class Intake extends SubsystemBase {
     }
 }
 ```
+
+The `() -> …` syntax is a [lambda expression](/java/java-fn-lambdas). Later you will see [method references](/java/java-fn-method-references) like `intake::hasGamePiece` — the same idea, shorter when you are only calling one existing method.
 
 <ContentTable
   title="The factory methods on SubsystemBase"
@@ -213,4 +215,16 @@ Log the intermediate values, not just the final output. When a shot misses, `dis
 
 </RulesBox>
 
-<LinkGrid links={[{"label":"Command Groups","id":"command-groups"},{"label":"RobotContainer & Bindings","id":"robot-container-and-bindings"},{"label":"Subsystems","id":"subsystems"},{"label":"WPILib Commands Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html"}]} title="Resources" section="frc" />
+<LinkGrid links={[
+    {"label":"Command Groups","id":"command-groups"},
+    {"label":"RobotContainer & Bindings","id":"robot-container-and-bindings"},
+    {"label":"Subsystems","id":"subsystems"},
+    {"label":"WPILib Commands Documentation","url":"https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html"}
+  ]} title="Resources" section="frc" />
+
+<LinkGrid links={[
+    {"label":"Instance Factory Methods","id":"java-dp-factory-method","description":"Why factories live on the subsystem"},
+    {"label":"The Command Pattern","id":"java-dp-command"},
+    {"label":"Lambda Expressions","id":"java-fn-lambdas"},
+    {"label":"Method References","id":"java-fn-method-references"}
+  ]} title="Java background" section="java" />

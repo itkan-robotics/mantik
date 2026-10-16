@@ -8,18 +8,14 @@ groupOrder: 2
 order: 5
 difficulty: beginner
 duration: 35 min
-description: ""
+description: "Shows how to send motor, sensor, and status data to the Driver Station with telemetry."
 ---
 
-### What is Telemetry?
+### What is telemetry?
 
-Telemetry lets you send data from your robot to the Driver Station for real-time monitoring and debugging. It is essential for understanding what your robot is doing during a match and for troubleshooting issues.
+Telemetry prints robot data on the Driver Station phone or tablet. Use it to debug logic and give drivers useful numbers during a match.
 
-
-
-Telemetry can display sensor values, motor powers, program states, and more.
-
-<RulesBox title="Why Use Telemetry?" subtitle="Telemetry helps you:">
+<RulesBox title="Why Use Telemetry?" subtitle="Common uses">
 
 - Debug your code by displaying variable values.
 - Monitor robot status in real time.
@@ -28,11 +24,9 @@ Telemetry can display sensor values, motor powers, program states, and more.
 
 </RulesBox>
 
-### Basic Telemetry Example
-
-Here is an example showing how to use telemetry in a LinearOpMode. This example displays motor power and a custom message on the Driver Station.
-
 ### Telemetry in LinearOpMode
+
+This example shows drive power and a status line each loop.
 
 ```java
 @TeleOp(name = "TelemetryExample")
@@ -58,13 +52,9 @@ public class TelemetryExample extends LinearOpMode {
 }
 ```
 
-### Advanced Telemetry Techniques
+### Advanced telemetry
 
-You can group telemetry data, use `telemetry.log()` for persistent messages, and display sensor values.
-
-
-
-Telemetry can also be used in Iterative OpModes and for debugging autonomous routines.
+Group related lines, use `telemetry.log()` for messages that should stay visible, and read sensors in the same loop. The same patterns work in iterative OpModes and autonomous.
 
 ### Telemetry with Sensors
 
@@ -86,7 +76,7 @@ public class SensorTelemetry extends LinearOpMode {
 }
 ```
 
-<RulesBox title="Best Practices for Telemetry" subtitle="Tips for effective telemetry:">
+<RulesBox title="Best Practices for Telemetry" subtitle="Driver Station readability">
 
 - Call `telemetry.update()` once per loop.
 - Use clear, descriptive labels for data.

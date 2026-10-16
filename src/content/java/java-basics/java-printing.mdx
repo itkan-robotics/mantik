@@ -8,14 +8,14 @@ groupOrder: 1
 order: 3
 difficulty: beginner
 duration: 40 min
-description: ""
+description: Using System.out.println to send text to the console and the minimum class structure every Java program needs.
 ---
 
-### Basic Printing
+### Basic printing
 
-The `System.out.println()` command prints text to the console. It's one of the first commands you'll learn in Java programming.
+`System.out.println()` sends a line of text to the console. It is usually the first output statement you learn.
 
-### Simple Print Example:
+### Simple print example
 
 ```java
 System.out.println("Hello world!");
@@ -26,11 +26,11 @@ System.out.println("Welcome to Java programming!");
 // Welcome to Java programming!
 ```
 
-### Program Structure
+### Program structure
 
-Every Java program needs boilerplate code to function. The program execution starts from the `main` method.
+A runnable Java program lives in a class and starts in `main`.
 
-### Complete Java Program:
+### Complete Java program
 
 ```java
 public class MyProgram {
@@ -42,14 +42,14 @@ public class MyProgram {
 }
 ```
 
-### Key Concepts:
+### Key ideas
 
-- **Parameters:** Text inside parentheses that gets printed
-- **Semicolon:** Every command must end with `;`
-- **Quotation marks:** Text must be enclosed in double quotes `""`
-- **Case sensitivity:** `System` must be capitalized exactly
+- **Argument:** The string inside the parentheses is what gets printed.
+- **Semicolon:** Each statement ends with `;`.
+- **Quotes:** Text literals use double quotes `"..."`.
+- **Capitalization:** `System` must be spelled exactly that way.
 
-### Multiple Lines and Comments:
+### Multiple lines and comments
 
 ```java
 public class Example {
@@ -65,7 +65,7 @@ public class Example {
 }
 ```
 
-<RulesBox title="Printing Best Practices:">
+<RulesBox title="Printing habits">
 
 **Good Practices:**
 
@@ -90,25 +90,20 @@ public class Example {
 - Add comments explaining what each print statement does
 - Try the 'sout' shortcut if you're using an IDE
 
-```java
-Practice with these printing exercises:
-```
+Practice with these printing exercises in your IDE or in the Mantik editor on earlier examples on this page.
 
 </ExerciseBox>
 
-### Applications in FRC
+### Printing in FRC
 
-In FRC, printing to the console is a powerful tool for debugging and monitoring robot behavior. It allows developers to quickly access important data without relying on external tools like SmartDashboard. This can be especially useful during testing and characterization.
+On the robot, `System.out.println` goes to the driver station console. It is a quick way to see numbers while tuning without opening Elastic or AdvantageScope.
 
-### FRC Console Printing Example:
+### FRC console printing example
 
-```java
+```java norun
 System.out.println("********** Drive FF Characterization Results **********");
 System.out.println("\tkS: " + formatter.format(kS));
 System.out.println("\tkV: " + formatter.format(kV));
 ```
 
-### Explanation
-
-The example above demonstrates how to print formatted feedforward characterization results directly to the console. By using `System.out.println()`, we can easily display values like `kS` and `kV` in a readable format. This approach eliminates the need to configure SmartDashboard or other external tools, making it a quick and efficient way to debug and analyze data during development.
-
+The `\t` inserts a tab so columns line up. Concatenating with `+` turns numbers into strings for display. For match play you will usually prefer structured logging; println is still useful during bring-up.

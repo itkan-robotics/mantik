@@ -1,0 +1,16 @@
+{
+  "teamNumber": 4476,
+  "teamName": "W.A.F.F.L.E.S.",
+  "normEpa": 1776,
+  "linkToCodebases": "FRC-4476-WAFFLES/Robot2026",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 287,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 659,
+  "lineCount": 659,
+  "sha": "2f474913ec2de6bbebc2ce18f8273b7dca5b2354",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/FRC-4476-WAFFLES/Robot2026/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:58:29.164Z"
+}

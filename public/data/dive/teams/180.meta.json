@@ -1,0 +1,16 @@
+{
+  "teamNumber": 180,
+  "teamName": "S.P.A.M.",
+  "normEpa": 1738,
+  "linkToCodebases": "frc180/2026-public",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 360,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 519,
+  "lineCount": 519,
+  "sha": "68496b2ae048476d64ec7dcb0317594390134a4c",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/frc180/2026-public/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:59:45.524Z"
+}

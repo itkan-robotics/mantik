@@ -1,0 +1,332 @@
+{
+  "version": 2,
+  "roundCount": 5,
+  "readDelayMs": 3000,
+  "answerMs": 25000,
+  "maxScorePerRun": 500,
+  "prompts": [
+    {
+      "id": "command-group-type",
+      "prompt": "Name one WPILib command group type.",
+      "answers": [
+        { "text": "SequentialCommandGroup", "aliases": ["sequential command group", "sequentialcommandgroup"], "tier": "common" },
+        { "text": "ParallelCommandGroup", "aliases": ["parallel command group", "parallelcommandgroup"], "tier": "uncommon" },
+        { "text": "ParallelRaceGroup", "aliases": ["parallel race group", "parallelracegroup"], "tier": "rare" },
+        { "text": "ParallelDeadlineGroup", "aliases": ["parallel deadline group", "paralleldeadlinegroup"], "tier": "deep" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "command-groups" }
+    },
+    {
+      "id": "command-type",
+      "prompt": "Name one kind of WPILib Command.",
+      "answers": [
+        { "text": "InstantCommand", "aliases": ["instantcommand", "instant command"], "tier": "uncommon" },
+        { "text": "FunctionalCommand", "aliases": ["functionalcommand", "functional command"], "tier": "uncommon" },
+        { "text": "RunCommand", "aliases": ["runcommand", "run command"], "tier": "common" },
+        { "text": "WaitCommand", "aliases": ["waitcommand", "wait command"], "tier": "common" },
+        { "text": "PrintCommand", "aliases": ["printcommand"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "commands" }
+    },
+    {
+      "id": "subsystem-type",
+      "prompt": "Name one WPILib type that owns a mechanism's hardware.",
+      "answers": [
+        { "text": "Subsystem", "aliases": ["subsystem"], "tier": "common" },
+        { "text": "SubsystemBase", "aliases": ["subsystembase", "subsystem base"], "tier": "uncommon" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "subsystems" }
+    },
+    {
+      "id": "trigger-action",
+      "prompt": "Name one Trigger method that schedules or runs commands from a binding.",
+      "answers": [
+        { "text": "onTrue", "aliases": ["on true"], "tier": "common" },
+        { "text": "whileTrue", "aliases": ["while true"], "tier": "uncommon" },
+        { "text": "toggleOnTrue", "aliases": ["toggle on true", "toggleontrue"], "tier": "rare" },
+        { "text": "onFalse", "aliases": ["on false", "onfalse"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "robot-container-and-bindings" }
+    },
+    {
+      "id": "scheduler-class",
+      "prompt": "Name the class that runs the command scheduler.",
+      "answers": [
+        { "text": "CommandScheduler", "aliases": ["commandscheduler", "command scheduler"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "intro-to-command-based" }
+    },
+    {
+      "id": "pid-class",
+      "prompt": "Name one WPILib PID controller class.",
+      "answers": [
+        { "text": "PIDController", "aliases": ["pidcontroller", "pid controller", "pid"], "tier": "common" },
+        { "text": "ProfiledPIDController", "aliases": ["profiledpidcontroller"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "frc-pid-control" }
+    },
+    {
+      "id": "feedforward-type",
+      "prompt": "Name one feedforward class or gain used on FRC mechanisms.",
+      "answers": [
+        { "text": "kV", "aliases": ["kv"], "tier": "common" },
+        { "text": "kG", "aliases": ["kg"], "tier": "common" },
+        { "text": "SimpleFeedforward", "aliases": ["simplefeedforward"], "tier": "uncommon" },
+        { "text": "ElevatorFeedforward", "aliases": ["elevatorfeedforward"], "tier": "rare" },
+        { "text": "kA", "aliases": ["ka"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "frc-pid-control" }
+    },
+    {
+      "id": "motion-profile",
+      "prompt": "Name one WPILib motion profiling type.",
+      "answers": [
+        { "text": "TrapezoidProfile", "aliases": ["trapezoidprofile", "trapezoid profile"], "tier": "uncommon" },
+        { "text": "ExponentialProfile", "aliases": ["exponentialprofile"], "tier": "rare" },
+        { "text": "Motion Magic", "aliases": ["motion magic", "motionmagic"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "trapezoidal-motion-profiling" }
+    },
+    {
+      "id": "gamepad-class",
+      "prompt": "Name one WPILib driver input class.",
+      "answers": [
+        { "text": "XboxController", "aliases": ["xboxcontroller", "xbox controller"], "tier": "common" },
+        { "text": "CommandXboxController", "aliases": ["commandxboxcontroller"], "tier": "uncommon" },
+        { "text": "Joystick", "aliases": ["joystick"], "tier": "common" },
+        { "text": "PS4Controller", "aliases": ["ps4controller"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "controllers-and-bindings" }
+    },
+    {
+      "id": "pose-type",
+      "prompt": "Name one WPILib type used for field pose.",
+      "answers": [
+        { "text": "Pose2d", "aliases": ["pose2d", "pose 2d"], "tier": "common" },
+        { "text": "Rotation2d", "aliases": ["rotation2d"], "tier": "uncommon" },
+        { "text": "Translation2d", "aliases": ["translation2d"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "pose-estimation-intro" }
+    },
+    {
+      "id": "odometry-class",
+      "prompt": "Name one odometry class in WPILib.",
+      "answers": [
+        { "text": "DifferentialDriveOdometry", "aliases": ["differentialdriveodometry"], "tier": "uncommon" },
+        { "text": "SwerveDriveOdometry", "aliases": ["swervedriveodometry"], "tier": "uncommon" },
+        { "text": "MecanumDriveOdometry", "aliases": ["mecanumdriveodometry"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "odometry" }
+    },
+    {
+      "id": "auto-chooser",
+      "prompt": "Name one way teams pick autonomous routines on the Driver Station.",
+      "answers": [
+        { "text": "SendableChooser", "aliases": ["sendablechooser", "chooser"], "tier": "common" },
+        { "text": "AutoChooser", "aliases": ["autochooser"], "tier": "uncommon" },
+        { "text": "PathPlannerAuto", "aliases": ["pathplannerauto"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "robot-container-and-bindings" }
+    },
+    {
+      "id": "pathplanner-type",
+      "prompt": "Name one PathPlanner or auto-related API name.",
+      "answers": [
+        { "text": "PathPlanner", "aliases": ["path planner", "pathplanner"], "tier": "common" },
+        { "text": "AutoBuilder", "aliases": ["autobuilder"], "tier": "uncommon" },
+        { "text": "PathPlannerPath", "aliases": ["pathplannerpath"], "tier": "schooler" },
+        { "text": "HolonomicPathFollower", "aliases": ["holonomicpathfollower"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "pathplanner" }
+    },
+    {
+      "id": "rev-motor",
+      "prompt": "Name one REV motor controller class or config type.",
+      "answers": [
+        { "text": "SparkMax", "aliases": ["sparkmax", "spark max"], "tier": "common" },
+        { "text": "SparkMaxConfig", "aliases": ["sparkmaxconfig"], "tier": "uncommon" },
+        { "text": "SparkBase", "aliases": ["sparkbase"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "rev-hardware-setup" }
+    },
+    {
+      "id": "ctre-motor",
+      "prompt": "Name one CTRE Talon FX related class.",
+      "answers": [
+        { "text": "TalonFX", "aliases": ["talonfx", "talon fx"], "tier": "common" },
+        { "text": "TalonFXConfigurator", "aliases": ["talonfxconfigurator"], "tier": "rare" },
+        { "text": "StatusSignal", "aliases": ["statussignal"], "tier": "deep" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "ctre-hardware-setup" }
+    },
+    {
+      "id": "vision-coprocessor",
+      "prompt": "Name one vision coprocessor or library teams use in FRC.",
+      "answers": [
+        { "text": "Limelight", "aliases": ["limelight"], "tier": "common" },
+        { "text": "PhotonVision", "aliases": ["photonvision", "photon"], "tier": "uncommon" },
+        { "text": "AprilTag", "aliases": ["apriltag", "april tag"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "limelight" }
+    },
+    {
+      "id": "logging-tool",
+      "prompt": "Name one FRC logging or log analysis tool.",
+      "answers": [
+        { "text": "AdvantageKit", "aliases": ["advantagekit", "advantage kit"], "tier": "common" },
+        { "text": "AdvantageScope", "aliases": ["advantagescope"], "tier": "common" },
+        { "text": "WPILog", "aliases": ["wpilog"], "tier": "uncommon" },
+        { "text": "Elastic", "aliases": ["elastic"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "advantagekit" }
+    },
+    {
+      "id": "dashboard",
+      "prompt": "Name one dashboard or telemetry UI used during matches.",
+      "answers": [
+        { "text": "Elastic", "aliases": ["elastic"], "tier": "common" },
+        { "text": "Shuffleboard", "aliases": ["shuffleboard"], "tier": "uncommon" },
+        { "text": "Glass", "aliases": ["glass"], "tier": "schooler" },
+        { "text": "NetworkTables", "aliases": ["networktables", "network tables"], "tier": "uncommon" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "elastic-basics" }
+    },
+    {
+      "id": "default-command",
+      "prompt": "Name the method that sets a subsystem's default command.",
+      "answers": [
+        { "text": "setDefaultCommand", "aliases": ["set default command"], "tier": "common" },
+        { "text": "defaultCommand", "aliases": ["default command"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "subsystems" }
+    },
+    {
+      "id": "requirements",
+      "prompt": "Name one command API related to subsystem exclusivity.",
+      "answers": [
+        { "text": "addRequirements", "aliases": ["add requirements"], "tier": "uncommon" },
+        { "text": "requires", "aliases": ["require"], "tier": "common" },
+        { "text": "getRequirements", "aliases": ["get requirements"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "commands" }
+    },
+    {
+      "id": "robot-base",
+      "prompt": "Name one WPILib robot base class from the templates.",
+      "answers": [
+        { "text": "TimedRobot", "aliases": ["timedrobot", "timed robot"], "tier": "common" },
+        { "text": "LoggableRobot", "aliases": ["loggablerobot"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "intro-to-command-based" }
+    },
+    {
+      "id": "wiring-class",
+      "prompt": "Name the class where command-based teams usually construct subsystems and bindings.",
+      "answers": [
+        { "text": "RobotContainer", "aliases": ["robotcontainer", "robot container"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "robot-container-and-bindings" }
+    },
+    {
+      "id": "encoder-type",
+      "prompt": "Name one encoder interface or implementation on FRC motors.",
+      "answers": [
+        { "text": "RelativeEncoder", "aliases": ["relativeencoder", "relative encoder"], "tier": "uncommon" },
+        { "text": "AbsoluteEncoder", "aliases": ["absoluteencoder"], "tier": "schooler" },
+        { "text": "Encoder", "aliases": ["encoder"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "sensors-and-encoders" }
+    },
+    {
+      "id": "neutral-mode",
+      "prompt": "Name one motor neutral mode.",
+      "answers": [
+        { "text": "Coast", "aliases": ["coast"], "tier": "common" },
+        { "text": "Brake", "aliases": ["brake"], "tier": "common" },
+        { "text": "NeutralMode", "aliases": ["neutralmode", "neutral mode"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "motor-config" }
+    },
+    {
+      "id": "current-limit",
+      "prompt": "Name one motor current limiting concept or setting.",
+      "answers": [
+        { "text": "stator current limit", "aliases": ["statorcurrentlimit", "stator limit"], "tier": "uncommon" },
+        { "text": "supply current limit", "aliases": ["supplycurrentlimit"], "tier": "rare" },
+        { "text": "current limiting", "aliases": ["current limit"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "motor-current-limiting" }
+    },
+    {
+      "id": "swerve-part",
+      "prompt": "Name one swerve drivetrain component class or concept.",
+      "answers": [
+        { "text": "SwerveModule", "aliases": ["swervemodule", "swerve module"], "tier": "uncommon" },
+        { "text": "SwerveDriveKinematics", "aliases": ["swervedrivekinematics"], "tier": "rare" },
+        { "text": "swerve", "aliases": ["swerve drive"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "swerve-drive-example" }
+    },
+    {
+      "id": "sim-mode",
+      "prompt": "Name one robot project mode used for simulation or replay.",
+      "answers": [
+        { "text": "SIM", "aliases": ["sim", "simulation"], "tier": "common" },
+        { "text": "REPLAY", "aliases": ["replay"], "tier": "uncommon" },
+        { "text": "REAL", "aliases": ["real"], "tier": "schooler" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "simulation-basics" }
+    },
+    {
+      "id": "io-pattern",
+      "prompt": "Name one pattern for swapping real hardware and simulation implementations.",
+      "answers": [
+        { "text": "IO layer", "aliases": ["io", "io interface"], "tier": "uncommon" },
+        { "text": "RobotContainer", "aliases": ["robotcontainer"], "tier": "schooler" },
+        { "text": "dependency injection", "aliases": ["dependency injection", "di"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "io-layer" }
+    },
+    {
+      "id": "units-api",
+      "prompt": "Name one WPILib units or measures API name.",
+      "answers": [
+        { "text": "Radians", "aliases": ["radians"], "tier": "schooler" },
+        { "text": "MetersPerSecond", "aliases": ["meterspersecond"], "tier": "uncommon" },
+        { "text": "Volts", "aliases": ["volts"], "tier": "common" },
+        { "text": "Measure", "aliases": ["measure"], "tier": "rare" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "frc-pid-control" }
+    },
+    {
+      "id": "command-schedule-method",
+      "prompt": "Name one way to start a command from code.",
+      "answers": [
+        { "text": "schedule", "aliases": ["schedule()"], "tier": "common" },
+        { "text": "withTimeout", "aliases": ["with timeout", "withtimeout"], "tier": "schooler" },
+        { "text": "andThen", "aliases": ["and then", "andthen"], "tier": "uncommon" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "commands" }
+    },
+    {
+      "id": "yass-tool",
+      "prompt": "Name one third-party mechanism helper library for FRC.",
+      "answers": [
+        { "text": "YAMS", "aliases": ["yams"], "tier": "uncommon" },
+        { "text": "Phoenix", "aliases": ["phoenix"], "tier": "schooler" },
+        { "text": "AdvantageKit", "aliases": ["advantagekit"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "yass" }
+    },
+    {
+      "id": "vision-pose",
+      "prompt": "Name one type of measurement used to correct pose with vision.",
+      "answers": [
+        { "text": "addVisionMeasurement", "aliases": ["vision measurement"], "tier": "uncommon" },
+        { "text": "PoseEstimator", "aliases": ["poseestimator", "pose estimator"], "tier": "schooler" },
+        { "text": "AprilTag", "aliases": ["apriltag"], "tier": "common" }
+      ],
+      "learnMore": { "section": "frc", "lessonId": "vision-pose-estimation-fusion" }
+    }
+  ]
+}

@@ -273,17 +273,30 @@ public class PhoenixUtil {
 }
 ```
 
+`Supplier` is a functional interface — see [Supplier and the Functional Interfaces](/java/java-fn-supplier). Passing a lambda into `tryUntilOk` is [passing functions as data](/java/java-fn-functions-as-data).
+
 Others worth having: deadband and clamp helpers, a tunable-constant wrapper (see [Tunable Constants and Characterization](/frc/tunable-constants)), and a logged pathfinder wrapper if you use PathPlanner with AdvantageKit.
 
 <RulesBox title="General Organization Rules" subtitle="Best practices:">
 
 - **One class per file,** file name matching the class.
 - **Clear separation:** subsystems own hardware; commands own decisions.
-- **Dependency injection.** Pass subsystems into multi-subsystem commands via the constructor; no static subsystem instances.
+- **Dependency injection.** Pass subsystems into multi-subsystem commands via the constructor; no static subsystem instances. See [Dependency Injection](/java/java-dp-dependency-injection).
 - **Nested constant classes,** static-imported at the point of use.
 - **Consistent naming** across the whole repository.
 - **Descriptive names.** `INTAKE_PIVOT_DOWN` beats `POS_2`.
 
 </RulesBox>
 
-<LinkGrid links={[{"label":"Subsystems","id":"subsystems"},{"label":"Commands","id":"commands"},{"label":"Hardware Abstraction with IO Layers","id":"io-layer"},{"label":"Command-Based Intro","id":"intro-to-command-based"}]} title="Resources" section="frc" />
+<LinkGrid links={[
+    {"label":"Subsystems","id":"subsystems"},
+    {"label":"Commands","id":"commands"},
+    {"label":"Hardware Abstraction with IO Layers","id":"io-layer"},
+    {"label":"Command-Based Intro","id":"intro-to-command-based"}
+  ]} title="Resources" section="frc" />
+
+<LinkGrid links={[
+    {"label":"Dependency Injection","id":"java-dp-dependency-injection"},
+    {"label":"Supplier and the Functional Interfaces","id":"java-fn-supplier"},
+    {"label":"Passing Functions as Data","id":"java-fn-functions-as-data"}
+  ]} title="Java background" section="java" />

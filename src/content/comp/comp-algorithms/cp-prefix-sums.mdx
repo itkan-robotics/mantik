@@ -21,7 +21,7 @@ One linear precomputation makes every query O(1).
 
 Define `pre[i]` as the sum of the first `i` elements. Index 0 holds zero, which removes the special case for ranges that start at the beginning.
 
-```java
+```java norun
 long[] pre = new long[n + 1];
 for (int i = 0; i < n; i++) {
     pre[i + 1] = pre[i] + a[i];
@@ -30,7 +30,7 @@ for (int i = 0; i < n; i++) {
 
 The sum of `a[l..r]` inclusive, with 0-based `l` and `r`, is then:
 
-```java
+```java norun
 long rangeSum = pre[r + 1] - pre[l];
 ```
 
@@ -48,7 +48,7 @@ Use `long` for the prefix array. With N = 200,000 values up to 10<sup>9</sup>, t
 
 The same structure answers counting questions. To count elements satisfying a property in a range, build a prefix over 0/1 indicators.
 
-```java
+```java norun
 // how many values in a[l..r] are even?
 int[] pre = new int[n + 1];
 for (int i = 0; i < n; i++) {
@@ -63,7 +63,7 @@ This generalizes: any question of the form "how many in this range" becomes O(1)
 
 For a grid, `pre[r][c]` holds the sum of the rectangle from the origin to `(r-1, c-1)`.
 
-```java
+```java norun
 long[][] pre = new long[rows + 1][cols + 1];
 for (int r = 0; r < rows; r++) {
     for (int c = 0; c < cols; c++) {
@@ -79,7 +79,7 @@ The `- pre[r][c]` corrects for the region counted twice by the two overlapping s
 
 Querying the rectangle from `(r1, c1)` to `(r2, c2)` inclusive uses the same correction in reverse:
 
-```java
+```java norun
 long sum = pre[r2 + 1][c2 + 1]
          - pre[r1][c2 + 1]
          - pre[r2 + 1][c1]
@@ -96,7 +96,7 @@ Now reverse the problem: many range *updates*, then one read of the final array.
 
 Applying each update directly is O(N) per update. Instead record only where the change starts and stops.
 
-```java
+```java norun
 long[] diff = new long[n + 1];
 
 // for each update (l, r, v):
@@ -139,7 +139,7 @@ Then take a 2D prefix sum of `diff` to recover the final grid.
 
 *Given N days of rainfall and Q queries, each asking the average rainfall over a range of days.*
 
-```java
+```java norun
 long[] pre = new long[n + 1];
 for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + rain[i];
 

@@ -1,0 +1,16 @@
+{
+  "teamNumber": 1701,
+  "teamName": "Robocubs",
+  "normEpa": 1720,
+  "linkToCodebases": "Robocubs/2026-RobotPublic",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 138,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 268,
+  "lineCount": 268,
+  "sha": "6c84471941a2ede4c041661b55bb170e80c95f58",
+  "license": "MIT",
+  "sourceUrl": "https://github.com/Robocubs/2026-RobotPublic/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T21:01:17.509Z"
+}

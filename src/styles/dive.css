@@ -1,0 +1,348 @@
+.dive-app {
+  min-height: 60vh;
+}
+
+.dive-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 2rem;
+}
+
+.dive-team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: 8px;
+  background: var(--color-surface, #fff);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.dive-team-card:hover {
+  border-color: var(--color-accent, #2563eb);
+}
+
+.dive-team-card-num {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.dive-team-card-name {
+  font-weight: 600;
+}
+
+.dive-team-card-meta {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.dive-primary-btn,
+.dive-secondary-btn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dive-primary-btn {
+  border: none;
+  background: var(--color-accent, #2563eb);
+  color: #fff;
+}
+
+.dive-secondary-btn {
+  border: 1px solid var(--color-border, #ccc);
+  background: transparent;
+  color: inherit;
+}
+
+.dive-link-btn {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-accent, #2563eb);
+  padding: 0;
+}
+
+.dive-play-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border, #ddd);
+  font-size: 0.9rem;
+}
+
+.dive-play-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.1fr);
+  gap: 0;
+  min-height: 70vh;
+}
+
+@media (max-width: 900px) {
+  .dive-play-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dive-play-main {
+  padding: 1rem 1.25rem;
+  overflow: auto;
+}
+
+.dive-prompt-card {
+  max-width: 42rem;
+}
+
+.dive-phase-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.dive-prompt-text {
+  font-size: 1.25rem;
+  line-height: 1.35;
+  margin: 0.5rem 0 1rem;
+}
+
+.dive-answer-input {
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.dive-code-panel {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--color-border, #ddd);
+  background: var(--color-code-bg, #0f172a);
+  color: #e2e8f0;
+  min-height: 320px;
+  max-height: min(70vh, 720px);
+}
+
+@media (max-width: 900px) {
+  .dive-code-panel {
+    border-left: none;
+    border-top: 1px solid var(--color-border, #ddd);
+    max-height: 45vh;
+  }
+}
+
+.dive-code-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dive-code-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dive-code-depth-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38%;
+  height: 1.45em;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+  border-top: 1px solid rgba(96, 165, 250, 0.45);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.45);
+  background: rgba(59, 130, 246, 0.08);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.12);
+}
+
+.dive-code-scroll {
+  height: 100%;
+  overflow: hidden;
+}
+
+.dive-code-pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  will-change: transform;
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dive-code-pre {
+    transition: none;
+  }
+}
+
+.dive-code-line {
+  display: flex;
+  white-space: pre;
+}
+
+.dive-code-line--active {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.dive-code-gutter {
+  flex: 0 0 3.25rem;
+  text-align: right;
+  padding-right: 0.75rem;
+  color: #64748b;
+  user-select: none;
+}
+
+.dive-code-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dive-summary-list {
+  padding-left: 1.25rem;
+}
+
+.dive-disclaimer {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 1.5rem;
+}
+
+.dive-error {
+  color: #b91c1c;
+}
+
+.dive-spoiler-details {
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+  border: 1px dashed var(--color-border, #94a3b8);
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  background: var(--color-surface-alt, rgba(148, 163, 184, 0.08));
+}
+
+.dive-spoiler-summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style-position: outside;
+}
+
+.dive-spoiler-summary::marker {
+  color: var(--color-muted, #64748b);
+}
+
+.dive-spoiler-hint {
+  margin: 0.5rem 0 0.35rem;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.dive-spoiler-body {
+  padding-top: 0.25rem;
+}
+
+.dive-accepted-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.dive-accepted-list li {
+  margin: 0.35rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+}
+
+.dive-accepted-answer {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.dive-accepted-meta {
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.dive-round-lesson-link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dive-round-lesson-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.dive-reveal-lesson {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}
+
+.dive-summary-item {
+  margin-bottom: 0.85rem;
+}
+
+.dive-summary-item-head {
+  margin: 0 0 0.25rem;
+}
+
+.dive-summary-item-meta {
+  font-style: italic;
+}
+
+.dive-daily {
+  margin-bottom: 1.5rem;
+}
+
+.dive-landing-footer {
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.dive-answer-feedback {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-muted, #64748b);
+}
+
+.dive-suggestion {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border, #cbd5e1);
+  border-radius: 8px;
+  background: var(--color-surface-alt, #f8fafc);
+}
+
+.dive-suggestion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.dive-suggestion-actions .dive-primary-btn,
+.dive-suggestion-actions .dive-secondary-btn {
+  margin-top: 0;
+}

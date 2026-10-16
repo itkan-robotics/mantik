@@ -67,6 +67,8 @@ git checkout -b new-branch
 ```
 ````
 
+**Runnable Java (Java Training and Competitive sections):** Fenced ` ```java ` blocks on lessons with `section: java` or `section: comp` get an in-browser **Run** control. Use ` ```java norun ` for snippets that are incomplete, depend on earlier fences on the page, or are not meant to compile. Exercise boxes only auto-run fences that declare `public class` or `public static void main`.
+
 ### RulesBox / StepsBox / ExerciseBox
 
 Use component tags with **markdown inside** (slot content):

@@ -1,0 +1,91 @@
+---
+const teams = [
+  {
+    number: 9128,
+    name: 'Itkan Robotics',
+    members: [
+      { name: 'Abdullah Khaled', href: 'https://github.com/akhaled247' },
+      { name: 'Abdur-Rehman Naveed', href: 'https://github.com/TheAilurusFulgens' },
+      { name: 'Zayan Hassan', href: 'https://github.com/Zayan-M-Hassan' },
+    ],
+  },
+  { number: 3476, name: 'Code Orange', members: null },
+  { number: 4451, name: 'ROBOTZ Garage', members: null },
+] as const;
+---
+
+<div class="home-contributors" data-home-contributors>
+  <p class="home-contributors-heading">Contributors</p>
+  <ul class="home-contributors-list">
+    {
+      teams.map((team) => (
+        <li>
+          <button
+            type="button"
+            class="home-contributors-team"
+            data-apply-team-colors={team.number}
+            aria-label={`Apply team ${team.number} colors`}
+          >
+            {team.number}
+          </button>
+          : {team.name}
+          {team.members && (
+            <>
+              {' '}
+              (
+              {team.members.map((m, i) => (
+                <>
+                  {i > 0 && (i === team.members!.length - 1 ? ', and ' : ', ')}
+                  <a href={m.href} rel="noopener noreferrer">{m.name}</a>
+                </>
+              ))}
+              )
+            </>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+  <p class="home-contributors-status" data-home-contributors-status role="status" aria-live="polite"></p>
+</div>
+
+<script>
+  import { applyTeamColorsByNumber } from '@/lib/prefs';
+
+  function initContributors(root: HTMLElement) {
+    if (root.dataset.initialized) return;
+    root.dataset.initialized = 'true';
+
+    const status = root.querySelector<HTMLElement>('[data-home-contributors-status]');
+
+    root.addEventListener('click', async (e) => {
+      const btn = (e.target as Element).closest<HTMLButtonElement>('[data-apply-team-colors]');
+      if (!btn) return;
+      e.preventDefault();
+
+      const n = Number(btn.dataset.applyTeamColors);
+      if (!Number.isFinite(n)) return;
+
+      btn.disabled = true;
+      if (status) status.textContent = `Loading team ${n} colors…`;
+
+      try {
+        await applyTeamColorsByNumber(n);
+        if (status) status.textContent = `Site colors updated for Team ${n}. Open Aa to adjust reading preferences.`;
+      } catch (err) {
+        if (status) {
+          status.textContent = err instanceof Error ? err.message : 'Could not load team colors.';
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
+  function boot() {
+    document.querySelectorAll<HTMLElement>('[data-home-contributors]').forEach(initContributors);
+  }
+
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>

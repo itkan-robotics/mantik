@@ -8,20 +8,20 @@ groupOrder: 12
 order: 2
 difficulty: advanced
 duration: 30 min
-description: ""
+description: Compare PedroPathing and Road Runner on setup, paths, localization, and which teams each fits.
 ---
 
 ### Introduction to FTC Path Planning Libraries
 
-FTC teams use path planning libraries to generate and follow complex autonomous paths. Two popular options are **PedroPathing** and **Road Runner**. Both help robots follow smooth, accurate trajectories, but they differ in features, complexity, and setup.
+Path libraries generate smooth trajectories and help your follower stay on them. **PedroPathing** and **Road Runner** are two common FTC choices. Both pair with odometry; they differ in setup effort, features, and tuning workflow.
 
 ### What is PedroPathing?
 
-PedroPathing is a lightweight, easy-to-use path planning library designed specifically for FTC. It focuses on simplicity and quick setup, making it ideal for teams new to advanced path planning. PedroPathing supports basic path following, localization, and simple configuration.
+PedroPathing targets FTC teams that want a smaller API and quicker first path. It covers basic following, localization hooks, and straightforward configuration without the full Road Runner stack.
 
 ### What is Road Runner?
 
-Road Runner is a powerful, feature-rich motion planning library for FTC. It supports advanced trajectory generation (splines, curves), velocity/acceleration constraints, and integrates with odometry and localization. Road Runner is widely used by top teams for its flexibility and performance, but has a steeper learning curve and more complex setup.
+Road Runner supports splines, velocity and acceleration limits, and tight integration with odometry tuning tools (including live tuning via dashboards). Many competitive teams use it; expect more Gradle setup and math up front.
 
 ### PedroPathing vs. Road Runner: Feature Comparison
 
@@ -38,7 +38,7 @@ Road Runner is a powerful, feature-rich motion planning library for FTC. It supp
 
 ### Which Should You Use?
 
-Choose **PedroPathing** if you want a quick, simple solution for basic autonomous paths and are new to path planning. Choose **Road Runner** if you need advanced features, complex trajectories, or want to push the limits of FTC autonomous performance.
+Choose **PedroPathing** when you want working auto paths quickly with less infrastructure. Choose **Road Runner** when you need spline trajectories, strict motion constraints, or you are investing in full odometry and tuning tooling for competition auto.
 
 <LinkGrid links={[{"label":"PedroPathing Documentation","url":"https://pedropathing.com/"},{"label":"Road Runner Documentation","url":"https://acme-robotics.gitbook.io/road-runner/"}]} title="Further Reading & Resources" section="ftc" />
 

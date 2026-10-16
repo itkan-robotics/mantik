@@ -8,31 +8,31 @@ groupOrder: 5
 order: 1
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: How P, I, and D correct error, where PID runs on the RIO vs the motor controller, and a practical tuning order.
 ---
 
 ### Overview
 
-PID (Proportional-Integral-Derivative) is a feedback loop that corrects errors. It drives a mechanism to a target setpoint (like an elevator height or shooter speed) by adjusting motor output.
+PID (proportional–integral–derivative) is a feedback controller. It compares where the mechanism is to where you want it (the setpoint) and adjusts motor output to close the gap. Elevators use position setpoints; shooters often use velocity setpoints.
 
 ### The Terms
 
-**P (Proportional):** Reacts to current error. "I'm far away, go fast." Main driver of motion.
+**P (proportional):** Output scales with current error. Large error → stronger correction. P does most of the work during a move.
 
-**I (Integral):** Reacts to accumulated error. "I've been close for a while, push harder." Fixes steady-state error (e.g., gravity).
+**I (integral):** Output scales with error summed over time. Use I when the mechanism stops short of the setpoint and stays there (steady-state error). Gravity on an elevator is often handled with feedforward (kG) instead of I.
 
-**D (Derivative):** Reacts to rate of change. "I'm closing in fast, slow down." Dampens oscillation.
+**D (derivative):** Output scales with how fast error is changing. D opposes rapid corrections and can reduce overshoot and oscillation.
 
 <RulesBox title="Implementation Methods" subtitle="Where to run PID:">
 
-- **On-RIO (WPILib PIDController):** Runs in user code (20ms loop). Flexible, easy to debug.
-- **On-Controller (Spark/Talon):** Runs on motor controller (1ms loop). Faster, frees up RIO CPU.
+- **On-RIO (WPILib `PIDController`):** Runs in your robot code (typically a 20 ms loop). Easy to log and change in software.
+- **On-controller (SparkMax / Talon FX):** Runs on the motor controller (faster loop). Less RIO CPU use; tune with Phoenix Tuner or REV Hardware Client.
 
 </RulesBox>
 
 ### WPILib PIDController
 
-Best for learning and complex logic.
+Use this when you want PID in Java (custom logic, multiple sensors, or learning how the math works).
 
 ### RIO PID Example
 
@@ -68,7 +68,7 @@ public class Elevator extends SubsystemBase {
 
 ### On-Controller PID
 
-Best for performance.
+Use on-controller PID when the mechanism needs a fast loop and your gains are stable.
 
 ### Hardware PID
 
@@ -137,7 +137,7 @@ public class Example {
 
 ### Tuning Process
 
-Tune feedforward first, then PID. Use Phoenix Tuner or similar tools for quick constant changes. Log desired vs actual position using a vendor-specific tool (Phoenix Tuner, REV Hardware Client) or an external tool (AdvantageScope, Elastic) to see system behavior. (Credits to [SuperNURDS FRC 3255](https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116) for the original method)
+Tune feedforward first, then PID. Change gains from Phoenix Tuner, REV Hardware Client, Elastic, or AdvantageScope while the mechanism runs. Graph commanded vs measured position or velocity; do not tune by eye alone. The kG-then-kP workflow below matches [SuperNURDS FRC 3255](https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116) and the [PID Tuning Practice](/frc/pid-tuning-practice-setup) lessons.
 
 <RulesBox title="Feedforward Tuning" subtitle="Steps:">
 

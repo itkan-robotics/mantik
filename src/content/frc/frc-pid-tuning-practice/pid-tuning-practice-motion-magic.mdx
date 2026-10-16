@@ -8,32 +8,25 @@ groupOrder: 6
 order: 5
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Motion Magic on hardware—kG with VoltageOut, kP with profiling off, then cruise velocity, acceleration, and jerk.
 ---
 
 ### Overview
 
-This lesson demonstrates Motion Magic® tuning using Phoenix Tuner. Motion Magic® is CTRE's motion profiling control mode that provides smooth, trapezoidal motion profiles. You'll learn how to tune kG (gravity feedforward), kP (proportional gain), and Motion Magic® constants (cruise velocity, acceleration, and jerk) to achieve precise, controlled motion.
+Motion Magic is CTRE’s trapezoidal profiler on Talon FX. This lesson uses Phoenix Tuner: find **kG**, tune **kP** with profile limits at zero, then set cruise velocity, acceleration, and optional jerk.
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of Motion Magic® tuning in Phoenix Tuner:
+Motion Magic tuning in Phoenix Tuner:
 
 <YouTubeEmbed id="edoeF-Z5IYA" title="PID Practice: Motion Magic" />
 
 ### Prerequisites
 
-Before starting this lesson, ensure the following are configured:
-
-
-
-• Supply and stator current limits are set
-
-• Positive direction corresponds to upward movement
-
-• Sensor-to-mechanism ratio is correct
-
-• Phoenix Tuner installed and connected to your motor controller
+- Current limits configured
+- Motor positive direction matches “up” or your convention
+- Sensor-to-mechanism ratio correct
+- Phoenix Tuner connected to the controller
 
 <StepsBox title="Tuning Steps">
 
@@ -94,19 +87,7 @@ Before starting this lesson, ensure the following are configured:
 
 ### Important Notes
 
-Motion Magic® provides better motion profiles than basic PID control by:
-
-
-
-• **Smoother motion:** Trapezoidal profiles eliminate sudden jerks
-
-• **Predictable acceleration:** Controlled ramp-up and ramp-down
-
-• **Better performance:** More efficient than PID-only control
-
-
-
-All tuning in this lesson is performed in Phoenix Tuner. The process involves finding the correct kG value to counteract gravity, tuning kP for responsiveness, and configuring Motion Magic® constants for smooth motion profiles.
+Motion Magic plans accel and cruise instead of asking PID alone to slam the mechanism to a setpoint. All steps here are in Phoenix Tuner: kG under voltage out, kP under position voltage, then Motion Magic cruise, acceleration, and jerk.
 
 <LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"PID Tuning Practice - Arm","id":"pid-tuning-practice-arm"}]} title="Resources" section="frc" />
 

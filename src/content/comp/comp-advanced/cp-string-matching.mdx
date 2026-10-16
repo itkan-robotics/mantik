@@ -46,7 +46,7 @@ The `while` loop looks like it could be expensive, but `j` only ever decreases i
 
 Concatenate the pattern, a separator that appears in neither string, and the text. Any position where the prefix function equals the pattern length marks a match.
 
-```java
+```java norun
 static List<Integer> findAll(String text, String pattern) {
     String combined = pattern + '\1' + text;
     int[] pi = prefixFunction(combined);
@@ -161,7 +161,7 @@ When an exact answer is required and a collision would be fatal, prefer KMP or Z
 
 `charAt` on a `String` is a bounds-checked method call. In a hot loop over 10<sup>6</sup> characters, converting to a `char[]` once is noticeably faster:
 
-```java
+```java norun
 char[] c = s.toCharArray();
 ```
 

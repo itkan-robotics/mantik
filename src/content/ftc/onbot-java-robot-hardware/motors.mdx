@@ -8,12 +8,12 @@ groupOrder: 4
 order: 1
 difficulty: beginner
 duration: 10 min
-description: ""
+description: "Maps DC motors, sets power and direction, and uses encoders for distance moves."
 ---
 
 ### Overview
 
-DC motors drive wheels, arms, and other moving parts. Access motors through the `hardwareMap`—an FTC SDK object that provides references to configured devices. Declare motors as member variables and initialize them in `runOpMode()`.
+DC motors drive wheels, arms, and lifts. Declare `DcMotor` fields, then call `hardwareMap.get()` in `runOpMode()` with names that match your configuration.
 
 ### Initialization and Basic Control
 

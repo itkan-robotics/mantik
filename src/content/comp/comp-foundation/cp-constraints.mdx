@@ -47,7 +47,7 @@ If N ≤ 5,000, a nested loop over all pairs is fine and you should stop looking
 
 To find the complexity, count how many times the innermost work runs as a function of the input size.
 
-```java
+```java norun
 // O(N) — the loop body runs n times
 long sum = 0;
 for (int i = 0; i < n; i++) {
@@ -55,7 +55,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-```java
+```java norun
 // O(N^2) — for each i, the inner loop runs up to n times
 int best = 0;
 for (int i = 0; i < n; i++) {
@@ -67,7 +67,7 @@ for (int i = 0; i < n; i++) {
 
 The second example runs about N<sup>2</sup>/2 times, not N<sup>2</sup>. Big O drops the constant factor, so both are O(N<sup>2</sup>). That is usually the right call, but not always — see the caveat below.
 
-```java
+```java norun
 // O(N log N) — sorting dominates the linear scan after it
 Arrays.sort(a);
 for (int i = 0; i < n; i++) {
@@ -135,7 +135,7 @@ The direct approach is to check every pair: O(N<sup>2</sup>) = 10<sup>10</sup>. 
 
 Consulting the table, N ≤ 100,000 allows O(N log N) or O(N). Two approaches fit:
 
-```java
+```java norun
 // O(N) average — one pass with a hash set
 Set<Integer> seen = new HashSet<>();
 boolean found = false;
@@ -148,7 +148,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-```java
+```java norun
 // O(N log N) — sort, then two pointers from both ends
 Arrays.sort(a);
 int lo = 0, hi = n - 1;

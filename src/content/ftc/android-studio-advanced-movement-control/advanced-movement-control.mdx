@@ -8,28 +8,31 @@ groupOrder: 10
 order: 1
 difficulty: advanced
 duration: 25 min
-description: ""
+description: Feedback control, PID, motion profiling, and how the topics in this Android Studio unit fit together.
 ---
 
 ### Why Advanced Movement Control?
 
-FTC robots often need to move with precision, repeatability, and speed. Simple power commands are not enough for tasks like driving straight, turning to a specific angle, or moving an arm to an exact position. **Advanced movement control** techniques help your robot perform reliably in both autonomous and teleop modes, giving you a competitive edge.
+Open-loop motor power is enough for teleop, but auto needs repeatable distance, angle, and mechanism position. Feedback control closes the loop with sensors so the robot corrects error instead of hoping timing and battery voltage stay the same.
 
 ### What You'll Learn in This Unit
 
-- The basics of control theory and why feedback is essential for robotics.
-- How to use PID (Proportional-Integral-Derivative) controllers to achieve precise movement.
-- How to tune and implement PID for different robot mechanisms (drivetrain, arms, etc.).
-- How to use motion profiling for smooth, fast, and accurate movement.
-- How to combine multiple control techniques for complex mechanisms.
+- Why feedback matters for drivetrains and mechanisms.
+- PID controllers in Java for position and heading.
+- Applying PID to drivetrain, IMU turns, and arms.
+- Motion profiles for smooth acceleration and deceleration.
+- Combining PID with feedforward on real mechanisms.
 
 ### Learning Path
 
-**Advanced Control Theory**: Understand the principles behind feedback and control systems.**PID Control**: Learn how to implement and tune PID controllers in Java using Android Studio.**Robot PID Control**: Apply PID to real robot mechanisms, including multi-axis and drivetrain control.**Motion Profiling**: Use motion profiles to generate smooth, efficient robot movement.
+1. **External Libraries** — optional frameworks that bundle control and structure.
+2. **PID Control** — P, I, D terms, a basic loop, and tuning.
+3. **Robot PID Control** — drivetrain, multi-axis, and mechanism examples.
+4. **Motion Profiling** — trapezoidal profiles and pairing with PID.
 
 ### Recommended Prerequisites
 
-- Comfort with Java programming and object-oriented concepts.
-- Basic experience with the FTC SDK in **Android Studio**.
-- Familiarity with robot hardware (motors, sensors, servos).
+- Comfortable Java and basic classes.
+- FTC SDK project open in Android Studio.
+- Motors configured with encoders; basic teleop experience.
 

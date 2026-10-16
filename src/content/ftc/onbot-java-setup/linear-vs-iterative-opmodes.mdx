@@ -8,22 +8,18 @@ groupOrder: 2
 order: 4
 difficulty: beginner
 duration: 40 min
-description: ""
+description: "Compares LinearOpMode and iterative OpMode structure and when to use each."
 ---
 
-### OpMode Types in FTC
+### OpMode types in FTC
 
-FTC supports two main OpMode types: **LinearOpMode** and **Iterative OpMode**. Understanding the difference helps you choose the right structure for your code.
+FTC code usually extends **LinearOpMode** or **OpMode** (iterative).
 
-
-
-A **LinearOpMode** runs your code from top to bottom, like a script. An **Iterative OpMode** runs your code in a loop, giving you more control over timing and state.
-
-
+**LinearOpMode** runs `runOpMode()` top to bottom, often with `sleep()`. **Iterative OpMode** splits setup into `init()` and repeats `loop()`.
 
 See: [gm0: OpMode Types](https://gm0.org/en/latest/docs/software/getting-started/linear-opmode-vs-opmode.html)
 
-<RulesBox title="Key Differences" subtitle="LinearOpMode vs Iterative OpMode:">
+<RulesBox title="Key Differences" subtitle="Linear vs iterative">
 
 - LinearOpMode: Code runs sequentially, like a script.
 - Iterative OpMode: Code runs in repeated loop() calls.
@@ -83,7 +79,7 @@ public class IterativeTeleOp extends OpMode {
 }
 ```
 
-<RulesBox title="When to Use Each Type" subtitle="Choose based on your needs:">
+<RulesBox title="When to Use Each Type" subtitle="Quick guide">
 
 - Use LinearOpMode for simple autonomous or TeleOp routines.
 - Use Iterative OpMode for advanced TeleOp with state machines or timing.
@@ -92,11 +88,11 @@ public class IterativeTeleOp extends OpMode {
 
 </RulesBox>
 
-### Converting Between Types
+### Converting between types
 
-You can convert a LinearOpMode to an Iterative OpMode by moving your logic into the `loop()` method and managing state with variables. For example, if you have a sequence of actions in LinearOpMode, you can use a state variable in Iterative OpMode to step through them.
+Move loop body code into `loop()` and use fields to track state when stepping through a sequence.
 
-### Further Reading & Resources
+### Further reading
 
 - [FTC SDK Example OpModes](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/master/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
 

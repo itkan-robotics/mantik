@@ -8,36 +8,24 @@ groupOrder: 8
 order: 1
 difficulty: beginner
 duration: 30 min
-description: ""
+description: Field pose (X, Y, heading), coordinate frames, and how odometry, vision, and fusion fit together.
 ---
 
 ### What is Pose Estimation?
 
-Pose estimation is the process of determining a robot's position and orientation (heading) on the field. In FRC, pose estimation is essential for accurate autonomous navigation, precise scoring, and field awareness. A pose consists of two components: **position** (X and Y coordinates) and **orientation** (heading angle).
+Pose estimation is knowing where the robot is on the field: **position** (X and Y, usually meters) and **heading** (which way the front points). Autos, path following, and alignment to game elements all need a pose that updates over time.
 
+Without it, wheel commands do not know if the robot reached the right spot. With a good estimate, you can drive to coordinates, follow splines, and branch logic on field location.
 
-
-Without pose estimation, robots operate blindly - they don't know where they are on the field, making autonomous routines unreliable and precise movements impossible. With accurate pose estimation, robots can navigate to specific locations, follow paths accurately, and make intelligent decisions based on their field position.
-
-
-
-Learn more: [WPILib: Odometry and Pose Estimation](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html#kinematics-and-odometry)
+[WPILib: Odometry and Pose Estimation](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html#kinematics-and-odometry)
 
 ### What is a Pose?
 
-A pose represents a robot's complete spatial state on the field. It consists of:
+**Position (X, Y):** Distance from the field origin along each axis. Convention depends on the year’s field layout; WPILib documents which corner is (0, 0).
 
+**Heading:** Rotation in the plane—degrees or radians, positive counterclockwise from the field +X axis in the standard WPILib field frame.
 
-
-**Position (X, Y):** The robot's location on the field, typically measured in meters from a reference point (origin). X represents forward/backward position, Y represents left/right position.
-
-
-
-**Orientation (Heading/Angle):** The direction the robot is facing, typically measured in degrees or radians. In FRC, heading is usually measured from 0° (pointing in the positive X direction) with positive angles representing counterclockwise rotation.
-
-
-
-WPILib represents poses using the `Pose2d` class, which combines a `Translation2d` (position) and a `Rotation2d` (orientation). This provides a complete description of the robot's state in 2D space.
+WPILib packs both into `Pose2d` (`Translation2d` + `Rotation2d`).
 
 ### Basic Pose Representation
 
@@ -74,57 +62,23 @@ public class PoseExample {
 
 ### Coordinate Systems
 
-Understanding coordinate systems is crucial for pose estimation. FRC uses a standard field coordinate system:
+**Field frame:** Fixed origin on the carpet. Alliance color can flip which corner is (0, 0); see [WPILib Coordinate Systems](https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#origin-follows-your-alliance).
 
-
-
-**Field Coordinate System:** The field has a fixed origin (typically at one corner) with X and Y axes. The positive X direction is usually toward the opposing alliance station, and the positive Y direction is typically to the left when facing positive X. All poses are measured relative to this fixed field coordinate system.
-
-
-
-**Robot Coordinate System:** The robot has its own coordinate system where the front of the robot is typically the positive X direction. Robot-centric coordinates are relative to the robot's current orientation, while field-centric coordinates are relative to the fixed field.
-
-
-
-**Origin and Axes:** The field origin (0, 0) is a fixed reference point. All robot positions are measured from this origin. The coordinate system is right-handed: positive X is typically forward, positive Y is left, and positive rotation is counterclockwise.
-
-*Taken from [WPILib Coordinate Systems](https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#origin-follows-your-alliance)*
+**Robot frame:** X usually out the front of the robot. Sensor offsets and vision transforms are defined robot-relative, then converted to field coordinates for autos.
 
 ### Methods of Pose Estimation
 
-There are several methods for estimating robot pose in FRC:
+**Odometry:** Integrate wheel travel and gyro heading (dead reckoning). Updates every robot loop; drifts when wheels slip or constants are wrong.
 
+**Vision:** Cameras see AprilTags (or other landmarks) and solve for robot pose on the field. Absolute when tags are visible; rate and accuracy depend on exposure, distance, and how many tags you see.
 
-
-**Odometry (Encoder-Based):** Uses wheel encoders and a gyroscope to track robot movement. Odometry calculates position by integrating wheel movements over time (dead reckoning). It provides continuous updates but can accumulate error (drift) over time. Odometry is fast and doesn't require external references, making it ideal for continuous tracking.
-
-
-
-**Vision-Based (Camera-Based):** Uses cameras to observe field features (AprilTags, field elements, game pieces) and calculate pose from these observations. Vision provides absolute positioning (no drift) but requires visibility of field features. Vision updates are typically slower than odometry and depend on camera field of view and lighting conditions.
-
-
-
-**Sensor Fusion:** Combines odometry and vision (or multiple sensors) to get the best of both worlds. Fusion algorithms (like Kalman filters) weight different sensor sources based on their reliability and update rates. This provides continuous tracking with periodic absolute corrections, resulting in highly accurate pose estimates.
+**Fusion:** Run odometry continuously and blend in vision when it is valid. WPILib `PoseEstimator` classes handle the weighting if you pass sensible standard deviations.
 
 ### Common Applications in FRC
 
-Pose estimation enables many advanced FRC capabilities:
-
-
-
-**Autonomous Navigation:** Move to specific field positions accurately. Navigate around obstacles. Return to starting positions. Execute multi-segment autonomous routines.
-
-
-
-**Path Following:** Follow complex trajectories (curves, splines). Maintain accurate position along paths. Execute autonomous paths with precision.
-
-
-
-**Precise Scoring:** Align mechanisms with game elements. Position robot for optimal scoring angles. Navigate to scoring locations accurately.
-
-
-
-**Field Awareness:** Make decisions based on robot position. Avoid obstacles and other robots. Optimize strategy based on field state. Track game piece locations relative to robot.
+- Autos and path following to field coordinates
+- Scoring alignment and staged pickup positions
+- Logic that depends on where you are (defense, cycle routing)
 
 ### Simple Pose Tracking Example
 
@@ -179,23 +133,13 @@ public class SimplePoseTracking {
 
 ### Key Concepts
 
-Understanding these concepts is essential for pose estimation:
+**Pose:** `(x, y, θ)` on the field—`Pose2d` in code.
 
+**Frames:** Field-centric for paths and autos; robot-centric for driver-centric drive and mounting cameras.
 
+**Localization:** Any method that updates pose; fusion is the usual competition setup.
 
-**Pose (Position and Orientation):** A complete description of robot state in 2D space. Position is (X, Y) coordinates, orientation is heading angle. Represented by WPILib's `Pose2d` class.
-
-
-
-**Coordinate Frames:** Reference systems for measuring positions. Field-centric coordinates are relative to fixed field origin. Robot-centric coordinates are relative to robot's current orientation. Transformations convert between coordinate frames.
-
-
-
-**Localization:** The process of determining where the robot is. Odometry provides continuous localization through dead reckoning. Vision provides absolute localization through field feature observation. Fusion combines multiple sources for best accuracy.
-
-
-
-**Field-Centric vs Robot-Centric:** Field-centric coordinates are fixed to the field (used for navigation and path planning). Robot-centric coordinates are relative to robot orientation (used for local movements and sensor readings). Most autonomous routines use field-centric coordinates.
+**Field-centric driving:** Joystick “forward” moves along the field, not along the robot nose, once pose and gyro are wired correctly.
 
 <LinkGrid links={[{"label":"WPILib Odometry Overview","url":"https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html#kinematics-and-odometry"},{"label":"WPILib Pose Explanation","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/pose.html"},{"label":"WPILib Coordinate Systems","url":"https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html"}]} title="Resources" section="frc" />
 

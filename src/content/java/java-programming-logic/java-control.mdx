@@ -8,14 +8,14 @@ groupOrder: 2
 order: 3
 difficulty: beginner
 duration: 40 min
-description: ""
+description: if/else chains, for and while loops, and logical operators for combining conditions.
 ---
 
-### Making Decisions with if/else
+### Decisions and repetition
 
-Control structures help your program make decisions and repeat actions based on conditions.
+Control structures let code branch on a condition or run the same block many times.
 
-### If/Else Statements:
+### If/else chains
 
 ```java
 int batteryLevel = 75;
@@ -31,18 +31,20 @@ if (batteryLevel > 80) {
 }
 ```
 
-<RulesBox title="Comparison Operators:" subtitle="Common Operators:">
+<RulesBox title="Comparison operators">
 
 - `==` - Equal to
 - `!=` - Not equal to
-- `&gt;` - Greater than
-- `&lt;` - Less than
-- `&gt;=` - Greater than or equal
-- `&lt;=` - Less than or equal
+- `>` - Greater than
+- `<` - Less than
+- `>=` - Greater than or equal
+- `<=` - Less than or equal
 
 </RulesBox>
 
-### Loops - For Loop:
+### For loop
+
+Use a `for` loop when you know how many iterations you need.
 
 ```java
 // For loop - when you know how many times to repeat
@@ -57,7 +59,9 @@ for (int i = 0; i < motorPowers.length; i++) {
 }
 ```
 
-### Loops - While Loop:
+### While loop
+
+Use `while` when repetition depends on a condition that may change inside the loop.
 
 ```java
 // While loop - repeat based on a condition
@@ -71,7 +75,7 @@ while (!sensorDetected && attempts < 10) {
 }
 ```
 
-<LogicalOperators title="Logical Operators:" subtitle="Combining Conditions:">
+<LogicalOperators title="Logical operators">
 
 - `&&` - AND (both conditions must be true)
 - `||` - OR (at least one condition must be true)

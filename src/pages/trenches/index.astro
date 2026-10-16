@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import DiveApp from '@/components/dive/DiveApp';
+import '@/styles/dive.css';
+---
+
+<BaseLayout
+  title="The Trenches"
+  description="Five prompts of rare-answer FRC programming trivia in The Trenches. Your score scrolls today's public Robot.java or RobotContainer backdrop—not a quiz on that code."
+  currentPath="/trenches"
+  showSidebar={false}
+>
+  <DiveApp client:idle />
+</BaseLayout>

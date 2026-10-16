@@ -8,7 +8,7 @@ groupOrder: 2
 order: 3
 difficulty: beginner
 duration: 35 min
-description: ""
+description: Set inversion, idle mode, and current limits so motors behave predictably and safely.
 ---
 
 ### Template Project
@@ -17,7 +17,7 @@ This lesson applies to both **Timed Robot** and **Command Robot** templates. For
 
 ### Overview
 
-Proper configuration ensures motors operate safely and correctly. We'll configure three essential settings: inversion, idle mode, and current limits. Each setting serves a specific purpose for safe and predictable motor behavior.
+Configure inversion, idle mode, and current limits so positive commands match physical motion and the motor stops safely when output is zero.
 
 <RulesBox title="Key Settings" subtitle="Configure these for every motor:">
 
@@ -65,7 +65,11 @@ The order of settings in the configuration object doesn't matter. All settings a
 
 ### Testing Your Configuration
 
-After configuring, test each setting: **Inversion:** Apply 0.2 power, verify direction. **Idle Mode:** Stop motor, check if it holds or spins freely. **Current Limit:** Monitor current draw during operation to ensure it's within limits.
+After configuring, test each setting:
+
+- **Inversion:** Apply 0.2 power and confirm direction.
+- **Idle mode:** Stop the motor and see whether it holds or coasts.
+- **Current limit:** Watch current draw during a stall or heavy load.
 
 <LinkGrid links={[{"label":"Intake Example","id":"intake-example-robot"},{"label":"Advanced Configuration","id":"motor-controller-configuration"}]} title="Resources" section="frc" />
 

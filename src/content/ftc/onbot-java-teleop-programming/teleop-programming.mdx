@@ -8,20 +8,18 @@ groupOrder: 5
 order: 1
 difficulty: beginner
 duration: 45 min
-description: ""
+description: "Reads gamepad input, maps it to drive and servo actions, and displays telemetry."
 ---
 
-### Overview of TeleOp Programming
+### TeleOp overview
 
-TeleOp programming is the process of writing code that allows drivers to control the robot in real time using gamepads. In this lesson, you'll learn how to read gamepad input, map controls to robot actions, and use telemetry for feedback.
+TeleOp code runs while drivers hold the gamepads. You read sticks and buttons, set motor and servo outputs, and show telemetry on the Driver Station.
 
-### Gamepad Input Handling
+### Gamepad input
 
-The `gamepad1` and `gamepad2` objects provide access to all the buttons, sticks, and triggers on the controllers. Reading these values lets you control motors, servos, and other mechanisms.
+`gamepad1` and `gamepad2` expose sticks, triggers, and buttons.
 
-### Example: Reading Gamepad Input
-
-This snippet shows how to read joystick and button values from gamepad1.
+### Reading gamepad input
 
 
 
@@ -34,11 +32,11 @@ if (aPressed) {
 }
 ```
 
-### Mapping Gamepad Inputs to Robot Actions
+### Mapping input to mechanisms
 
-You can use gamepad input to control motors, servos, and other mechanisms. For example, you might use the left stick for driving and a button to control a claw.
+Typical pattern: left stick for drive, buttons for a claw or arm.
 
-### Example: Mapping Controls to Drive and Servo
+### Drive and claw example
 
 ```java
 // Drive control
@@ -54,15 +52,13 @@ if (gamepad1.a) {
 }
 ```
 
-### Telemetry for Debugging and Feedback
+### Telemetry for drivers
 
-Telemetry lets you send data from your robot to the Driver Station for real-time feedback. Use `telemetry.addData()` to add information and `telemetry.update()` to send it. This is essential for debugging and for providing drivers with useful information during a match. 
+Call `telemetry.addData()` then `telemetry.update()` once per loop.
 
+See [Telemetry Logging](../environment-setup/telemetry-logging.json) for basics.
 
-
-For more on telemetry, see [FTC Docs: Telemetry](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/blocks/creating_op_modes/Writing-an-Op-Mode-with-FTC-Blocks.html#inserting-telemetry-statements) or [Telemetry Logging](../environment-setup/telemetry-logging.json).
-
-### Example: Using Telemetry
+### Telemetry example
 
 ```java
 telemetry.addData("Left Power", leftPower);

@@ -1,0 +1,16 @@
+{
+  "teamNumber": 948,
+  "teamName": "NRG (Newport Robotics Group)",
+  "normEpa": 1738,
+  "linkToCodebases": "NRG948/NRGRobot2026",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 120,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 251,
+  "lineCount": 251,
+  "sha": "cd503d8c234e06ab6a9d7a3097a0f3f58c8f2b40",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/NRG948/NRGRobot2026/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:59:48.318Z"
+}

@@ -8,26 +8,28 @@ groupOrder: 10
 order: 3
 difficulty: advanced
 duration: 80 min
-description: ""
+description: P, I, and D terms, a Java PID loop, tuning order, sample rate, and common symptom fixes.
 ---
 
 ### What is PID Control?
 
-PID stands for **Proportional-Integral-Derivative**. It's a feedback control algorithm that helps your robot reach and maintain a target value (like position or speed) by adjusting motor power based on the error between the target and the actual value. PID is the most common control algorithm used in FTC for precise movement.
+**PID** (Proportional–Integral–Derivative) adjusts motor power from **error** = target − measurement. It is the default way FTC teams hold position, speed, or heading when encoders or an IMU provide feedback.
 
 ### How PID Works
 
-- **Proportional (P)**: Reacts to the current error. The bigger the error, the stronger the correction.
-- **Integral (I)**: Reacts to the accumulation of past errors. Helps eliminate steady-state error.
-- **Derivative (D)**: Reacts to the rate of change of the error. Helps dampen oscillations and overshoot.
+- **Proportional (P):** Output scales with current error—larger miss, stronger correction.
+- **Integral (I):** Output scales with accumulated error over time—can remove small bias that P alone leaves.
+- **Derivative (D):** Output scales with how fast error is changing—damps overshoot and oscillation.
 
 ### The PID Formula
 
-output = kP * error + kI * integral + kD * derivativeWhere `error = target - actual`, `integral` is the sum of errors over time, and `derivative` is the rate of change of error.
+`output = kP * error + kI * integral + kD * derivative`
+
+Here `error = target - actual`, **integral** sums error × Δt, and **derivative** is the change in error over Δt.
 
 ### Basic PID Loop in Java (Android Studio)
 
-This example shows a simple PID loop for controlling a motor to reach a target position:
+Position-hold example on a motor encoder:
 
 
 
@@ -52,11 +54,11 @@ while (opModeIsActive()) {
 
 ### Tuning PID Controllers
 
-Tuning means finding the right values for kP, kI, and kD. Start with kP, then add kD to reduce overshoot, and finally kI if you have steady-state error. Adjust one at a time and observe the robot's response. [Learn more about tuning: gm0 Control Loops](https://gm0.org/en/latest/docs/software/concepts/control-loops.html)
+Tune **kP** first until the mechanism responds quickly without violent oscillation. Add **kD** to calm overshoot. Add **kI** only if a small error remains after P and D are reasonable—and cap the integral term to limit windup. Change one gain at a time. [gm0: Control loops](https://gm0.org/en/latest/docs/software/concepts/control-loops.html)
 
 ### Sample Rate and Performance
 
-The sample rate is how often your PID loop updates. Faster sample rates (more frequent updates) can improve stability and responsiveness, but may use more CPU. The FTC SDK's built-in PID runs at 20Hz, but you can run your own loop faster if needed. [Read more about sample rate](https://gm0.org/en/latest/docs/software/concepts/control-loops.html#pid-controller-sample-rate)
+**Sample rate** is how often the loop runs. Faster loops can track better but cost CPU time. Built-in motor PID in the SDK updates on the order of 20 Hz; custom loops in your OpMode can run faster if needed. [gm0: PID sample rate](https://gm0.org/en/latest/docs/software/concepts/control-loops.html#pid-controller-sample-rate)
 
 ### Troubleshooting PID
 
@@ -77,7 +79,7 @@ The sample rate is how often your PID loop updates. Faster sample rates (more fr
 
 <RulesBox title="Caution: Using the Integral (kI) Term in Robotics">
 
-In FIRST robotics and many real-world applications, using the integral (kI) term in PID control is generally discouraged unless you have a strong understanding of how PID works. The kI term can sometimes introduce **steady-state error** or cause your robot to **drift over time** if not tuned carefully. This is because the integral term accumulates error over time, which can lead to *integral windup* and unpredictable behavior. For most FTC robots, you can achieve good control with just the proportional (kP) and derivative (kD) terms. Only add kI if you have a persistent steady-state error that cannot be fixed by adjusting kP and kD, and always test thoroughly to ensure stability.
+Many FTC mechanisms work well with **kP** and **kD** only. **kI** sums error over time; that can fix a small leftover bias, but it also builds up during saturation (**integral windup**) and can cause overshoot or slow drift if limits are wrong. Add **kI** only when you still have steady-state error after tuning P and D, use a small value, clamp the integral term, and test at low power first.
 
 </RulesBox>
 

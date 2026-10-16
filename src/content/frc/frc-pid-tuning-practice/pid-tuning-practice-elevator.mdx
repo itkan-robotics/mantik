@@ -8,38 +8,28 @@ groupOrder: 6
 order: 2
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Binary-search kG, then double kP until the position trace looks rectangular—in sim or on hardware.
 ---
 
 ### Overview
 
-This lesson demonstrates PID tuning for an elevator mechanism. You'll learn the tuning method derived from SuperNURDS FRC 3255's 2025 build thread, combined with WPILib recommendations. The process involves tuning kG (gravity feedforward) first, then P (proportional gain).
+Tune an elevator with gravity feedforward first, then proportional gain. The order matches [SuperNURDS FRC 3255](https://www.chiefdelphi.com/t/frc-3255-supernurds-2025-build-thread/477499/116) and WPILib practice guidance.
 
-
-
-kG is a type of feedforward, which is open-loop control that doesn't depend on the setpoint. kS is a constant voltage added to counteract friction. Setpoint units depend on your mechanism - in this example, meters are used.
+**kG** is feedforward that fights gravity (volts). **kS** fights static friction. Setpoint units depend on your template; the YAMS lesson uses meters for height.
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of elevator PID tuning:
+Elevator tuning walkthrough:
 
 <YouTubeEmbed id="Td7UHjy4DRY" title="PID Practice: Elevator" />
 
 ### Prerequisites
 
-Before starting this lesson, you should have:
-
-
-
-• Completed the Setup lesson
-
-• Elevator mechanism selected in SmartDashboard
-
-• Live tuning enabled in Elastic
-
-• Position and velocity graphs set up in AdvantageScope
-
-• Teleoperated mode enabled
+- [Setup](/frc/pid-tuning-practice-setup) complete
+- Elevator selected in SmartDashboard
+- Live tuning on in Elastic
+- Position and velocity on an AdvantageScope line graph
+- Teleop enabled in the sim
 
 <StepsBox title="Tuning Steps">
 
@@ -87,39 +77,11 @@ Before starting this lesson, you should have:
 
 ### Important Notes
 
-This elevator example was relatively simple and didn't require motion profiling. However, the arm mechanism (covered in the next lesson) is more complex and demonstrates:
-
-
-
-• More finicky tuning requirements
-
-• The need for motion profiling
-
-• Trapezoidal motion profiles
-
-• More realistic tuning scenarios
-
-
-
-It's recommended to watch the arm tuning video as well to see a more complete example of the tuning process, including motion profiling.
+This elevator did not need motion profiling. The [arm lesson](/frc/pid-tuning-practice-arm) adds tighter kG precision, overshoot risk, and trapezoidal limits—watch that video if you want the full workflow.
 
 ### Applying to Physical Hardware
 
-The same principles apply when tuning with physical hardware using Phoenix Tuner or REV Hardware Client:
-
-
-
-• **Phoenix Tuner:** Use the Config tab to adjust values. Look for "rotor position" and "velocity" for graphing.
-
-• **REV Hardware Client:** Similar configuration options are available
-
-• The tuning process is the same: tune kG first, then kP
-
-• Watch for the same rectangular shape in position graphs
-
-
-
-The tools may look different, but the techniques and principles remain the same.
+Use Phoenix Tuner or REV Hardware Client with the same kG-then-kP order. Graph rotor position and velocity (names vary slightly by vendor). Aim for the same rectangular position trace as in sim.
 
 <LinkGrid links={[{"label":"Try in browser","url":"/pid-simulation"},{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Arm","id":"pid-tuning-practice-arm"},{"label":"Elevator Example","id":"elevator-example"}]} title="Resources" section="frc" />
 

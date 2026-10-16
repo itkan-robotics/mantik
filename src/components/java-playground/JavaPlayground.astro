@@ -1,0 +1,12 @@
+---
+import JavaPlaygroundApp from './JavaPlayground.tsx';
+import '@/styles/java-playground.css';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<JavaPlaygroundApp client:visible id={id} />

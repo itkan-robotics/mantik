@@ -1,0 +1,174 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.lib.BLine.*;
+import frc.robot.lib.simulation.FuelSim;
+import frc.robot.subsystems.Controllers;
+import frc.robot.subsystems.HubShiftUtil;
+import frc.robot.subsystems.drive.Autos;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.COS;
+import frc.robot.subsystems.vision.TagHelper;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+public class Robot extends LoggedRobot {
+  private Command autonomousCommand;
+
+  private final RobotContainer robotContainer;
+
+  private final COS cos;
+
+  private final Autos autos;
+
+  public Robot() {
+    Logger.recordMetadata("ProjectName", "971 First Bot 2026");
+    Logger.recordMetadata("TeamNumber", "971");
+    Logger.recordMetadata("RobotName", "971 Robot");
+
+    switch (Constants.MODE) {
+      case REAL -> {
+        // Running on a real robot, log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+      }
+      case SIM -> {
+        // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
+      }
+      case REPLAY -> {
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+      }
+    }
+
+    Logger.start();
+
+    // IMPORTANT: DO NOT DELETE OR EXPENSIVE FILE READING WILL FREEZE WHEN FIRST TAG HELPER FUNCTION
+    // IS CALLED
+    TagHelper.init();
+
+    robotContainer = new RobotContainer();
+    cos = new COS(robotContainer.drivetrain);
+    autos = new Autos(robotContainer.drivetrain);
+  }
+
+  @Override
+  public void robotInit() {
+    DataLogManager.start();
+
+    robotContainer.resetSuperstructure();
+  }
+
+  @Override
+  public void robotPeriodic() {
+    cos.updatePose();
+
+    if (Controllers.ODOMETRY_RESET.getAsBoolean()) {
+      robotContainer.drivetrain.resetPose(cos.getLastVisionPose());
+    }
+
+    if (Controllers.DISABLE_OTF.getAsBoolean()) {
+      robotContainer.drivetrain.resetPose(cos.getLastVisionPose());
+    }
+
+    CommandScheduler.getInstance().run();
+    robotContainer.periodic();
+
+    HubShiftUtil.ShiftInfo info = HubShiftUtil.getShiftInfo();
+    Logger.recordOutput("HubShift/Active", info.hubActive());
+    Logger.recordOutput("HubShift/RemainingTime", Math.round(info.remainingTime()));
+    Logger.recordOutput("HubShift/UntilHubFlip", Math.round(info.timeUntilHubStateChange()));
+    Logger.recordOutput("HubShift/CurrentShift", info.currentShift().toString());
+  }
+
+  @Override
+  public void disabledInit() {
+    HubShiftUtil.initialize();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    Logger.recordOutput("Auto/SelectedOptionCached", autos.preloadSelectedAuto());
+    Pose2d startPose = autos.getAutonomousStartPose();
+
+    if (startPose != null) {
+      if (DriverStation.getAlliance().isPresent()
+          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        startPose = FlippingUtil.flipFieldPose(startPose);
+      }
+
+      // Update the field visualization with the auto start pose
+      robotContainer.drive.setAutoStartPose(startPose);
+    }
+    // TODO: Log the autonomous starting pose
+  }
+
+  @Override
+  public void disabledExit() {}
+
+  @Override
+  public void autonomousInit() {
+    robotContainer.drive.setDriveMode(Drive.Mode.NONE);
+    autonomousCommand = autos.getAutonomousCommand();
+    if (autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(robotContainer.superstructure.neutral());
+      CommandScheduler.getInstance().schedule(autonomousCommand);
+    }
+    HubShiftUtil.initialize();
+
+    if (RobotBase.isSimulation()) robotContainer.simAutoInit();
+  }
+
+  @Override
+  public void autonomousPeriodic() {}
+
+  @Override
+  public void autonomousExit() {}
+
+  @Override
+  public void teleopInit() {
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
+    }
+    HubShiftUtil.initialize();
+  }
+
+  @Override
+  public void teleopPeriodic() {}
+
+  @Override
+  public void teleopExit() {}
+
+  @Override
+  public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
+  }
+
+  @Override
+  public void testPeriodic() {}
+
+  @Override
+  public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {
+    FuelSim.getInstance().updateSim();
+  }
+}

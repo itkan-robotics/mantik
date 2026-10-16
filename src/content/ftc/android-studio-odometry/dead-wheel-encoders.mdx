@@ -8,24 +8,24 @@ groupOrder: 11
 order: 2
 difficulty: advanced
 duration: 40 min
-description: ""
+description: Mount dead-wheel encoders, read ticks in code, and convert them to distance for odometry.
 ---
 
 ### What are Dead Wheels?
 
-Dead wheels are unpowered, free-spinning wheels equipped with encoders. Unlike drive wheels, they are not affected by slippage from driving the robot, making them ideal for accurate position tracking in FTC robots.
+Dead wheels spin freely and are not driven by the motors. Encoders on those wheels measure motion with less slip than counting only on powered drive wheels.
 
 ### Advantages of Dead Wheel Encoders
 
-Using dead wheels for odometry greatly improves accuracy because they are isolated from drivetrain forces. This reduces errors from wheel slip and provides more reliable encoder readings for autonomous navigation.
+Because dead wheels are not pushing the robot, their encoders usually see cleaner counts during acceleration, turns, and pushing matches—when drive-wheel slip is worst.
 
 ### Hardware Setup and Placement
 
-Dead wheels are typically mounted on the robot chassis in parallel and perpendicular orientations. Proper placement is crucial for accurate tracking.
+Mount one pair parallel to the drivetrain (forward/back) and often a third wheel perpendicular for lateral motion. Measure distances between wheel centers carefully; bad geometry shows up as curved “straight” drives.
 
 ### Reading Encoder Values in Android Studio
 
-To use dead wheel encoders in your FTC code, you must initialize and read from the encoders using the FTC SDK. Here is a sample snippet:
+Configure each encoder as a `DcMotor` in the Robot Configuration, then read positions in your OpMode:
 
 
 
@@ -55,17 +55,15 @@ public void runOpMode() {
 
 ### Calculating Robot Position from Encoders
 
-To convert encoder ticks to robot position, you need to know the wheel diameter, encoder resolution, and the distance between wheels. The basic formula is:
+Convert ticks to distance with wheel diameter and counts per revolution:
 
 `distance = (ticks / ticks_per_revolution) * wheel_circumference`
 
-By combining the distances from each wheel, you can estimate the robot's X, Y, and heading.
-
- You can also determine the inches/tick ratio manually by moving your robot forward/laterally and dividing the distance traveled by the number of ticks recorded.
+Combine per-wheel distances in your odometry math to update X, Y, and heading. You can also calibrate inches per tick by driving a known distance and dividing by the tick change.
 
 ### Sample Calculation Code
 
-This snippet shows how to convert encoder ticks to inches:
+Example conversion to inches:
 
 
 
@@ -80,7 +78,7 @@ double distanceInches = (ticks / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE;
 
 ### Troubleshooting Dead Wheel Odometry
 
-Common issues include incorrect encoder direction, mechanical binding, or misalignment. Always verify encoder readings and check for smooth wheel rotation.
+If counts run backward, flip encoder direction in config or code. Binding, loose mounts, or debris on the wheel also produce jumps—spin each wheel by hand and watch telemetry before trusting auto.
 
 <LinkGrid links={[{"label":"gm0: Odometry (Dead Wheels)","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html"}]} title="Further Reading" section="ftc" />
 

@@ -85,7 +85,7 @@ Kruskal's is usually the one to write. It is short, the union-find is reusable, 
 
 Grow the tree from one node, repeatedly taking the cheapest edge that leaves the current tree. This is Dijkstra's shape with a different comparison.
 
-```java
+```java norun
 static long prim(List<List<Edge>> adj, int n) {
     boolean[] inTree = new boolean[n + 1];
     PriorityQueue<long[]> pq =
@@ -126,7 +126,7 @@ This is not a shortest-path problem — the sum does not matter, only the maximu
 
 So a common pattern is to run Kruskal's and stop as soon as the two nodes of interest become connected. The weight of the edge that connected them is the answer.
 
-```java
+```java norun
 Arrays.sort(edges, (x, y) -> Integer.compare(x[2], y[2]));
 for (int[] e : edges) {
     union(e[0], e[1]);

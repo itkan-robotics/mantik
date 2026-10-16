@@ -1,12 +1,17 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '@/styles/global.css';
 import Header from '@/components/layout/Header.astro';
 import HeaderBehavior from '@/components/layout/HeaderBehavior.astro';
 import Sidebar from '@/components/layout/Sidebar.astro';
 import SidebarBehavior from '@/components/layout/SidebarBehavior.astro';
 import KeyboardShortcuts from '@/components/layout/KeyboardShortcuts.astro';
+import PreferencesDrawer from '@/components/islands/PreferencesDrawer.astro';
+import PwaUpdatePrompt from '@/components/islands/PwaUpdatePrompt';
 import Search from '@/components/layout/Search.astro';
 import { siteConfig } from '@/config/navigation';
+import { CHEERPJ_LOADER, ECJ_FILENAME } from '@/lib/java-playground/constants';
+import { LAUNCHER_FILENAME, playgroundPublicUrl } from '@/lib/java-playground/assets';
 import type { SidebarGroup } from '@/lib/content';
 
 interface Props {
@@ -16,6 +21,8 @@ interface Props {
   sidebarGroups?: SidebarGroup[];
   showSidebar?: boolean;
   canonical?: string;
+  /** Java lessons hydrate runnable examples; warm the runtime fetches early. */
+  javaExamples?: boolean;
 }
 
 const {
@@ -25,15 +32,19 @@ const {
   sidebarGroups = [],
   showSidebar = false,
   canonical,
+  javaExamples = false,
 } = Astro.props;
 
 const fullTitle = title === siteConfig.title ? title : `${title} | Mantik`;
 const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
+const ecjHref = playgroundPublicUrl(ECJ_FILENAME);
+const launcherHref = playgroundPublicUrl(LAUNCHER_FILENAME);
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" transition:animate="none">
   <head>
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
@@ -75,12 +86,47 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
     />
 
     <link rel="icon" href={siteConfig.brand.iconLight} type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+    {javaExamples && <link rel="preconnect" href="https://cjrtnc.leaningtech.com" />}
+    {javaExamples && <link rel="preload" as="script" href={CHEERPJ_LOADER} crossorigin="anonymous" />}
+    {javaExamples && <link rel="preload" as="fetch" href={ecjHref} crossorigin="anonymous" />}
+    {javaExamples && <link rel="preload" as="fetch" href={launcherHref} crossorigin="anonymous" />}
 
     <script is:inline>
+      /* Reader preferences — mirrors src/lib/prefs.ts (cannot import inline). */
       (function () {
-        var t = localStorage.getItem('mantik-theme');
-        if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches))
-          document.documentElement.setAttribute('data-theme', 'dark');
+        var h = document.documentElement, p = {};
+        try {
+          var raw = localStorage.getItem('mantik-prefs');
+          if (raw) p = JSON.parse(raw) || {};
+          else { var t = localStorage.getItem('mantik-theme'); if (t === 'light' || t === 'dark') p.theme = t; }
+        } catch (e) {}
+        var ok = function (v, list, d) { return list.indexOf(v) >= 0 ? v : d; };
+        var theme = ok(p.theme, ['system', 'light', 'dark'], 'system');
+        if (p.teamColors && (p.teamSiteTheme === 'light' || p.teamSiteTheme === 'dark')) {
+          theme = p.teamSiteTheme;
+        } else if (theme === 'system') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        h.setAttribute('data-theme', theme);
+        h.style.colorScheme = theme;
+        h.setAttribute('data-text', ok(p.text, ['sm', 'md', 'lg', 'xl'], 'md'));
+        h.setAttribute('data-spacing', ok(p.spacing, ['normal', 'relaxed'], 'normal'));
+        h.setAttribute('data-contrast', ok(p.contrast, ['normal', 'high'], 'normal'));
+        h.setAttribute('data-motion', ok(p.motion, ['system', 'reduce'], 'system'));
+        var vars = p.teamStyleVars;
+        if (p.teamColors && vars && typeof vars === 'object') {
+          h.setAttribute('data-team-colors', '');
+          for (var ck in vars) {
+            if (Object.prototype.hasOwnProperty.call(vars, ck) && typeof vars[ck] === 'string') {
+              h.style.setProperty(ck, vars[ck]);
+            }
+          }
+        }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'dark' ? '#161314' : '#fafaf9');
       })();
     </script>
   </head>
@@ -98,6 +144,8 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
 
     <KeyboardShortcuts />
     <Search />
+    <PreferencesDrawer />
+    <PwaUpdatePrompt client:only="react" />
     <HeaderBehavior />
     <SidebarBehavior />
 
@@ -115,8 +163,21 @@ const canonicalUrl = canonical ?? new URL(currentPath, siteConfig.url).href;
           <footer>
             <div class="bottom-of-page">
               <div class="left-details">
-                <div class="copyright">Copyright © 2026 Mantik</div>
+                <div class="copyright">Copyright © 2026 Itkan Robotics</div>
                 <div class="footer-tagline">Built by students, for FIRST teams.</div>
+                <div class="footer-licenses">
+                  <a
+                    href="https://github.com/itkan-robotics/mantik/blob/main/LICENSE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Code (BSD-3)</a>
+                  <span class="footer-license-sep" aria-hidden="true">·</span>
+                  <a
+                    href="https://github.com/itkan-robotics/mantik/blob/main/LICENSE-CONTENT"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Lessons (CC BY 4.0)</a>
+                </div>
               </div>
               <div class="right-details">
                 <a href="https://github.com/itkan-robotics/mantik" target="_blank" rel="noopener noreferrer">

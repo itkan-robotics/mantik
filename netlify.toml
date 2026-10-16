@@ -80,6 +80,20 @@
 [[redirects]]
   from = "/pid-simulation/"
   to = "/pid-simulation"
+
+[[redirects]]
+  from = "/dive"
+  to = "/trenches"
+  status = 301
+
+[[redirects]]
+  from = "/dive/"
+  to = "/trenches"
+  status = 301
+
+[[redirects]]
+  from = "/trenches/"
+  to = "/trenches"
   status = 301
 
 [[redirects]]

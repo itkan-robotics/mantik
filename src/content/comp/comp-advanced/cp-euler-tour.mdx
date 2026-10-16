@@ -21,7 +21,7 @@ Record the order in which a depth-first traversal enters and leaves each node. T
 
 Assign each node an entry time and an exit time.
 
-```java
+```java norun
 static int[] tin, tout;
 static int timer = 0;
 
@@ -43,7 +43,7 @@ After this, the subtree of `u` is exactly the index range `[tin[u], tout[u])`. I
 
 **Ancestor test in O(1).** `u` is an ancestor of `v` exactly when:
 
-```java
+```java norun
 boolean isAncestor = tin[u] <= tin[v] && tout[v] <= tout[u];
 ```
 
@@ -57,7 +57,7 @@ Using an exclusive `tout` — assigned after the children, without incrementing 
 
 Place each node's value at its entry index. Now a subtree's values are a contiguous slice.
 
-```java
+```java norun
 long[] flat = new long[n];
 for (int u = 1; u <= n; u++) {
     flat[tin[u]] = value[u];
@@ -66,7 +66,7 @@ for (int u = 1; u <= n; u++) {
 
 For queries with no updates, a prefix sum over `flat` answers "sum of values in a subtree" in O(1):
 
-```java
+```java norun
 long[] pre = new long[n + 1];
 for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + flat[i];
 
@@ -81,7 +81,7 @@ See [Prefix Sums and Difference Arrays](/comp/cp-prefix-sums).
 
 When values change between queries, replace the prefix sum with a Fenwick tree. Point update, prefix query, both O(log N).
 
-```java
+```java norun
 static long[] bit;
 static int n;
 
@@ -115,7 +115,7 @@ The `x & -x` idiom isolates the lowest set bit, which is how a Fenwick tree walk
 
 Reverse the roles. To add a value to every node in a subtree and later read individual nodes, use a difference array over the tour, or a Fenwick tree in range-update/point-query mode.
 
-```java
+```java norun
 static void addToSubtree(int u, long delta) {
     update(tin[u], delta);
     update(tout[u], -delta);
