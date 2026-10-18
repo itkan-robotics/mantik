@@ -15,7 +15,7 @@
   autoLaunch = true
 
 [build.environment]
-  NODE_VERSION = "22"
+  NODE_VERSION = "22.22"
 
 # Canonical domain: HTTPS + non-www
 [[redirects]]
