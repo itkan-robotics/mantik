@@ -17,6 +17,8 @@
 </div>
 
 <script>
+  import { normalizePagefindResult } from '@/lib/pagefindResultUrl';
+
   function setSearchOverlayOpen(open: boolean) {
     const overlay = document.querySelector('[data-search-overlay]') as HTMLElement | null;
     if (!overlay) return;
@@ -93,6 +95,7 @@
         element: '#pagefind-search',
         showSubResults: true,
         resetStyles: false,
+        processResult: (result) => normalizePagefindResult(result),
       });
     } catch {
       showUnavailable();

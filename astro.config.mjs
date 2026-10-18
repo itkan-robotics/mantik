@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
+import AstroPWA from '@vite-pwa/astro';
 import { fileURLToPath } from 'url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { pagefindDevPlugin } from './scripts/pagefind-dev-plugin.mjs';
@@ -30,6 +31,38 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) => !page.includes('/admin'),
+    }),
+    AstroPWA({
+      registerType: 'prompt',
+      injectRegister: false,
+      includeManifestIcons: false,
+      strategies: 'injectManifest',
+      srcDir: 'src/pwa',
+      filename: 'service-worker.ts',
+      manifest: false,
+      experimental: {
+        directoryAndTrailingSlashHandler: true,
+      },
+      injectManifest: {
+        globPatterns: [
+          'index.html',
+          'offline/index.html',
+          'offline/manifests/*.json',
+          'media/**/*.{svg,png,jpg,webp}',
+          'icons/**/*.png',
+        ],
+        globIgnores: [
+          '**/pagefind/**',
+          '**/java-playground/**',
+          '**/admin/**',
+          '**/pid-simulation/**',
+          '**/trenches/**',
+          '**/stats.html',
+        ],
+      },
+      devOptions: {
+        enabled: false,
+      },
     }),
   ],
   markdown: {
