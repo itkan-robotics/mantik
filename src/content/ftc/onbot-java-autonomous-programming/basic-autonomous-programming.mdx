@@ -8,20 +8,20 @@ groupOrder: 6
 order: 1
 difficulty: intermediate
 duration: 50 min
-description: ""
+description: "Introduces autonomous period rules and a minimal LinearOpMode with waitForStart."
 ---
 
-### What is Autonomous Mode in FTC?
+### Autonomous period
 
-In FTC, autonomous mode is a period at the start of each match where the robot operates entirely based on pre-programmed instructions, without any driver input. This is your opportunity to score points by having your robot perform tasks automatically. Understanding how to structure and write autonomous code is essential for competition success.
+For the first 30 seconds of each match (length may vary by season), the robot runs without gamepad input. Your `@Autonomous` OpMode runs during this time.
 
-### Structure of an FTC OpMode
+### Autonomous OpMode structure
 
-FTC programs are organized into OpModes. An OpMode is a Java class that defines the robot's behavior for a specific mode (autonomous or teleop). In OnBot Java, you create a new OpMode by extending the `LinearOpMode` class and overriding the `runOpMode()` method. The OpMode must be annotated with `@Autonomous` to be selectable as an autonomous program. For more details, see [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28OnBot-Java%29.html).
+Extend `LinearOpMode`, annotate with `@Autonomous`, and put actions after `waitForStart()`.
 
-### Minimal Autonomous OpMode Example
+See [FTC Docs: Creating and Running an Op Mode (OnBot Java)](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/onbot_java/creating_op_modes/Creating-and-Running-an-Op-Mode-%28OnBot-Java%29.html).
 
-This example shows the basic structure of an autonomous OpMode in OnBot Java. Each section of the code is explained in detail below.
+### Minimal autonomous example
 
 
 

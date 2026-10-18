@@ -33,7 +33,7 @@ Work small examples by hand first.
 
 </StepsBox>
 
-```java
+```java norun
 int[] p = {a, b, c};
 Arrays.sort(p);
 
@@ -78,7 +78,7 @@ The third point is the most frequent failure. Writing `if (x < 5) ... else if (x
 
 Adding the two areas double-counts the intersection, so subtract it once. That single formula replaces a large amount of casework:
 
-```java
+```java norun
 long area1 = (long)(x2 - x1) * (y2 - y1);
 long area2 = (long)(x4 - x3) * (y4 - y3);
 
@@ -97,7 +97,7 @@ This inclusion-exclusion idea generalizes; see Inclusion-Exclusion for the versi
 
 Once the cases are listed, write them in the same order, one branch each, with a comment naming the case.
 
-```java
+```java norun
 if (n == 0) {
     // no cows: nothing to do
     out.println(0);

@@ -21,7 +21,7 @@ double position = pivot.getPosition().getValueAsDouble();
 
 That line only works when a real TalonFX is on the CAN bus. In simulation there is no motor. When replaying a match log there is a file, not a motor. And nothing about the read is recorded, so nothing can be reproduced afterwards.
 
-The **IO layer** puts one interface between the subsystem and the hardware. The subsystem talks to the interface; the interface is implemented differently depending on where the code is running.
+The **IO layer** puts one interface between the subsystem and the hardware. The subsystem talks to the interface; the implementation is chosen at construction time — the same [dependency injection](/java/java-dp-dependency-injection) and [runtime polymorphism](/java/java-runtime-polymorphism) ideas from the Java track, applied to robot hardware.
 
 <RulesBox title="Three pieces, every time">
 
@@ -207,4 +207,16 @@ For a conveyor that runs one motor at one duty cycle, the abstraction usually co
 
 </RulesBox>
 
-<LinkGrid links={[{"label":"Subsystems","id":"subsystems"},{"label":"AdvantageKit","id":"advantagekit"},{"label":"Simulation Basics","id":"simulation-basics"},{"label":"Swerve Drive","id":"swerve-drive-example"},{"label":"AdvantageKit IO Interfaces","url":"https://docs.advantagekit.org/data-flow/recording-inputs/io-interfaces/"}]} title="Resources" section="frc" />
+<LinkGrid links={[
+    {"label":"Subsystems","id":"subsystems"},
+    {"label":"AdvantageKit","id":"advantagekit"},
+    {"label":"Simulation Basics","id":"simulation-basics"},
+    {"label":"Swerve Drive","id":"swerve-drive-example"},
+    {"label":"AdvantageKit IO Interfaces","url":"https://docs.advantagekit.org/data-flow/recording-inputs/io-interfaces/"}
+  ]} title="Resources" section="frc" />
+
+<LinkGrid links={[
+    {"label":"Interfaces","id":"java-interfaces"},
+    {"label":"Runtime Polymorphism","id":"java-runtime-polymorphism"},
+    {"label":"Dependency Injection","id":"java-dp-dependency-injection"}
+  ]} title="Java background" section="java" />

@@ -1,0 +1,3282 @@
+{
+  "generatedAt": "2026-10-16T13:20:21.645Z",
+  "statboticsApi": "https://api-statbotics.popcornpenguins.com/v3",
+  "methodology": "GitHub code search for wpilib_preferences projectYear 2026, per-team supplemental search, Chief Delphi search.json github links; EPA/names from Statbotics (api-statbotics.popcornpenguins.com mirror when official API is down).",
+  "referenceSpreadsheet": "https://docs.google.com/spreadsheets/d/1ZOaepojGhez6A-37ZMln_O9KbCgQb--DadE6ziMTAzM/edit?gid=408396042",
+  "chiefDelphiThread": "https://www.chiefdelphi.com/t/i-actually-scraped-github-to-get-3310-public-2025-code-repos/505706",
+  "rowCount": 467,
+  "repoCount": 467,
+  "orphanRepoCount": 0,
+  "rows": [
+    {
+      "teamName": "The Outliers",
+      "teamNumber": 5687,
+      "normEpa": 1877,
+      "language": "cpp",
+      "linkToCodebases": "frc5687/2026-robot"
+    },
+    {
+      "teamName": "Jack in the Bot",
+      "teamNumber": 2910,
+      "normEpa": 1875,
+      "language": "java",
+      "linkToCodebases": "FRCTeam2910/2026CompetitionRobot-Public"
+    },
+    {
+      "teamName": "Citrus Circuits",
+      "teamNumber": 1678,
+      "normEpa": 1872,
+      "language": "java",
+      "linkToCodebases": "frc1678/C2026-Public"
+    },
+    {
+      "teamName": "Mercenary Robotics",
+      "teamNumber": 6369,
+      "normEpa": 1863,
+      "language": "java",
+      "linkToCodebases": "MercsMavs-MSA/2026-FRC-6369-Bravo"
+    },
+    {
+      "teamNumber": 9128,
+      "teamName": "ITKAN Robotics",
+      "linkToCodebases": "itkan-robotics/RobotCode2026Public",
+      "language": "java",
+      "normEpa": 1849
+    },
+    {
+      "teamName": "Nashoba Robotics",
+      "teamNumber": 1768,
+      "normEpa": 1839,
+      "language": "java",
+      "linkToCodebases": "Nashoba-Robotics/2026NashobaRobotics"
+    },
+    {
+      "teamName": "Broncobots",
+      "teamNumber": 1987,
+      "normEpa": 1837,
+      "language": "java",
+      "linkToCodebases": "FRCTeam1987/Robot2026"
+    },
+    {
+      "teamName": "Team SCREAM",
+      "teamNumber": 4522,
+      "normEpa": 1811,
+      "language": "java",
+      "linkToCodebases": "TeamSCREAMRobotics/4522_2026Competition"
+    },
+    {
+      "teamName": "Team BEAN",
+      "teamNumber": 1833,
+      "normEpa": 1798,
+      "language": "java",
+      "linkToCodebases": "team1833/2026-public"
+    },
+    {
+      "teamName": "StuyPulse",
+      "teamNumber": 694,
+      "normEpa": 1793,
+      "language": "java",
+      "linkToCodebases": "StuyPulse/Pulsecrew-Prep-2026"
+    },
+    {
+      "teamName": "CC Shambots",
+      "teamNumber": 5907,
+      "normEpa": 1782,
+      "language": "java",
+      "linkToCodebases": "GrahamL03/Shambots5907_26CompBot-dev-main-graham"
+    },
+    {
+      "teamName": "W.A.F.F.L.E.S.",
+      "teamNumber": 4476,
+      "normEpa": 1776,
+      "language": "java",
+      "linkToCodebases": "FRC-4476-WAFFLES/Robot2026"
+    },
+    {
+      "teamName": "Cyber Unicorn",
+      "teamNumber": 8214,
+      "normEpa": 1771,
+      "language": "java",
+      "linkToCodebases": "nirobotics/ni-8214-2026-public"
+    },
+    {
+      "teamName": "Mechanical Advantage",
+      "teamNumber": 6328,
+      "normEpa": 1750,
+      "language": "java",
+      "linkToCodebases": "Mechanical-Advantage/RobotCode2026Public"
+    },
+    {
+      "teamName": "Team Lance-A-Bot",
+      "teamNumber": 4237,
+      "normEpa": 1748,
+      "language": "java",
+      "linkToCodebases": "SirLanceABot/2026-Robot-Dev-4237"
+    },
+    {
+      "teamName": "BREAD",
+      "teamNumber": 5940,
+      "normEpa": 1747,
+      "language": "java",
+      "linkToCodebases": "BREAD5940/2026-Onseason"
+    },
+    {
+      "teamName": "S.P.A.M.",
+      "teamNumber": 180,
+      "normEpa": 1738,
+      "language": "java",
+      "linkToCodebases": "frc180/2026-public"
+    },
+    {
+      "teamName": "NRG (Newport Robotics Group)",
+      "teamNumber": 948,
+      "normEpa": 1738,
+      "language": "java",
+      "linkToCodebases": "NRG948/NRGRobot2026"
+    },
+    {
+      "teamName": "Spartan Robotics",
+      "teamNumber": 971,
+      "normEpa": 1737,
+      "language": "java",
+      "linkToCodebases": "frc971/971-second-robot-2026"
+    },
+    {
+      "teamName": "Krypton Cougars",
+      "teamNumber": 2539,
+      "normEpa": 1736,
+      "language": "java",
+      "linkToCodebases": "FRC2539/javabot-2026"
+    },
+    {
+      "teamName": "Full Metal Jackets",
+      "teamNumber": 1296,
+      "normEpa": 1735,
+      "language": "java",
+      "linkToCodebases": "FRC1296/RhsRobot2026"
+    },
+    {
+      "teamName": "The Blair Robot Project",
+      "teamNumber": 449,
+      "normEpa": 1731,
+      "language": "java",
+      "linkToCodebases": "blair-robot-project/robot2026"
+    },
+    {
+      "teamName": "The Aluminum Narwhals",
+      "teamNumber": 3128,
+      "normEpa": 1729,
+      "language": "java",
+      "linkToCodebases": "Team3128/3128-common"
+    },
+    {
+      "teamName": "The BioMechs",
+      "teamNumber": 841,
+      "normEpa": 1728,
+      "language": "java",
+      "linkToCodebases": "Team841/2026-comp"
+    },
+    {
+      "teamName": "BCR Blackout",
+      "teamNumber": 2200,
+      "normEpa": 1728,
+      "language": "java",
+      "linkToCodebases": "BCR2200/2026_robot_code"
+    },
+    {
+      "teamName": "Iron Panthers",
+      "teamNumber": 5026,
+      "normEpa": 1728,
+      "language": "java",
+      "linkToCodebases": "Iron-Panthers/FRC-2026"
+    },
+    {
+      "teamName": "Robocubs",
+      "teamNumber": 1701,
+      "normEpa": 1720,
+      "language": "java",
+      "linkToCodebases": "Robocubs/2026-RobotPublic"
+    },
+    {
+      "teamName": "KnightKrawler",
+      "teamNumber": 2052,
+      "normEpa": 1719,
+      "language": "java",
+      "linkToCodebases": "frc2052/2026-Rebuilt"
+    },
+    {
+      "teamName": "Red Thunder Robotics",
+      "teamNumber": 7166,
+      "normEpa": 1717,
+      "language": "java",
+      "linkToCodebases": "Red-Thunder-Robotics/7166_REBUILT"
+    },
+    {
+      "teamName": "RoboWhales",
+      "teamNumber": 9032,
+      "normEpa": 1717,
+      "language": "java",
+      "linkToCodebases": "team9032/9032-2026-FRC-Robot-Code-Public"
+    },
+    {
+      "teamName": "Team MineKee",
+      "teamNumber": 7520,
+      "normEpa": 1709,
+      "language": "java",
+      "linkToCodebases": "Team7520/FRC-2026"
+    },
+    {
+      "teamName": "Frog Force",
+      "teamNumber": 503,
+      "normEpa": 1707,
+      "language": "java",
+      "linkToCodebases": "githubAnish/robot-2026-rewrite"
+    },
+    {
+      "teamName": "Cybersonics",
+      "teamNumber": 103,
+      "normEpa": 1706,
+      "language": "java",
+      "linkToCodebases": "Cybersonics/2026-Robot"
+    },
+    {
+      "teamName": "RoboHawks",
+      "teamNumber": 346,
+      "normEpa": 1706,
+      "language": "java",
+      "linkToCodebases": "Robohawks-346-Programming/Team346_2026_RobotCode"
+    },
+    {
+      "teamName": "Jaguar Robotics Sponsored By Feit Electric",
+      "teamNumber": 7415,
+      "normEpa": 1706,
+      "language": "java",
+      "linkToCodebases": "Jaguar-Robotics/FRC7415-2026Code"
+    },
+    {
+      "teamName": "Gompei and the HERD",
+      "teamNumber": 190,
+      "normEpa": 1705,
+      "language": "java",
+      "linkToCodebases": "Team-190/2k26-Robot-Code"
+    },
+    {
+      "teamName": "Red Rock Robotics",
+      "teamNumber": 3006,
+      "normEpa": 1705,
+      "language": "java",
+      "linkToCodebases": "Red-Rock-Robotics-3006/FRC2026"
+    },
+    {
+      "teamName": "Average Joes",
+      "teamNumber": 3620,
+      "normEpa": 1701,
+      "language": "java",
+      "linkToCodebases": "FRC3620/FRC3620_2026_Good_Will_Bunting"
+    },
+    {
+      "teamName": "WildStang",
+      "teamNumber": 111,
+      "normEpa": 1699,
+      "language": "java",
+      "linkToCodebases": "wildstang/2026_111_robot_software"
+    },
+    {
+      "teamName": "G.R.R. (Greater Rochester Robotics)",
+      "teamNumber": 340,
+      "normEpa": 1699,
+      "language": "java",
+      "linkToCodebases": "Greater-Rochester-Robotics/Rebuilt2026-340"
+    },
+    {
+      "teamName": "Team Titanium",
+      "teamNumber": 1986,
+      "normEpa": 1698,
+      "language": "java",
+      "linkToCodebases": "TeamTitaniumRobotics/FRC-2026"
+    },
+    {
+      "teamName": "Robot Dolphins From Outer Space",
+      "teamNumber": 5199,
+      "normEpa": 1698,
+      "language": "java",
+      "linkToCodebases": "FRCTeam5199/Robot-Code-2026"
+    },
+    {
+      "teamName": "The Ravonics Revolution",
+      "teamNumber": 1710,
+      "normEpa": 1695,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-1710/2026-Robot"
+    },
+    {
+      "teamName": "MARS/WARS",
+      "teamNumber": 4143,
+      "normEpa": 1695,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-4143/mainbot-4143-2026"
+    },
+    {
+      "teamName": "Binary Battalion",
+      "teamNumber": 7028,
+      "normEpa": 1693,
+      "language": "java",
+      "linkToCodebases": "STMARobotics/frc-7028-2026"
+    },
+    {
+      "teamName": "Clockwork",
+      "teamNumber": 4322,
+      "normEpa": 1690,
+      "language": "java",
+      "linkToCodebases": "4322/2026_Robot"
+    },
+    {
+      "teamName": "The FEDS",
+      "teamNumber": 201,
+      "normEpa": 1686,
+      "language": "java",
+      "linkToCodebases": "feds201/Rebuilt-SpyderJr"
+    },
+    {
+      "teamName": "The Flying Circuits",
+      "teamNumber": 1787,
+      "normEpa": 1686,
+      "language": "java",
+      "linkToCodebases": "TheFlyingCircuits/2026-Robot"
+    },
+    {
+      "teamName": "The Funky Monkeys",
+      "teamNumber": 846,
+      "normEpa": 1685,
+      "language": "cpp",
+      "linkToCodebases": "Team846/2026-training"
+    },
+    {
+      "teamName": "Galaxia in memory of David Zohar",
+      "teamNumber": 5987,
+      "normEpa": 1684,
+      "language": "java",
+      "linkToCodebases": "Galaxia5987/recode-2026"
+    },
+    {
+      "teamName": "Truck Town Thunder",
+      "teamNumber": 68,
+      "normEpa": 1683,
+      "language": "java",
+      "linkToCodebases": "FRCTeam68/2026-CompBot"
+    },
+    {
+      "teamName": "BadgerBOTS",
+      "teamNumber": 1306,
+      "normEpa": 1682,
+      "language": "java",
+      "linkToCodebases": "team1306/Robot2026"
+    },
+    {
+      "teamName": "Spartronics",
+      "teamNumber": 4915,
+      "normEpa": 1681,
+      "language": "java",
+      "linkToCodebases": "Spartronics4915/2026-Rebuilt"
+    },
+    {
+      "teamName": "Firebots",
+      "teamNumber": 3501,
+      "normEpa": 1680,
+      "language": "java",
+      "linkToCodebases": "firebots-software/2026-Rebuilt"
+    },
+    {
+      "teamName": "Gryphon Command",
+      "teamNumber": 3966,
+      "normEpa": 1680,
+      "language": "java",
+      "linkToCodebases": "gryphoncommand/2026-bootcamp"
+    },
+    {
+      "teamName": "Spectrum   -△◅",
+      "teamNumber": 3847,
+      "normEpa": 1679,
+      "language": "java",
+      "linkToCodebases": "Spectrum3847/2026-Spectrum"
+    },
+    {
+      "teamName": "Spartatroniks",
+      "teamNumber": 3512,
+      "normEpa": 1674,
+      "language": "java",
+      "linkToCodebases": "frc3512/Robot-2026"
+    },
+    {
+      "teamName": "Techno-Ticks",
+      "teamNumber": 236,
+      "normEpa": 1673,
+      "language": "java",
+      "linkToCodebases": "Team236/2026-Robot"
+    },
+    {
+      "teamName": "Walton Robotics",
+      "teamNumber": 2974,
+      "normEpa": 1672,
+      "language": "java",
+      "linkToCodebases": "WaltonRobotics/Rebuilt"
+    },
+    {
+      "teamName": "Red Hawk Robotics",
+      "teamNumber": 2713,
+      "normEpa": 1671,
+      "language": "java",
+      "linkToCodebases": "FRC2713/Robot2026"
+    },
+    {
+      "teamName": "Sab-BOT-age",
+      "teamNumber": 1640,
+      "normEpa": 1670,
+      "language": "java",
+      "linkToCodebases": "FRC1640/2026-Code"
+    },
+    {
+      "teamName": "Chop Shop",
+      "teamNumber": 166,
+      "normEpa": 1666,
+      "language": "java",
+      "linkToCodebases": "chopshop-166/frc-2026"
+    },
+    {
+      "teamName": "Mukwonago BEARs",
+      "teamNumber": 930,
+      "normEpa": 1666,
+      "language": "java",
+      "linkToCodebases": "FRC930/Robot2026V2"
+    },
+    {
+      "teamName": "Stateline Robotics",
+      "teamNumber": 4655,
+      "normEpa": 1665,
+      "language": "java",
+      "linkToCodebases": "StatelineRobotics/2026-Rebuilt"
+    },
+    {
+      "teamName": "NOMAD",
+      "teamNumber": 6995,
+      "normEpa": 1664,
+      "language": "java",
+      "linkToCodebases": "frc6995/Robot-2026"
+    },
+    {
+      "teamName": "Bovine Intervention",
+      "teamNumber": 686,
+      "normEpa": 1663,
+      "language": "java",
+      "linkToCodebases": "FRC-686-Bovine-Intervention/Robot-2026-Rebuilt"
+    },
+    {
+      "teamName": "Copperhead Robotics",
+      "teamNumber": 401,
+      "normEpa": 1658,
+      "language": "java",
+      "linkToCodebases": "team401/2026-Robot-Code"
+    },
+    {
+      "teamName": "WARP7",
+      "teamNumber": 865,
+      "normEpa": 1656,
+      "language": "java",
+      "linkToCodebases": "Team865/RobotDemo"
+    },
+    {
+      "teamName": "Orange Dynamite",
+      "teamNumber": 2583,
+      "normEpa": 1655,
+      "language": "java",
+      "linkToCodebases": "WestwoodRobotics/2583-frc-2026"
+    },
+    {
+      "teamName": "Iron Claw",
+      "teamNumber": 972,
+      "normEpa": 1654,
+      "language": "java",
+      "linkToCodebases": "iron-claw-972/FRC2026"
+    },
+    {
+      "teamName": "Cougar Robotics",
+      "teamNumber": 1403,
+      "normEpa": 1653,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-1403/Robot2026"
+    },
+    {
+      "teamName": "Otter Chaos",
+      "teamNumber": 4512,
+      "normEpa": 1653,
+      "language": "java",
+      "linkToCodebases": "4512OtterChaos/frc2026"
+    },
+    {
+      "teamName": "AIR STRIKE",
+      "teamNumber": 78,
+      "normEpa": 1652,
+      "language": "java",
+      "linkToCodebases": "frc78/2026-Bandit"
+    },
+    {
+      "teamName": "TRIGON",
+      "teamNumber": 5990,
+      "normEpa": 1652,
+      "language": "java",
+      "linkToCodebases": "Programming-TRIGON/RobotCodePostSeason2026"
+    },
+    {
+      "teamName": "Sabre Robotics",
+      "teamNumber": 6045,
+      "normEpa": 1652,
+      "language": "java",
+      "linkToCodebases": "frc-6045/2026-naan-REALEST"
+    },
+    {
+      "teamName": "RamTech",
+      "teamNumber": 59,
+      "normEpa": 1651,
+      "language": "java",
+      "linkToCodebases": "L13V/2026_59"
+    },
+    {
+      "teamName": "Chill Out",
+      "teamNumber": 1778,
+      "normEpa": 1651,
+      "language": "java",
+      "linkToCodebases": "FIRST1778/2026-Robot-Code-Public"
+    },
+    {
+      "teamName": "Vortechs",
+      "teamNumber": 3257,
+      "normEpa": 1651,
+      "language": "java",
+      "linkToCodebases": "TeamVortechs/3257-COMP-ROBOT-3257-2026-Rebuild"
+    },
+    {
+      "teamName": "Jacktown Vectors",
+      "teamNumber": 2611,
+      "normEpa": 1650,
+      "language": "java",
+      "linkToCodebases": "2611-Vectors/2026-Delta-Bot"
+    },
+    {
+      "teamName": "The Quadrangles",
+      "teamNumber": 3494,
+      "normEpa": 1649,
+      "language": "java",
+      "linkToCodebases": "FRC3494/2026-lambda"
+    },
+    {
+      "teamName": "Tiger Dynasty",
+      "teamNumber": 5010,
+      "normEpa": 1649,
+      "language": "java",
+      "linkToCodebases": "clrozeboom/FRC5010Claude"
+    },
+    {
+      "teamName": "Robotic Eagles",
+      "teamNumber": 5507,
+      "normEpa": 1649,
+      "language": "java",
+      "linkToCodebases": "gwhs/2026-Rebuilt"
+    },
+    {
+      "teamName": "TechHOUNDS",
+      "teamNumber": 868,
+      "normEpa": 1646,
+      "language": "java",
+      "linkToCodebases": "Yes-Because-No/sysid-template-2026"
+    },
+    {
+      "teamName": "Rosbots",
+      "teamNumber": 5572,
+      "normEpa": 1646,
+      "language": "java",
+      "linkToCodebases": "Frc5572/TimedRobot"
+    },
+    {
+      "teamName": "Ludington O-Bots",
+      "teamNumber": 7160,
+      "normEpa": 1646,
+      "language": "java",
+      "linkToCodebases": "o-bots7160/2026-frc-rebuilt"
+    },
+    {
+      "teamName": "Team E.L.I.T.E.",
+      "teamNumber": 48,
+      "normEpa": 1645,
+      "language": "java",
+      "linkToCodebases": "teamelite48/2026-robot"
+    },
+    {
+      "teamName": "The Deadbolts",
+      "teamNumber": 10980,
+      "normEpa": 1643,
+      "language": "java",
+      "linkToCodebases": "teamdeadbolts/2026-robot-code"
+    },
+    {
+      "teamName": "Chargers",
+      "teamNumber": 4189,
+      "normEpa": 1642,
+      "language": "java",
+      "linkToCodebases": "Chargers-4189/Rebuilt-2026"
+    },
+    {
+      "teamName": "The Riveters",
+      "teamNumber": 1481,
+      "normEpa": 1641,
+      "language": "java",
+      "linkToCodebases": "FRC-1481-Riveters/2026_robot"
+    },
+    {
+      "teamName": "♨️ BBQ ♨️",
+      "teamNumber": 2714,
+      "normEpa": 1640,
+      "language": "java",
+      "linkToCodebases": "FRC2714/BBQ-Rebuilt-2026"
+    },
+    {
+      "teamName": "The Lightning Turtles",
+      "teamNumber": 3100,
+      "normEpa": 1639,
+      "language": "java",
+      "linkToCodebases": "3100-Robotics/protobot-2026"
+    },
+    {
+      "teamName": "Knight Vision",
+      "teamNumber": 3175,
+      "normEpa": 1638,
+      "language": "java",
+      "linkToCodebases": "frc3175/2026"
+    },
+    {
+      "teamName": "The Pascack PI-oneers",
+      "teamNumber": 1676,
+      "normEpa": 1637,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-1676/2026-Practice-Chassis"
+    },
+    {
+      "teamName": "Huskie Robotics",
+      "teamNumber": 3061,
+      "normEpa": 1637,
+      "language": "java",
+      "linkToCodebases": "HuskieRobotics/frc-software-2026"
+    },
+    {
+      "teamName": "Knight Owls",
+      "teamNumber": 8884,
+      "normEpa": 1637,
+      "language": "java",
+      "linkToCodebases": "NSS-Robotics/FRC8884-2026"
+    },
+    {
+      "teamName": "Big Bad Bob",
+      "teamNumber": 319,
+      "normEpa": 1636,
+      "language": "java",
+      "linkToCodebases": "Team319/frc319-2026"
+    },
+    {
+      "teamName": "Team Mean Machine",
+      "teamNumber": 2471,
+      "normEpa": 1636,
+      "language": "java",
+      "linkToCodebases": "TeamMeanMachine/FRC2026"
+    },
+    {
+      "teamName": "CocoNuts",
+      "teamNumber": 2486,
+      "normEpa": 1634,
+      "language": "java",
+      "linkToCodebases": "Coconuts2486-FRC/FRC-2026"
+    },
+    {
+      "teamName": "Rebel Robotics",
+      "teamNumber": 2638,
+      "normEpa": 1634,
+      "language": "java",
+      "linkToCodebases": "rebels2638/2026-Robot-Code"
+    },
+    {
+      "teamName": "Degrees of Freedom",
+      "teamNumber": 6413,
+      "normEpa": 1631,
+      "language": "java",
+      "linkToCodebases": "DoF-6413/2026-Rebuilt"
+    },
+    {
+      "teamName": "The F.A.S.T. Team - Fowlerville Area Scientific Technicians",
+      "teamNumber": 7056,
+      "normEpa": 1630,
+      "language": "java",
+      "linkToCodebases": "team7056fastteam/FRC-2026"
+    },
+    {
+      "teamName": "Finney Falcons",
+      "teamNumber": 1405,
+      "normEpa": 1627,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-1405/2026Robot"
+    },
+    {
+      "teamName": "LHS Steel Stingers",
+      "teamNumber": 9452,
+      "normEpa": 1627,
+      "language": "java",
+      "linkToCodebases": "LHS-Steel-Stingers-9452/2026-Peashooter"
+    },
+    {
+      "teamName": "Obsidian",
+      "teamNumber": 5454,
+      "normEpa": 1626,
+      "language": "java",
+      "linkToCodebases": "FRCTeam5454/2026-Rebuilt-GameBot"
+    },
+    {
+      "teamName": "Royal Robotics",
+      "teamNumber": 2522,
+      "normEpa": 1625,
+      "language": "java",
+      "linkToCodebases": "royal-robotics/frc-2026-robot"
+    },
+    {
+      "teamName": "ROCORI Robotics",
+      "teamNumber": 4728,
+      "normEpa": 1625,
+      "language": "java",
+      "linkToCodebases": "FRC4728/FRC4728-2026"
+    },
+    {
+      "teamName": "Nerds of Prey",
+      "teamNumber": 4065,
+      "normEpa": 1622,
+      "language": "java",
+      "linkToCodebases": "Team4065/NOP-Rebuilt-2026"
+    },
+    {
+      "teamName": "Byting Bulldogs",
+      "teamNumber": 3539,
+      "normEpa": 1620,
+      "language": "java",
+      "linkToCodebases": "FRC-3539/2026-Rebuilt"
+    },
+    {
+      "teamName": "Titanium Titans",
+      "teamNumber": 4467,
+      "normEpa": 1619,
+      "language": "java",
+      "linkToCodebases": "TitaniumTitans/2026-Rebuilt"
+    },
+    {
+      "teamName": "Stormgears",
+      "teamNumber": 5422,
+      "normEpa": 1616,
+      "language": "java",
+      "linkToCodebases": "Stormgears-FRC-5422/Rebuilt-kitbot-2026"
+    },
+    {
+      "teamName": "Leviathans",
+      "teamNumber": 8744,
+      "normEpa": 1616,
+      "language": "java",
+      "linkToCodebases": "FRC-Team8744/2026CompetitionCodeBase"
+    },
+    {
+      "teamName": "REBELLION",
+      "teamNumber": 10014,
+      "normEpa": 1616,
+      "language": "java",
+      "linkToCodebases": "10014Rebellion/2026-C3RBERUS-main"
+    },
+    {
+      "teamName": "⚙️ The Grease Monkeys ⚙️",
+      "teamNumber": 457,
+      "normEpa": 1615,
+      "language": "java",
+      "linkToCodebases": "frc457/Mechanum-Robot"
+    },
+    {
+      "teamName": "TechnoKats Robotics Team",
+      "teamNumber": 45,
+      "normEpa": 1614,
+      "language": "java",
+      "linkToCodebases": "TechnoKats-45/TK45-2026"
+    },
+    {
+      "teamName": "The Foley Freeze",
+      "teamNumber": 910,
+      "normEpa": 1613,
+      "language": "java",
+      "linkToCodebases": "FoleyFreeze/2026-FRC"
+    },
+    {
+      "teamName": "Antares",
+      "teamNumber": 6962,
+      "normEpa": 1607,
+      "language": "java",
+      "linkToCodebases": "team6962/Code-2026"
+    },
+    {
+      "teamName": "Team 4 ELEMENT",
+      "teamNumber": 4,
+      "normEpa": 1604,
+      "language": "java",
+      "linkToCodebases": "team4element/Team4Rebuild"
+    },
+    {
+      "teamName": "REX",
+      "teamNumber": 1727,
+      "normEpa": 1604,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-1727/2026-Robot"
+    },
+    {
+      "teamName": "Lakota Robotics",
+      "teamNumber": 1038,
+      "normEpa": 1603,
+      "language": "java",
+      "linkToCodebases": "LakotaRobotics1038/2026RobotProject"
+    },
+    {
+      "teamName": "Raider Robotics",
+      "teamNumber": 5024,
+      "normEpa": 1603,
+      "language": "java",
+      "linkToCodebases": "frc5024/Rebuilt"
+    },
+    {
+      "teamName": "Markham FireBirds",
+      "teamNumber": 7902,
+      "normEpa": 1603,
+      "language": "java",
+      "linkToCodebases": "PaisWillie/FRC-Rebuilt-2026"
+    },
+    {
+      "teamName": "CATATRONICS",
+      "teamNumber": 1810,
+      "normEpa": 1601,
+      "language": "java",
+      "linkToCodebases": "Team1810Robotics/2026-1810-Robot-Code"
+    },
+    {
+      "teamName": "Saber Robotics",
+      "teamNumber": 2506,
+      "normEpa": 1601,
+      "language": "java",
+      "linkToCodebases": "ishaanhari26/SaberRobotics2506-Robot2026"
+    },
+    {
+      "teamName": "Milliken Mills Silver Knights",
+      "teamNumber": 9569,
+      "normEpa": 1601,
+      "language": "java",
+      "linkToCodebases": "Abluebowobble/9569-rebuilt-2026"
+    },
+    {
+      "teamName": "WorBots",
+      "teamNumber": 4145,
+      "normEpa": 1600,
+      "language": "java",
+      "linkToCodebases": "Worthington-Robotics/2026RobotCode"
+    },
+    {
+      "teamName": "RoboJacks",
+      "teamNumber": 4674,
+      "normEpa": 1600,
+      "language": "java",
+      "linkToCodebases": "whistlepunkprogram/RibbonCuttingRobotCode"
+    },
+    {
+      "teamName": "Hotwire",
+      "teamNumber": 2990,
+      "normEpa": 1599,
+      "language": "java",
+      "linkToCodebases": "HotwireRobotics/Hotwire-2026-Season"
+    },
+    {
+      "teamName": "The Pink Team",
+      "teamNumber": 233,
+      "normEpa": 1598,
+      "language": "java",
+      "linkToCodebases": "ThePinkAlliance/2026-PID-Test"
+    },
+    {
+      "teamName": "CRyptonite",
+      "teamNumber": 624,
+      "normEpa": 1597,
+      "language": "java",
+      "linkToCodebases": "Team624/2026Robot-Public"
+    },
+    {
+      "teamName": "Eagle Evolution",
+      "teamNumber": 3322,
+      "normEpa": 1593,
+      "language": "java",
+      "linkToCodebases": "frc3322/Code-2026"
+    },
+    {
+      "teamName": "Cyber Coyotes",
+      "teamNumber": 3603,
+      "normEpa": 1593,
+      "language": "java",
+      "linkToCodebases": "CyberCoyotes/2026-Rebuilt"
+    },
+    {
+      "teamName": "Titan Robotics Club",
+      "teamNumber": 492,
+      "normEpa": 1592,
+      "language": "java",
+      "linkToCodebases": "trc492/Frc2026Rebuilt"
+    },
+    {
+      "teamName": "Copper Bots",
+      "teamNumber": 2586,
+      "normEpa": 1590,
+      "language": "java",
+      "linkToCodebases": "Team-2586-Copperbots/Copperbots-2026---Snake"
+    },
+    {
+      "teamName": "Wildcat Robotics",
+      "teamNumber": 3039,
+      "normEpa": 1590,
+      "language": "java",
+      "linkToCodebases": "Team3039/2026-Tone-Rebuilt"
+    },
+    {
+      "teamName": "Iron Kodiaks",
+      "teamNumber": 5137,
+      "normEpa": 1589,
+      "language": "java",
+      "linkToCodebases": "MHHSRobotics/2026-season"
+    },
+    {
+      "teamName": "MisCar",
+      "teamNumber": 1574,
+      "normEpa": 1586,
+      "language": "java",
+      "linkToCodebases": "OrenMic/ftc-robot-2027"
+    },
+    {
+      "teamName": "Bearbotics",
+      "teamNumber": 4068,
+      "normEpa": 1586,
+      "language": "java",
+      "linkToCodebases": "bearboticsfrc/2026-Rebuilt"
+    },
+    {
+      "teamName": "The RoboSpartans",
+      "teamNumber": 4639,
+      "normEpa": 1585,
+      "language": "java",
+      "linkToCodebases": "aditya-khambekar/2026-Citrus-Clone"
+    },
+    {
+      "teamName": "Alotobots",
+      "teamNumber": 5152,
+      "normEpa": 1585,
+      "language": "java",
+      "linkToCodebases": "5152Alotobots/5152_Rebuilt"
+    },
+    {
+      "teamName": "Blue Twilight",
+      "teamNumber": 2220,
+      "normEpa": 1582,
+      "language": "java",
+      "linkToCodebases": "EaganRobotics/2026-robot"
+    },
+    {
+      "teamName": "Charger Robotics",
+      "teamNumber": 7174,
+      "normEpa": 1582,
+      "language": "cpp",
+      "linkToCodebases": "team7174/2026-REBUILT-V2"
+    },
+    {
+      "teamName": "PowerHouse",
+      "teamNumber": 9410,
+      "normEpa": 1578,
+      "language": "java",
+      "linkToCodebases": "FRC9410/2026-Robot"
+    },
+    {
+      "teamName": "Ramageddon",
+      "teamNumber": 4855,
+      "normEpa": 1574,
+      "language": "java",
+      "linkToCodebases": "FRCTeam4855/2026-CompBot"
+    },
+    {
+      "teamName": "Bad Robots",
+      "teamNumber": 1014,
+      "normEpa": 1573,
+      "language": "python",
+      "linkToCodebases": "BadRobots1014/BadRobot2026"
+    },
+    {
+      "teamName": "Plasma Robotics",
+      "teamNumber": 2403,
+      "normEpa": 1573,
+      "language": "java",
+      "linkToCodebases": "PlasmaRobotics2403/2026Robot"
+    },
+    {
+      "teamName": "DARC SIDE",
+      "teamNumber": 6502,
+      "normEpa": 1572,
+      "language": "java",
+      "linkToCodebases": "DurhamAcademy/FRC2026"
+    },
+    {
+      "teamName": "Turbo Torque",
+      "teamNumber": 7492,
+      "normEpa": 1572,
+      "language": "cpp",
+      "linkToCodebases": "Turbo-Torque/2026-Rerun"
+    },
+    {
+      "teamName": "SAASquatch Robotics",
+      "teamNumber": 8032,
+      "normEpa": 1572,
+      "language": "java",
+      "linkToCodebases": "redshiftrobotics/rebuilt-2026"
+    },
+    {
+      "teamName": "SPIKE",
+      "teamNumber": 293,
+      "normEpa": 1569,
+      "language": "java",
+      "linkToCodebases": "Team293/Rebuilt"
+    },
+    {
+      "teamName": "The Spring Konstant",
+      "teamNumber": 6357,
+      "normEpa": 1569,
+      "language": "java",
+      "linkToCodebases": "frc6357/robot-code-2026"
+    },
+    {
+      "teamName": "Night Hawks",
+      "teamNumber": 614,
+      "normEpa": 1568,
+      "language": "java",
+      "linkToCodebases": "team614frc/Team-614-Rebuilt"
+    },
+    {
+      "teamName": "BEAST Robotics",
+      "teamNumber": 2202,
+      "normEpa": 1568,
+      "language": "java",
+      "linkToCodebases": "2202Programming/FRC2026"
+    },
+    {
+      "teamName": "Bagel Bytes",
+      "teamNumber": 702,
+      "normEpa": 1567,
+      "language": "java",
+      "linkToCodebases": "702roboticsmember/2026Robot"
+    },
+    {
+      "teamName": "Tigerbots",
+      "teamNumber": 2183,
+      "normEpa": 1567,
+      "language": "java",
+      "linkToCodebases": "Tigerbots2183/2026-Robot"
+    },
+    {
+      "teamName": "The Gongoliers",
+      "teamNumber": 5112,
+      "normEpa": 1566,
+      "language": "java",
+      "linkToCodebases": "Gongoliers/Robot2026"
+    },
+    {
+      "teamName": "C4 (Capital City Chaotic Coders)",
+      "teamNumber": 6184,
+      "normEpa": 1565,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-6184/2026-Bamboom"
+    },
+    {
+      "teamName": "Northern Force",
+      "teamNumber": 172,
+      "normEpa": 1564,
+      "language": "java",
+      "linkToCodebases": "NorthernForce/Rebuilt"
+    },
+    {
+      "teamName": "Cyber Colonels",
+      "teamNumber": 1740,
+      "normEpa": 1564,
+      "language": "java",
+      "linkToCodebases": "Ri3D-Philadelphia/Rebuilt-2026"
+    },
+    {
+      "teamName": "Panthinators",
+      "teamNumber": 8234,
+      "normEpa": 1564,
+      "language": "java",
+      "linkToCodebases": "frc-8234-panthinators/2026-Robot-Code"
+    },
+    {
+      "teamName": "The Ionizers",
+      "teamNumber": 10903,
+      "normEpa": 1564,
+      "language": "java",
+      "linkToCodebases": "FRC-10903-The-Ionizers/2026-Robot-Code"
+    },
+    {
+      "teamName": "The 2nd Law Enforcers",
+      "teamNumber": 178,
+      "normEpa": 1563,
+      "language": "java",
+      "linkToCodebases": "team178/2026RobotCode"
+    },
+    {
+      "teamName": "CPR - Cedar Park Robotics",
+      "teamNumber": 3663,
+      "normEpa": 1563,
+      "language": "java",
+      "linkToCodebases": "team3663/2026-Rebuilt"
+    },
+    {
+      "teamName": "Norwell Robotics",
+      "teamNumber": 348,
+      "normEpa": 1560,
+      "language": "java",
+      "linkToCodebases": "FRC348/2026-Robot"
+    },
+    {
+      "teamName": "POBots",
+      "teamNumber": 353,
+      "normEpa": 1560,
+      "language": "java",
+      "linkToCodebases": "POBots-353/2026RobotCode"
+    },
+    {
+      "teamName": "Infinite Loop",
+      "teamNumber": 2648,
+      "normEpa": 1560,
+      "language": "java",
+      "linkToCodebases": "Team2648/2026-Robot-Code"
+    },
+    {
+      "teamName": "CTC Inspire",
+      "teamNumber": 5801,
+      "normEpa": 1560,
+      "language": "java",
+      "linkToCodebases": "CSE-FortOsageCTC/5801_Inspire_2026"
+    },
+    {
+      "teamName": "Roaring Robotics",
+      "teamNumber": 2704,
+      "normEpa": 1558,
+      "language": "java",
+      "linkToCodebases": "Roaring-Robotics-2704/FRC2026"
+    },
+    {
+      "teamName": "RoboRaiders",
+      "teamNumber": 3561,
+      "normEpa": 1557,
+      "language": "java",
+      "linkToCodebases": "Taft-RoboRaiders/2026-Code-Rebuilt"
+    },
+    {
+      "teamName": "Oakbotics",
+      "teamNumber": 3739,
+      "normEpa": 1555,
+      "language": "java",
+      "linkToCodebases": "Oakbotics/2026-FRC-Code"
+    },
+    {
+      "teamName": "The Body Electric",
+      "teamNumber": 1389,
+      "normEpa": 1554,
+      "language": "java",
+      "linkToCodebases": "team1389/2026-Chip-Phoenix"
+    },
+    {
+      "teamName": "Revolt Robotics",
+      "teamNumber": 4976,
+      "normEpa": 1554,
+      "language": "java",
+      "linkToCodebases": "team4976/FRC-2026-REBUILT"
+    },
+    {
+      "teamName": "TechKnights",
+      "teamNumber": 334,
+      "normEpa": 1553,
+      "language": "java",
+      "linkToCodebases": "Curf231/Rookie_Bot_Command_Robot"
+    },
+    {
+      "teamName": "Trojans",
+      "teamNumber": 2386,
+      "normEpa": 1553,
+      "language": "java",
+      "linkToCodebases": "BCHRobotics/2026"
+    },
+    {
+      "teamName": "Zebrotics",
+      "teamNumber": 5708,
+      "normEpa": 1553,
+      "language": "java",
+      "linkToCodebases": "FRC5708/FRC-2026-RobotCode"
+    },
+    {
+      "teamName": "The Mechanical Bulls",
+      "teamNumber": 810,
+      "normEpa": 1552,
+      "language": "java",
+      "linkToCodebases": "team810/Rebuilt"
+    },
+    {
+      "teamName": "Cyberhawks",
+      "teamNumber": 706,
+      "normEpa": 1551,
+      "language": "java",
+      "linkToCodebases": "ArrowheadCyberhawks/RobotCode2026"
+    },
+    {
+      "teamName": "The Alphabots",
+      "teamNumber": 8810,
+      "normEpa": 1551,
+      "language": "java",
+      "linkToCodebases": "8810bot/2026_8810_main"
+    },
+    {
+      "teamName": "Tecmilenio - DEVOLT",
+      "teamNumber": 9134,
+      "normEpa": 1551,
+      "language": "java",
+      "linkToCodebases": "DevoltRobotics/Devolt-Rebuilt-RIO"
+    },
+    {
+      "teamName": "Ghost Bots",
+      "teamNumber": 10070,
+      "normEpa": 1551,
+      "language": "java",
+      "linkToCodebases": "ghostbots10070/robotCode"
+    },
+    {
+      "teamName": "Team Roboto",
+      "teamNumber": 447,
+      "normEpa": 1549,
+      "language": "java",
+      "linkToCodebases": "TeamRoboto447/Team-Roboto-2018-2026-rewrite"
+    },
+    {
+      "teamName": "Phoenix",
+      "teamNumber": 4533,
+      "normEpa": 1549,
+      "language": "java",
+      "linkToCodebases": "4533-phoenix/frc-2026-robot"
+    },
+    {
+      "teamName": "The Prototypes",
+      "teamNumber": 2854,
+      "normEpa": 1548,
+      "language": "java",
+      "linkToCodebases": "soalpexe/2854-Comp2026"
+    },
+    {
+      "teamName": "Explorer Robotics",
+      "teamNumber": 5181,
+      "normEpa": 1547,
+      "language": "java",
+      "linkToCodebases": "LSRobotics/2026Robot"
+    },
+    {
+      "teamName": "Digital Minds",
+      "teamNumber": 5458,
+      "normEpa": 1547,
+      "language": "java",
+      "linkToCodebases": "deanbunn/XRP-5458"
+    },
+    {
+      "teamName": "Melrose Gear Grinders",
+      "teamNumber": 11283,
+      "normEpa": 1547,
+      "language": "java",
+      "linkToCodebases": "Spacatsu/11283-Comp-Robot-2026"
+    },
+    {
+      "teamName": "Stormbots",
+      "teamNumber": 4778,
+      "normEpa": 1546,
+      "language": "java",
+      "linkToCodebases": "stormbots-4778/REBUILT"
+    },
+    {
+      "teamName": "WarriorBots",
+      "teamNumber": 6421,
+      "normEpa": 1546,
+      "language": "java",
+      "linkToCodebases": "frc6421/2026-robot-code"
+    },
+    {
+      "teamName": "Unipards",
+      "teamNumber": 6998,
+      "normEpa": 1546,
+      "language": "java",
+      "linkToCodebases": "boyu0802/swerve-2026"
+    },
+    {
+      "teamName": "The GreenVillains",
+      "teamNumber": 281,
+      "normEpa": 1545,
+      "language": "java",
+      "linkToCodebases": "entech281/Robot2026"
+    },
+    {
+      "teamName": "G3 Robotics",
+      "teamNumber": 1648,
+      "normEpa": 1545,
+      "language": "java",
+      "linkToCodebases": "midtownrobotics/G3-2026"
+    },
+    {
+      "teamName": "Electromagnetic Panthers (EMP)",
+      "teamNumber": 5126,
+      "normEpa": 1545,
+      "language": "java",
+      "linkToCodebases": "First5126/2026-rebuilt-CompBot"
+    },
+    {
+      "teamName": "Wildcat5e",
+      "teamNumber": 6705,
+      "normEpa": 1545,
+      "language": "java",
+      "linkToCodebases": "Wildcat5e/2026-rebuilt-robot"
+    },
+    {
+      "teamName": "Binary Crows",
+      "teamNumber": 10589,
+      "normEpa": 1545,
+      "language": "java",
+      "linkToCodebases": "BinaryCrows10589/2026Team10589"
+    },
+    {
+      "teamName": "Horsepower",
+      "teamNumber": 801,
+      "normEpa": 1544,
+      "language": "java",
+      "linkToCodebases": "Team801Horsepower/robot-code-2026"
+    },
+    {
+      "teamName": "The Golden Griffins",
+      "teamNumber": 6220,
+      "normEpa": 1544,
+      "language": "java",
+      "linkToCodebases": "Team-6220/6220_2026"
+    },
+    {
+      "teamName": "OSTC -  SWEET BOTS",
+      "teamNumber": 7553,
+      "normEpa": 1543,
+      "language": "java",
+      "linkToCodebases": "SweetBots7553/OCCRA-7553-2026"
+    },
+    {
+      "teamName": "Flux Robotics",
+      "teamNumber": 10413,
+      "normEpa": 1543,
+      "language": "java",
+      "linkToCodebases": "FRC-Flux-Robotics/New_Robot"
+    },
+    {
+      "teamName": "Snider Panthers- \"The Gold Standard\"",
+      "teamNumber": 9431,
+      "normEpa": 1542,
+      "language": "cpp",
+      "linkToCodebases": "snidercs/frc-bot-2026-cxx"
+    },
+    {
+      "teamName": "Krono",
+      "teamNumber": 10935,
+      "normEpa": 1542,
+      "language": "java",
+      "linkToCodebases": "dandushlol/TankRobot"
+    },
+    {
+      "teamName": "Esquimalt Atom Smashers",
+      "teamNumber": 7287,
+      "normEpa": 1541,
+      "language": "java",
+      "linkToCodebases": "Hanson2258/FRC-2026"
+    },
+    {
+      "teamName": "Triple Helix Robotics",
+      "teamNumber": 2363,
+      "normEpa": 1540,
+      "language": "java",
+      "linkToCodebases": "TripleHelixProgramming/offseason-2026"
+    },
+    {
+      "teamName": "Warbots",
+      "teamNumber": 620,
+      "normEpa": 1538,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-620/T620-SPF-NIDMOT-SW"
+    },
+    {
+      "teamName": "Gator-Bots",
+      "teamNumber": 1250,
+      "normEpa": 1536,
+      "language": "java",
+      "linkToCodebases": "FRC-1250/Team-1250-Rebuilt2026"
+    },
+    {
+      "teamName": "Dragon Robotics",
+      "teamNumber": 2375,
+      "normEpa": 1535,
+      "language": "java",
+      "linkToCodebases": "dragon-robotics/FRC2026_Java_Swerve_Robot"
+    },
+    {
+      "teamName": "Jesuit Robotics",
+      "teamNumber": 2374,
+      "normEpa": 1533,
+      "language": "java",
+      "linkToCodebases": "JesuitRobotics2374/Season2026-MainBot"
+    },
+    {
+      "teamName": "Overclocked",
+      "teamNumber": 2485,
+      "normEpa": 1533,
+      "language": "java",
+      "linkToCodebases": "team2485/frc-2026"
+    },
+    {
+      "teamName": "Rebel Alliance",
+      "teamNumber": 4624,
+      "normEpa": 1532,
+      "language": "java",
+      "linkToCodebases": "OwatonnaRobotics4624/2026-Robot"
+    },
+    {
+      "teamName": "Gridrunners",
+      "teamNumber": 10011,
+      "normEpa": 1531,
+      "language": "java",
+      "linkToCodebases": "DRSS-Robotics/FRC-Age-2026"
+    },
+    {
+      "teamName": "The BioMech Falcons",
+      "teamNumber": 5268,
+      "normEpa": 1530,
+      "language": "java",
+      "linkToCodebases": "FRC-5268-BiomechFalcons/2026-robot-code"
+    },
+    {
+      "teamName": "Sushi Squad",
+      "teamNumber": 7461,
+      "normEpa": 1530,
+      "language": "java",
+      "linkToCodebases": "SushiSquad7461/2026-dango"
+    },
+    {
+      "teamName": "Boulder Valley Black Knights",
+      "teamNumber": 2036,
+      "normEpa": 1529,
+      "language": "java",
+      "linkToCodebases": "fairviewrobotics/2026-robot-code"
+    },
+    {
+      "teamName": "ASTRO",
+      "teamNumber": 7605,
+      "normEpa": 1529,
+      "language": "java",
+      "linkToCodebases": "ASTRO7605/Robot2026"
+    },
+    {
+      "teamName": "Devil Tech",
+      "teamNumber": 1559,
+      "normEpa": 1528,
+      "language": "java",
+      "linkToCodebases": "Team1559/2026"
+    },
+    {
+      "teamName": "W.A.Robotics",
+      "teamNumber": 6925,
+      "normEpa": 1528,
+      "language": "java",
+      "linkToCodebases": "sahil-patel-2011/6925-RobotCodeUpdated"
+    },
+    {
+      "teamName": "Pioneers",
+      "teamNumber": 7525,
+      "normEpa": 1528,
+      "language": "java",
+      "linkToCodebases": "FRC-7525/7525-Rebuilt"
+    },
+    {
+      "teamName": "RoboBlazers",
+      "teamNumber": 7617,
+      "normEpa": 1527,
+      "language": "java",
+      "linkToCodebases": "roboblazers7617/2026Robot"
+    },
+    {
+      "teamName": "Robo-Raiders",
+      "teamNumber": 3681,
+      "normEpa": 1526,
+      "language": "java",
+      "linkToCodebases": "3681NHR/NHHS_FRC_2026_3681"
+    },
+    {
+      "teamName": "The Livonia Warriors",
+      "teamNumber": 2832,
+      "normEpa": 1525,
+      "language": "java",
+      "linkToCodebases": "FRC2832/Robot2832-2026"
+    },
+    {
+      "teamName": "RoboVikes",
+      "teamNumber": 701,
+      "normEpa": 1524,
+      "language": "java",
+      "linkToCodebases": "FRC701/rebuilt-2026"
+    },
+    {
+      "teamName": "TC Titans",
+      "teamNumber": 3767,
+      "normEpa": 1523,
+      "language": "java",
+      "linkToCodebases": "TCTitans3767/2026-Robot"
+    },
+    {
+      "teamName": "Komodo",
+      "teamNumber": 4293,
+      "normEpa": 1523,
+      "language": "java",
+      "linkToCodebases": "teamkomodo/2026-REBUILT"
+    },
+    {
+      "teamName": "Impact",
+      "teamNumber": 2585,
+      "normEpa": 1522,
+      "language": "java",
+      "linkToCodebases": "PMSCS50/FRC-2026-Final"
+    },
+    {
+      "teamName": "Falkon Robotics",
+      "teamNumber": 589,
+      "normEpa": 1521,
+      "language": "java",
+      "linkToCodebases": "CVHSFRC589/2026_Robot_Code"
+    },
+    {
+      "teamName": "Titanium Tigers",
+      "teamNumber": 4829,
+      "normEpa": 1521,
+      "language": "java",
+      "linkToCodebases": "TitaniumTigers4829/sabre-code-2026"
+    },
+    {
+      "teamName": "Full Metal Muskrats",
+      "teamNumber": 5860,
+      "normEpa": 1521,
+      "language": "java",
+      "linkToCodebases": "AlgonacRobotics/FRC2026Rebuilt"
+    },
+    {
+      "teamName": "CircuiTree",
+      "teamNumber": 1599,
+      "normEpa": 1518,
+      "language": "java",
+      "linkToCodebases": "atlee-circuitree/Rebuilt-new"
+    },
+    {
+      "teamName": "Exploding Bacon",
+      "teamNumber": 1902,
+      "normEpa": 1518,
+      "language": "java",
+      "linkToCodebases": "FRC-1902/2026-game"
+    },
+    {
+      "teamName": "FLYT",
+      "teamNumber": 2290,
+      "normEpa": 1518,
+      "language": "java",
+      "linkToCodebases": "frc2290/FLYT-Rebuilt-2026"
+    },
+    {
+      "teamName": "The Y Team",
+      "teamNumber": 3211,
+      "normEpa": 1518,
+      "language": "java",
+      "linkToCodebases": "yteam3211/robot2026Catalyst"
+    },
+    {
+      "teamName": "Iced Java",
+      "teamNumber": 6894,
+      "normEpa": 1518,
+      "language": "java",
+      "linkToCodebases": "IcedJavaRobotics/2026-rebuilt"
+    },
+    {
+      "teamName": "SentinelFox Engineering",
+      "teamNumber": 4584,
+      "normEpa": 1517,
+      "language": "java",
+      "linkToCodebases": "Alejandrop22/SentinelFox-2026"
+    },
+    {
+      "teamName": "Webb Robotics",
+      "teamNumber": 1466,
+      "normEpa": 1516,
+      "language": "java",
+      "linkToCodebases": "FRC1466/2026RobotCode"
+    },
+    {
+      "teamName": "GEARS",
+      "teamNumber": 2181,
+      "normEpa": 1516,
+      "language": "java",
+      "linkToCodebases": "FRCteam2181/2026-Comp-Code"
+    },
+    {
+      "teamName": "Titans",
+      "teamNumber": 2620,
+      "normEpa": 1516,
+      "language": "java",
+      "linkToCodebases": "AbigailRS/Robotics-2026-Competition-2620"
+    },
+    {
+      "teamName": "Bit Buckets",
+      "teamNumber": 4183,
+      "normEpa": 1516,
+      "language": "java",
+      "linkToCodebases": "BitBucketsFRC4183/FRC2026-Rebuilt"
+    },
+    {
+      "teamName": "igKnightion",
+      "teamNumber": 4021,
+      "normEpa": 1515,
+      "language": "java",
+      "linkToCodebases": "igKnightion-Robotics/2026-Varsity"
+    },
+    {
+      "teamName": "Chargers",
+      "teamNumber": 5160,
+      "normEpa": 1515,
+      "language": "java",
+      "linkToCodebases": "frc-5160-the-chargers/FRC2026"
+    },
+    {
+      "teamName": "Tech Tigers",
+      "teamNumber": 7196,
+      "normEpa": 1515,
+      "language": "java",
+      "linkToCodebases": "techtigers7196/frc7196_2026"
+    },
+    {
+      "teamName": "Spartan Robotics",
+      "teamNumber": 5724,
+      "normEpa": 1514,
+      "language": "java",
+      "linkToCodebases": "5724-SpartanRobotics/RobotCode2026"
+    },
+    {
+      "teamName": "Error 404",
+      "teamNumber": 7226,
+      "normEpa": 1513,
+      "language": "java",
+      "linkToCodebases": "frcerror404/FRC2026"
+    },
+    {
+      "teamName": "Red Alert",
+      "teamNumber": 1741,
+      "normEpa": 1512,
+      "language": "java",
+      "linkToCodebases": "RAR1741/RA26_RobotCode"
+    },
+    {
+      "teamName": "Stampede",
+      "teamNumber": 3630,
+      "normEpa": 1512,
+      "language": "java",
+      "linkToCodebases": "Stampede3630/2026-Rebuilt"
+    },
+    {
+      "teamName": "Aviators",
+      "teamNumber": 6809,
+      "normEpa": 1512,
+      "language": "java",
+      "linkToCodebases": "JR-Wiederkehr/Autry-FRC-6809"
+    },
+    {
+      "teamName": "Wild Cards",
+      "teamNumber": 811,
+      "normEpa": 1511,
+      "language": "java",
+      "linkToCodebases": "Team-811/2026-Robot-Code-new"
+    },
+    {
+      "teamName": "Iron Maple",
+      "teamNumber": 5516,
+      "normEpa": 1511,
+      "language": "java",
+      "linkToCodebases": "Shenzhen-Robotics-Alliance/5516-2026-OnSeason-main"
+    },
+    {
+      "teamName": "StormBots",
+      "teamNumber": 2811,
+      "normEpa": 1510,
+      "language": "java",
+      "linkToCodebases": "stormbots/Rebuilt"
+    },
+    {
+      "teamName": "Boba Bots",
+      "teamNumber": 253,
+      "normEpa": 1509,
+      "language": "java",
+      "linkToCodebases": "bobabots253/Code-2026"
+    },
+    {
+      "teamName": "SparTechs",
+      "teamNumber": 834,
+      "normEpa": 1509,
+      "language": "java",
+      "linkToCodebases": "FRCTeam834/Robot-2026"
+    },
+    {
+      "teamName": "Pike RoboDevils",
+      "teamNumber": 1018,
+      "normEpa": 1509,
+      "language": "java",
+      "linkToCodebases": "PikeRoboDevils/FRC2026"
+    },
+    {
+      "teamName": "Super Hornets",
+      "teamNumber": 8069,
+      "normEpa": 1509,
+      "language": "java",
+      "linkToCodebases": "superhornets/2026-Robot"
+    },
+    {
+      "teamName": "SMbly Required",
+      "teamNumber": 5805,
+      "normEpa": 1508,
+      "language": "java",
+      "linkToCodebases": "TomAs-1226/Leviticus-5805-2026-code"
+    },
+    {
+      "teamName": "Deep Blue",
+      "teamNumber": 199,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "DeepBlueRobotics/RobotCode2026"
+    },
+    {
+      "teamName": "Monarch Robotics",
+      "teamNumber": 4141,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "MDHSRobotics/Rebuilt-2026"
+    },
+    {
+      "teamName": "Gladiator Robotics",
+      "teamNumber": 5109,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "GladiatorRobotics5109/Rebuilt5109"
+    },
+    {
+      "teamName": "RoboRams",
+      "teamNumber": 6078,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "HoltPublic/2026-FRC-Robot"
+    },
+    {
+      "teamName": "PrepaTec - Daedalus",
+      "teamNumber": 7102,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "Daedalus7102/daedalus-rebuilt-learning"
+    },
+    {
+      "teamName": "CANBus in memory of Roney Tal",
+      "teamNumber": 9740,
+      "normEpa": 1507,
+      "language": "java",
+      "linkToCodebases": "CANBUS-9740/Offseason-2026"
+    },
+    {
+      "teamName": "Red Tie Robotics",
+      "teamNumber": 1458,
+      "normEpa": 1506,
+      "language": "java",
+      "linkToCodebases": "FRC1458/Robot2026"
+    },
+    {
+      "teamName": "Career Academy Robotics - Wolf Pack",
+      "teamNumber": 5484,
+      "normEpa": 1506,
+      "language": "java",
+      "linkToCodebases": "FRCTeam5484/2026-FRC"
+    },
+    {
+      "teamName": "Botmasterz",
+      "teamNumber": 9255,
+      "normEpa": 1506,
+      "language": "java",
+      "linkToCodebases": "Botmasterz9255/Botmasterz2026robot"
+    },
+    {
+      "teamName": "Ionic Bond",
+      "teamNumber": 9738,
+      "normEpa": 1506,
+      "language": "java",
+      "linkToCodebases": "ionicbond-9738/2026a-RobotCode"
+    },
+    {
+      "teamName": "Singularity",
+      "teamNumber": 10032,
+      "normEpa": 1506,
+      "language": "java",
+      "linkToCodebases": "Kav-1n/2026-rebuilt-10032-The-new-one-which-we-use-gng"
+    },
+    {
+      "teamName": "The Gearhounds",
+      "teamNumber": 5674,
+      "normEpa": 1505,
+      "language": "java",
+      "linkToCodebases": "Eaton-Rapids-Robotics-Team/2026-dans-truck"
+    },
+    {
+      "teamName": "Phantom Talons",
+      "teamNumber": 10114,
+      "normEpa": 1505,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-10114/2026-Champs"
+    },
+    {
+      "teamName": "Corax",
+      "teamNumber": 3424,
+      "normEpa": 1504,
+      "language": "java",
+      "linkToCodebases": "Waterford-Robotics/3424_Rebuilt"
+    },
+    {
+      "teamName": "Robo Falcons",
+      "teamNumber": 8179,
+      "normEpa": 1503,
+      "language": "java",
+      "linkToCodebases": "DCRoboFalcons8179/2026"
+    },
+    {
+      "teamName": "Freedom Robotics",
+      "teamNumber": 11318,
+      "normEpa": 1503,
+      "language": "java",
+      "linkToCodebases": "Freedom-Robotics/Rebuilt-2026"
+    },
+    {
+      "teamName": "SOTA Cyberdragons",
+      "teamNumber": 5700,
+      "normEpa": 1502,
+      "language": "java",
+      "linkToCodebases": "SOTACyberdragons/5700-FRC2026"
+    },
+    {
+      "teamName": "Spongebotics",
+      "teamNumber": 7476,
+      "normEpa": 1502,
+      "language": "java",
+      "linkToCodebases": "Earl-Of-March-FRC/2026-7476-Rebuilt"
+    },
+    {
+      "teamName": "RoboWarriors",
+      "teamNumber": 41,
+      "normEpa": 1501,
+      "language": "java",
+      "linkToCodebases": "Team41Robotics/2026-robot-code"
+    },
+    {
+      "teamName": "Kilroy Robotics",
+      "teamNumber": 339,
+      "normEpa": 1501,
+      "language": "java",
+      "linkToCodebases": "FIRST-Team-339/Rebuilt"
+    },
+    {
+      "teamName": "The Chomp Bots",
+      "teamNumber": 1854,
+      "normEpa": 1499,
+      "language": "java",
+      "linkToCodebases": "gatorbotics1700/1854_Robot_2026"
+    },
+    {
+      "teamName": "The Rocketeers",
+      "teamNumber": 20,
+      "normEpa": 1498,
+      "language": "java",
+      "linkToCodebases": "team20/Robot2026"
+    },
+    {
+      "teamName": "Red Storm",
+      "teamNumber": 509,
+      "normEpa": 1498,
+      "language": "java",
+      "linkToCodebases": "Zac1017/FRC-Target-Snap-Robot"
+    },
+    {
+      "teamName": "Parallel Universe",
+      "teamNumber": 1257,
+      "normEpa": 1498,
+      "language": "java",
+      "linkToCodebases": "FRC1257/2026-Robot"
+    },
+    {
+      "teamName": "Critical Circuits",
+      "teamNumber": 9062,
+      "normEpa": 1498,
+      "language": "java",
+      "linkToCodebases": "FRCCriticalCircuits/RobotCode2026"
+    },
+    {
+      "teamName": "RAPTORS",
+      "teamNumber": 1711,
+      "normEpa": 1497,
+      "language": "java",
+      "linkToCodebases": "frc1711/2026-robot"
+    },
+    {
+      "teamName": "Galvanized Guardians",
+      "teamNumber": 2170,
+      "normEpa": 1497,
+      "language": "java",
+      "linkToCodebases": "Team2170/2026-Rebuilt"
+    },
+    {
+      "teamName": "Berkelium",
+      "teamNumber": 5419,
+      "normEpa": 1497,
+      "language": "java",
+      "linkToCodebases": "team5419/frc-2026"
+    },
+    {
+      "teamName": "Amal Hawks Robotics",
+      "teamNumber": 7611,
+      "normEpa": 1497,
+      "language": "java",
+      "linkToCodebases": "Amal-Hawks7611/AmalHawk_2026_Robot_Code"
+    },
+    {
+      "teamName": "AGROBOT",
+      "teamNumber": 9168,
+      "normEpa": 1496,
+      "language": "java",
+      "linkToCodebases": "agrobot9168/Robot_Mirage"
+    },
+    {
+      "teamName": "Titan Robotics",
+      "teamNumber": 539,
+      "normEpa": 1495,
+      "language": "java",
+      "linkToCodebases": "TESRobotics539/2026-Robot-Code"
+    },
+    {
+      "teamName": "The Umbrella Corporation",
+      "teamNumber": 1719,
+      "normEpa": 1495,
+      "language": "java",
+      "linkToCodebases": "FRCteam1719theUmbrellaCorporation/CTRE-New-Swerve-2026"
+    },
+    {
+      "teamName": "Winner's Circle Robo Jockey's",
+      "teamNumber": 5492,
+      "normEpa": 1495,
+      "language": "java",
+      "linkToCodebases": "WCR-FRC-2016/2026-Rebuilt"
+    },
+    {
+      "teamName": "Hicksville J-Birds",
+      "teamNumber": 1468,
+      "normEpa": 1494,
+      "language": "java",
+      "linkToCodebases": "sean-zhen/1468-2026"
+    },
+    {
+      "teamName": "Gone Fishin'",
+      "teamNumber": 3566,
+      "normEpa": 1494,
+      "language": "java",
+      "linkToCodebases": "frc3566/2026-Test-Kraken"
+    },
+    {
+      "teamName": "HVA RoHAWKtics",
+      "teamNumber": 3824,
+      "normEpa": 1494,
+      "language": "cpp",
+      "linkToCodebases": "HVA-FRC-3824/Competition2026"
+    },
+    {
+      "teamName": "Spice Gears",
+      "teamNumber": 5883,
+      "normEpa": 1494,
+      "language": "java",
+      "linkToCodebases": "SpiceGears/FRC-2026"
+    },
+    {
+      "teamName": "Wolverine Robotics",
+      "teamNumber": 949,
+      "normEpa": 1493,
+      "language": "java",
+      "linkToCodebases": "Bellevue-Wolverine-Robotics/2026-Rebuilt"
+    },
+    {
+      "teamName": "Dawgma",
+      "teamNumber": 1712,
+      "normEpa": 1493,
+      "language": "java",
+      "linkToCodebases": "Dawgma-1712/FRC-2026"
+    },
+    {
+      "teamName": "Red Pebble Rebels",
+      "teamNumber": 2726,
+      "normEpa": 1493,
+      "language": "java",
+      "linkToCodebases": "Red-Rock-Robotics-3006/2726-FRC2026"
+    },
+    {
+      "teamName": "Mystic Biscuit",
+      "teamNumber": 6465,
+      "normEpa": 1493,
+      "language": "java",
+      "linkToCodebases": "MysticBiscuit/2026-robot"
+    },
+    {
+      "teamName": "Northview Robotics",
+      "teamNumber": 6632,
+      "normEpa": 1493,
+      "language": "java",
+      "linkToCodebases": "Northview-Robotics/FRC-2026"
+    },
+    {
+      "teamName": "Robo T-Birds",
+      "teamNumber": 1672,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "FRCTeam1672/2026-Robot"
+    },
+    {
+      "teamName": "Atlantis",
+      "teamNumber": 2679,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "Atlantis2679/RobotCode2026"
+    },
+    {
+      "teamName": "Tribe Tech Robotics",
+      "teamNumber": 4485,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "DueroBone/BareMinumumRobot"
+    },
+    {
+      "teamName": "Doc Botics",
+      "teamNumber": 6110,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "DO-C-Botics/DOCBOTICS-2026-REBUILT"
+    },
+    {
+      "teamName": "Tech4Peace",
+      "teamNumber": 8153,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "Canluca2011/FRC_8153_zorn"
+    },
+    {
+      "teamName": "Sparkling H2O",
+      "teamNumber": 8729,
+      "normEpa": 1492,
+      "language": "java",
+      "linkToCodebases": "Spark-Youth-Robotics-Club-8729/2026-code"
+    },
+    {
+      "teamName": "Comet Robotics",
+      "teamNumber": 1885,
+      "normEpa": 1491,
+      "language": "java",
+      "linkToCodebases": "Comet-FRC/C2026-REBUILT"
+    },
+    {
+      "teamName": "Goldstrikers",
+      "teamNumber": 2473,
+      "normEpa": 1491,
+      "language": "java",
+      "linkToCodebases": "Tino-FRC-2473/FRC2026"
+    },
+    {
+      "teamName": "Eagle Elite",
+      "teamNumber": 5227,
+      "normEpa": 1491,
+      "language": "java",
+      "linkToCodebases": "Celesteisscool/5227-2026-Rebuilt"
+    },
+    {
+      "teamName": "The Highlanders",
+      "teamNumber": 6201,
+      "normEpa": 1491,
+      "language": "java",
+      "linkToCodebases": "TheHighlanders/Preseason-Kitbot-2026"
+    },
+    {
+      "teamName": "Squirrels",
+      "teamNumber": 6863,
+      "normEpa": 1490,
+      "language": "cpp",
+      "linkToCodebases": "yepid-git/FRC-2026"
+    },
+    {
+      "teamName": "Machine Mavericks",
+      "teamNumber": 7480,
+      "normEpa": 1490,
+      "language": "java",
+      "linkToCodebases": "Machine-Mavericks/FRC-2026"
+    },
+    {
+      "teamName": "Skunk Works Robotics",
+      "teamNumber": 1983,
+      "normEpa": 1489,
+      "language": "java",
+      "linkToCodebases": "Skunkworks1983/DriveBase-2026"
+    },
+    {
+      "teamName": "CuttingEdge",
+      "teamNumber": 10909,
+      "normEpa": 1488,
+      "language": "java",
+      "linkToCodebases": "edgewoodhsrobotics/Cutting-Edge-2026"
+    },
+    {
+      "teamName": "Eco Robotics",
+      "teamNumber": 8016,
+      "normEpa": 1487,
+      "language": "java",
+      "linkToCodebases": "frc8016/2026-REBUILT"
+    },
+    {
+      "teamName": "Questionable Engineering",
+      "teamNumber": 9015,
+      "normEpa": 1487,
+      "language": "java",
+      "linkToCodebases": "FRC9015/Rebuilt"
+    },
+    {
+      "teamName": "Fe Maidens",
+      "teamNumber": 2265,
+      "normEpa": 1486,
+      "language": "java",
+      "linkToCodebases": "femaidens/2026-Rebuilt"
+    },
+    {
+      "teamName": "Syosset SuperSonics",
+      "teamNumber": 9016,
+      "normEpa": 1486,
+      "language": "java",
+      "linkToCodebases": "SyossetFRCOrg/SYO_official-2026"
+    },
+    {
+      "teamName": "STORM",
+      "teamNumber": 10264,
+      "normEpa": 1486,
+      "language": "java",
+      "linkToCodebases": "FRCTeam10264/2026RobotCode"
+    },
+    {
+      "teamName": "Renaissance Robotics",
+      "teamNumber": 538,
+      "normEpa": 1485,
+      "language": "java",
+      "linkToCodebases": "frc538/2026-rebuilt"
+    },
+    {
+      "teamName": "Gemini",
+      "teamNumber": 4575,
+      "normEpa": 1485,
+      "language": "java",
+      "linkToCodebases": "Gemini4575/2026-Robot-Code"
+    },
+    {
+      "teamName": "SESI SENAI STEEL BULLS",
+      "teamNumber": 9460,
+      "normEpa": 1485,
+      "language": "java",
+      "linkToCodebases": "glucas038/Steel-Bulls-2026-Off-Season"
+    },
+    {
+      "teamName": "Robot Wranglers",
+      "teamNumber": 10913,
+      "normEpa": 1485,
+      "language": "java",
+      "linkToCodebases": "Legacy-Ranch-High-School-Robotics/2026-Robot-10913"
+    },
+    {
+      "teamName": "SHARP",
+      "teamNumber": 3260,
+      "normEpa": 1484,
+      "language": "java",
+      "linkToCodebases": "SarahHeinzHouseFRC/frc2026"
+    },
+    {
+      "teamName": "Thunderbots",
+      "teamNumber": 7657,
+      "normEpa": 1484,
+      "language": "java",
+      "linkToCodebases": "7657thunderbots/FRC2026-REBUILT"
+    },
+    {
+      "teamName": "Bobcats",
+      "teamNumber": 11010,
+      "normEpa": 1484,
+      "language": "java",
+      "linkToCodebases": "bobcats-frc/frc-2026"
+    },
+    {
+      "teamName": "Robotechs",
+      "teamNumber": 871,
+      "normEpa": 1483,
+      "language": "java",
+      "linkToCodebases": "FRCTeam871/2026Robot"
+    },
+    {
+      "teamName": "Pigmice 2733",
+      "teamNumber": 2733,
+      "normEpa": 1483,
+      "language": "java",
+      "linkToCodebases": "Pigmice2733/frc-2026"
+    },
+    {
+      "teamName": "Murphy's Outlaws",
+      "teamNumber": 677,
+      "normEpa": 1482,
+      "language": "java",
+      "linkToCodebases": "ColumbusSchoolforGirls/2026-Competition-Robot"
+    },
+    {
+      "teamName": "Hot Spot Robotics",
+      "teamNumber": 2853,
+      "normEpa": 1482,
+      "language": "java",
+      "linkToCodebases": "AidricRobinson/FRC-2026-2853"
+    },
+    {
+      "teamName": "Patriots",
+      "teamNumber": 3205,
+      "normEpa": 1482,
+      "language": "java",
+      "linkToCodebases": "CCHS-FIRST-Robotics/2026RobotCode"
+    },
+    {
+      "teamName": "X-CATS",
+      "teamNumber": 191,
+      "normEpa": 1481,
+      "language": "java",
+      "linkToCodebases": "X-Cats/software-2026"
+    },
+    {
+      "teamName": "Penn Robotics Black Knights",
+      "teamNumber": 135,
+      "normEpa": 1480,
+      "language": "java",
+      "linkToCodebases": "Team135BlackKnights/Public-135-Consul"
+    },
+    {
+      "teamName": "f(x) Robotics",
+      "teamNumber": 6004,
+      "normEpa": 1480,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-6004/6004_2026_v1"
+    },
+    {
+      "teamName": "μBotics",
+      "teamNumber": 7157,
+      "normEpa": 1479,
+      "language": "java",
+      "linkToCodebases": "Mubotics7157/2026-Splitstream"
+    },
+    {
+      "teamName": "Σ-Motion",
+      "teamNumber": 2658,
+      "normEpa": 1478,
+      "language": "java",
+      "linkToCodebases": "Meanbox12/frc-robot-testing"
+    },
+    {
+      "teamName": "AZTECHS",
+      "teamNumber": 157,
+      "normEpa": 1477,
+      "language": "java",
+      "linkToCodebases": "Aztechs157/FRC2026"
+    },
+    {
+      "teamName": "Falco Tech",
+      "teamNumber": 3193,
+      "normEpa": 1477,
+      "language": "java",
+      "linkToCodebases": "FalcoTech/FalcoTech-2026"
+    },
+    {
+      "teamName": "PULSARS",
+      "teamNumber": 3425,
+      "normEpa": 1477,
+      "language": "cpp",
+      "linkToCodebases": "Comets3357/PULSARS-2026"
+    },
+    {
+      "teamName": "PrepaTec - Buluk",
+      "teamNumber": 3472,
+      "normEpa": 1477,
+      "language": "java",
+      "linkToCodebases": "Imcab/MARS-base-robot"
+    },
+    {
+      "teamName": "Tractor Technicians",
+      "teamNumber": 3655,
+      "normEpa": 1477,
+      "language": "java",
+      "linkToCodebases": "TractorNation/3655_RobotCode_2026"
+    },
+    {
+      "teamName": "Critical Hit",
+      "teamNumber": 10101,
+      "normEpa": 1477,
+      "language": "java",
+      "linkToCodebases": "frc10101/2026-rebuilt"
+    },
+    {
+      "teamName": "S.W.A.T.",
+      "teamNumber": 1806,
+      "normEpa": 1476,
+      "language": "java",
+      "linkToCodebases": "frc1806/Rebuilt-1806"
+    },
+    {
+      "teamName": "Armada",
+      "teamNumber": 2508,
+      "normEpa": 1476,
+      "language": "java",
+      "linkToCodebases": "Armada2508/Rebuilt"
+    },
+    {
+      "teamName": "Can't Control",
+      "teamNumber": 4788,
+      "normEpa": 1476,
+      "language": "java",
+      "linkToCodebases": "CurtinFRC/2026-Rebuilt"
+    },
+    {
+      "teamName": "Hamady Hawks",
+      "teamNumber": 9242,
+      "normEpa": 1476,
+      "language": "java",
+      "linkToCodebases": "Hamady-9242/RobotCode_2026"
+    },
+    {
+      "teamName": "CBoT´S4",
+      "teamNumber": 3522,
+      "normEpa": 1475,
+      "language": "java",
+      "linkToCodebases": "CBOTS4-3522/FRC-2026-REBUILT"
+    },
+    {
+      "teamName": "ConquEra",
+      "teamNumber": 8557,
+      "normEpa": 1475,
+      "language": "java",
+      "linkToCodebases": "FRC-8557-Conquera/Frc2026autoaimtry"
+    },
+    {
+      "teamName": "Oakton Cougar Robotics 623",
+      "teamNumber": 623,
+      "normEpa": 1474,
+      "language": "java",
+      "linkToCodebases": "OaktonCougarRobotics/Rebuilt"
+    },
+    {
+      "teamName": "LadyTalons",
+      "teamNumber": 9492,
+      "normEpa": 1472,
+      "language": "java",
+      "linkToCodebases": "Prosper-FRC/2026-Robot-Rebuilt-Common"
+    },
+    {
+      "teamName": "Advanced Power",
+      "teamNumber": 815,
+      "normEpa": 1471,
+      "language": "java",
+      "linkToCodebases": "AdvancedPower/2026-Rebuilt"
+    },
+    {
+      "teamName": "LIFE Engineering",
+      "teamNumber": 5830,
+      "normEpa": 1470,
+      "language": "java",
+      "linkToCodebases": "Team5830/2026-Rebuilt"
+    },
+    {
+      "teamName": "Automatons",
+      "teamNumber": 7768,
+      "normEpa": 1470,
+      "language": "java",
+      "linkToCodebases": "jeffreyddavis/frc2026"
+    },
+    {
+      "teamName": "Mechanical Pumas",
+      "teamNumber": 6616,
+      "normEpa": 1469,
+      "language": "java",
+      "linkToCodebases": "cjmasini/Mechanical-Pumas-2026"
+    },
+    {
+      "teamName": "Silver Robotics",
+      "teamNumber": 9575,
+      "normEpa": 1469,
+      "language": "java",
+      "linkToCodebases": "SilverRobotics9575/2026_Robot_swerve"
+    },
+    {
+      "teamName": "Team Eagle Eyed",
+      "teamNumber": 8825,
+      "normEpa": 1468,
+      "language": "java",
+      "linkToCodebases": "MrProck/ProckRoboticsTest"
+    },
+    {
+      "teamName": "Coded Dragons",
+      "teamNumber": 10421,
+      "normEpa": 1467,
+      "language": "java",
+      "linkToCodebases": "FRC10421/2026-Rebuilt"
+    },
+    {
+      "teamName": "Charger Robotics",
+      "teamNumber": 537,
+      "normEpa": 1466,
+      "language": "java",
+      "linkToCodebases": "Team537/RobotCode2026"
+    },
+    {
+      "teamName": "Category 5",
+      "teamNumber": 3489,
+      "normEpa": 1466,
+      "language": "java",
+      "linkToCodebases": "Category5-Team3489/FRC-3489-2026"
+    },
+    {
+      "teamName": "Eastern Robotic Vikings",
+      "teamNumber": 204,
+      "normEpa": 1465,
+      "language": "java",
+      "linkToCodebases": "vikings204/2026-startCode"
+    },
+    {
+      "teamName": "PrepaTec - HORUS",
+      "teamNumber": 6348,
+      "normEpa": 1465,
+      "language": "java",
+      "linkToCodebases": "Sophh098/rebuilt_mty_6348"
+    },
+    {
+      "teamName": "Sancar Robotics",
+      "teamNumber": 10470,
+      "normEpa": 1464,
+      "language": "java",
+      "linkToCodebases": "Urtera/10470git"
+    },
+    {
+      "teamName": "TECHNOTICS",
+      "teamNumber": 1635,
+      "normEpa": 1463,
+      "language": "java",
+      "linkToCodebases": "1635-Technotics/1635-Technotics-2026-REBUILT"
+    },
+    {
+      "teamName": "Cobalt Catalysts",
+      "teamNumber": 3042,
+      "normEpa": 1463,
+      "language": "java",
+      "linkToCodebases": "team3042/Rebuilt-2026"
+    },
+    {
+      "teamName": "CK Cyber Pack",
+      "teamNumber": 5689,
+      "normEpa": 1463,
+      "language": "java",
+      "linkToCodebases": "FRC-CKCyberPack-5689/2026-Robot"
+    },
+    {
+      "teamName": "Retrobotics",
+      "teamNumber": 7414,
+      "normEpa": 1463,
+      "language": "java",
+      "linkToCodebases": "PerkValleyRobotics/2026RobotCode"
+    },
+    {
+      "teamName": "Servos Strike Back",
+      "teamNumber": 7531,
+      "normEpa": 1463,
+      "language": "java",
+      "linkToCodebases": "FRC-Team-7531/FRC7531_2026"
+    },
+    {
+      "teamName": "Team Tobor",
+      "teamNumber": 2143,
+      "normEpa": 1462,
+      "language": "cpp",
+      "linkToCodebases": "LiamB225/Robot_Code_2026"
+    },
+    {
+      "teamName": "Roxbotix",
+      "teamNumber": 4361,
+      "normEpa": 1462,
+      "language": "java",
+      "linkToCodebases": "Team-4361/RobotCode-2026"
+    },
+    {
+      "teamName": "Stan Robotix",
+      "teamNumber": 6622,
+      "normEpa": 1462,
+      "language": "cpp",
+      "linkToCodebases": "stan-robotix-6622/2026-StanRobotix-FRC"
+    },
+    {
+      "teamName": "UPS (Ultimate Protection Squad)",
+      "teamNumber": 1675,
+      "normEpa": 1461,
+      "language": "java",
+      "linkToCodebases": "frc1675/frc1675-2026"
+    },
+    {
+      "teamName": "Steel Mustangs",
+      "teamNumber": 2945,
+      "normEpa": 1461,
+      "language": "java",
+      "linkToCodebases": "cactusjupiter/2026-2945-main-code"
+    },
+    {
+      "teamName": "MechCatical Warriors",
+      "teamNumber": 11274,
+      "normEpa": 1461,
+      "language": "java",
+      "linkToCodebases": "nothingness08/FRC11274"
+    },
+    {
+      "teamName": "Chantilly Robotics",
+      "teamNumber": 612,
+      "normEpa": 1460,
+      "language": "java",
+      "linkToCodebases": "Team612/612-2026-Rebuilt"
+    },
+    {
+      "teamName": "8-Bit Miners",
+      "teamNumber": 7436,
+      "normEpa": 1460,
+      "language": "java",
+      "linkToCodebases": "8-Bit-Miners-7436/2026-Off-Season"
+    },
+    {
+      "teamName": "The Rambots",
+      "teamNumber": 1350,
+      "normEpa": 1459,
+      "language": "java",
+      "linkToCodebases": "RambotsTeam1350/REBUILT-2026"
+    },
+    {
+      "teamName": "System Overload Robotics",
+      "teamNumber": 6059,
+      "normEpa": 1459,
+      "language": "java",
+      "linkToCodebases": "systemoverloadrobotics/Robot2026"
+    },
+    {
+      "teamName": "Starstuff",
+      "teamNumber": 9403,
+      "normEpa": 1459,
+      "language": "java",
+      "linkToCodebases": "StarstuffRobotics/REAL-Rebuilt-Game-25-26"
+    },
+    {
+      "teamName": "Arrowhead Robotics",
+      "teamNumber": 3773,
+      "normEpa": 1458,
+      "language": "java",
+      "linkToCodebases": "Team3773/2026-Swerve-Code"
+    },
+    {
+      "teamName": "The Spikes",
+      "teamNumber": 2212,
+      "normEpa": 1457,
+      "language": "java",
+      "linkToCodebases": "Spikes-2212-Programming-Guild/rebuilt-2026"
+    },
+    {
+      "teamName": "Cosmos Robot Works",
+      "teamNumber": 7742,
+      "normEpa": 1457,
+      "language": "java",
+      "linkToCodebases": "CosmosRobotW0rks/CRW-7742-2026"
+    },
+    {
+      "teamName": "Redbird Robotics",
+      "teamNumber": 1716,
+      "normEpa": 1454,
+      "language": "java",
+      "linkToCodebases": "Brown-County-FIRST-Robotics/1716-2026-robot"
+    },
+    {
+      "teamName": "Jags",
+      "teamNumber": 4015,
+      "normEpa": 1454,
+      "language": "java",
+      "linkToCodebases": "team4015/4015-Rebuilt-Code-Base"
+    },
+    {
+      "teamName": "T.I.M.E.-Bots",
+      "teamNumber": 5275,
+      "normEpa": 1453,
+      "language": "java",
+      "linkToCodebases": "timebots5275frc/2026-Robot"
+    },
+    {
+      "teamName": "Nerd Herd",
+      "teamNumber": 937,
+      "normEpa": 1452,
+      "language": "java",
+      "linkToCodebases": "frc937/robot2026"
+    },
+    {
+      "teamName": "GRP Titans",
+      "teamNumber": 9206,
+      "normEpa": 1452,
+      "language": "java",
+      "linkToCodebases": "GRP-Robotics-9206/robot-2026"
+    },
+    {
+      "teamName": "Team Paradise",
+      "teamNumber": 1165,
+      "normEpa": 1451,
+      "language": "java",
+      "linkToCodebases": "TeamParadise/2026-Robot"
+    },
+    {
+      "teamName": "Storm Robotics",
+      "teamNumber": 3740,
+      "normEpa": 1450,
+      "language": "java",
+      "linkToCodebases": "thefaftek-git/3740_2026"
+    },
+    {
+      "teamName": "Miami Beach Bots",
+      "teamNumber": 7652,
+      "normEpa": 1450,
+      "language": "java",
+      "linkToCodebases": "MiamiBeachBots/2026-bot"
+    },
+    {
+      "teamName": "TurboTrojans",
+      "teamNumber": 3302,
+      "normEpa": 1448,
+      "language": "java",
+      "linkToCodebases": "TurboTrojans-3302/DASH-2026"
+    },
+    {
+      "teamName": "Soaring Colts",
+      "teamNumber": 3624,
+      "normEpa": 1448,
+      "language": "java",
+      "linkToCodebases": "frc3624/REBUILT"
+    },
+    {
+      "teamName": "PHRED",
+      "teamNumber": 847,
+      "normEpa": 1447,
+      "language": "java",
+      "linkToCodebases": "PHREDRobotics/FRC-2026-Rebuilt"
+    },
+    {
+      "teamName": "Option 16",
+      "teamNumber": 3341,
+      "normEpa": 1447,
+      "language": "java",
+      "linkToCodebases": "frc-team-3341/2026-REBUILT-FRC-3341"
+    },
+    {
+      "teamName": "Horns of Havoc",
+      "teamNumber": 3393,
+      "normEpa": 1447,
+      "language": "java",
+      "linkToCodebases": "Horns-of-Havoc-3393/2026-REBUILT"
+    },
+    {
+      "teamName": "Like a Boss",
+      "teamNumber": 5509,
+      "normEpa": 1447,
+      "language": "java",
+      "linkToCodebases": "Team-5509/Lambda-2026"
+    },
+    {
+      "teamName": "Off-Season Demo Team 9991",
+      "teamNumber": 9991,
+      "normEpa": 1445,
+      "language": "java",
+      "linkToCodebases": "ATAARobotics/fuel-toucher-kdays-2026"
+    },
+    {
+      "teamName": "Oriole Assault",
+      "teamNumber": 1091,
+      "normEpa": 1444,
+      "language": "java",
+      "linkToCodebases": "Team1091/FRC-2026-Rebuilt"
+    },
+    {
+      "teamName": "Team K.I.S.S.",
+      "teamNumber": 5189,
+      "normEpa": 1444,
+      "language": "java",
+      "linkToCodebases": "Sabre5189/Amazing2026Robot"
+    },
+    {
+      "teamName": "Hangar 84",
+      "teamNumber": 7271,
+      "normEpa": 1444,
+      "language": "java",
+      "linkToCodebases": "ZavionCyboron/RobotMerge"
+    },
+    {
+      "teamName": "Dragons",
+      "teamNumber": 10912,
+      "normEpa": 1443,
+      "language": "java",
+      "linkToCodebases": "FRC10912/Kit-Bot-2026-V1"
+    },
+    {
+      "teamName": "The RatPack",
+      "teamNumber": 830,
+      "normEpa": 1442,
+      "language": "cpp",
+      "linkToCodebases": "FRC830/2026Robot"
+    },
+    {
+      "teamName": "Off-Season Demo Team 9986",
+      "teamNumber": 9986,
+      "normEpa": 1442,
+      "language": "java",
+      "linkToCodebases": "Coconuts2486-FRC/freshman-bot-2026"
+    },
+    {
+      "teamName": "Off-Season Demo Team 9998",
+      "teamNumber": 9998,
+      "normEpa": 1442,
+      "language": "java",
+      "linkToCodebases": "Mason841/2026-BigDumpy"
+    },
+    {
+      "teamName": "Off-Season Demo Team 9999",
+      "teamNumber": 9999,
+      "normEpa": 1442,
+      "language": "java",
+      "linkToCodebases": "Ri3D-MIT/2026_Robot_Code"
+    },
+    {
+      "teamName": "Metalheads",
+      "teamNumber": 10949,
+      "normEpa": 1442,
+      "language": "java",
+      "linkToCodebases": "Metalheads10949/RebuiltRobot"
+    },
+    {
+      "teamName": "Manitoulin Metal",
+      "teamNumber": 6865,
+      "normEpa": 1441,
+      "language": "java",
+      "linkToCodebases": "Manitoulin-Metal/FRC_2026_Manitoulin_Metal_6865"
+    },
+    {
+      "teamName": "Wextech Titans",
+      "teamNumber": 9782,
+      "normEpa": 1441,
+      "language": "java",
+      "linkToCodebases": "Canadian-Crusader/Basic-Gurbert-2026"
+    },
+    {
+      "teamName": "EAGLE WARRIORS",
+      "teamNumber": 10542,
+      "normEpa": 1441,
+      "language": "java",
+      "linkToCodebases": "Feyds/2026robot"
+    },
+    {
+      "teamName": "SCORPIONS ROBOTICS",
+      "teamNumber": 7672,
+      "normEpa": 1440,
+      "language": "java",
+      "linkToCodebases": "Scorpions-Robotics/Robot-2026"
+    },
+    {
+      "teamName": "Pelham πthons Team 4034",
+      "teamNumber": 4034,
+      "normEpa": 1439,
+      "language": "java",
+      "linkToCodebases": "applepie-thons/2026-PHS-Robotics-Proj"
+    },
+    {
+      "teamName": "Deep-Space Robotics",
+      "teamNumber": 6884,
+      "normEpa": 1439,
+      "language": "java",
+      "linkToCodebases": "SanBenitoRobotics6884/offrookiebot-2026"
+    },
+    {
+      "teamName": "Falcon Fury",
+      "teamNumber": 5190,
+      "normEpa": 1438,
+      "language": "java",
+      "linkToCodebases": "FRC5190/2026CompetitionSeason"
+    },
+    {
+      "teamName": "BearBots (FRC)",
+      "teamNumber": 6964,
+      "normEpa": 1438,
+      "language": "java",
+      "linkToCodebases": "Bearbots6964/FRC2026"
+    },
+    {
+      "teamName": "AutoPilots",
+      "teamNumber": 7762,
+      "normEpa": 1436,
+      "language": "cpp",
+      "linkToCodebases": "2477MarauderRascals/2026-Rebuilt-Code-Most-Updated-"
+    },
+    {
+      "teamName": "Jenks Prime Movers",
+      "teamNumber": 31,
+      "normEpa": 1435,
+      "language": "java",
+      "linkToCodebases": "FRCTeam31/2026_competition_robot"
+    },
+    {
+      "teamName": "Ursa Major",
+      "teamNumber": 2849,
+      "normEpa": 1434,
+      "language": "java",
+      "linkToCodebases": "teamursamajor/2026RobotCode"
+    },
+    {
+      "teamName": "Something's Bruin",
+      "teamNumber": 4550,
+      "normEpa": 1434,
+      "language": "java",
+      "linkToCodebases": "CCHS4550/4550-REBUILT-2026"
+    },
+    {
+      "teamName": "Vanier Vikings",
+      "teamNumber": 9659,
+      "normEpa": 1434,
+      "language": "java",
+      "linkToCodebases": "VanierVikings/REBUILT"
+    },
+    {
+      "teamName": "DiscoTechs",
+      "teamNumber": 1099,
+      "normEpa": 1433,
+      "language": "java",
+      "linkToCodebases": "DiscoTechs/Robot-Code-2026"
+    },
+    {
+      "teamName": "Boyne City Blaze",
+      "teamNumber": 4377,
+      "normEpa": 1433,
+      "language": "java",
+      "linkToCodebases": "BoyneCityBlaze4377/2026-Robot-Code"
+    },
+    {
+      "teamName": "The Juggernauts",
+      "teamNumber": 1,
+      "normEpa": 1432,
+      "language": "java",
+      "linkToCodebases": "juggernautsprogramming/RobotCodeOfficial2026"
+    },
+    {
+      "teamName": "The Cashew Chickens @ Springfield Robotics",
+      "teamNumber": 9428,
+      "normEpa": 1432,
+      "language": "java",
+      "linkToCodebases": "SGFRobots/9428CashewChickens-2026"
+    },
+    {
+      "teamName": "Nightstrike",
+      "teamNumber": 9522,
+      "normEpa": 1432,
+      "language": "java",
+      "linkToCodebases": "Archimedes9522/team9522_2026"
+    },
+    {
+      "teamName": "Athena's Warriors",
+      "teamNumber": 3182,
+      "normEpa": 1431,
+      "language": "java",
+      "linkToCodebases": "FRCTeam3182/2026_REBUILT_Robot_VP"
+    },
+    {
+      "teamName": "Steel Sturgeons",
+      "teamNumber": 9176,
+      "normEpa": 1429,
+      "language": "java",
+      "linkToCodebases": "steelsturgeons9176/2026-main"
+    },
+    {
+      "teamName": "Isotope Robotics",
+      "teamNumber": 9709,
+      "normEpa": 1429,
+      "language": "java",
+      "linkToCodebases": "Isotope-Robotics/FRC-2026-AGAIN"
+    },
+    {
+      "teamName": "Quack Attack",
+      "teamNumber": 6805,
+      "normEpa": 1428,
+      "language": "java",
+      "linkToCodebases": "BaronClaps/6805-Rebuilt"
+    },
+    {
+      "teamName": "Digital Fusion",
+      "teamNumber": 1317,
+      "normEpa": 1427,
+      "language": "java",
+      "linkToCodebases": "df1317/2026-rebuilt"
+    },
+    {
+      "teamName": "CryptoHawks",
+      "teamNumber": 8726,
+      "normEpa": 1426,
+      "language": "java",
+      "linkToCodebases": "Cryptohawks8726/FRC-8726-2026"
+    },
+    {
+      "teamName": "Cougar Claw Robotics",
+      "teamNumber": 11444,
+      "normEpa": 1426,
+      "language": "java",
+      "linkToCodebases": "Lansing-Catholic-Robotics/2026-Robot"
+    },
+    {
+      "teamName": "Elemental Dragons",
+      "teamNumber": 3680,
+      "normEpa": 1423,
+      "language": "java",
+      "linkToCodebases": "ElementalDragons/3680Robotics"
+    },
+    {
+      "teamName": "NEST Robotics",
+      "teamNumber": 2927,
+      "normEpa": 1422,
+      "language": "java",
+      "linkToCodebases": "SubParSuperCar/NEST-2927-Robot-2026"
+    },
+    {
+      "teamName": "Las Pumas",
+      "teamNumber": 2197,
+      "normEpa": 1420,
+      "language": "java",
+      "linkToCodebases": "q314tracy/2026-refinery-ri3d"
+    },
+    {
+      "teamName": "The Space Dolphins",
+      "teamNumber": 9034,
+      "normEpa": 1418,
+      "language": "java",
+      "linkToCodebases": "PureXan/2026-Project-Oasis-Rebuilt-Comp-Code"
+    },
+    {
+      "teamName": "Infuzed",
+      "teamNumber": 6908,
+      "normEpa": 1417,
+      "language": "java",
+      "linkToCodebases": "frc6908/2026-Robot"
+    },
+    {
+      "teamName": "KING TeC",
+      "teamNumber": 2169,
+      "normEpa": 1416,
+      "language": "java",
+      "linkToCodebases": "KINGTeC2169/2026-Robot-Code"
+    },
+    {
+      "teamName": "THE SHISHKABOTS",
+      "teamNumber": 6822,
+      "normEpa": 1415,
+      "language": "java",
+      "linkToCodebases": "RohanKaura/Shishkabots-2026-a939b3ff803e9d0ba439c0cc2be8d4fbd05f9494"
+    },
+    {
+      "teamName": "Galileo",
+      "teamNumber": 10695,
+      "normEpa": 1412,
+      "language": "java",
+      "linkToCodebases": "Galileo10695/Galileo10695-2026"
+    },
+    {
+      "teamName": "Strange Quarks",
+      "teamNumber": 6101,
+      "normEpa": 1410,
+      "language": "java",
+      "linkToCodebases": "WTMCRobotics/2026-rebuilt"
+    },
+    {
+      "teamName": "Ragin' C-Biscuits",
+      "teamNumber": 1280,
+      "normEpa": 1409,
+      "language": "java",
+      "linkToCodebases": "Team-1280/rebuilt-2026"
+    },
+    {
+      "teamName": "Lancer Robotics",
+      "teamNumber": 2367,
+      "normEpa": 1407,
+      "language": "cpp",
+      "linkToCodebases": "Saint-Francis-Robotics-Team2367/2026Robot"
+    },
+    {
+      "teamName": "EMU Robotics",
+      "teamNumber": 4729,
+      "normEpa": 1407,
+      "language": "java",
+      "linkToCodebases": "EMU4729/FRC2026"
+    },
+    {
+      "teamName": "Cougar Robotics",
+      "teamNumber": 1982,
+      "normEpa": 1406,
+      "language": "java",
+      "linkToCodebases": "SMNWTeam1982/2026-Rebuilt"
+    },
+    {
+      "teamName": "Cavaliers",
+      "teamNumber": 2978,
+      "normEpa": 1406,
+      "language": "java",
+      "linkToCodebases": "BDHS-Cavs/2026"
+    },
+    {
+      "teamName": "JET SET",
+      "teamNumber": 6079,
+      "normEpa": 1406,
+      "language": "java",
+      "linkToCodebases": "brystrahl/6079"
+    },
+    {
+      "teamName": "Au Pirates",
+      "teamNumber": 3291,
+      "normEpa": 1405,
+      "language": "java",
+      "linkToCodebases": "AuPiratesFIRST/FRC-2026-Rebuilt-Team3291"
+    },
+    {
+      "teamName": "RoboRabbits",
+      "teamNumber": 11176,
+      "normEpa": 1401,
+      "language": "java",
+      "linkToCodebases": "uvaxn/RoboRabbits_rebuilt-2026"
+    },
+    {
+      "teamName": "Gator Gears",
+      "teamNumber": 4973,
+      "normEpa": 1398,
+      "language": "python",
+      "linkToCodebases": "Team4973/2026-rebuilt"
+    },
+    {
+      "teamName": "Pirate Robotics",
+      "teamNumber": 6032,
+      "normEpa": 1398,
+      "language": "java",
+      "linkToCodebases": "frcteam6032/2026-Base"
+    },
+    {
+      "teamName": "SainTech Robotics",
+      "teamNumber": 9247,
+      "normEpa": 1398,
+      "language": "java",
+      "linkToCodebases": "kuzeyatay/9247-2026-CODE"
+    },
+    {
+      "teamName": "PARATECH FRC",
+      "teamNumber": 9302,
+      "normEpa": 1396,
+      "language": "java",
+      "linkToCodebases": "Paratech-FRC/Swerve-Rebuilt-Regional-2026"
+    },
+    {
+      "teamName": "Oakville Dynamics",
+      "teamNumber": 8719,
+      "normEpa": 1393,
+      "language": "java",
+      "linkToCodebases": "OakvilleDynamics/2026-Robot"
+    },
+    {
+      "teamName": "Edwardsville Technologies",
+      "teamNumber": 4931,
+      "normEpa": 1391,
+      "language": "java",
+      "linkToCodebases": "frc-4931/2026-Robot"
+    },
+    {
+      "teamName": "Talons",
+      "teamNumber": 5232,
+      "normEpa": 1391,
+      "language": "java",
+      "linkToCodebases": "TheHexCoder0x10/comp_2-2026-5232"
+    },
+    {
+      "teamName": "Topper Robotics",
+      "teamNumber": 3984,
+      "normEpa": 1388,
+      "language": "java",
+      "linkToCodebases": "TopperRobotics/2026-Rebuilt"
+    },
+    {
+      "teamName": "Minot Syber-Sentinels",
+      "teamNumber": 10173,
+      "normEpa": 1387,
+      "language": "python",
+      "linkToCodebases": "minotfirstrobotics/FRC10173-2026"
+    },
+    {
+      "teamName": "Robolions",
+      "teamNumber": 3397,
+      "normEpa": 1384,
+      "language": "java",
+      "linkToCodebases": "frc-3397-robolions/2026-SwerveBot-1-Imported"
+    },
+    {
+      "teamName": "The Brooklyn Blacksmiths",
+      "teamNumber": 806,
+      "normEpa": 1381,
+      "language": "java",
+      "linkToCodebases": "team806/frc806_2026"
+    },
+    {
+      "teamName": "Greatest of All Times",
+      "teamNumber": 8092,
+      "normEpa": 1381,
+      "language": "java",
+      "linkToCodebases": "GOAT-8092/8092-2026"
+    },
+    {
+      "teamName": "Raiders of the ARC- TEAR-A-BYTE",
+      "teamNumber": 6905,
+      "normEpa": 1380,
+      "language": "java",
+      "linkToCodebases": "RaidersOfTheARC/6905REBUILT-STATES"
+    },
+    {
+      "teamName": "Red Lion Bots",
+      "teamNumber": 7115,
+      "normEpa": 1378,
+      "language": "java",
+      "linkToCodebases": "discobots2587/2026-rebuilt-offseason"
+    },
+    {
+      "teamName": "The Dynamos",
+      "teamNumber": 250,
+      "normEpa": 1377,
+      "language": "java",
+      "linkToCodebases": "emilroy75/2026robotjava-code"
+    },
+    {
+      "teamName": "Zenith Polaris",
+      "teamNumber": 8569,
+      "normEpa": 1376,
+      "language": "java",
+      "linkToCodebases": "FRC-8569/Finalist-2026"
+    },
+    {
+      "teamName": "G.I.R.L.",
+      "teamNumber": 9057,
+      "normEpa": 1375,
+      "language": "java",
+      "linkToCodebases": "CSK-Robotics/2026"
+    },
+    {
+      "teamName": "Pirate Robolution",
+      "teamNumber": 5430,
+      "normEpa": 1374,
+      "language": "java",
+      "linkToCodebases": "Team5430/2026-Robot-Code"
+    },
+    {
+      "teamName": "RoboBills",
+      "teamNumber": 5176,
+      "normEpa": 1373,
+      "language": "java",
+      "linkToCodebases": "Team-5176/5176-Rebuilt"
+    },
+    {
+      "teamName": "Shrapnel Sergeants",
+      "teamNumber": 2408,
+      "normEpa": 1363,
+      "language": "java",
+      "linkToCodebases": "ShrapnelSergeants2408/2026_Competition_Code"
+    },
+    {
+      "teamName": "Tsinelas'",
+      "teamNumber": 9715,
+      "normEpa": 1360,
+      "language": "java",
+      "linkToCodebases": "FRC-9715-Tsinelas/9715-Rebuilt-25-26"
+    },
+    {
+      "teamName": "PORTAL",
+      "teamNumber": 9303,
+      "normEpa": 1357,
+      "language": "java",
+      "linkToCodebases": "elidaduck/2026_frc_9303"
+    },
+    {
+      "teamName": "Daedalus",
+      "teamNumber": 2839,
+      "normEpa": 1348,
+      "language": "java",
+      "linkToCodebases": "Daedalus-2839/2026-Robot"
+    },
+    {
+      "teamName": "Team 2182",
+      "teamNumber": 2182,
+      "normEpa": null,
+      "language": "java",
+      "linkToCodebases": "FRCteam2181/Minnetrials-2026-4"
+    },
+    {
+      "teamName": "Team 8054",
+      "teamNumber": 8054,
+      "normEpa": null,
+      "language": "java",
+      "linkToCodebases": "ctllmp/8054-weekly-hw"
+    },
+    {
+      "teamName": "Team 8173",
+      "teamNumber": 8173,
+      "normEpa": null,
+      "language": "java",
+      "linkToCodebases": "brightonfrc/2026"
+    },
+    {
+      "teamName": "Team 11855",
+      "teamNumber": 11855,
+      "normEpa": null,
+      "language": "java",
+      "linkToCodebases": "PepsiLee/2026CompetitionRobot-Offseason-main"
+    }
+  ],
+  "orphanRepos": []
+}

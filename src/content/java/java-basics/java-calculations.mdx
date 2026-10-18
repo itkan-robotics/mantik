@@ -8,14 +8,14 @@ groupOrder: 1
 order: 5
 difficulty: beginner
 duration: 55 min
-description: ""
+description: Arithmetic in Java, order of operations, and why integer division differs from floating-point division.
 ---
 
-### Basic Mathematical Operations
+### Basic mathematical operations
 
-Java supports the standard mathematical operations: addition `+`, subtraction `-`, multiplication `*`, and division `/`. Operations follow familiar precedence rules.
+Java uses `+`, `-`, `*`, and `/` with the usual precedence: `*` and `/` before `+` and `-`.
 
-### Simple Calculations:
+### Simple calculations
 
 ```java
 int first = 2;
@@ -29,11 +29,11 @@ System.out.println("Sum: " + sum);
 System.out.println("Product: " + product);
 ```
 
-### Precedence and Parentheses
+### Precedence and parentheses
 
-Operations are performed left to right, with `*` and `/` calculated before `+` and `-`. Use parentheses to control the order of operations.
+Parentheses run first. Without them, multiplication and division happen before addition and subtraction.
 
-### Order of Operations:
+### Order of operations
 
 ```java
 int withParentheses = (1 + 1) + 3 * (2 + 5);
@@ -48,14 +48,14 @@ System.out.println(withoutParentheses); // prints 13
 // 3 * 2 = 6, then 1 + 1 + 6 + 5 = 13
 ```
 
-### Key Concepts:
+### Key ideas
 
-- **Expression:** A combination of values that produces another value
-- **Statement:** A complete instruction that performs an action
-- **Precedence:** Multiplication and division before addition and subtraction
-- **Parentheses:** Override normal precedence rules
+- **Expression:** Values and operators that produce a single value.
+- **Statement:** A full instruction, usually ending with `;`.
+- **Precedence:** `*` and `/` bind tighter than `+` and `-`.
+- **Parentheses:** Force a different evaluation order.
 
-### Calculating and Printing:
+### Calculating and printing
 
 ```java
 int robotSpeed = 25;
@@ -72,11 +72,13 @@ System.out.println("Result: " + (2 + 3));     // prints "Result: 5"
 System.out.println("Wrong: " + 2 + 3);        // prints "Wrong: 23"
 ```
 
-### Division and Data Types
+With `+`, Java evaluates left to right. Once one operand is a `String`, the rest are converted to strings and appended. Parentheses around `(2 + 3)` do the math first.
 
-Division behavior depends on the data types involved. Integer division produces integer results, while floating-point division produces decimal results.
+### Division and data types
 
-### Integer vs Floating-Point Division:
+If both operands are integers, `/` truncates toward zero. If either operand is floating-point, you get a decimal result.
+
+### Integer vs floating-point division
 
 ```java
 // Integer division - truncates decimal part
@@ -95,7 +97,7 @@ double precise = (double) a / b;  // 3.5
 double wrong = (double) (a / b);  // 3.0 (division done first!)
 ```
 
-<RulesBox title="Division Best Practices:">
+<RulesBox title="Division habits">
 
 **Good Practices:**
 
@@ -113,7 +115,7 @@ double wrong = (double) (a / b);  // 3.0 (division done first!)
 
 </RulesBox>
 
-### Practical Robot Calculations:
+### Practical robot calculations
 
 ```java
 public class RobotCalculations {
@@ -144,16 +146,15 @@ public class RobotCalculations {
 }
 ```
 
-<RulesBox title="Common Variable Assignment Misconceptions:" subtitle="Understanding Variable Assignment:">
+<RulesBox title="Assignment copies a value">
 
-- **Assignment is copying:** `a = b` copies b's value to a, b keeps its value
-- **No automatic dependency:** Changing b later doesn't affect a
-- **Direction matters:** `a = b` means 'copy b into a', not the reverse
-- **One-time operation:** Assignment happens once when the line executes
+- `a = b` copies the value from `b` into `a`; `b` is unchanged.
+- Later changes to `b` do not change `a`.
+- Assignment runs once when that line executes.
 
 </RulesBox>
 
-### Variable Assignment Example:
+### Variable assignment example
 
 ```java
 int robotCount = 5;
@@ -184,4 +185,3 @@ Practice with mathematical operations and calculations:
 ```
 
 </ExerciseBox>
-

@@ -8,24 +8,25 @@ groupOrder: 3
 order: 1
 difficulty: beginner
 duration: 15 min
-description: ""
+description: How the WPILib command scheduler, subsystems, and default commands fit together on an FRC robot.
 ---
 
 ### Overview
 
-Command-based programming organizes robot code into logical components. It separates hardware (subsystems) from logic (commands), making code reusable, maintainable, and scalable. It is the standard for modern FRC development.
+Command-based code splits **hardware** (subsystems) from **behavior** (commands). The scheduler runs commands, tracks subsystem ownership, and lets teleop and auto share the same command objects. It is the default layout for new WPILib projects.
+
+If the lifecycle methods and “actions as objects” idea feel unfamiliar, read the Java lessons below first. They cover the command pattern and deferred execution without mixing in WPILib APIs.
+
+<LinkGrid links={[
+    {"label":"The Command Pattern","id":"java-dp-command","description":"Scheduler, lifecycle, and why commands are objects"},
+    {"label":"Passing Functions as Data","id":"java-fn-functions-as-data","description":"Callbacks and storing behaviour for later"}
+  ]} title="Java background" section="java" />
 
 ### Setting Up Your Project
 
-When creating a new WPILib project, use the **Command Robot** template. This provides the correct command-based structure with `Robot.java`, `RobotContainer.java`, and the necessary directories.
+Create a WPILib project with the **Command Robot** template. You get `Robot.java`, `RobotContainer.java`, and starter subsystem/command examples.
 
-
-
-In VS Code, use **WPILib: Create a new project** and select the Command Robot template. The template includes example subsystems and commands to help you get started.
-
-
-
-For detailed instructions, see the [Project Creation guide](#project-creation).
+In VS Code: **WPILib: Create a new project** → Command Robot. See [Project Creation](/frc/project-creation) for the full walkthrough.
 
 <RulesBox title="Core Components" subtitle="The four pillars:">
 
@@ -41,20 +42,13 @@ For detailed instructions, see the [Project Creation guide](#project-creation).
 **Robot.java (TimedRobot):**
 
 - All logic in one file.
-
-- Hard to manage as complexity grows.
-
-- Direct hardware control mixed with logic.
-
-
+- Hardware control mixed with decisions.
+- Hard to reuse the same motion in teleop and auto.
 
 **Command-Based:**
 
-- Modular structure.
-
-- Reusable commands (auto & teleop).
-
-- Clean separation of concerns.
+- Subsystems own hardware; commands own when and why.
+- The same command can run from a button or an auto routine.
 
 ### Command Lifecycle
 

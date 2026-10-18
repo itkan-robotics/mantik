@@ -8,12 +8,12 @@ groupOrder: 3
 order: 4
 difficulty: intermediate
 duration: 30 min
-description: ""
+description: Two indices on arrays or strings—opposite ends, same direction, or fast and slow—for O(n) scans.
 ---
 
 ### Two Pointers Technique
 
-The two pointers technique is a common algorithmic pattern that uses two pointers to solve problems efficiently. It's particularly useful for array and string problems.
+Two pointers keep a pair of indices and move them under clear rules so you never need an O(n²) nested loop over the same data.
 
 ### Types of Two Pointers
 
@@ -83,7 +83,7 @@ public int removeDuplicatesII(int[] nums) {
 
 ### Fast and Slow Pointers - Cycle Detection
 
-```java
+```java norun
 // Detect cycle in linked list (Floyd's Algorithm)
 public boolean hasCycle(ListNode head) {
     if (head == null || head.next == null) return false;

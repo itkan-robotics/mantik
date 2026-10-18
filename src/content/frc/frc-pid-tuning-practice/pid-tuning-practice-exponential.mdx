@@ -8,32 +8,24 @@ groupOrder: 6
 order: 6
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Full feedforward pass (kG, kV, kA) then kP and kD for an elevator with exponential profiling in YAMS sim.
 ---
 
 ### Overview
 
-This guide covers tuning PID controllers with exponential motion profiling for elevator mechanisms. You'll learn how to tune feedforward constants (kG, kV, kA) and PID constants (kP, kD) to achieve smooth, accurate control. This tutorial uses YAMS simulation but the techniques apply to physical hardware tuning with Phoenix Tuner or REV Hardware Client.
+Tune an elevator with exponential profiling: zero everything, set kG, measure kV and kA from duty-cycle and ramp data, then raise kP and kD until the position trace is box-shaped without oscillation. Filmed in YAMS; same gains philosophy applies in Phoenix Tuner or REV Hardware Client on a real robot.
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of elevator PID tuning with exponential motion profiling:
+Exponential profile elevator tuning:
 
 <YouTubeEmbed id="nlRjdr1KUg4" title="PID Practice: Exponential Profiles" />
 
 ### Prerequisites
 
-Before starting, ensure you have:
-
-
-
-• Practice repository cloned and open in VS Code
-
-• Simulation running (Sim GUI)
-
-• Elastic dashboard configured with live tuning, tuning widgets, and position/velocity graphs
-
-• Understanding of basic mechanism setup
+- Practice repo open in VS Code with sim running
+- Elastic live tuning widget and position/velocity graphs
+- [Setup lesson](/frc/pid-tuning-practice-setup) complete
 
 <StepsBox title="Tuning Steps">
 
@@ -99,7 +91,7 @@ Before starting, ensure you have:
 
 ### Important Notes
 
-Practice in simulation before tuning physical hardware. Oscillation on a real robot can cause mechanisms to move at dangerous speeds (20-30 ft/s) and risk damage.
+Sim first. On a real elevator, bad gains can drive violent oscillation—keep hands on disable and clear the area before live tuning.
 
 <LinkGrid links={[{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Setup","id":"pid-tuning-practice-setup"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Practice Repository","url":"https://github.com/itkan-robotics/mantik-pid-practice"}]} title="Resources" section="frc" />
 

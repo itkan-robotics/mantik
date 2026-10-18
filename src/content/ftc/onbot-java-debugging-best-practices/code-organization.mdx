@@ -8,20 +8,18 @@ groupOrder: 7
 order: 3
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: "Splits init and subsystems into methods and helper classes for easier debugging."
 ---
 
-### Why Code Organization Matters
+### Why organize code
 
-Good code organization makes your programs easier to debug, maintain, and expand. In FTC, it's especially important to avoid large, monolithic files. Instead, break your code into small, focused classes and methods.
+Small methods and helper classes make it obvious where drive, arm, or sensor logic lives. That speeds up fixes during build season.
 
-### Modularizing Hardware Initialization in Your OpMode
+### Hardware init method
 
-To keep your OpMode organized and easy to debug, move hardware initialization into a separate function within your OpMode class. This keeps your main logic clean and makes it easier to update or troubleshoot hardware mapping without touching the rest of your code.
+Move all `hardwareMap.get()` calls into `initHardware()` and call it at the top of `runOpMode()`.
 
-### Example: Hardware Initialization Function
-
-Define a dedicated method for hardware setup in your OpMode:
+### initHardware example
 
 
 
@@ -34,9 +32,7 @@ private void initHardware() {
 }
 ```
 
-### Using the Hardware Initialization Function in Your OpMode
-
-Call your hardware initialization function at the start of `runOpMode()`:
+### OpMode that calls initHardware
 
 
 
@@ -61,11 +57,11 @@ public class ModularOpMode extends LinearOpMode {
 }
 ```
 
-### Naming Conventions and File Structure
+### Naming and file layout
 
-Use clear, descriptive names for your classes, methods, and variables. Organize your files so that related code is grouped together. This helps you and your teammates find and fix bugs faster.
+Match method names to subsystems (`drive()`, `controlClaw()`). Keep one main OpMode per file when possible.
 
-### Tips for Good Code Organization
+### Organization tips
 
 - Keep each file focused on one purpose (e.g., hardware, drive logic, sensors).
 - Use consistent naming conventions.
@@ -73,13 +69,11 @@ Use clear, descriptive names for your classes, methods, and variables. Organize 
 - Avoid duplicating code—use helper methods or classes instead.
 - Review and refactor your code regularly.
 
-### Documenting Your Code
+### JavaDoc and comments
 
-Comments and documentation help you remember your logic and make it easier for others to help debug. Use JavaDoc for methods and classes, and add inline comments for tricky logic.
+Document public helpers with JavaDoc; use short inline comments only where logic is non-obvious.
 
-### JavaDoc Example
-
-Here's how to document a method with JavaDoc:
+### JavaDoc example
 
 
 
@@ -94,9 +88,9 @@ public void setDrivePower(double power) {
 }
 ```
 
-### Using Version Control for Debugging
+### Backups and version control
 
-Version control lets you track changes and revert to working code. While OnBot Java doesn't have built-in Git, you can still keep backups and use comments to mark changes. For more on version control in FTC, see [FTC Docs: Programming Resources](https://ftc-docs.firstinspires.org/en/latest/programming_resources/index.html).
+OnBot Java has no built-in Git. Copy working OpModes to a team repo or shared drive before big edits. See [FTC Docs: Programming Resources](https://ftc-docs.firstinspires.org/en/latest/programming_resources/index.html).
 
 <ExerciseBox title="Practice: Refactor a Monolithic OpMode" description="Take a long OpMode file and break it into at least two classes (e.g., hardware and logic). Add comments and JavaDoc to your methods. Test that your code still works." answers={[{"task":"Identify sections of code that can be moved to helper classes.","content":"// In the monolithic OpMode above, the following sections can be moved to helper classes:\n// 1. Hardware initialization (mapping motors and servos)\n// 2. Drive logic (setting motor power)\n// 3. Claw control logic (setting servo position)\n// 4. Telemetry display\n// By separating these, your code becomes easier to read, debug, and expand."},{"task":"Refactor the code and update your OpMode to use the new classes.","content":"// Step 1: Create a RobotHardware helper class\npublic class RobotHardware {\n    public DcMotor leftMotor, rightMotor;\n    public Servo clawServo;\n    /**\n     * Initializes all hardware components.\n     */\n    public void init(HardwareMap hardwareMap) {\n        leftMotor = hardwareMap.get(DcMotor.class, \"left_drive\");\n        rightMotor = hardwareMap.get(DcMotor.class, \"right_drive\");\n        clawServo = hardwareMap.get(Servo.class, \"claw_servo\");\n    }\n}\n\n// Step 2: Refactor the OpMode to use RobotHardware and modular methods\n@TeleOp\npublic class ModularOpMode extends LinearOpMode {\n    private RobotHardware robot = new RobotHardware();\n    @Override\n    public void runOpMode() {\n        robot.init(hardwareMap);\n        waitForStart();\n        while (opModeIsActive()) {\n            drive();\n            controlClaw();\n            showTelemetry();\n        }\n    }\n    /**\n     * Drives the robot using joystick input.\n     */\n    private void drive() {\n        double leftPower = -gamepad1.left_stick_y;\n        double rightPower = -gamepad1.right_stick_y;\n        robot.leftMotor.setPower(leftPower);\n        robot.rightMotor.setPower(rightPower);\n    }\n    /**\n     * Controls the claw servo with gamepad buttons.\n     */\n    private void controlClaw() {\n        if (gamepad1.a) {\n            robot.clawServo.setPosition(1.0);\n        } else if (gamepad1.b) {\n            robot.clawServo.setPosition(0.0);\n        }\n    }\n    /**\n     * Displays telemetry data on the Driver Station.\n     */\n    private void showTelemetry() {\n        telemetry.addData(\"Left Power\", robot.leftMotor.getPower());\n        telemetry.addData(\"Right Power\", robot.rightMotor.getPower());\n        telemetry.addData(\"Claw Position\", robot.clawServo.getPosition());\n        telemetry.update();\n    }\n}"},{"task":"Add JavaDoc and comments to explain your logic.","content":"// In the refactored code above, each method has a JavaDoc comment explaining its purpose.\n// For example:\n/**\n * Drives the robot using joystick input.\n */\nprivate void drive() { ... }\n// Inline comments can be added for tricky logic.\n// This makes the code easier to understand, debug, and maintain."}]}>
 

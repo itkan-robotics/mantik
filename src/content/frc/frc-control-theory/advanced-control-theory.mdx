@@ -8,17 +8,17 @@ groupOrder: 5
 order: 4
 difficulty: advanced
 duration: 30 min
-description: ""
+description: When state-space, LQR, and MIMO control help on an FRC robot—and when PID is enough.
 ---
 
 ### Overview
 
-Beyond PID, advanced control techniques like State-Space, LQR, and Feedforward offer superior performance for complex systems. These are useful for multi-joint arms, swerve drives, or systems requiring high precision.
+PID covers most mechanisms on a typical robot. State-space models, LQR, and multi-input control matter when several states are coupled (swerve modules, multi-joint arms, balancing) or when you need coordinated control across more than one actuator.
 
 <RulesBox title="Techniques" subtitle="Key concepts:">
 
 - **State-Space:** Models systems using state variables (position, velocity) and matrix equations.
-- **LQR (Linear Quadratic Regulator):** Optimal control that balances error reduction with control effort.
+- **LQR (linear quadratic regulator):** Picks gains that trade tracking error against how hard you drive the motors.
 - **Feedforward:** Predicts required output based on physics models (gravity, friction, inertia).
 - **MIMO:** Multi-Input Multi-Output control for coupled systems (e.g., Swerve).
 
@@ -26,21 +26,17 @@ Beyond PID, advanced control techniques like State-Space, LQR, and Feedforward o
 
 ### State-Space Control
 
-Uses the equation `ẋ = Ax + Bu` to model how system state changes. This allows controlling multiple coupled variables (like arm angle and velocity) simultaneously. WPILib provides `LinearSystem` and `LinearSystemLoop` for implementation.
+State-space control uses `ẋ = Ax + Bu` to model how position, velocity, and other states evolve together. You can command more than one related variable at once (for example arm angle and arm angular velocity). WPILib provides `LinearSystem` and `LinearSystemLoop`.
 
-### LQR (Optimal Control)
+### LQR
 
-LQR finds the 'best' control gains by minimizing a cost function. You tune **Q** (penalty for error) and **R** (penalty for effort).
-
-High Q = aggressive correction.
-
-High R = smooth/efficient motion.
+LQR chooses feedback gains by minimizing a cost function. You set **Q** (how much you penalize state error) and **R** (how much you penalize control effort). Higher Q tends toward snappier tracking; higher R tends toward gentler motor commands.
 
 ### When to Use
 
-**PID:** Sufficient for 90% of FRC mechanisms (shooters, simple arms, intakes).
+**PID:** Intakes, elevators, single-axis arms, shooters, and most independent mechanisms.
 
-**Advanced Control:** Needed for inverted pendulums, balancing robots, or highly coupled multi-joint arms.
+**Advanced control:** Balancing robots, inverted pendulums, tightly coupled multi-DOF arms, or full drivetrain models where WPILib’s state-space tooling is already wired in.
 
 <LinkGrid links={[{"label":"WPILib State-Space","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/index.html"},{"label":"PID Control","id":"frc-pid-control"}]} title="Resources" section="frc" />
 

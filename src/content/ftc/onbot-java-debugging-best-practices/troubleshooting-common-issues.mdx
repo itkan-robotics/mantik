@@ -8,20 +8,20 @@ groupOrder: 7
 order: 4
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: "Fixes typical mapping, lifecycle, and initialization mistakes in OnBot Java OpModes."
 ---
 
 ### Introduction
 
-Even experienced programmers run into common issues when working with FTC robots. This lesson will help you quickly identify and fix the most frequent problems in OnBot Java.
+These issues appear on almost every team at some point: wrong device names, code before `waitForStart()`, and motors used before mapping.
 
-### Hardware Mapping Errors
+### Hardware mapping errors
 
-One of the most common issues is a mismatch between your hardware configuration and your code. If you misspell a device name or forget to add a device in the configuration, your code will throw an error. Always double-check that your hardwareMap.get() calls match the names in your configuration.
+`hardwareMap.get()` strings must match configuration exactly, including case.
 
-### Example: Hardware Mapping Error
+### Case-sensitive name example
 
-Because configuration names are case-sensitive, this code will throw an error even if 'left_drive' is in your configuration:
+`LEFT_DRIVE` does not match `left_drive`:
 
 
 
@@ -29,11 +29,11 @@ Because configuration names are case-sensitive, this code will throw an error ev
 leftMotor = hardwareMap.get(DcMotor.class, "LEFT_DRIVE");
 ```
 
-### OpMode Lifecycle Mistakes
+### OpMode lifecycle
 
-Understanding when your code runs is crucial. Initialization code should go before waitForStart(), and your main loop should be inside while (opModeIsActive()). Placing code in the wrong place can cause unexpected behavior.
+Map hardware before `waitForStart()`. Driver controls belong inside `while (opModeIsActive())`.
 
-### Correct OpMode Structure
+### Correct structure
 
 ```java
 @TeleOp
@@ -50,11 +50,11 @@ public class LifecycleExample extends LinearOpMode {
 }
 ```
 
-### Sensor and Motor Initialization Problems
+### Use after init only
 
-If you try to use a sensor or motor before it's initialized, you'll get errors or unexpected results. Always initialize all hardware before waitForStart().
+Calling `setPower()` before `hardwareMap.get()` fails or behaves unpredictably.
 
-### Initialization Example
+### Init order example
 
 ```java
 // Correct
@@ -63,7 +63,7 @@ leftMotor = hardwareMap.get(DcMotor.class, "left_drive");
 leftMotor.setPower(1.0); // leftMotor not initialized yet
 ```
 
-### Quick Troubleshooting Checklist
+### Quick checklist
 
 - Check that all device names in your code match your configuration.
 - Initialize all hardware before waitForStart().

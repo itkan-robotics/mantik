@@ -17,3 +17,6 @@ out/
 /frc/
 /comp/
 .env.example
+# Downloaded by scripts/fetch-java-playground-assets.mjs
+public/java-playground/ecj.jar
+public/java-playground/ecj-*.jar

@@ -8,14 +8,14 @@ groupOrder: 3
 order: 1
 difficulty: beginner
 duration: 65 min
-description: ""
+description: Repeating code with while loops when the stop condition is not known in advance.
 ---
 
-### Why Use Loops?
+### Why loops exist
 
-Loops allow programs to repeat code efficiently. Instead of writing the same code multiple times, loops execute a block of code repeatedly based on a condition.
+Copy-pasting the same statements does not scale. A loop runs a block until a condition becomes false (or until you `break`).
 
-### Problem: Repetitive Code
+### Without a loop
 
 ```java
 // Without loops - inefficient and inflexible
@@ -35,7 +35,7 @@ sum = sum + Integer.valueOf(scanner.nextLine());
 System.out.println("The sum is " + sum);
 ```
 
-### Solution: Using While Loops
+### With a while loop
 
 ```java
 // With loops - efficient and flexible
@@ -56,7 +56,7 @@ while (true) {
 System.out.println("The sum of the numbers is " + sum);
 ```
 
-### Basic While Loop Structure:
+### Basic while loop
 
 ```java
 while (condition) {

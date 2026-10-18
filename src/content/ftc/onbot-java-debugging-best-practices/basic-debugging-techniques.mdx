@@ -8,20 +8,18 @@ groupOrder: 7
 order: 1
 difficulty: intermediate
 duration: 40 min
-description: ""
+description: "Uses telemetry, error messages, and small tests to find bugs in OnBot Java OpModes."
 ---
 
 ### Introduction
 
-Debugging is a critical skill for FTC programmers. In this lesson, you'll learn how to use OnBot Java's tools and best practices to find and fix bugs in your robot code. We'll focus on techniques that help you quickly identify issues and improve your code quality.
+Most FTC bugs show up in hardware names, init order, or the main loop. This lesson covers how to read errors and narrow them down with telemetry.
 
-### Understanding the FTC OpMode Structure
+### OpMode layout
 
-Before you can debug effectively, you need to understand how an FTC OpMode is structured. Most bugs occur in initialization, hardware mapping, or the main loop. Knowing where to look is half the battle.
+Map hardware before `waitForStart()`. Put repeating logic in `while (opModeIsActive())`.
 
-### Minimal OpMode Example
-
-A simple OpMode structure helps you isolate bugs:
+### Minimal OpMode for testing
 
 
 
@@ -44,13 +42,11 @@ public class DebugExampleOpMode extends LinearOpMode {
 }
 ```
 
-### Using Telemetry for Debugging
+### Telemetry while debugging
 
-Telemetry lets you see what's happening inside your robot in real time. Use it to print out variable values, sensor readings, and program state. This is your primary tool for debugging in OnBot Java.
+Print variables and sensor reads each loop when behavior is wrong.
 
-### Telemetry Example
-
-Add telemetry statements to track variables:
+### Telemetry example
 
 
 
@@ -60,17 +56,17 @@ telemetry.addData("Loop Count", loopCount);
 telemetry.update();
 ```
 
-### Common Error Types and How to Interpret Them
+### Common errors
 
-You'll encounter errors like null pointer exceptions, hardware mapping errors, and syntax mistakes. Learning to read error messages and stack traces is essential. For example, a null pointer exception often means you forgot to initialize a variable or mapped hardware incorrectly. 
+- **Hardware name mismatch**: Driver Station cannot find the device string.
+- **NullPointerException**: Used a motor or sensor before `hardwareMap.get()`.
+- **Compile errors**: Typos in variable names.
 
+See [gm0: Fundamental Concepts of Programming](https://gm0.org/en/latest/docs/software/getting-started/fundamental-concepts.html).
 
+### Null pointer example
 
-For more on Java errors, see [gm0: Fundamental Concepts of Programming](https://gm0.org/en/latest/docs/software/getting-started/fundamental-concepts.html).
-
-### Example: Null Pointer Exception
-
-This code will throw a NullPointerException if leftMotor is not initialized:
+Uninitialized `leftMotor` causes a crash on `setPower`:
 
 
 
@@ -78,11 +74,11 @@ This code will throw a NullPointerException if leftMotor is not initialized:
 leftMotor.setPower(1.0); // Throws error if leftMotor is null
 ```
 
-### Incremental Testing and Code Isolation
+### Test one piece at a time
 
-Test small sections of your code at a time. Comment out unrelated code and focus on one feature. This makes it easier to find where bugs are hiding.
+Comment out subsystems until the problem disappears, then add them back.
 
-### Isolating Code for Testing
+### Isolation example
 
 ```java
 // Only test motor initialization
@@ -91,7 +87,7 @@ telemetry.addData("Status", "Motor mapped");
 telemetry.update();
 ```
 
-### Best Practices for Debugging in FTC
+### Debugging checklist
 
 - Check your hardware configuration matches your code.
 - Use descriptive variable names.

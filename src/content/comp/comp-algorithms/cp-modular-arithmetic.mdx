@@ -25,14 +25,14 @@ static final long MOD = 1_000_000_007L;
 
 Addition, subtraction, and multiplication all commute with taking the remainder. You can reduce at every step and the final answer is unchanged.
 
-```java
+```java norun
 long add(long a, long b) { return (a + b) % MOD; }
 long mul(long a, long b) { return (a * b) % MOD; }
 ```
 
 Subtraction needs care because Java's `%` can return a negative value.
 
-```java
+```java norun
 long sub(long a, long b) { return ((a - b) % MOD + MOD) % MOD; }
 ```
 
@@ -40,7 +40,7 @@ Adding `MOD` before the second reduction forces the result non-negative. Skippin
 
 <RulesBox title="Reduce as you go, never at the end">
 
-```java
+```java norun
 // WRONG — overflows long long before the modulo
 long product = 1;
 for (int i = 1; i <= n; i++) product *= i;
@@ -97,7 +97,7 @@ Instead multiply by the *modular inverse* of `b`: the value `b⁻¹` such that `
 
 When `m` is prime and `b` is not a multiple of it, Fermat's little theorem gives the inverse directly:
 
-```java
+```java norun
 static long inverse(long b, long mod) {
     return power(b, mod - 2, mod);        // requires mod to be prime
 }
@@ -121,7 +121,7 @@ For a composite modulus, use the extended Euclidean algorithm, which finds the i
 
 Counting problems usually need "n choose k" modulo a prime. Precompute factorials and their inverses once, then each coefficient is O(1).
 
-```java
+```java norun
 static final int MAXN = 1_000_001;
 static long[] fact = new long[MAXN];
 static long[] invFact = new long[MAXN];

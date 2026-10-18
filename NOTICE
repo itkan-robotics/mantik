@@ -1,0 +1,33 @@
+Mantik
+======
+
+This project includes software derived from third-party open source.
+
+WPILib / controls_js_sim
+--------------------------
+
+PID simulation physics in `src/lib/pid-sim/physics/` is ported from the
+WPILib documentation interactive controls examples (controls_js_sim), which are
+part of the WPILib project.
+
+  - Source: https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim
+  - WPILib: https://github.com/wpilibsuite/allwpilib
+  - License: BSD-3-Clause (see WPILib and wpilib-docs repositories)
+
+Motor constant patterns in `src/lib/pid-sim/physics/dcMotor.ts` follow
+`edu.wpi.first.math.system.plant.DCMotor` from WPILib.
+
+Trapezoid profile and related utilities reference WPILib Java implementations.
+
+When you redistribute Mantik, retain this notice along with `LICENSE`.
+
+Java Playground (in-browser runner)
+-----------------------------------
+
+The Java lesson runner in `src/lib/java-playground/` and `src/components/java-playground/`
+is derived from community Mantik forks (including work by FRC 4451 and FRC 3476) and
+uses [CheerpJ](https://cheerpj.com) (Leaning Technologies) for a browser JVM, plus
+Eclipse ECJ for in-browser compilation.
+
+  - CheerpJ: https://cheerpj.com — see Leaning Technologies license terms for production use
+  - ECJ: Eclipse Public License 2.0 (downloaded at build time into `public/java-playground/`)

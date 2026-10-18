@@ -8,12 +8,12 @@ groupOrder: 2
 order: 6
 difficulty: intermediate
 duration: 45 min
-description: ""
+description: Prefix trees for dictionary lookup, autocomplete-style queries, and word problems in O(length) per step.
 ---
 
 ### Trie Overview
 
-A Trie (prefix tree) is a tree-like data structure used to store and retrieve strings. It's particularly efficient for prefix-based operations and autocomplete functionality.
+A trie stores strings character by character along shared prefixes. Lookups and inserts cost O(m) for string length m, which beats rescanning a whole list when many words share beginnings.
 
 ### Trie Properties
 
@@ -24,7 +24,7 @@ A Trie (prefix tree) is a tree-like data structure used to store and retrieve st
 
 ### Basic Trie Implementation
 
-```java
+```java norun
 class TrieNode {
     private TrieNode[] children;
     private boolean isEndOfWord;
@@ -91,7 +91,7 @@ class Trie {
 
 ### Word Search II Problem
 
-```java
+```java norun
 // Find all words in the board that exist in the dictionary
 public List<String> findWords(char[][] board, String[] words) {
     Trie trie = new Trie();
@@ -142,7 +142,7 @@ private void dfs(char[][] board, int i, int j, Trie trie, String current, Set<St
 
 ### Longest Common Prefix
 
-```java
+```java norun
 // Find longest common prefix of all strings
 public String longestCommonPrefix(String[] strs) {
     if (strs == null || strs.length == 0) return "";

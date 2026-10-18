@@ -1,0 +1,188 @@
+{
+  "generatedAt": "2026-10-16T21:01:17.921Z",
+  "teamLimit": 20,
+  "sourceIndex": "public/data/frc-2026-public-repositories.json",
+  "skippedWhileFilling": 6,
+  "teams": [
+    {
+      "teamNumber": 1678,
+      "teamName": "Citrus Circuits",
+      "normEpa": 1872,
+      "linkToCodebases": "frc1678/C2026-Public",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 309,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 6369,
+      "teamName": "Mercenary Robotics",
+      "normEpa": 1863,
+      "linkToCodebases": "MercsMavs-MSA/2026-FRC-6369-Bravo",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 447,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 9128,
+      "teamName": "ITKAN Robotics",
+      "normEpa": 1849,
+      "linkToCodebases": "itkan-robotics/RobotCode2026Public",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 329,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 1768,
+      "teamName": "Nashoba Robotics",
+      "normEpa": 1839,
+      "linkToCodebases": "Nashoba-Robotics/2026NashobaRobotics",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 416,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 1987,
+      "teamName": "Broncobots",
+      "normEpa": 1837,
+      "linkToCodebases": "FRCTeam1987/Robot2026",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 339,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 1833,
+      "teamName": "Team BEAN",
+      "normEpa": 1798,
+      "linkToCodebases": "team1833/2026-public",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 393,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 694,
+      "teamName": "StuyPulse",
+      "normEpa": 1793,
+      "linkToCodebases": "StuyPulse/Pulsecrew-Prep-2026",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 102,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 5907,
+      "teamName": "CC Shambots",
+      "normEpa": 1782,
+      "linkToCodebases": "GrahamL03/Shambots5907_26CompBot-dev-main-graham",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 254,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 4476,
+      "teamName": "W.A.F.F.L.E.S.",
+      "normEpa": 1776,
+      "linkToCodebases": "FRC-4476-WAFFLES/Robot2026",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 659,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 4237,
+      "teamName": "Team Lance-A-Bot",
+      "normEpa": 1748,
+      "linkToCodebases": "SirLanceABot/2026-Robot-Dev-4237",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 326,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 5940,
+      "teamName": "BREAD",
+      "normEpa": 1747,
+      "linkToCodebases": "BREAD5940/2026-Onseason",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 583,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 180,
+      "teamName": "S.P.A.M.",
+      "normEpa": 1738,
+      "linkToCodebases": "frc180/2026-public",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 519,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 948,
+      "teamName": "NRG (Newport Robotics Group)",
+      "normEpa": 1738,
+      "linkToCodebases": "NRG948/NRGRobot2026",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 251,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 971,
+      "teamName": "Spartan Robotics",
+      "normEpa": 1737,
+      "linkToCodebases": "frc971/971-second-robot-2026",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 175,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 2539,
+      "teamName": "Krypton Cougars",
+      "normEpa": 1736,
+      "linkToCodebases": "FRC2539/javabot-2026",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 270,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 1296,
+      "teamName": "Full Metal Jackets",
+      "normEpa": 1735,
+      "linkToCodebases": "FRC1296/RhsRobot2026",
+      "chosenFile": "src/main/java/frc/robot/Robot.java",
+      "lineCount": 126,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 841,
+      "teamName": "The BioMechs",
+      "normEpa": 1728,
+      "linkToCodebases": "Team841/2026-comp",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 384,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 2200,
+      "teamName": "BCR Blackout",
+      "normEpa": 1728,
+      "linkToCodebases": "BCR2200/2026_robot_code",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 592,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 5026,
+      "teamName": "Iron Panthers",
+      "normEpa": 1728,
+      "linkToCodebases": "Iron-Panthers/FRC-2026",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 659,
+      "license": "NOASSERTION"
+    },
+    {
+      "teamNumber": 1701,
+      "teamName": "Robocubs",
+      "normEpa": 1720,
+      "linkToCodebases": "Robocubs/2026-RobotPublic",
+      "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+      "lineCount": 268,
+      "license": "MIT"
+    }
+  ]
+}

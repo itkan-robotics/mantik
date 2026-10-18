@@ -8,90 +8,34 @@ groupOrder: 8
 order: 2
 difficulty: intermediate
 duration: 95 min
-description: ""
+description: Dead reckoning with encoders and a gyro—for differential and swerve, with WPILib odometry classes.
 ---
 
 ### Introduction to Odometry
 
-Odometry is a method of pose estimation that uses wheel encoders and a gyroscope to track robot movement over time. By measuring how far each wheel has rotated and the robot's heading, odometry calculates the robot's position through dead reckoning - integrating movement changes to determine current position.
+Odometry estimates pose from wheel motion and heading. Each loop you read how far wheels turned and what the gyro reports, then integrate that into X, Y, and θ. Updates run at robot loop rate (about 20 ms) with no camera required.
 
+Error stacks up: slip, wrong wheel diameter, or bad track width shows up as drift. Most competition stacks still lean on odometry and correct it with vision when tags are visible.
 
+*Differential and swerve are both covered below. Examples show the flow; your team template has the full hardware wiring.*
 
-Odometry provides continuous, fast updates (typically every 20ms robot loop) and doesn't require external references like cameras or field features. However, odometry accumulates error over time (drift) due to wheel slippage, encoder inaccuracy, and measurement errors. Despite this limitation, odometry is the foundation of most FRC pose estimation systems.
-
-
-
-***This lesson covers odometry for both differential drive and swerve drive robots. The code examples below show the general structure and flow - your team's drivetrain template will have the complete, hardware-specific implementation.***
-
-
-
-Learn more: [WPILib: Odometry Documentation](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html)
+[WPILib: Odometry Documentation](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html)
 
 ### Odometry Principles
 
-Odometry works through dead reckoning - calculating position by integrating movement changes:
+Start from a known pose. Each timestep, add the small change implied by wheel distances and heading—that is dead reckoning.
 
-
-
-**Dead Reckoning:** Starting from a known position, odometry tracks how the robot moves and updates position accordingly. Each movement (forward, backward, turning) changes the robot's pose, and these changes are accumulated to determine current position.
-
-
-
-**Integrating Wheel Movements:** Encoders measure how far each wheel has rotated. By knowing wheel diameter and encoder counts per revolution, odometry converts encoder readings into distance traveled.
-
-
-
-**Calculating Position Changes:** From wheel encoder readings and gyro heading, odometry calculates how the robot's X, Y, and heading have changed since the last update. These changes are added to the previous pose to get the new pose.
+Convert encoder rotations to meters with wheel radius and gear ratio. WPILib kinematics turn those distances into a field-frame delta.
 
 ### Required Sensors
 
-Odometry requires specific sensors to track robot movement:
+**Wheel encoders** on each driven wheel (or each swerve module drive). Calibrate diameter and counts per revolution.
 
-
-
-**Wheel Encoders:**
-
-- Measure rotation of drive wheels
-
-- Can be built into motors (Talon FX, SPARK MAX) or external encoders
-
-- Provide distance traveled by each wheel
-
-- Must be calibrated (encoder counts per revolution, wheel diameter)
-
-
-
-**Gyroscope (for Heading):**
-
-- Measures robot rotation and heading
-
-- Can be a dedicated gyro (Pigeon 2, NavX, ADXRS450)
-
-- Provides absolute heading (not just change)
-
-- Essential for accurate odometry, especially during turns
+**Gyro** for heading (Pigeon, NavX, ADXRS450, or integrated IMU). Turns especially need a stable heading source.
 
 ### Differential Drive Odometry
 
-Differential drive odometry uses two wheel encoders (left and right) plus a gyroscope to track robot pose.
-
-
-
-**How It Works:**
-
-- Left and right wheel encoders provide distance measurements
-
-- The difference between left and right distances determines rotation
-
-- The average of left and right distances determines forward movement
-
-- Heading comes from the gyroscope (most accurate)
-
-- Position is calculated from wheel distances and heading
-
-
-
-**WPILib Support:** WPILib provides the `DifferentialDriveOdometry` class that handles all the complex kinematics calculations for you.
+Left and right encoder distances plus gyro heading feed `DifferentialDriveOdometry`. WPILib handles the kinematics.
 
 ### Reading Encoder Positions
 
@@ -175,27 +119,9 @@ public void resetOdometry(Pose2d pose) {
 
 ### Swerve Drive Odometry
 
-Swerve odometry is similar to differential drive odometry but accounts for the unique movement characteristics of swerve drivetrains. Swerve robots can move in any direction (holonomic movement) and rotate independently, requiring odometry that tracks individual module positions and angles.
+Each module reports drive distance and steer angle. `SwerveDriveOdometry` fuses four modules and the gyro into one field pose.
 
-
-
-**How It Works:**
-
-- Each swerve module has a drive encoder (distance) and angle encoder (steering direction)
-
-- All four module states are combined to calculate overall robot movement
-
-- Gyroscope provides heading for accuracy
-
-- More measurement points = higher accuracy than differential drive
-
-
-
-**WPILib Support:** WPILib provides the `SwerveDriveOdometry` class that handles all the complex kinematics calculations for you.
-
-
-
-Learn more: [WPILib: Swerve Drive Odometry](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html)
+[WPILib: Swerve Drive Odometry](https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html)
 
 ### Getting Module Positions
 
@@ -268,23 +194,7 @@ public SwerveDrivetrain() {
 
 ### Swerve Module Position
 
-For swerve odometry, each module needs to report its `SwerveModulePosition` which contains:
-
-
-
-**Module Position Components:**
-
-- **Distance:** How far the module's drive wheel has traveled (meters)
-
-- **Angle:** The module's current steering angle (Rotation2d)
-
-
-
-**Reading from Modules:** Each swerve module typically has a drive motor with encoder (for distance) and a CANcoder or similar sensor (for steering angle). Combine these readings to create a `SwerveModulePosition`.
-
-
-
-**Implementation Note:** Your swerve drivetrain template will have a `SwerveModule` class that handles reading from encoders and creating `SwerveModulePosition` objects. The template handles all the hardware-specific details - you just need to understand that each module reports distance and angle.
+`SwerveModulePosition` holds drive distance (meters) and steer angle (`Rotation2d`). Your template’s `SwerveModule` class usually builds this from the drive encoder and absolute angle sensor.
 
 ### Reading Drive Distance
 
@@ -316,51 +226,17 @@ public SwerveModulePosition getPosition() {
 
 ### Odometry Limitations
 
-Understanding odometry limitations is crucial for effective use:
+**Drift:** Small constant errors become large over distance—often on the order of a few percent of travel if calibration is loose.
 
+**Slip:** Acceleration, defense, and low-friction carpet make encoders lie until vision or a reset fixes pose.
 
+**Long runs:** A long auto with only odometry can end far from truth; fuse vision or reset pose at known landmarks.
 
-**Drift:** Odometry accumulates error over time. Small measurement errors compound, causing the pose estimate to drift from actual position. Drift increases with distance traveled and time. Typical drift: 1-5% of distance traveled.
-
-
-
-**Wheel Slippage:** When wheels slip (during acceleration, on slippery surfaces, during collisions), encoder readings don't match actual movement. Slippage causes immediate pose errors that persist until corrected.
-
-
-
-**Accuracy Degradation Over Time:** Without correction, odometry accuracy decreases over time. After long autonomous routines or extended operation, pose may be significantly off. This is why sensor fusion with vision is recommended for high-accuracy applications.
-
-
-
-**Mitigation Strategies:**
-
-- Use vision-based pose estimation to periodically correct drift
-
-- Implement sensor fusion (see [Vision-Based Pose Estimation](#vision-pose-estimation-complete) lesson)
-
-- Design mechanisms to minimize wheel slippage
-
-- Calibrate wheel diameter and encoder settings accurately
+**Mitigation:** Calibrate wheel diameter and track width; fuse vision ([fusion lesson](/frc/vision-pose-estimation-fusion)); avoid unnecessary wheel spin.
 
 ### Swerve-Specific Considerations
 
-Swerve odometry has unique considerations compared to differential drive:
-
-
-
-**Module Offsets:** Module positions must be accurately measured relative to robot center. Incorrect offsets cause odometry errors. Measure track width and wheelbase carefully (in meters).
-
-
-
-**Module Angle Accuracy:** Swerve odometry requires accurate module angle measurements. Absolute encoders (like CANcoder) are strongly recommended for each module. Module angle errors directly affect odometry accuracy.
-
-
-
-**Center of Rotation:** Swerve robots can rotate around any point (not just center). Odometry assumes rotation around robot center, which is accurate for most cases.
-
-
-
-**Accuracy Advantages:** Swerve odometry is typically more accurate than differential drive because it uses four measurement points instead of two. However, it requires proper calibration of all four modules.
+Measure module locations to the robot center in meters. Absolute steer encoders (CANcoder, etc.) matter—steer error becomes translation error. Four modules give more constraints than a tank drive, but all four must be calibrated.
 
 ### Complete Swerve Odometry Flow
 
@@ -459,49 +335,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 ### Best Practices for Accurate Odometry
 
-Following these practices ensures the most accurate odometry possible:
-
-
-
-**Sensor Calibration:**
-
-- Accurately measure and configure wheel diameter
-
-- Accurately measure and configure track width / wheelbase
-
-- Calibrate gyroscope properly
-
-- For swerve: Calibrate all module angle offsets
-
-
-
-**Update Frequency:**
-
-- Call `updateOdometry()` in every `periodic()` call (20ms)
-
-- Don't skip odometry updates - this is critical for accuracy
-
-- Your drivetrain template handles efficient sensor reading
-
-
-
-**Drift Mitigation:**
-
-- Combine with vision for periodic corrections
-
-- Reset odometry at start of autonomous
-
-- Monitor odometry accuracy during testing
-
-
-
-**Mechanical Considerations:**
-
-- Minimize wheel slippage (proper wheel material, avoid aggressive acceleration)
-
-- Ensure encoders are securely mounted
-
-- Check for mechanical play in drivetrain
+- Measure wheel diameter, track width, and wheelbase; set gyro and module offsets in code to match.
+- Call odometry `update` every `periodic()`—skipped loops mean wrong pose.
+- Reset pose at auto start and when vision gives a trusted fix.
+- Reduce slip with reasonable accel limits and solid encoder mounting.
 
 <LinkGrid links={[{"label":"Pose Estimation Introduction","id":"pose-estimation-intro"},{"label":"Vision-Based Pose Estimation","id":"vision-pose-estimation-fusion"},{"label":"WPILib Kinematics and Odometry","url":"https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/index.html"},{"label":"Sensors and Encoders","id":"sensors-and-encoders"}]} title="Resources" section="frc" />
 

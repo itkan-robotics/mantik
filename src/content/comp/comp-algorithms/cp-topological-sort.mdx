@@ -82,7 +82,7 @@ Only do this when the problem asks for it — the heap is unnecessary otherwise,
 
 The alternative: depth-first search, appending each node after all of its descendants, then reversing.
 
-```java
+```java norun
 static int[] state;                  // 0 = unvisited, 1 = in progress, 2 = done
 static List<Integer> post = new ArrayList<>();
 static boolean hasCycle = false;
@@ -121,7 +121,7 @@ This is the reason topological sort matters beyond ordering. Once nodes are in t
 
 *Find the longest path in a directed acyclic graph.*
 
-```java
+```java norun
 List<Integer> order = topoSort(adj, n);
 
 int[] longest = new int[n + 1];       // longest path ending at each node
@@ -141,7 +141,7 @@ Longest path is NP-hard on a general graph but linear on a DAG, precisely becaus
 
 The same shape counts paths, finds minimum costs, or propagates any value forward:
 
-```java
+```java norun
 // number of distinct paths from node 1 to node n, modulo a prime
 long[] ways = new long[n + 1];
 ways[1] = 1;

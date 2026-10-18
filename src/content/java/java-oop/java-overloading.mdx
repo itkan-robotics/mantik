@@ -8,22 +8,20 @@ groupOrder: 4
 order: 4
 difficulty: intermediate
 duration: 80 min
-description: ""
+description: Multiple methods or constructors with the same name and different parameter lists, plus this() chaining.
 ---
 
-### What is Overloading?
+### Overloading
 
-**Overloading** allows you to create multiple versions of constructors or methods with the same name but different parameters. This eliminates repetitive code and provides flexible ways to create objects or call methods. In robotics, overloading helps create versatile robot classes that can be initialized in different ways.
+**Overloading** means two or more methods (or constructors) share a name but differ in parameter types or counts. The compiler picks the match at compile time.
 
-### Why Use Overloading?
+Use it when the same action needs optional arguments—for example, `moveForward()` and `moveForward(double speed)` instead of unrelated method names.
 
-Overloading makes your code more flexible and user-friendly. Instead of having methods like `moveForward()`, `moveForwardWithSpeed()`, and `moveForwardWithDistance()`, you can have multiple `moveForward()` methods that accept different parameters. This creates cleaner, more intuitive APIs for your robot classes.
+### Constructor overloading
 
-### Constructor Overloading
+Several constructors can initialize the same class with different levels of detail.
 
-Constructor overloading allows you to create objects in different ways by providing multiple constructors with different parameter lists. This is especially useful for robot classes where you might want to create robots with different initial configurations.
-
-### Basic Constructor Overloading:
+### Basic constructor overloading
 
 ```java
 public class FRCRobot {
@@ -79,9 +77,9 @@ System.out.println(robot3);
 
 ### Constructor Chaining with this()
 
-Notice the repetitive code in the constructors above? We can eliminate this by using **constructor chaining**. One constructor can call another constructor using `this()`, which must be the first line in the constructor.
+Shared setup can call another constructor with **`this(...)`** as the first line in the constructor.
 
-### Improved Constructor with Chaining:
+### Constructor chaining
 
 ```java
 public class FRCRobot {
@@ -139,7 +137,7 @@ FRCRobot robot3 = new FRCRobot("PowerBot", 67890, "Swerve", 85.5);
 
 Just like constructors, methods can be overloaded to provide different ways of performing the same operation. This is extremely useful in robotics for creating flexible movement, sensor reading, and control methods.
 
-### Basic Method Overloading:
+### Basic method overloading
 
 ```java
 public class RobotMovement {
@@ -184,7 +182,7 @@ robot.moveForward(0.5, 3.0);      // Speed for 3 seconds
 
 Similar to constructors, overloaded methods can call each other to reduce code duplication. The simpler methods can call the more complex ones with default values.
 
-### Method Overloading with Chaining:
+### Method overloading with chaining
 
 ```java
 public class RobotArm {
@@ -238,7 +236,7 @@ arm.moveArm(0, 0.2, 0.5);          // Move to 0° slowly with tight tolerance
 
 Let's look at some real-world FRC robotics examples where overloading makes the code much more flexible and easier to use in competition scenarios.
 
-### FRC Drivetrain with Overloading:
+### FRC drivetrain example
 
 ```java
 public class FRCDrivetrain {

@@ -8,12 +8,12 @@ groupOrder: 10
 order: 5
 difficulty: advanced
 duration: 60 min
-description: ""
+description: Trapezoidal velocity profiles in Java, PID plus feedforward tracking, and tuning for smooth FTC moves.
 ---
 
 ### What is Motion Profiling?
 
-Motion profiling is a technique for planning smooth, efficient movements for your robot. Instead of instantly commanding full speed or power, you generate a profile that gradually accelerates and decelerates, making your robot's motion faster, more accurate, and less likely to slip or tip.
+A motion profile plans **how fast** the mechanism should move over time—ramp up, cruise, ramp down—instead of jumping straight to full power. That reduces wheel slip, tipping, and overshoot on arms and drivetrains.
 
 ### Types of Motion Profiles
 
@@ -23,7 +23,7 @@ Motion profiling is a technique for planning smooth, efficient movements for you
 
 ### Generating a Trapezoidal Profile in Java
 
-This example shows how to generate a simple trapezoidal velocity profile:
+Trapezoidal profile: compute accel, cruise, and decel phases for a target distance:
 
 
 
@@ -58,11 +58,11 @@ for (double t = 0; t < totalTime; t += 0.02) {
 
 ### Combining Motion Profiling with PID and Feedforward
 
-Motion profiles generate target positions and velocities over time. You use a PID controller to follow the position setpoint, and optionally add **feedforward** terms to account for expected velocity and acceleration. This combination gives you both accuracy and responsiveness.Learn more: [gm0: Feedforward Control](https://gm0.org/en/latest/docs/software/concepts/control-loops.html#feedforward-control)
+Each profile sample gives a target position and velocity. PID closes position error; **feedforward** adds expected voltage from velocity and acceleration so PID does less work. [gm0: Feedforward control](https://gm0.org/en/latest/docs/software/concepts/control-loops.html#feedforward-control)
 
 ### Following a Profile with PID and Feedforward
 
-This snippet shows how to combine PID and feedforward to follow a profile:
+PID plus velocity/acceleration feedforward on each profile point:
 
 
 
@@ -82,8 +82,8 @@ for (ProfilePoint pt : profile) {
 
 ### Practical FTC Examples
 
-- Use motion profiling for autonomous driving, arm movement, and any task where smooth, fast motion is needed.
-- Libraries like Road Runner provide advanced motion profiling for FTC robots.
+- Profile auto drives and large arm moves where jerk causes slip or bounce.
+- Road Runner and similar libraries generate profiles and followers for FTC drivetrains.
 
 ### Troubleshooting and Tuning
 

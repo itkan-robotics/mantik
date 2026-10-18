@@ -8,20 +8,16 @@ groupOrder: 9
 order: 2
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Draw autonomous paths in PathPlanner and run them from WPILib AutoBuilder on the robot.
 ---
 
 ### What is PathPlanner?
 
-PathPlanner is a motion profile generator and autonomous path planning tool for FRC robots. It allows you to draw paths on a field map, configure robot constraints (max velocity, acceleration), and automatically generate smooth trajectories. It integrates seamlessly with WPILib via [PathPlannerLib](https://pathplanner.dev/api/java/) to follow these paths in code.
+PathPlanner draws paths on a field map, applies velocity and acceleration limits, and exports smooth trajectories. [PathPlannerLib](https://pathplanner.dev/api/java/) turns those files into WPILib commands on the robot.
 
+The usual entry point is **[AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html)**—path following plus event markers (for example `intake` or `shoot`) you place in the GUI.
 
-
-The modern workflow uses **[AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html)**, which automatically generates commands to follow paths and trigger event markers (like "Intake" or "Shoot") defined in the GUI.
-
-
-
-Learn more: [PathPlanner Documentation](https://pathplanner.dev/home.html) | [PathPlannerLib API](https://pathplanner.dev/api/java/)
+[PathPlanner docs](https://pathplanner.dev/home.html) | [API](https://pathplanner.dev/api/java/)
 
 ### Key Concepts
 
@@ -37,7 +33,7 @@ Learn more: [PathPlanner Documentation](https://pathplanner.dev/home.html) | [Pa
 
 ### Configuring AutoBuilder
 
-To use PathPlanner, you must configure [AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html) in your "RobotContainer" or "Drivetrain" subsystem. This tells PathPlanner how to control your robot and where it is. See [AutoBuilder Configuration Documentation](https://pathplanner.dev/pplib-build-an-auto.html).
+Configure [AutoBuilder](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html) once in `RobotContainer` or your drivetrain subsystem—pose suppliers, chassis speeds, and PID. See [AutoBuilder setup](https://pathplanner.dev/pplib-build-an-auto.html).
 
 ### AutoBuilder Configuration (Swerve)
 
@@ -97,9 +93,7 @@ A mass left over from last season's robot produces consistent tracking error on 
 
 ### Warmup and Pathfinding
 
-Two additions worth making once the basics work.
-
-**Warmup.** The first path of autonomous otherwise pays a one-time class-loading cost while the match clock is running. Schedule the warmup commands at startup to pay it before the match instead:
+**Warmup.** The first auto path can stutter while JVM classes load. Pay that cost at startup:
 
 ```java
 // In the Robot constructor

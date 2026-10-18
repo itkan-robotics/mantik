@@ -8,50 +8,125 @@ groupOrder: 10
 order: 2
 difficulty: intermediate
 duration: 25 min
-description: ""
+description: Compare TRCLib, NextFTC, Dairy, SolversLib, and FTCLib and how to integrate one into your project.
 ---
 
 ### Understanding External Libraries in FTC
 
-FTC teams often use external libraries to simplify complex programming tasks and improve code organization. These libraries provide pre-built solutions for common robotics problems, allowing teams to focus on strategy and robot-specific logic rather than reinventing basic functionality.
+External libraries are JARs or Gradle dependencies you add to TeamCode. They package patterns—command scheduling, math, path following—that teams would otherwise rewrite each season.
 
 ### Why Use External Libraries?
 
-External libraries offer several advantages for FTC teams:**Time Savings**: Pre-built solutions reduce development time**Reliability**: Well-tested code with fewer bugs**Advanced Features**: Access to sophisticated algorithms and techniques**Community Support**: Active communities provide help and updates**Learning Opportunities**: Study well-written code to improve programming skills
+- **Time:** Reuse tested abstractions instead of building everything from scratch.
+- **Reliability:** Popular libraries are exercised by many teams; bugs get reported and fixed.
+- **Features:** Access path planning, command-based structure, and utilities beyond the bare SDK.
+- **Community:** Docs, Discord servers, and example repos speed up onboarding.
+- **Learning:** Reading library source shows how experienced teams structure projects.
 
 ### Library Integration Considerations
 
-Before choosing a library, consider these factors:**Learning Curve**: How much time will it take to learn the library?**Documentation Quality**: Is the library well-documented with examples?**Community Size**: Larger communities provide better support**Update Frequency**: Regular updates indicate active maintenance**Compatibility**: Does it work with your current FTC SDK version?**Performance**: Does it meet your robot's performance requirements?
+Before you adopt a library, ask:
+
+- **Learning curve:** Can your team learn it this season?
+- **Documentation:** Are setup steps and examples current for your SDK?
+- **Community:** Is help available when you are stuck at 11 p.m. before a meet?
+- **Updates:** Does the project release for new FTC SDK versions?
+- **Compatibility:** Does it match your min SDK and Gradle setup?
+- **Performance:** Will it fit in your OpMode loop budget on the Control Hub?
 
 ### FTC Library Comparison
 
+The sections below summarize common choices. None is mandatory; many winning teams use only the SDK.
+
 ### TRCLib Deep Dive
 
-**TRCLib** is one of the most popular command-based programming frameworks for FTC. It provides a structured approach to robot programming that mirrors professional robotics development practices.Key Features:**Command-Based Programming**: Organizes code into commands and subsystems**State Management**: Built-in state machine capabilities**Telemetry Integration**: Easy integration with FTC telemetry**Extensive Documentation**: Comprehensive guides and examples**Active Community**: Large user base with good supportWhen to Use TRCLib:Building complex robots with multiple subsystemsWanting to learn professional robotics programming practicesNeed for advanced state management and command sequencingPlanning to scale to more complex robot designs
+**TRCLib** is a command-based framework modeled on FRC-style subsystems and commands.
+
+Key features:
+
+- Command-based organization (commands, subsystems, schedulers)
+- State helpers and telemetry hooks
+- Large example set and long-running community
+
+When to consider it: multi-subsystem robots, mentors who want FRC-like structure, or teams planning to grow code complexity over years.
 
 ### NextFTC Deep Dive
 
-**NextFTC** is a modern framework designed to simplify FTC development while maintaining good programming practices. It provides a clean API that's easier to learn than some alternatives.Key Features:**Modern API Design**: Clean, intuitive interface**Built-in Utilities**: Common functions pre-implemented**Good Documentation**: Clear guides and examples**Active Development**: Regular updates and improvements**Beginner Friendly**: Easier learning curve than some alternativesWhen to Use NextFTC:Wanting modern development practices without overwhelming complexityTeams with intermediate programming experienceNeed for good documentation and examplesPrefer cleaner, more intuitive APIs
+**NextFTC** is a newer framework with a smaller surface area than full TRCLib.
+
+Key features:
+
+- Modern Kotlin/Java-friendly APIs
+- Built-in helpers for common FTC tasks
+- Documentation aimed at intermediate teams
+
+When to consider it: you want structure without the heaviest command framework, or you prefer readable APIs over maximum flexibility.
 
 ### Dairy Deep Dive
 
-**Dairy** is a lightweight utility library focused on common FTC programming tasks. It's designed to be simple and focused rather than providing a complete framework.Key Features:**Lightweight**: Small library size, minimal overhead**Focused Scope**: Specific utilities for common tasks**Easy Integration**: Simple to add to existing projects**Beginner Friendly**: Simple API, easy to understand**Modular**: Use only what you needWhen to Use Dairy:Need specific utilities without full framework overheadSimple robot designs that don't require complex frameworksWant to learn from focused, well-written utility codePrefer to build custom solutions with helper utilities
+**Dairy** is a utility library, not a full robot framework.
+
+Key features:
+
+- Small footprint; import only what you need
+- Helpers for math, units, and repetitive SDK boilerplate
+- Easy to mix with your own architecture
+
+When to consider it: you like writing your own OpMode flow but want vetted math and utilities.
 
 ### SolversLib Deep Dive
 
-**SolversLib** is a specialized library focused on advanced path planning and motion control. It provides sophisticated algorithms for autonomous movement and trajectory following.Key Features:**Advanced Path Planning**: Sophisticated trajectory generation**Motion Control**: Precise movement control algorithms**Mathematical Rigor**: Based on solid control theory**Performance Optimized**: Efficient algorithms for real-time control**Good Documentation**: Clear explanations of algorithmsWhen to Use SolversLib:Focus on advanced autonomous movementNeed precise trajectory followingHave understanding of control theoryWant to implement sophisticated motion control
+**SolversLib** focuses on motion control and path following math.
+
+Key features:
+
+- Trajectory and path tooling
+- Control-theory-oriented APIs
+- Tuned for autonomous movement
+
+When to consider it: autonomous performance is the priority and you already understand odometry and PID basics.
 
 ### FTCLib Deep Dive
 
-**FTCLib** is a comprehensive development framework that provides a complete solution for FTC programming. It includes everything from basic utilities to advanced features.Key Features:**Complete Framework**: Comprehensive solution for all aspects**Extensive Features**: Wide range of capabilities**Active Community**: Large user base and good support**Good Documentation**: Comprehensive guides and examples**Regular Updates**: Active maintenance and improvementsWhen to Use FTCLib:Want a complete solution for all programming needsBuilding complex robots with many featuresPrefer comprehensive frameworks over multiple smaller librariesNeed extensive features and capabilities
+**FTCLib** bundles a wide set of features—commands, vision helpers, math, and more—in one project.
+
+Key features:
+
+- Broad feature set in a single dependency
+- Active releases aligned with FTC seasons
+- Large user community
+
+When to consider it: you want one ecosystem for most robot software rather than stitching several small libs.
 
 ### Making the Right Choice
 
-Choosing the right library depends on your team's specific needs and experience level:For Beginners:Start with **Dairy** for simple utilitiesConsider **NextFTC** for a gentle introduction to frameworksFocus on learning the basics before diving into complex frameworksFor Intermediate Teams:**NextFTC** provides a good balance of features and simplicity**TRCLib** if you want to learn professional practicesConsider **SolversLib** if focusing on advanced movementFor Advanced Teams:**TRCLib** for professional-grade code structure**FTCLib** for comprehensive feature set**SolversLib** for advanced motion controlConsider combining multiple libraries for specific needs
+**Beginners:** Start with SDK-only or **Dairy**-style utilities; add a framework when teleop and basic auto are stable.
+
+**Intermediate:** **NextFTC** or **TRCLib** depending on whether you want a lighter or more FRC-like model.
+
+**Advanced:** **TRCLib**, **FTCLib**, or **SolversLib** for movement; you may combine a framework with a motion library for auto.
+
+Match the library to this year’s robot goals—not every library on the list.
 
 ### Integration Best Practices
 
-When integrating external libraries into your FTC project:Setup and Configuration:Follow the library's official setup instructionsEnsure compatibility with your FTC SDK versionTest the library with a simple example before full integrationKeep backups of your original codeDevelopment Workflow:Start with the library's examples and tutorialsIncrementally integrate features rather than rewriting everything at onceUse version control to track changes and enable rollbacksDocument your customizations and modificationsTesting and Validation:Test library features thoroughly before competitionHave fallback plans if library features don't work as expectedMonitor performance impact on your robotKeep the library updated to the latest stable version
+**Setup**
+
+- Follow the library’s official Gradle steps for your FTC SDK version.
+- Build a hello-world OpMode before porting the whole robot.
+- Commit or branch before large merges.
+
+**Development**
+
+- Port one subsystem at a time.
+- Keep team-specific logic in your packages; avoid forking vendor code when possible.
+- Document version numbers in README or team wiki.
+
+**Testing**
+
+- Bench-test new library code at low power.
+- Have a fallback OpMode without the library for competition day.
+- Update when the library ships SDK-compatible releases—not mid-meet unless required.
 
 <ExerciseBox title="Library Evaluation Exercise" description="Evaluate which library would be best for your team's current robot design and programming experience level.">
 
@@ -66,5 +141,9 @@ When integrating external libraries into your FTC project:Setup and Configuratio
 
 ### Further Reading Resources
 
-For more information about these libraries and FTC development:[TRCLib Documentation](https://trc492.github.io/pages/TrcLibFeatures.html)[NextFTC Documentation](https://nextftc.dev/)[Dairy Documentation](https://docs.dairy.foundation/introduction)[FTCLib Documentation](https://docs.ftclib.org/ftclib)[SolversLib Documentation](https://docs.seattlesolvers.com/)
+- [TRCLib Documentation](https://trc492.github.io/pages/TrcLibFeatures.html)
+- [NextFTC Documentation](https://nextftc.dev/)
+- [Dairy Documentation](https://docs.dairy.foundation/introduction)
+- [FTCLib Documentation](https://docs.ftclib.org/ftclib)
+- [SolversLib Documentation](https://docs.seattlesolvers.com/)
 

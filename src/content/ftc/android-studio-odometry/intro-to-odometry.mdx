@@ -8,32 +8,32 @@ groupOrder: 11
 order: 1
 difficulty: advanced
 duration: 35 min
-description: ""
+description: Track field position and heading with encoders, common FTC layouts, and typical error sources.
 ---
 
 ### What is Odometry?
 
-Odometry is the process of tracking a robot’s position and orientation on the field using sensors, typically wheel encoders. In FTC, odometry is essential for enabling your robot to navigate autonomously and perform tasks with precision.
+Odometry estimates where your robot is on the field—position and heading—using sensors, usually wheel encoders. It is the basis for repeatable autonomous paths and precise scoring runs.
 
 ### Why Odometry Matters in FTC
 
-With odometry, your robot can follow complex paths, score game elements, and return to specific locations during autonomous periods. It is a foundational concept for advanced autonomous routines in FTC.
+During autonomous, odometry lets the robot follow planned paths, return to the same spot each match, and coordinate mechanisms that depend on where the robot is on the field.
 
 ### Basic Principles of Odometry
 
-Odometry systems use encoders attached to wheels to measure how far the robot has traveled. By analyzing the movement of these wheels, the robot can estimate its position (X, Y) and heading (angle) on the field. Most FTC robots use either drive encoders or dedicated 'dead wheels' for this purpose. 
-
-
+Encoders count how far wheels turn. From those counts you estimate travel distance and rotation, then integrate into **X**, **Y**, and **heading** in a field frame. Many teams use drive motor encoders; others add dedicated **dead wheels** for better accuracy.
 
 For more on the theory, see [gm0: Odometry](https://gm0.org/en/latest/docs/software/concepts/odometry.html).
 
 ### Common Odometry Setups in FTC
 
-There are several ways to set up odometry on an FTC robot:**Drive Encoder Odometry:** Uses the encoders built into the drive motors. Simple, but can be inaccurate due to wheel slippage.**Dead Wheel Odometry:** Uses unpowered wheels with encoders for more accurate tracking.**Two-Wheel vs. Three-Wheel:** Two-wheel setups can track position but not always heading; three-wheel setups can track both position and orientation.
+- **Drive encoder odometry:** Uses encoders on drive motors. Simple to wire, but wheel slip on the driven wheels hurts accuracy.
+- **Dead wheel odometry:** Free-spinning wheels with their own encoders; slip on drive wheels affects them less.
+- **Two-wheel vs. three-wheel:** Two parallel wheels can track distance along the plane but need another source for heading; a third wheel (often perpendicular) helps measure rotation and lateral motion.
 
 ### Limitations and Sources of Error
 
-Odometry is not perfect. Errors can come from wheel slippage, misalignment, or sensor noise. Understanding these limitations helps you design more robust autonomous routines and troubleshoot issues during competition.
+Odometry drifts. Wheel slip, bumped encoders, wrong wheel diameter, and frame flex all add error. Knowing that helps you test movements, add corrections (vision, IMU fusion), and debug when auto misses the target.
 
 <LinkGrid links={[{"label":"gm0: Odometry (Theory)","url":"https://gm0.org/en/latest/docs/software/concepts/odometry.html"},{"label":"gm0: Kinematics (Related Concepts)","url":"https://gm0.org/en/latest/docs/software/concepts/kinematics.html"}]} title="Further Reading" section="ftc" />
 

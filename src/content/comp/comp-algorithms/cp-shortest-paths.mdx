@@ -71,7 +71,7 @@ static long[] dijkstra(List<List<Edge>> adj, int source, int n) {
 
 <RulesBox title="The stale-entry check is not optional">
 
-```java
+```java norun
 if (d > dist[u]) continue;
 ```
 
@@ -179,7 +179,7 @@ Initialise the diagonal to 0, absent edges to a large sentinel, and use a sentin
 
 Distances alone are often not the answer. Record where each improvement came from.
 
-```java
+```java norun
 int[] parent = new int[n + 1];
 Arrays.fill(parent, -1);
 

@@ -1,0 +1,16 @@
+{
+  "teamNumber": 694,
+  "teamName": "StuyPulse",
+  "normEpa": 1793,
+  "linkToCodebases": "StuyPulse/Pulsecrew-Prep-2026",
+  "chosenFile": "src/main/java/frc/robot/Robot.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 102,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 85,
+  "lineCount": 102,
+  "sha": "9abb9758f726882a54d908dad1078812a304d80f",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/StuyPulse/Pulsecrew-Prep-2026/blob/main/src/main/java/frc/robot/Robot.java",
+  "fetchedAt": "2026-10-16T20:58:23.892Z"
+}

@@ -8,36 +8,27 @@ groupOrder: 6
 order: 3
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Precise kG on a rotating arm, kP tuning, then max velocity and acceleration for trapezoidal motion.
 ---
 
 ### Overview
 
-This lesson demonstrates PID tuning for an arm mechanism. Arms are more complex than elevators due to their rotational nature and varying gravity effects. You'll learn how to tune kG precisely, tune kP, and use motion profiling (trapezoidal profiles) to achieve smooth, accurate control.
+Arms see gravity change with angle, so kG tuning is pickier than on a vertical elevator. This lesson covers binary-search kG, doubling kP, watching overshoot, and setting motion-profile limits.
 
-**Browser practice:** Open [PID Simulation](/pid-simulation) on Mantik and choose **Arm** plus your motor vendor. Setpoint and kP use motor rotations (V/rot); the Mechanism view and TraceView show degrees. The browser plant matches [controls_js_sim](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim) (5 kg, 1 m, 100:1). Gravity feedforward uses kG · cos(angle). Retune kP in the browser even if you watched the lesson video on YAMS hardware.
+**Browser practice:** [PID Simulation](/pid-simulation) → **Arm** and your vendor. Setpoint and kP use motor rotations (V/rot); the mechanism view shows degrees. Plant matches [controls_js_sim](https://github.com/wpilibsuite/wpilib-docs/tree/main/source/_extensions/controls_js_sim) (5 kg, 1 m, 100:1) with kG · cos(angle). Retune in the browser even if you followed the YAMS video.
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of arm PID tuning:
+Arm tuning walkthrough:
 
 <YouTubeEmbed id="JXoCSk-9al4" title="PID Practice: Arm" />
 
 ### Prerequisites
 
-Before starting this lesson, you should have:
-
-
-
-• Completed the Setup lesson
-
-• Completed the Elevator tuning lesson (for basic tuning concepts)
-
-• Arm mechanism selected in SmartDashboard
-
-• Live tuning enabled in Elastic
-
-• Position and velocity graphs set up in AdvantageScope
+- [Setup](/frc/pid-tuning-practice-setup) and [elevator](/frc/pid-tuning-practice-elevator) lessons
+- Arm selected in SmartDashboard
+- Live tuning in Elastic
+- Position and velocity graphed in AdvantageScope
 
 <StepsBox title="Tuning Steps">
 
@@ -113,73 +104,22 @@ Before starting this lesson, you should have:
 
 ### Why Motion Profiling Matters
 
-Motion profiling is crucial for arms because:
-
-
-
-• **Prevents overshoot:** Controls acceleration to avoid ramming into hard stops
-
-• **Reduces jerkiness:** Smooths out sudden movements that can break chains or damage mechanisms
-
-• **More efficient:** Faster and more accurate than uncontrolled movement
-
-• **Protects hardware:** Prevents the mechanism from being too energetic or extreme
-
-
-
-Without motion profiling, mechanisms can experience sudden jerks that cause mechanical failures (like broken chains, as mentioned in the video).
+Bare position PID can command aggressive acceleration at the start of a move. Profiling caps velocity and acceleration so the arm is less likely to overshoot into hard stops or shock the chain.
 
 ### Trapezoidal vs Exponential Profiles
 
-The video uses trapezoidal motion profiles because they're more intuitive. However, exponential profiles are often better because:
-
-
-
-• Motors need time to ramp up - they don't instantly jump to max velocity
-
-• Exponential profiles better match how motors actually behave
-
-• They can provide even smoother motion
-
-
-
-Trapezoidal profiles are a good starting point for learning, but consider exponential profiles for production code.
+The video uses trapezoidal limits because they are easy to set in MAXMotion and Motion Magic. Exponential profiles (Motion Magic Expo or WPILib `ExponentialProfile`) ramp more gradually and often feel smoother on the same hardware. Learn trapezoidal first; switch to exponential if you still see harsh starts.
 
 ### Applying to Physical Hardware
 
-The same techniques apply when tuning with physical hardware:
-
-
-
-• **Phoenix Tuner:** Use Config tab to adjust values. Graph "rotor position" and "velocity."
-
-• **REV Hardware Client:** Similar configuration options available
-
-• The tuning process is identical: precise kG, kP tuning, then motion profiling
-
-• Watch for the same rectangular motion profile
-
-
-
-Even though the tools look different, the principles and techniques you learn here apply directly to physical mechanism tuning.
+Phoenix Tuner and REV Hardware Client expose the same gains and profile fields. Order stays: kG, kP, then max velocity and acceleration. Graph position and velocity the same way as in sim.
 
 ### Key Takeaways
 
-The complete arm tuning process involves:
-
-
-
-1. **Precise kG tuning:** Get it accurate to 2-3 decimal places for finicky mechanisms
-
-2. **kP tuning:** Double until you reach the target, but watch for overshoot
-
-3. **Motion profiling:** Use max velocity and max acceleration to create smooth, rectangular motion
-
-4. **Rectangular shape goal:** The position graph should look like a rectangle, not a curve or oscillation
-
-
-
-These skills apply to all mechanism tuning, whether using simulation tools or physical hardware tuning tools.
+1. kG to several decimal places where the arm is sensitive to gravity
+2. kP by doubling until motion is fast, without overshoot
+3. Motion profile limits to shape the move
+4. Position graph: sharp rise, flat hold, sharp fall—not a slow curve or ringing
 
 <LinkGrid links={[{"label":"Try in browser","url":"/pid-simulation"},{"label":"PID Control","id":"frc-pid-control"},{"label":"PID Tuning Practice - Elevator","id":"pid-tuning-practice-elevator"},{"label":"Trapezoidal Motion Profiling","id":"trapezoidal-motion-profiling"},{"label":"Feedforward Control","url":"https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward-control.html"}]} title="Resources" section="frc" />
 

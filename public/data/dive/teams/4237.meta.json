@@ -1,0 +1,16 @@
+{
+  "teamNumber": 4237,
+  "teamName": "Team Lance-A-Bot",
+  "normEpa": 1748,
+  "linkToCodebases": "SirLanceABot/2026-Robot-Dev-4237",
+  "chosenFile": "src/main/java/frc/robot/Robot.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 326,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 258,
+  "lineCount": 326,
+  "sha": "671c916d2015857d093b65cf70e72ae0fc438b45",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/SirLanceABot/2026-Robot-Dev-4237/blob/main/src/main/java/frc/robot/Robot.java",
+  "fetchedAt": "2026-10-16T20:59:27.092Z"
+}

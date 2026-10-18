@@ -1,0 +1,16 @@
+{
+  "teamNumber": 2200,
+  "teamName": "BCR Blackout",
+  "normEpa": 1728,
+  "linkToCodebases": "BCR2200/2026_robot_code",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 394,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 592,
+  "lineCount": 592,
+  "sha": "f417dd34d4d6ed22502724aadd5ce649d49efbde",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/BCR2200/2026_robot_code/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T21:01:10.992Z"
+}

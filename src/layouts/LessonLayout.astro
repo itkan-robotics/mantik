@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumb from '@/components/layout/Breadcrumb.astro';
+import JavaExampleHydrate from '@/components/java-playground/JavaExampleHydrate.astro';
+import { pathWithBase } from '@/lib/pathWithBase';
 import type { SidebarGroup } from '@/lib/content';
 import type { SidebarItem } from '@/lib/content';
 
@@ -14,6 +16,7 @@ interface Props {
   difficulty?: string;
   duration?: string;
   unlisted?: boolean;
+  javaExamples?: boolean;
 }
 
 const {
@@ -26,6 +29,7 @@ const {
   difficulty,
   duration,
   unlisted,
+  javaExamples = false,
 } = Astro.props;
 ---
 
@@ -35,6 +39,7 @@ const {
   currentPath={currentPath}
   sidebarGroups={sidebarGroups}
   showSidebar={true}
+  javaExamples={javaExamples}
 >
   <Breadcrumb currentPath={currentPath} />
 
@@ -48,15 +53,25 @@ const {
     )}
   </div>
 
+  {javaExamples && <p class="jp-runtime-status" data-jp-runtime-status role="status" hidden />}
+
   {/* Pagefind ignores pages with no data-pagefind-body, which keeps unlisted lessons out of search. */}
   <div class="lesson-content" data-pagefind-body={unlisted ? undefined : true}>
     <slot />
   </div>
+  {javaExamples && <JavaExampleHydrate />}
+
+  {javaExamples && (
+    <script>
+      import { installJavaPageStartup } from '@/lib/java-playground/pageStartup';
+      installJavaPageStartup();
+    </script>
+  )}
 
   {(prev || next) && (
     <nav class="lesson-nav" aria-label="Lesson navigation">
       {prev ? (
-        <a href={prev.href} class="lesson-nav-link lesson-nav-prev">
+        <a href={pathWithBase(prev.href)} class="lesson-nav-link lesson-nav-prev">
           <span class="lesson-nav-label">Previous</span>
           <span class="lesson-nav-title">{prev.label}</span>
         </a>
@@ -64,7 +79,7 @@ const {
         <span />
       )}
       {next ? (
-        <a href={next.href} class="lesson-nav-link lesson-nav-next">
+        <a href={pathWithBase(next.href)} class="lesson-nav-link lesson-nav-next">
           <span class="lesson-nav-label">Next</span>
           <span class="lesson-nav-title">{next.label}</span>
         </a>
@@ -89,7 +104,7 @@ const {
     document.addEventListener('keydown', (e) => {
       if (!e.ctrlKey && !e.metaKey) return;
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+      if (target.closest('input, textarea, select, .monaco-editor, .cm-editor, .cm-content, [contenteditable="true"]')) return;
 
       if (e.key === 'ArrowLeft' || e.key === '<') {
         e.preventDefault();

@@ -8,14 +8,14 @@ groupOrder: 4
 order: 2
 difficulty: intermediate
 duration: 40 min
-description: ""
+description: Creating objects with new, separate state per instance, and passing objects as method arguments.
 ---
 
-### Creating and Using Objects
+### Objects
 
-Objects are **instances** of classes - they are the actual entities created from the class blueprint. You create objects using the `new` keyword followed by a constructor call. Each object has its own unique state (variable values) but shares the same behavior (methods) defined by its class.
+An **object** is one instance of a class. Use `new` and a constructor to create it. Each object has its own field values but uses the same methods defined on the class.
 
-### Object Instantiation:
+### Creating objects
 
 ```java
 // Creating objects from a class
@@ -40,9 +40,9 @@ System.out.println(robot3);
 
 ### Object State and Behavior
 
-Each object maintains its own **state** through its instance variables, while all objects of the same class share the same **behavior** through their methods. Think of it like multiple robots built from the same blueprint - they all have the same capabilities, but each has its own current settings and status.
+**State** lives in instance variables; **behavior** is the shared methods on the class.
 
-### Multiple Objects Example:
+### Multiple objects
 
 ```java
 public class RobotDemo {
@@ -84,9 +84,9 @@ public class RobotDemo {
 
 ### Understanding Object References
 
-In Java, variables don't actually contain objects - they contain **references** to objects. A reference is like a remote control that points to an object in memory. This means multiple variables can reference the same object, and changing the object through one reference affects all other references to that same object.
+Object variables hold **references** (addresses), not the object itself. Two variables can refer to the same object; updates through either name show up on both.
 
-### Object References Explained:
+### References example
 
 ```java
 // Create one robot object
@@ -121,21 +121,21 @@ if (nullRobot != null) {
 }
 ```
 
-<RulesBox title="Object Reference Rules:" subtitle="Important Concepts to Remember:">
+<RulesBox title="Reference rules">
 
-- **References vs Objects:** Variables store references, not the actual objects
-- **Multiple References:** Many variables can reference the same object
-- **Null References:** A reference can be null (not pointing to any object)
-- **== vs .equals():** == compares references, .equals() compares object content
-- **Shared State:** Changes through any reference affect the same object
+- Variables hold references, not embedded objects
+- Several variables can point at one object
+- `null` means no object
+- `==` compares references; `.equals()` compares content (when implemented)
+- Changes through any reference affect the same object
 
 </RulesBox>
 
-### Objects as Method Parameters
+### Objects as parameters
 
-Objects can be passed as parameters to methods. When you pass an object to a method, you're actually passing a reference to that object. This means the method can modify the object's state, and those changes will be visible outside the method.
+Methods receive a copy of the reference. The method can change the object’s fields; those changes remain visible after the call.
 
-### Objects as Parameters:
+### Parameters example
 
 ```java
 public class RobotManager {

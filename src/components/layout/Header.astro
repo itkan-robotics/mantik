@@ -1,6 +1,6 @@
 ---
 import { sections, appRoutes } from '@/config/navigation';
-import ThemeToggle from '@/components/islands/ThemeToggle.astro';
+import PreferencesButton from '@/components/islands/PreferencesButton.astro';
 
 interface Props {
   currentPath: string;
@@ -61,8 +61,8 @@ function isActive(path: string): boolean {
           <span class="help-icon">?</span>
         </button>
       </div>
-      <div class="theme-toggle-container theme-toggle-header">
-        <ThemeToggle />
+      <div class="theme-toggle-container prefs-header">
+        <PreferencesButton />
       </div>
     </div>
   </div>

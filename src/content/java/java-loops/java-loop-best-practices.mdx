@@ -8,14 +8,14 @@ groupOrder: 3
 order: 4
 difficulty: intermediate
 duration: 80 min
-description: ""
+description: Scope, loop structure, infinite-loop pitfalls, and choosing for vs while.
 ---
 
-### Variable Scope in Loops
+### Variable scope in loops
 
-Variables declared inside a loop only exist within that loop. To use values after the loop ends, declare variables before the loop starts.
+A variable declared inside the loop body is not visible after the loop ends. Declare counters and totals before the loop if you need them later.
 
-### Variable Scope - Wrong Way:
+### Scope — wrong place for the accumulator
 
 ```java
 Scanner scanner = new Scanner(System.in);
@@ -39,7 +39,7 @@ while (true) {
 // System.out.println("Total ones: " + ones);
 ```
 
-### Variable Scope - Correct Way:
+### Scope — accumulator before the loop
 
 ```java
 Scanner scanner = new Scanner(System.in);
@@ -64,9 +64,9 @@ System.out.println("The total of ones: " + ones);
 
 ### Program Structure Best Practices
 
-Keep loops clean by separating the loop logic from the post-loop processing. Place calculations and output **after** the loop ends, not inside it.
+Collect input inside the loop; print summaries after the loop when you can.
 
-### Poor Structure (Avoid):
+### Structure to avoid
 
 ```java
 // [BAD] Poor structure - processing inside loop

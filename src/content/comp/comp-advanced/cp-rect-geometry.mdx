@@ -62,7 +62,7 @@ The overlap's left edge is the rightmost of the two left edges; its right edge i
 
 For any interval overlap — 1D, or one dimension of a rectangle:
 
-```java
+```java norun
 int overlap = Math.max(0, Math.min(end1, end2) - Math.max(start1, start2));
 ```
 
@@ -74,7 +74,7 @@ This handles the disjoint case without a branch. It is worth memorizing, because
 
 Add the areas and subtract the double-counted intersection.
 
-```java
+```java norun
 long union = a.area() + b.area() - intersectionArea(a, b);
 ```
 
@@ -134,7 +134,7 @@ Only take a square root when the problem asks for an actual distance as output, 
 
 *Given three axis-aligned rectangles, print the area covered by at least one.*
 
-```java
+```java norun
 long a1 = r[0].area(), a2 = r[1].area(), a3 = r[2].area();
 
 long i12 = intersectionArea(r[0], r[1]);

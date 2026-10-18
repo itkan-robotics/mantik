@@ -146,7 +146,7 @@ For larger N, replace the `TreeMap` scan with a segment tree over compressed y-c
 
 Coordinates are often up to 10<sup>9</sup> while only 2N distinct values appear. Mapping them to `0..2N-1` lets you index arrays by coordinate.
 
-```java
+```java norun
 int[] xs = /* every x coordinate that appears */;
 int[] sorted = xs.clone();
 Arrays.sort(sorted);

@@ -1,0 +1,16 @@
+{
+  "teamNumber": 1296,
+  "teamName": "Full Metal Jackets",
+  "normEpa": 1735,
+  "linkToCodebases": "FRC1296/RhsRobot2026",
+  "chosenFile": "src/main/java/frc/robot/Robot.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 126,
+  "containerFile": null,
+  "containerLineCount": 0,
+  "lineCount": 126,
+  "sha": "339b3d45fdf27985806dbc1e1ae7ffc57737a9e0",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/FRC1296/RhsRobot2026/blob/main/src/main/java/frc/robot/Robot.java",
+  "fetchedAt": "2026-10-16T21:00:09.463Z"
+}

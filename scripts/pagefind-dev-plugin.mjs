@@ -34,6 +34,43 @@ export function pagefindDevPlugin() {
     name: 'pagefind-dev',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
+        if (req.url?.startsWith('/offline/manifests/')) {
+          const rel = req.url.replace(/^\/offline\/manifests\//, '').split('?')[0];
+          if (!rel || rel.includes('..') || !rel.endsWith('.json')) {
+            res.statusCode = 404;
+            res.end('Not found');
+            return;
+          }
+          const filePath = path.join(root, 'dist', 'offline', 'manifests', rel);
+          if (!fs.existsSync(filePath)) {
+            res.statusCode = 404;
+            res.end('Run npm run build to generate offline manifests');
+            return;
+          }
+          res.setHeader('Content-Type', 'application/json');
+          fs.createReadStream(filePath).pipe(res);
+          return;
+        }
+
+        if (req.url?.startsWith('/offline/downloads/')) {
+          const rel = req.url.replace(/^\/offline\/downloads\//, '').split('?')[0];
+          if (!rel || rel.includes('..') || !rel.endsWith('.zip')) {
+            res.statusCode = 404;
+            res.end('Not found');
+            return;
+          }
+          const filePath = path.join(root, 'dist', 'offline', 'downloads', rel);
+          if (!fs.existsSync(filePath)) {
+            res.statusCode = 404;
+            res.end('Run npm run build to generate offline ZIP packs (dist/offline/downloads)');
+            return;
+          }
+          res.setHeader('Content-Type', 'application/zip');
+          res.setHeader('Content-Disposition', `attachment; filename="${rel}"`);
+          fs.createReadStream(filePath).pipe(res);
+          return;
+        }
+
         if (!req.url?.startsWith('/pagefind/')) return next();
 
         const filePath = resolvePagefindFile(req.url);

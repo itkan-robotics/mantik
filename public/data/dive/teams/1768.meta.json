@@ -1,0 +1,16 @@
+{
+  "teamNumber": 1768,
+  "teamName": "Nashoba Robotics",
+  "normEpa": 1839,
+  "linkToCodebases": "Nashoba-Robotics/2026NashobaRobotics",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 137,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 416,
+  "lineCount": 416,
+  "sha": "33da8f70fb6a3a3fdedeb4aa84c22d53abe9c0cc",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/Nashoba-Robotics/2026NashobaRobotics/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:57:48.244Z"
+}

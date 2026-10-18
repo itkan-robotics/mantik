@@ -1,0 +1,16 @@
+{
+  "teamNumber": 2539,
+  "teamName": "Krypton Cougars",
+  "normEpa": 1736,
+  "linkToCodebases": "FRC2539/javabot-2026",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 105,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 270,
+  "lineCount": 270,
+  "sha": "82ba1b7c65edaacf2946706b56f3701eec90f031",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/FRC2539/javabot-2026/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:59:53.423Z"
+}

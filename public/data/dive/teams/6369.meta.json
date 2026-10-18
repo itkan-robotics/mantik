@@ -1,0 +1,16 @@
+{
+  "teamNumber": 6369,
+  "teamName": "Mercenary Robotics",
+  "normEpa": 1863,
+  "linkToCodebases": "MercsMavs-MSA/2026-FRC-6369-Bravo",
+  "chosenFile": "src/main/java/frc/robot/RobotContainer.java",
+  "robotFile": "src/main/java/frc/robot/Robot.java",
+  "robotLineCount": 204,
+  "containerFile": "src/main/java/frc/robot/RobotContainer.java",
+  "containerLineCount": 447,
+  "lineCount": 447,
+  "sha": "86d168f3f5d5f7528e0bad3828e21a27dd262322",
+  "license": "NOASSERTION",
+  "sourceUrl": "https://github.com/MercsMavs-MSA/2026-FRC-6369-Bravo/blob/main/src/main/java/frc/robot/RobotContainer.java",
+  "fetchedAt": "2026-10-16T20:57:43.281Z"
+}

@@ -8,22 +8,16 @@ groupOrder: 2
 order: 6
 difficulty: beginner
 duration: 35 min
-description: ""
+description: "Describes Control Hub and Expansion Hub roles, wiring, configuration, and hardwareMap usage."
 ---
 
-### What are the Control Hub & Expansion Hub?
+### Control Hub and Expansion Hub
 
-The Control Hub and Expansion Hub are the main hardware modules for FTC robots. The Control Hub is the robot's brain and WiFi access point; the Expansion Hub adds more ports for motors, servos, and sensors.
-
-
-
-The Control Hub runs your robot code and connects to the Driver Station via WiFi. The Expansion Hub is used when you need more hardware ports than the Control Hub provides.
-
-
+The Control Hub runs your code and hosts WiFi for the Driver Station. The Expansion Hub adds motor, servo, and sensor ports when one hub is not enough.
 
 See: [FTC Docs: Hardware Setup](https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/index.html)
 
-<RulesBox title="Key Features" subtitle="Control Hub vs Expansion Hub:">
+<RulesBox title="Key Features" subtitle="At a glance">
 
 - Control Hub: Contains Android device, WiFi, and hardware ports.
 - Expansion Hub: Adds extra hardware ports (motors, servos, sensors).
@@ -32,17 +26,11 @@ See: [FTC Docs: Hardware Setup](https://ftc-docs.firstinspires.org/en/latest/har
 
 </RulesBox>
 
-### Wiring and Connections
+### Wiring and connections
 
-Connect the Control Hub to the Expansion Hub using the RS485 cable. Power both hubs from the robot battery.
+Link hubs with an RS485 cable. Power both from the robot battery. Plug devices into either hub.
 
-
-
-Motors, servos, and sensors are plugged into the appropriate ports on either hub.
-
-
-
-See [FTC Docs: Adding an Expansion Hub](https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/configuring_dual_hubs/configuring-dual-hubs.html) for diagrams and best practices.
+See [FTC Docs: Adding an Expansion Hub](https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/configuring_dual_hubs/configuring-dual-hubs.html).
 
 ### Sample HardwareMap Usage
 
@@ -57,15 +45,13 @@ DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "distance_sensor
 // Devices can be on either the Control Hub or Expansion Hub.
 ```
 
-### Configuring Hardware in the Driver Station
+### Configuring hardware in the Driver Station
 
-You must configure your robot's hardware in the Driver Station app. Assign names to each device (motor, servo, sensor) so you can access them in code.
-
-
+In the Driver Station app, add each device and give it a name that matches your `hardwareMap.get()` calls.
 
 See: [FTC Docs: Configuring Hardware](https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html)
 
-<RulesBox title="Best Practices" subtitle="Tips for using Control & Expansion Hubs:">
+<RulesBox title="Best Practices" subtitle="Dual-hub tips">
 
 - Label all cables and ports for easy troubleshooting.
 - Double-check wiring before powering on.

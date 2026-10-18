@@ -22,6 +22,50 @@ npm run build    # Astro build + Pagefind search index
 npm run preview  # Preview production build locally
 ```
 
+## Offline learning
+
+### ZIP packs (recommended for schools)
+
+Open **Aa → Offline lessons** and download the **ZIP** for Java, FTC, FRC, or Competitive (one track per file). Build output also lives at `dist/offline/downloads/mantik-{track}.zip` after `npm run build`.
+
+1. Unzip on a mentor or teacher laptop (Windows, Mac, or Linux).
+2. In the folder that contains the track directory (`java`, `ftc`, etc.), start a local server, for example:
+   - `python -m http.server 8080 --bind 0.0.0.0`
+   - or `npx --yes serve -l 8080`
+3. On student **Chromebooks** on the same Wi‑Fi (or a classroom hotspot), open Chrome to `http://<laptop-ip>:8080/java` (or `/ftc`, `/frc`, `/comp`).
+
+Do not open lesson HTML by double-clicking — browsers block that. Student Chromebooks do not need extensions; they only visit the mentor laptop’s address.
+
+Full steps are in `README-OFFLINE.txt` inside each ZIP.
+
+### Save in Chrome (PWA)
+
+Mantik can be **installed** from Chrome/Edge (Install app / Add to Home Screen). In **Offline lessons**, **Download** saves a track into the browser cache when your school allows service workers.
+
+- Use the **lesson sidebar** and **prev/next** offline — search is not required.
+- **PID Simulation**, **Resources**, and **in-browser Java Run** still need a network connection.
+- After a site update, use **Update** in Offline lessons when shown.
+
+Test cache mode: `npm run build && npm run preview`, then DevTools → Application → Cache storage (`mantik-java`, etc.) and Offline mode.
+
+ZIP links in `npm run dev` are served from `dist/offline/downloads/` after a build (same as offline manifests). Use `npm run preview` to test the full production layout.
+
+## Java Playground
+
+Java Training and Competitive (`/java/*`, `/comp/*`) lessons compile and run **in the browser** (CheerpJ + ECJ, Java 17). Most ` ```java ` fences get a **Run** control automatically; opt out with ` ```java norun ` ``.
+
+`predev` / `prebuild` download ECJ into `public/java-playground/` (gitignored) and build the launcher JAR (committed; rebuild when `scripts/java/*.java` changes). First run in a tab can take ~30s while the runtime warms up.
+
+```bash
+npm run test:java-examples   # compile-check lesson fences for the browser runtime
+```
+
+**CheerpJ preload map (optional, faster first compile):** After a warm run on a Java lesson, open the browser console and run `await __jpDumpResources()`, then paste the JSON into [`src/lib/java-playground/cheerpjPreload.json`](src/lib/java-playground/cheerpjPreload.json). Paths must be for Java **17** (`/lt/17/...`), not Java 8. Commit the file once generated.
+
+Lesson-to-lesson navigation uses Astro View Transitions (`transition:animate="none"`) so the Java worker stays warm without a visible SPA animation.
+
+Reader preferences (theme, text size, spacing, contrast, motion) live in the header **Aa** drawer (`src/lib/prefs.ts`).
+
 ## Project Structure
 
 ```
@@ -129,4 +173,18 @@ Configured for **Netlify** via `netlify.toml`:
 
 ## License
 
-Copyright © 2026 Mantik
+Mantik uses a **split license** so teams can reuse lessons and code clearly.
+
+| Material | License | File |
+|----------|---------|------|
+| Software (site, PID sim, scripts, components) | [BSD-3-Clause](LICENSE) | `LICENSE` |
+| Lesson text and MDX in `src/content/` | [CC BY 4.0](LICENSE-CONTENT) | `LICENSE-CONTENT` |
+| Third-party ports (WPILib controls examples) | Attribution | `NOTICE` |
+
+**Forks** (for example team deployments) may keep customizing and hosting the
+site if they retain the BSD-3 copyright and license notice for Mantik code,
+follow CC BY 4.0 when redistributing lesson prose, and keep `NOTICE` for
+WPILib-derived physics. Team-specific additions are yours; document your
+copyright in your README.
+
+Copyright © 2026 Itkan Robotics (project: Mantik).

@@ -8,12 +8,12 @@ groupOrder: 6
 order: 1
 difficulty: intermediate
 duration: 55 min
-description: ""
+description: Clone mantik-pid-practice, run YAMS sim, and wire Elastic plus AdvantageScope for live tuning—or use the browser sim first.
 ---
 
 ### Overview
 
-This guide covers setting up the PID tuning practice repository using YAMS simulation. YAMS provides better simulation than the default WPILib examples, which can be buggy and may not always load. The setup includes configuring the simulation, Elastic, and AdvantageScope for live tuning.
+This lesson sets up the [mantik-pid-practice](https://github.com/itkan-robotics/mantik-pid-practice) repo with YAMS simulation, Elastic, and AdvantageScope. YAMS is more reliable for mechanism tuning than the stock WPILib sim examples many teams hit in class.
 
 ### Browser or local?
 
@@ -30,23 +30,15 @@ The browser sim (Tier 1) ports WPILib’s [controls_js_sim](https://github.com/w
 
 ### Video Tutorial
 
-Watch this video for a complete walkthrough of the setup process:
+Setup walkthrough:
 
 <YouTubeEmbed id="7ZNNbFWNo_s" title="PID Practice Setup" />
 
 ### Prerequisites
 
-Before starting, ensure you have:
-
-
-
-• Git installed
-
-• GitHub Desktop installed
-
-• WPILib installed (includes Elastic and AdvantageScope)
-
-• Visual Studio Code with WPILib extension
+- Git and GitHub Desktop
+- WPILib (includes Elastic and AdvantageScope)
+- VS Code with the WPILib extension
 
 <StepsBox title="Setup Steps">
 
@@ -76,10 +68,10 @@ Before starting, ensure you have:
 
 <RulesBox title="Important Notes">
 
-- This setup works the same way regardless of which dashboard or graphing tool you're using.
-- If using Phoenix Tuner with real hardware, keep teleoperated mode enabled and allow motors to run outside code control.
-- The mechanism visualization in AdvantageScope isn't needed when using Phoenix Tuner with physical hardware.
-- YAMS simulation is more reliable than default WPILib simulation examples.
+- The workflow is the same whether you graph in AdvantageScope, Phoenix Tuner, or REV Hardware Client.
+- On a real robot with Phoenix Tuner, stay in teleop and enable tuning modes that let the tuner override setpoints when required.
+- You do not need AdvantageScope’s mechanism view when the physical mechanism is in front of you.
+- Prefer YAMS over the default WPILib mechanism examples if sim fails to load or behaves oddly.
 
 </RulesBox>
 

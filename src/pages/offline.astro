@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { sections } from '@/config/navigation';
+---
+
+<BaseLayout
+  title="Offline"
+  description="This lesson is not available offline yet."
+  currentPath="/offline"
+  showSidebar={false}
+>
+  <div class="lesson-content offline-page">
+    <h1>Not available offline yet</h1>
+    <p>
+      This lesson is not saved on your device. You need an internet connection to open it until you
+      download a track below.
+    </p>
+    <p>
+      To read lessons without a connection, open Reading preferences (Aa in the header) →
+      <strong>Offline lessons</strong>.
+    </p>
+    <p>
+      <strong>Classrooms:</strong> download the <strong>ZIP</strong> for a track, unzip on a mentor laptop,
+      run a local web server, and open the track URL from student Chromebooks on the same Wi‑Fi. Instructions
+      are in <code>README-OFFLINE.txt</code> inside the ZIP.
+    </p>
+    <p>
+      <strong>This browser:</strong> while online, choose <strong>Download</strong> to save a track in
+      Chrome&apos;s cache. Use the lesson sidebar or prev/next — search is not required offline.
+    </p>
+    <h2>Learning tracks</h2>
+    <ul>
+      {sections.map((section) => (
+        <li>
+          <a href={section.path}>{section.label}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="offline-page-note">
+      In-browser Java Run still needs a network connection.
+    </p>
+  </div>
+</BaseLayout>

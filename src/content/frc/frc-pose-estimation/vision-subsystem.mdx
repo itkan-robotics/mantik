@@ -8,64 +8,35 @@ groupOrder: 8
 order: 3
 difficulty: intermediate
 duration: 80 min
-description: ""
+description: AprilTag vision with PhotonVision or Limelight—a subsystem that publishes robot pose for fusion.
 ---
 
 ### Why Vision-Based Pose Estimation?
 
-Imagine your robot driving across the field, relying solely on wheel encoders and a gyro. Over time, small errors accumulate—wheel slip, surface variations, measurement inaccuracies. Before you know it, your robot thinks it's in one place, but it's actually several feet away. This is drift, and it's the fundamental challenge of odometry-based localization.
+Wheel odometry drifts when encoders slip or constants are off. Vision looks at fixed landmarks on the field—usually AprilTags—and solves for robot pose in the field frame. When tags are visible, that fix does not accumulate error the way integration does.
 
-
-
-Vision-based pose estimation solves this problem by providing absolute positioning. Instead of accumulating error over time, your robot can look at the field, see known markers (AprilTags), and instantly know exactly where it is. It's like having GPS for your robot—periodic corrections that eliminate drift and ensure accurate navigation.
-
-
-
-When combined with odometry through sensor fusion, you get the best of both worlds: continuous, fast tracking from odometry, with periodic absolute corrections from vision. This creates a robust, accurate pose estimation system that works reliably in competition conditions.
+Pair vision with odometry in a `PoseEstimator`: odometry every loop, vision when tags are in view. See the [fusion lesson](/frc/vision-pose-estimation-fusion).
 
 ### Understanding AprilTags
 
-AprilTags are fiducial markers—visual markers with unique black and white patterns that encode a specific ID. Think of them as QR codes designed for robotics. Each AprilTag on an FRC field has a known position and orientation, specified in the official field layout documentation.
+AprilTags are printed patterns with numeric IDs. The season field layout lists each ID’s pose on the field. The camera estimates pose relative to the tag; with the camera mount on the robot known, you get robot pose on the field.
 
-
-
-When your camera detects an AprilTag, the vision system can calculate the camera's position relative to that tag. Since the tag's field position is known, and the camera's position relative to your robot is known, the system can determine your robot's exact pose on the field. This happens in real-time, providing instant absolute positioning without any accumulated error.
-
-
-
-FRC fields typically have AprilTags placed at strategic locations: scoring areas, corners, and mid-field positions. Each tag has a unique ID that corresponds to its field position, allowing your robot to identify which tag it's seeing and calculate its pose accordingly.
+Tags are placed around the perimeter and at scoring zones. Multi-tag solves are more stable than a single tag at long range.
 
 ### The Vision Processing Pipeline
 
-Here's how vision pose estimation works, step by step:
-
-
-
-**Step 1: Image Capture** - Your camera continuously captures images of the field at 10-30 frames per second. The camera needs to be properly calibrated to account for lens distortion and measure accurate distances.
-
-
-
-**Step 2: Tag Detection** - The vision processor analyzes each image, searching for AprilTag patterns. When a tag is found, the system identifies its unique ID and measures its position in the image.
-
-
-
-**Step 3: Pose Calculation** - Using the tag's known size and position in the image, the system calculates the camera's position and orientation relative to the tag. This involves complex geometry and camera calibration data.
-
-
-
-**Step 4: Robot Pose Conversion** - The camera pose is converted to robot pose by accounting for the camera's mounting position and orientation relative to the robot center. This gives you the robot's actual position on the field.
+1. **Capture** — Camera frames at roughly 10–30 Hz; lens calibration matters for range.
+2. **Detect** — Pipeline finds tag corners and ID in the image.
+3. **Solve** — PnP (or coprocessor equivalent) yields camera pose relative to the tag.
+4. **Transform** — Apply robot-to-camera offset to express `Pose2d` on the field.
 
 ### Creating the Vision Subsystem
 
-Now let's create a vision subsystem that can detect AprilTags and provide pose estimates. Both PhotonVision and Limelight are excellent choices for FRC vision processing. PhotonVision is an open-source solution that runs on coprocessors, while Limelight is a dedicated smart camera. Both provide similar functionality for AprilTag detection and robot localization.
-
-
-
-For PhotonVision, you'll configure your camera in the PhotonVision UI and use the PhotonCamera class in your code. For Limelight, you'll use the LimelightHelpers utility class which simplifies accessing Limelight's NetworkTables data. Both systems can provide pose estimates that work seamlessly with WPILib's PoseEstimator.
+PhotonVision runs on a coprocessor (`PhotonCamera` + `PhotonPoseEstimator`). Limelight is a smart camera (`LimelightHelpers` over NetworkTables). Both feed `addVisionMeasurement` on a WPILib pose estimator.
 
 ### Step 1: Creating the Camera Object
 
-The first step is to create a camera object that connects to your vision system. For PhotonVision, you create a PhotonCamera object with the camera name that matches your PhotonVision configuration. For Limelight, you don't need to create a camera object—instead, you'll use the LimelightHelpers class with your camera's name (or "limelight" for the default camera).
+PhotonVision: `PhotonCamera` name must match the UI. Limelight: use `LimelightHelpers` with the camera hostname (often `"limelight"`).
 
 
 
@@ -73,7 +44,7 @@ The first step is to create a camera object that connects to your vision system.
 
 ### Step 2: Configuring Camera Pose and PhotonPoseEstimator
 
-Your camera needs to know its position and orientation relative to your robot's center. For PhotonVision, you also need to create a PhotonPoseEstimator which handles pose calculation from AprilTag detections. The estimator uses the field layout (AprilTag positions) and camera pose configuration. For Limelight, you configure the pipeline index and set the camera pose programmatically using setPipelineIndex() and setCameraPose_RobotSpace().
+Measure camera position and rotation on the robot (`Transform3d` or Limelight `setCameraPose_RobotSpace`). Load the season `AprilTagFieldLayout`. PhotonVision uses `PhotonPoseEstimator`; Limelight sets the fiducial pipeline index in the UI and in code.
 
 
 
@@ -81,7 +52,7 @@ Your camera needs to know its position and orientation relative to your robot's 
 
 ### Step 3: Getting AprilTag Detections
 
-Once your camera is configured, you can retrieve AprilTag detections. Both systems provide methods to check if targets are detected and to get information about those targets. PhotonVision uses getAllUnreadResults() to get all unread pipeline results (process each one to avoid missing detections), while Limelight uses getLatestResults() to get JSON-formatted results.
+Poll for targets each loop. PhotonVision: drain `getAllUnreadResults()` so frames are not dropped. Limelight: `getLatestResults()` or pose estimate helpers on `LimelightHelpers`.
 
 
 
@@ -89,7 +60,7 @@ Once your camera is configured, you can retrieve AprilTag detections. Both syste
 
 ### Step 4: Extracting Pose Estimates
 
-The most important part of vision-based pose estimation is extracting the robot's pose from AprilTag detections. PhotonVision uses PhotonPoseEstimator.update() which automatically calculates the robot pose from pipeline results. It returns an EstimatedRobotPose with pose, timestamp, and target information. Limelight provides getBotPoseEstimate_wpiBlue() which returns a PoseEstimate object containing the pose, timestamp, and metadata about the detection quality.
+PhotonVision: `PhotonPoseEstimator.update(result)` → `EstimatedRobotPose` with timestamp. Limelight: `getBotPoseEstimate_wpiBlue()` → `PoseEstimate` (use Blue field frame for recent games). Reject bad fixes before calling `addVisionMeasurement`.
 
 
 

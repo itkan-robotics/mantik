@@ -10,6 +10,9 @@
     <p id="search-unavailable" class="search-unavailable-message" hidden>
       Search requires an index. Run <code>npm run build</code> once, then restart dev.
     </p>
+    <p id="search-offline-hint" class="search-offline-hint" hidden role="status">
+      Search needs internet. Offline lessons: use the sidebar or download a track under Reading preferences (Aa).
+    </p>
   </div>
 </div>
 
@@ -32,8 +35,16 @@
   function openSearchOverlay(query = '') {
     setSearchOverlayOpen(true);
 
+    const offlineHint = document.getElementById('search-offline-hint');
     const container = document.getElementById('pagefind-search');
-    const pfInput = container?.querySelector('input');
+    const offline = typeof navigator !== 'undefined' && !navigator.onLine;
+    if (offlineHint) offlineHint.hidden = !offline;
+    if (container) container.style.display = offline ? 'none' : '';
+
+    if (offline) return;
+
+    const containerEl = container;
+    const pfInput = containerEl?.querySelector('input');
     if (pfInput instanceof HTMLInputElement) {
       pfInput.value = query;
       pfInput.focus();
