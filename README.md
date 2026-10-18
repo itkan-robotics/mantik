@@ -40,13 +40,13 @@ Full steps are in `README-OFFLINE.txt` inside each ZIP.
 
 ### Save in Chrome (PWA)
 
-Mantik can be **installed** from Chrome/Edge (Install app / Add to Home Screen). In **Offline lessons**, **Download** saves a track into the browser cache when your school allows service workers.
+Mantik is a **Progressive Web App** (`@vite-pwa/astro` + Workbox). Install from Chrome/Edge (Install app) or ChromeOS shelf. On school Chromebooks, use **Aa → Offline lessons → Download** on Wi‑Fi first; then lessons work without network (sidebar prev/next — search not required).
 
-- Use the **lesson sidebar** and **prev/next** offline — search is not required.
-- **PID Simulation**, **Resources**, and **in-browser Java Run** still need a network connection.
-- After a site update, use **Update** in Offline lessons when shown.
+- **PID Simulation**, **Resources**, and **in-browser Java Run** need a network connection.
+- After a deploy, tap **Refresh** when the update banner appears.
+- If your district blocks service workers, use the **ZIP** links in Offline lessons instead.
 
-Test cache mode: `npm run build && npm run preview`, then DevTools → Application → Cache storage (`mantik-java`, etc.) and Offline mode.
+Test: `npm run build && npm run preview` → DevTools → Application (service worker, `mantik-java` caches) or `npm run pwa:audit`.
 
 ZIP links in `npm run dev` are served from `dist/offline/downloads/` after a build (same as offline manifests). Use `npm run preview` to test the full production layout.
 

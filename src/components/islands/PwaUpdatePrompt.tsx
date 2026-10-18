@@ -1,54 +1,49 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import '@/pwa/register';
+import { setPwaUpdateListener } from '@/pwa/register';
 
 export default function PwaUpdatePrompt() {
   const [visible, setVisible] = useState(false);
-  const waitingRef = useRef<ServiceWorker | null>(null);
+  const [offlineReady, setOfflineReady] = useState(false);
 
   useEffect(() => {
-    if (!import.meta.env.PROD) return;
-    if (!('serviceWorker' in navigator)) return;
-
-    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
-      /* preview without postbuild sw */
+    setPwaUpdateListener((needRefresh) => {
+      if (needRefresh) {
+        setOfflineReady(false);
+        setVisible(true);
+      } else {
+        setOfflineReady(true);
+        setVisible(true);
+      }
     });
-
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
-    });
-
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.addEventListener('updatefound', () => {
-        const installing = registration.installing;
-        if (!installing) return;
-        installing.addEventListener('statechange', () => {
-          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-            waitingRef.current = registration.waiting ?? installing;
-            setVisible(true);
-          }
-        });
-      });
-    });
+    return () => setPwaUpdateListener(null);
   }, []);
 
   if (!visible) return null;
 
+  const isUpdate = !offlineReady;
+
   return (
     <div className="pwa-update-prompt" role="status" aria-live="polite">
-      <p className="pwa-update-prompt__text">A new version of Mantik is ready.</p>
-      <button
-        type="button"
-        className="pwa-update-prompt__btn"
-        onClick={() => {
-          waitingRef.current?.postMessage({ type: 'SKIP_WAITING' });
-        }}
-      >
-        Refresh
-      </button>
+      <p className="pwa-update-prompt__text">
+        {isUpdate ? 'A new version of Mantik is ready.' : 'Mantik is ready to use offline.'}
+      </p>
+      {isUpdate ? (
+        <button
+          type="button"
+          className="pwa-update-prompt__btn"
+          onClick={() => {
+            void window.__mantikPwaUpdateSW?.(true);
+          }}
+        >
+          Refresh
+        </button>
+      ) : null}
       <button
         type="button"
         className="pwa-update-prompt__dismiss"
         onClick={() => setVisible(false)}
-        aria-label="Dismiss update notice"
+        aria-label="Dismiss notice"
       >
         ×
       </button>

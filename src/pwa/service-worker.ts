@@ -1,6 +1,5 @@
 /**
- * Service worker source (injectManifest). Navigation checks section download caches
- * before falling back to the offline help page.
+ * Mantik service worker (injectManifest). Postbuild re-inject runs after Pagefind + offline manifests.
  */
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
@@ -11,9 +10,11 @@ import {
   LEARNING_SECTIONS,
   NAVIGATION_DENYLIST,
   ONLINE_ONLY_PATH_PREFIXES,
-} from './pwa-workbox-config.mjs';
+} from './sw-config';
 
-precacheAndRoute(self.__WB_MANIFEST);
+declare let self: ServiceWorkerGlobalScope;
+
+precacheAndRoute(self.__WB_MANIFEST, { directoryIndex: 'index.html' });
 clientsClaim();
 
 self.addEventListener('message', (event) => {
@@ -24,8 +25,7 @@ self.addEventListener('message', (event) => {
 
 const SECTION_CACHE_NAMES = LEARNING_SECTIONS.map((section) => `mantik-${section}`);
 
-/** @param {URL} url */
-async function matchCachedDocument(url) {
+async function matchCachedDocument(url: URL): Promise<Response | null> {
   const origin = url.origin;
   const pathname = url.pathname;
   const paths = new Set([pathname]);
@@ -49,12 +49,11 @@ async function matchCachedDocument(url) {
   return null;
 }
 
-function isOfflineContext() {
+function isOfflineContext(): boolean {
   return typeof navigator !== 'undefined' && navigator.onLine === false;
 }
 
-/** @returns {Promise<Response>} */
-async function serveOfflineHelpOrError() {
+async function serveOfflineHelpOrError(): Promise<Response> {
   if (isOfflineContext()) {
     const offline = await matchPrecache('/offline/index.html');
     if (offline) return offline;
@@ -62,9 +61,25 @@ async function serveOfflineHelpOrError() {
   return Response.error();
 }
 
+function isLessonPath(pathname: string): boolean {
+  return LEARNING_SECTIONS.some(
+    (section) => pathname === `/${section}` || pathname.startsWith(`/${section}/`),
+  );
+}
+
 registerRoute(
   new NavigationRoute(
     async ({ url, request }) => {
+      if (isOfflineContext()) {
+        const cached = await matchCachedDocument(url);
+        if (cached) return cached;
+        const precached = await matchPrecache(request);
+        if (precached) return precached;
+        if (isLessonPath(url.pathname)) {
+          return serveOfflineHelpOrError();
+        }
+      }
+
       try {
         const response = await fetch(request);
         if (response.ok || response.status === 304 || response.type === 'opaqueredirect') {
@@ -88,8 +103,7 @@ registerRoute(
   ),
 );
 
-/** @param {string} section */
-function sectionRuntimeCache(section) {
+function sectionRuntimeCache(section: string): void {
   registerRoute(
     ({ url }) => {
       const path = url.pathname;
@@ -133,6 +147,25 @@ registerRoute(
   new CacheFirst({
     cacheName: 'mantik-pagefind',
     plugins: [new ExpirationPlugin({ maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 14 })],
+  }),
+  'GET',
+);
+
+registerRoute(
+  ({ url }) =>
+    url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com',
+  new StaleWhileRevalidate({
+    cacheName: 'mantik-external-fonts',
+    plugins: [new ExpirationPlugin({ maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 })],
+  }),
+  'GET',
+);
+
+registerRoute(
+  ({ url }) => url.hostname === 'cdnjs.cloudflare.com' && url.pathname.includes('font-awesome'),
+  new StaleWhileRevalidate({
+    cacheName: 'mantik-external-fonts',
+    plugins: [new ExpirationPlugin({ maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 })],
   }),
   'GET',
 );

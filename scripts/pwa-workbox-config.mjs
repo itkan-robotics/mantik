@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+/** Keep in sync with src/pwa/sw-config.ts */
 export const LEARNING_SECTIONS = ['java', 'ftc', 'frc', 'comp'];
 
 export const NAVIGATION_DENYLIST = [
@@ -24,7 +25,6 @@ export const ONLINE_ONLY_PATH_PREFIXES = [
   '/resources',
   '/java-playground/',
   '/data/',
-  /** Dataset embedded at build time — must not be served from mantik-frc StaleWhileRevalidate. */
   '/frc/2026-public-repositories',
 ];
 
@@ -45,13 +45,13 @@ const GLOB_IGNORES = [
   '**/stats.html',
 ];
 
-/** Workbox injectManifest options (postbuild, after Astro + Pagefind). */
+/** Workbox injectManifest options (postbuild, after Astro + Pagefind + offline manifests). */
 export function getInjectManifestOptions(distDir) {
   return {
     globDirectory: distDir,
     globPatterns: GLOB_PATTERNS,
     globIgnores: GLOB_IGNORES,
-    swSrc: path.join(root, 'scripts/pwa-sw-src.js'),
+    swSrc: path.join(root, 'src/pwa/service-worker.ts'),
     swDest: path.join(distDir, 'sw.js'),
   };
 }

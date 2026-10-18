@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "resolveJsonModule": true,
+    "types": ["vite-plugin-pwa/client"],
     "paths": {
       "@/*": ["src/*"]
     }
